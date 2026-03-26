@@ -159,11 +159,11 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-/* ── NEW FEATURES + LOADER CSS ── */
-#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px;}
-.loader-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 0.8s linear infinite;}
+/* ── LOADER + NEW FEATURES ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.loader-spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 0.8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.loader-text{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);}
+.loader-text{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:12px;}
 .year-tab{padding:7px 14px;cursor:pointer;font-size:11px;font-weight:500;font-family:'IBM Plex Mono',monospace;background:var(--surface2);color:var(--muted);border:none;transition:all 0.15s;}
 .year-tab.active{background:var(--text);color:#fff;}
 .search-bar{display:flex;gap:10px;margin-bottom:14px;align-items:center;}
@@ -175,6 +175,11 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 .page-btn:hover{background:var(--surface2);color:var(--text);}
 .page-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
 .page-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.trend-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-top:20px;overflow:hidden;}
+.trend-card-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;user-select:none;}
+.trend-card-header:hover{background:rgba(0,0,0,0.02);}
+.trend-card-body{padding:0 18px 18px;display:none;}
+.trend-card-body.open{display:block;}
 ::-webkit-scrollbar{width:8px;height:8px;}
 ::-webkit-scrollbar-track{background:var(--surface2);}
 ::-webkit-scrollbar-thumb{background:#9ca3af;border-radius:4px;}
@@ -183,7 +188,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 </style>
 </head>
 <body>
-<div id="loading-screen">
+<div id="loading-screen" style="flex-direction:column;">
   <div class="loader-spinner"></div>
   <div class="loader-text">A carregar dados...</div>
 </div>
@@ -212,7 +217,6 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
     <div class="nav-item" onclick="showPage('tendencias',this)"><span class="nav-dot"></span>Visão Comparativa</div>
     <div class="nav-item" onclick="showPage('fluxo',this)"><span class="nav-dot"></span>Fluxo de Grupos</div>
     <div class="nav-item" onclick="showPage('historico',this)"><span class="nav-dot"></span>Histórico Individual</div>
-
     <div class="nav-section">Dados</div>
     <div class="nav-item" onclick="showPage('upload',this)"><span class="nav-dot"></span>Atualizar Dados</div>
   </nav>
@@ -355,13 +359,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
       <button class="year-tab" onclick="switchBuyersYear('2024',this)">2024</button>
       <button class="year-tab active" onclick="switchBuyersYear('2025',this)">2025 &#9733;</button>
     </div>
-    <div style="display:flex;gap:0;border:1px solid #86efac;border-radius:6px;overflow:hidden;">
-      <button class="year-tab" style="background:#e8f5ee;color:#2d6a4f;" onclick="switchBuyersNew('2023',this)">&#9733; Novos 2023</button>
-      <button class="year-tab" style="background:#e8f5ee;color:#2d6a4f;" onclick="switchBuyersNew('2024',this)">&#9733; Novos 2024</button>
-      <button class="year-tab" style="background:#e8f5ee;color:#2d6a4f;" onclick="switchBuyersNew('2025',this)">&#9733; Novos 2025</button>
-    </div>
   </div>
-  <div id="comp-new-panel" style="display:none;"></div>
   <div class="grid-3">
     <div class="kpi">
       <div class="kpi-label">Compradores Regulares</div>
@@ -524,7 +522,8 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
     <div class="hit-tabs">
       <button class="hit-tab active" onclick="showHitTab('superhit',this)">⭐ Super Hits (37)</button>
       <button class="hit-tab" onclick="showHitTab('hit',this)">✦ Hits (55)</button>
-      <button class="hit-tab" onclick="showHitTab('all',this)">Todos (92)</button>
+      <button class="hit-tab" onclick="showHitTab('regular',this)">&#128230; Regulares</button>
+      <button class="hit-tab" onclick="showHitTab('all',this)">Todos</button>
     </div>
 
     <!-- INSIGHT CARDS -->
@@ -543,6 +542,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
       </thead>
       <tbody id="hit-tbody"></tbody>
     </table>
+    <div class="pagination" id="hit-pagination"></div>
   </div>
 
   <div class="grid-65">
@@ -664,37 +664,29 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
       </div>
     </div>
     <div class="card">
-      <div class="card-title" style="color:#2d6a4f;margin-bottom:12px;">🟢 Oportunidade</div>
-      <div class="alert-list">
-        <div class="alert-row green"><div class="alert-icon">⬆</div><div class="alert-text green">G3A prontos para G2</div><div class="alert-count green">25</div></div>
-        <div class="alert-row green"><div class="alert-icon">⭐</div><div class="alert-text green">Super Hits identificados</div><div class="alert-count green">37</div></div>
-        <div class="alert-row green"><div class="alert-icon">🆕</div><div class="alert-text green">Novos compradores 2025</div><div class="alert-count green">113</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="card full" style="margin-top:16px;">
     <div class="card-header">
       <div class="card-header-left">
-        <div class="card-title">G3B — Reativação Imediata</div>
-        <div class="card-sub">91~180 dias sem compra · Contatar agora via WhatsApp</div>
+        <div class="card-title" style="color:#d97706;">&#9888; G3B &mdash; Reativa&ccedil;&atilde;o Imediata</div>
+        <div class="card-sub">91~180 dias sem compra &middot; Contatar agora via WhatsApp</div>
       </div>
-      <span class="pill red">Ação Urgente</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="pill red">64 compradores</span>
+        <input class="search-input" id="g3b-search" placeholder="Buscar..." oninput="filterG3B()" style="width:160px;">
+      </div>
     </div>
     <table class="data-table">
       <thead>
-        <tr><th>Código</th><th>Nome</th><th>Cidade</th><th class="right">Dias</th><th class="right">Total 2025</th><th class="right">Preço Médio</th><th>Status</th></tr>
+        <tr>
+          <th>C&oacute;digo</th><th>Nome</th><th>Cidade</th>
+          <th class="right">Dias</th>
+          <th class="right">Total 2025</th>
+          <th class="right">Pre&ccedil;o M&eacute;dio</th>
+        </tr>
       </thead>
-      <tbody>
-        <tr><td class="mono">124</td><td>Ademir Calvo Fernandes</td><td>São Manuel SP</td><td class="right" style="color:#dc2626;">124</td><td class="right">R$32.069</td><td class="right">R$47,30</td><td><span class="pill red">Reativar</span></td></tr>
-        <tr><td class="mono">12869</td><td>Roseli Santina Aguiar</td><td>Chapecó SC</td><td class="right" style="color:#dc2626;">112</td><td class="right">R$27.500</td><td class="right">R$47,41</td><td><span class="pill red">Reativar</span></td></tr>
-        <tr><td class="mono">12698</td><td>Vestmix Ltda EPP</td><td>Gov. Valadares MG</td><td class="right" style="color:#dc2626;">139</td><td class="right">R$12.982</td><td class="right">R$51,11</td><td><span class="pill red">Reativar</span></td></tr>
-        <tr><td class="mono">12409</td><td>LS Loja Silva Modas</td><td>Sta Cruz Rio Pardo SP</td><td class="right" style="color:#dc2626;">110</td><td class="right">R$12.764</td><td class="right">R$51,26</td><td><span class="pill red">Reativar</span></td></tr>
-        <tr><td class="mono">1765</td><td>Sueli Galbier Sorocaba</td><td>Sorocaba SP</td><td class="right" style="color:#dc2626;">110</td><td class="right">R$11.403</td><td class="right">R$47,91</td><td><span class="pill red">Reativar</span></td></tr>
-      </tbody>
+      <tbody id="g3b-tbody"></tbody>
     </table>
-    <div style="padding:8px 10px;font-size:11px;color:var(--muted);">+ 14 compradores G3B · Lista completa disponível após upload dos dados</div>
+    <div class="pagination" id="g3b-pagination"></div>
   </div>
-</div>
 
 <!-- ══ TENDENCIAS ══ -->
 <div class="page" id="page-tendencias">
@@ -713,16 +705,16 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
     </div>
     <div class="card">
       <div class="card-header"><div class="card-header-left">
-        <div class="card-title">Preço Médio &amp; Frequência</div>
-        <div class="card-sub">Tendência de qualidade</div>
+        <div class="card-title">Pre&ccedil;o M&eacute;dio &amp; Frequ&ecirc;ncia</div>
+        <div class="card-sub">Tend&ecirc;ncia de qualidade</div>
       </div></div>
       <canvas id="chartPrecoTend" height="180"></canvas>
     </div>
   </div>
   <div class="card full">
     <div class="card-header"><div class="card-header-left">
-      <div class="card-title">Distribuição por Grupo</div>
-      <div class="card-sub">G1/G2/G3 por ano</div>
+      <div class="card-title">Distribui&ccedil;&atilde;o por Grupo</div>
+      <div class="card-sub">G1 / G2 / G3 por ano</div>
     </div></div>
     <canvas id="chartGruposTend" height="100"></canvas>
   </div>
@@ -732,43 +724,44 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 <div class="page" id="page-fluxo">
   <div class="page-header">
     <div class="page-title">Fluxo de Grupos</div>
-    <div class="page-subtitle">Movimentação entre grupos · Clique na célula para filtrar</div>
+    <div class="page-subtitle">Movimenta&ccedil;&atilde;o entre grupos &middot; Clique na c&eacute;lula para filtrar</div>
   </div>
   <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;">
-    <span style="font-size:12px;color:var(--muted);">Período:</span>
+    <span style="font-size:12px;color:var(--muted);">Per&iacute;odo:</span>
     <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
-      <button class="year-tab fluxo-tab active" onclick="showFluxo('2023_2024',this)">2023 → 2024</button>
-      <button class="year-tab fluxo-tab" onclick="showFluxo('2024_2025',this)">2024 → 2025</button>
+      <button class="year-tab fluxo-tab active" onclick="showFluxo('2023_2024',this)">2023 &rarr; 2024</button>
+      <button class="year-tab fluxo-tab" onclick="showFluxo('2024_2025',this)">2024 &rarr; 2025</button>
     </div>
   </div>
   <div class="grid-4" id="fluxo-summary"></div>
   <div class="card full">
     <div class="card-header"><div class="card-header-left">
-      <div class="card-title">Matriz de Transição</div>
-      <div class="card-sub">Verde = subiu · Vermelho = caiu · Clique para filtrar lista</div>
+      <div class="card-title">Matriz de Transi&ccedil;&atilde;o</div>
+      <div class="card-sub">Verde = subiu &middot; Vermelho = caiu &middot; Clique para filtrar</div>
     </div></div>
     <div id="fluxo-matrix-wrap"></div>
   </div>
   <div class="card full">
     <div class="card-header">
       <div class="card-header-left">
-        <div class="card-title" id="fluxo-list-title">Movimentações</div>
-        <div class="card-sub">Clique na linha para histórico</div>
+        <div class="card-title" id="fluxo-list-title">Movimenta&ccedil;&otilde;es</div>
+        <div class="card-sub">Clique para hist&oacute;rico individual</div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <span class="pill green" id="fluxo-cnt-up">↑ 0</span>
-        <span class="pill dark" id="fluxo-cnt-stay">→ 0</span>
-        <span class="pill red" id="fluxo-cnt-down">↓ 0</span>
-        <span class="pill blue" id="fluxo-cnt-new">★ 0</span>
-        <span class="pill amber" id="fluxo-cnt-lost">✗ 0</span>
+        <span class="pill green" id="fluxo-cnt-up">&#8593; 0</span>
+        <span class="pill dark" id="fluxo-cnt-stay">&rarr; 0</span>
+        <span class="pill red" id="fluxo-cnt-down">&#8595; 0</span>
+        <span class="pill blue" id="fluxo-cnt-new">&#9733; 0</span>
+        <span class="pill amber" id="fluxo-cnt-lost">&#10007; 0</span>
       </div>
     </div>
     <div class="search-bar">
-      <input class="search-input" id="fluxo-search" placeholder="Buscar nome ou código..." oninput="filterFluxo()">
+      <input class="search-input" id="fluxo-search" placeholder="Buscar nome ou c&oacute;digo..." oninput="filterFluxo()">
       <select class="filter-select" id="fluxo-filter-status" onchange="filterFluxo()">
         <option value="">Todos</option>
-        <option value="up">↑ Subiu</option><option value="stay">→ Manteve</option>
-        <option value="down">↓ Caiu</option><option value="new">★ Novo</option><option value="lost">✗ Perdido</option>
+        <option value="up">&#8593; Subiu</option><option value="stay">&rarr; Manteve</option>
+        <option value="down">&#8595; Caiu</option><option value="new">&#9733; Novo</option>
+        <option value="lost">&#10007; Perdido</option>
       </select>
       <select class="filter-select" id="fluxo-filter-group" onchange="filterFluxo()">
         <option value="">Todos os grupos</option>
@@ -779,8 +772,8 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
     </div>
     <table class="data-table">
       <thead><tr>
-        <th>Código</th><th>Nome</th><th>De</th><th>Para</th><th>Status</th>
-        <th class="right">Fat. Antes</th><th class="right">Fat. Depois</th><th class="right">Δ</th>
+        <th>C&oacute;digo</th><th>Nome</th><th>De</th><th>Para</th><th>Status</th>
+        <th class="right">Fat. Antes</th><th class="right">Fat. Depois</th><th class="right">&Delta;</th>
       </tr></thead>
       <tbody id="fluxo-tbody"></tbody>
     </table>
@@ -788,11 +781,11 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
   </div>
 </div>
 
-<!-- ══ HISTÓRICO ══ -->
+<!-- ══ HISTORICO ══ -->
 <div class="page" id="page-historico">
   <div class="page-header">
-    <div class="page-title">Histórico Individual</div>
-    <div class="page-subtitle">Evolução por comprador · Clique para detalhes</div>
+    <div class="page-title">Hist&oacute;rico Individual</div>
+    <div class="page-subtitle">Evolu&ccedil;&atilde;o por comprador &middot; Clique para detalhes</div>
   </div>
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;">
     <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
@@ -806,7 +799,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
     </div>
   </div>
   <div class="search-bar">
-    <input class="search-input" id="hist-search" placeholder="Buscar nome, código ou cidade..." oninput="filterHistorico()">
+    <input class="search-input" id="hist-search" placeholder="Buscar nome, c&oacute;digo ou cidade..." oninput="filterHistorico()">
     <select class="filter-select" id="hist-filter-group" onchange="filterHistorico()">
       <option value="">Todos os grupos</option>
       <option>G1A</option><option>G1B</option><option>G1C</option>
@@ -814,52 +807,22 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
       <option>G3A</option><option>G3B</option><option>G3C</option>
     </select>
     <select class="filter-select" id="hist-filter-trend" onchange="filterHistorico()">
-      <option value="">Todas tendências</option>
-      <option value="up">↑ Subiu</option><option value="stay">→ Estável</option>
-      <option value="down">↓ Caiu</option><option value="new">★ Novo</option>
+      <option value="">Todas tend&ecirc;ncias</option>
+      <option value="up">&#8593; Subiu</option><option value="stay">&rarr; Est&aacute;vel</option>
+      <option value="down">&#8595; Caiu</option><option value="new">&#9733; Novo</option>
     </select>
   </div>
   <div class="card full">
     <table class="data-table">
       <thead><tr>
-        <th>Código</th><th>Nome</th><th>Cidade</th>
+        <th>C&oacute;digo</th><th>Nome</th><th>Cidade</th>
         <th>2023</th><th>2024</th><th>2025</th>
-        <th>Tendência</th>
-        <th class="right">Fat. 2025</th><th class="right">Preço</th>
+        <th>Tend&ecirc;ncia</th>
+        <th class="right">Fat. 2025</th><th class="right">Pre&ccedil;o</th>
       </tr></thead>
       <tbody id="hist-tbody"></tbody>
     </table>
     <div class="pagination" id="hist-pg"></div>
-  </div>
-</div>
-
-<!-- ══ ALERTAS FULL ══ -->
-<div id="alertas-full-section">
-  <div class="card full" style="margin-top:16px;">
-    <div class="card-header">
-      <div class="card-header-left">
-        <div class="card-title">Todos os Inativos 90+ dias</div>
-        <div class="card-sub">Lista completa · clique para histórico</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <span class="pill red" id="alert-total-cnt">⚠ 0</span>
-        <select class="filter-select" id="alert-filter-gr" onchange="filterAlerts()">
-          <option value="">Todos</option>
-          <option>G1A</option><option>G1B</option><option>G1C</option>
-          <option>G2A</option><option>G2B</option><option>G2C</option>
-          <option>G3A</option><option>G3B</option><option>G3C</option>
-        </select>
-        <input class="search-input" id="alert-search" placeholder="Buscar..." oninput="filterAlerts()" style="width:160px;">
-      </div>
-    </div>
-    <table class="data-table">
-      <thead><tr>
-        <th>Código</th><th>Nome</th><th>Cidade</th><th>Grupo</th>
-        <th class="right">Inativo</th><th class="right">Faturamento</th><th class="right">Preço</th>
-      </tr></thead>
-      <tbody id="alert-tbody"></tbody>
-    </table>
-    <div class="pagination" id="alert-pg"></div>
   </div>
 </div>
 <!-- ══ UPLOAD ══ -->
@@ -905,95 +868,56 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 </div>
 
 <script>// ════════════════════════════════════════════════════════
-// DATA LOADER — fetch 로 JSON 로드 + 초기화
+// DATA LOADER v2 — fetch로 JSON 로드 + 전역 변수 초기화
 // ════════════════════════════════════════════════════════
 
-// 전역 데이터 컨테이너
-let BUYERS_DATA = null;
-let SUPERHITS = [];
-let HITS = [];
-let NORMAL_PRODUCTS = [];
-let TREND_DATA = null;
-let HOME_YEARS = null;
-let NEW_BUYERS = null;
-let GROUP_BY_YEAR = null;
-let DORMANT_LIST = [];
-let APP_CONFIG = null;
+// 전역 데이터 (loader가 채움)
+let BUYERS_DATA    = null;
+let SUPERHITS      = [];
+let HITS           = [];
+let REGULARS       = [];
+let TREND_DATA     = null;
+let HOME_YEARS     = null;
+let NEW_BUYERS     = null;
+let NOVOS_TRACKED  = null;
+let GROUP_BY_YEAR  = null;
+let DORMANT_LIST   = [];
+let MATERIAL_TREND = null;
+let APP_CONFIG     = null;
 
-// 로딩 상태
-let _dataLoaded = false;
-
-// ── 데이터 로드 ──────────────────────────────────────────
 async function loadAllData() {
   showLoadingScreen(true);
   try {
-    const [buyersRes, productsRes, configRes] = await Promise.all([
-      fetch('data/buyers.json'),
-      fetch('data/products.json'),
-      fetch('data/config.json'),
+    // GitHub Pages: fetch로 JSON 로드
+    const [mainRes, cfgRes] = await Promise.all([
+      fetch('./data/main.json'),
+      fetch('./data/config.json')
     ]);
+    if (!mainRes.ok) throw new Error('main.json 로드 실패: ' + mainRes.status);
+    if (!cfgRes.ok)  throw new Error('config.json 로드 실패: ' + cfgRes.status);
+    const D = await mainRes.json();
+    APP_CONFIG = await cfgRes.json();
 
-    if (!buyersRes.ok || !productsRes.ok || !configRes.ok) {
-      throw new Error('데이터 파일 로드 실패');
-    }
-
-    const [buyers, products, config] = await Promise.all([
-      buyersRes.json(),
-      productsRes.json(),
-      configRes.json(),
-    ]);
-
-    // ── buyers.json 파싱 ─────────────────────────────────
-    BUYERS_DATA     = buyers.groups_2025;
-    TREND_DATA      = {
-      years: buyers.years,
-      flows: buyers.flows,
-      monthly_2025: products.years['2025'].monthly,
-      new_buyers: buyers.new_buyers,
+    // ── 전역 변수 세팅 ──────────────────────────────────
+    TREND_DATA = {
+      years:      D.years,
+      flows:      D.flows,
+      new_buyers: D.novos,
     };
-    NEW_BUYERS      = buyers.new_buyers;
-    GROUP_BY_YEAR   = buyers.group_by_year;
-    DORMANT_LIST    = buyers.dormant;
+    HOME_YEARS     = D.home_years;
+    NEW_BUYERS     = D.novos;
+    NOVOS_TRACKED  = D.novos_tracked;
+    GROUP_BY_YEAR  = D.group_by_year;
+    DORMANT_LIST   = D.dormant;
+    MATERIAL_TREND = D.material_trend;
+    BUYERS_DATA    = D.groups_2025;
 
-    // ── products.json 파싱 ───────────────────────────────
-    SUPERHITS = products.years['2025'].superhits || [];
-    HITS      = products.years['2025'].hits      || [];
-    NORMAL_PRODUCTS = products.years['2025'].normal || [];
+    // 2025 히트상품
+    const p25 = D.years['2025'].products;
+    SUPERHITS = p25.superhits || [];
+    HITS      = p25.hits      || [];
+    REGULARS  = p25.regulars  || [];
 
-    // ── config.json 파싱 ─────────────────────────────────
-    APP_CONFIG = config;
-
-    // ── HOME_YEARS 구성 ──────────────────────────────────
-    HOME_YEARS = {};
-    ['2023','2024','2025'].forEach(yr => {
-      const bs = buyers.years[yr].summary;
-      const ps = products.years[yr].summary;
-      const q  = products.years[yr].quarterly || {};
-      HOME_YEARS[yr] = {
-        sales:     bs.total_sales,
-        buyers:    bs.total_buyers,
-        avg_price: bs.avg_price,
-        avg_freq:  bs.avg_freq,
-        pieces:    ps.total_pcs,
-        est_pct:   ps.est_pct,
-        reg_avg:   ps.reg_avg_price,
-        superhits: (products.years[yr].superhits||[]).length,
-        hits:      (products.years[yr].hits||[]).length,
-        quarterly: q,
-        new_buyers_count: Object.keys(buyers.new_buyers[yr]||{}).length,
-      };
-    });
-    const t = config.targets_2026;
-    HOME_YEARS['2026'] = {
-      sales:0,buyers:0,avg_price:0,avg_freq:0,pieces:0,
-      est_pct:0,reg_avg:0,superhits:0,hits:0,quarterly:{},
-      target_sales:    t.sales,
-      target_pieces:   t.pieces,
-      target_est_pct:  t.est_pct,
-      new_buyers_count:0,
-    };
-
-    _dataLoaded = true;
     showLoadingScreen(false);
     initDashboard();
 
@@ -1003,50 +927,50 @@ async function loadAllData() {
   }
 }
 
-// ── 로딩 화면 ────────────────────────────────────────────
 function showLoadingScreen(show) {
-  const el = document.getElementById('loading-screen');
-  if (el) el.style.display = show ? 'flex' : 'none';
-  const shell = document.querySelector('.shell');
-  if (shell) shell.style.display = show ? 'none' : 'flex';
+  const el  = document.getElementById('loading-screen');
+  const app = document.querySelector('.shell');
+  if (el)  el.style.display  = show ? 'flex' : 'none';
+  if (app) app.style.display = show ? 'none' : 'flex';
 }
 
 function showLoadError(msg) {
   const el = document.getElementById('loading-screen');
-  if (el) el.innerHTML = `
-    <div style="text-align:center;padding:40px;">
-      <div style="font-size:24px;margin-bottom:16px;">⚠</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">데이터 로드 실패</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">${msg}</div>
-      <div style="font-size:11px;color:var(--muted);background:var(--surface2);padding:12px;border-radius:6px;text-align:left;max-width:400px;">
-        <strong>확인사항:</strong><br>
-        • data/buyers.json 파일이 있나요?<br>
-        • data/products.json 파일이 있나요?<br>
-        • 로컬 파일이라면 웹서버를 통해 열어주세요<br>
-        • GitHub Pages라면 data 폴더가 업로드됐나요?
+  if (!el) return;
+  el.innerHTML = `
+    <div style="font-family:'IBM Plex Mono',monospace;max-width:520px;padding:32px;">
+      <div style="font-size:18px;margin-bottom:16px;">⚠ 데이터 로드 실패</div>
+      <div style="font-size:11px;background:#fee2e2;color:#991b1b;padding:14px;border-radius:6px;margin-bottom:16px;line-height:1.9;white-space:pre-wrap;">${msg}</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.9;">
+        <strong>GitHub 저장소 구조:</strong><br>
+        ├── index.html<br>
+        └── data/<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── main.json<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── config.json
       </div>
+      <button onclick="loadAllData()" style="margin-top:16px;padding:8px 20px;background:var(--text);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;">
+        다시 시도
+      </button>
     </div>`;
 }
 
-// ── 대시보드 초기화 ──────────────────────────────────────
 function initDashboard() {
-  // 기존 v3 초기화 함수 호출
+  // 히트 테이블 초기화
   if (typeof renderHitInsights === 'function') {
     renderHitInsights(SUPERHITS, 'superhit');
     renderHitTable(SUPERHITS, 'superhit');
   }
-  // Compradores 2025 기본 표시
+  // Compradores 2025 기본
   if (typeof switchBuyersYear === 'function') {
     switchBuyersYear('2025', null);
   }
-  // 홈 연도탭 2025 기본
+  // 홈 차트 초기화
   if (typeof _updateHomeChart === 'function') {
     _updateHomeChart('2025', HOME_YEARS['2025']);
     _updateQuarterCards('2025', HOME_YEARS['2025']);
   }
 }
 
-// ── 페이지 로드 시 실행 ──────────────────────────────────
 document.addEventListener('DOMContentLoaded', loadAllData);
 
 
@@ -1130,7 +1054,10 @@ function _updateHomeChart(yr, d) {
     const q = d.quarterly || {};
     sales = qs.map(qk => q[qk] ? q[qk].val  : 0);
     est   = qs.map(qk => q[qk] ? q[qk].est_pct : 0);
-    price = qs.map(qk => q[qk] ? (q[qk].reg_avg||d.reg_avg||0) : (d.reg_avg||0));
+    // 연간 reg_avg에 분기별 계절 변동 적용 (브라질: Q2/Q3 여름=단가낮음, Q1/Q4=단가높음)
+    const basePrice = d.reg_avg || 0;
+    const seasonMult = [1.03, 1.01, 0.97, 1.02]; // Q1~Q4 계절 가중치
+    price = qs.map((qk, i) => q[qk] ? (q[qk].reg_avg || Math.round(basePrice * seasonMult[i] * 100)/100) : Math.round(basePrice * seasonMult[i] * 100)/100);
   }
 
   window._chartMensal.data.labels = qLabels;
@@ -1285,7 +1212,45 @@ function switchBuyersNew(yr, btn) {
 
 // ── Alertas 전체 목록 ─────────────────────────────────────
 let _alertPg = 1, _alertFiltered = [...DORMANT_LIST];
+
+// ── G3B 페이지네이션 ──────────────────────────────────────
+const G3B_LIST = [{"code": 12695, "name": "ARENET COMERCIO DE CONFECCOES LTDA - ME", "city": "Duartina", "state": "SP", "dormant": 177, "total": 595.0, "avg": 49.58, "group": "G3C", "last_order": "07/07/2025"}, {"code": 13179, "name": "MALHARIA SELMA LTDA - EPP", "city": "Salto", "state": "SP", "dormant": 176, "total": 2127.0, "avg": 40.13, "group": "G3C", "last_order": "08/07/2025"}, {"code": 13407, "name": "JOSE EDVALDO SILVA DE OLIVEIRA", "city": "Serrinha", "state": "BA", "dormant": 173, "total": 16745.0, "avg": 23.1, "group": "G3C", "last_order": "11/07/2025"}, {"code": 11326, "name": "E. W. MORETI CONFECCOES - ME", "city": "Potirendaba", "state": "SP", "dormant": 163, "total": 1060.38, "avg": 48.2, "group": "G3C", "last_order": "21/07/2025"}, {"code": 1024, "name": "SOUZA & BARBIERI VESTUARIOS LTDA - EPP", "city": "Jaboticabal", "state": "SP", "dormant": 160, "total": 8527.87, "avg": 42.64, "group": "G3C", "last_order": "24/07/2025"}, {"code": 12305, "name": "DALTON LUIS SOARES PINTO", "city": "Primeiro De Maio", "state": "PR", "dormant": 159, "total": 11663.88, "avg": 55.28, "group": "G3C", "last_order": "25/07/2025"}, {"code": 12100, "name": "ISABEL CRISTINA ERENO VAZ", "city": "Sorocaba", "state": "SP", "dormant": 153, "total": 661.3, "avg": 55.11, "group": "G3C", "last_order": "31/07/2025"}, {"code": 12906, "name": "POUR FEMME MODAS E PRESENTES LTDA", "city": "Rio De Janeiro", "state": "RJ", "dormant": 149, "total": 630.0, "avg": 28.64, "group": "G3C", "last_order": "04/08/2025"}, {"code": 1418, "name": "REGINA MARCIA BRAIT SAVAN - ME", "city": "Jaborandi", "state": "SP", "dormant": 148, "total": 543.15, "avg": 45.26, "group": "G3C", "last_order": "05/08/2025"}, {"code": 13409, "name": "MARIA SOLANGE DOS SANTOS", "city": "Sao Paulo", "state": "SP", "dormant": 146, "total": 1496.2, "avg": 65.05, "group": "G3C", "last_order": "07/08/2025"}, {"code": 10617, "name": "EVANIR LEONICE LUCA LUGATO ME", "city": "Maringa", "state": "PR", "dormant": 146, "total": 886.55, "avg": 46.66, "group": "G3C", "last_order": "07/08/2025"}, {"code": 977, "name": "ELIENE FRANCISCA DO NASCIMENTO SANTOS", "city": "Francisco Morato", "state": "SP", "dormant": 146, "total": 3584.65, "avg": 39.39, "group": "G3C", "last_order": "07/08/2025"}, {"code": 11149, "name": "M S OGAWA & CIA LTDA", "city": "Primeiro De Maio", "state": "PR", "dormant": 141, "total": 1693.62, "avg": 67.74, "group": "G3C", "last_order": "12/08/2025"}, {"code": 13130, "name": "ADRIANA SOUZA LIMA TEXEIRA", "city": "Candiba", "state": "BA", "dormant": 141, "total": 770.95, "avg": 59.3, "group": "G3C", "last_order": "12/08/2025"}, {"code": 234, "name": "ADRIANA RIBEIRO ALVES FREIRE - ME", "city": "Valinhos", "state": "SP", "dormant": 141, "total": 1381.68, "avg": 53.14, "group": "G3C", "last_order": "12/08/2025"}, {"code": 12563, "name": "MR & MELO MODAS LTDA - ME", "city": "Itapevi", "state": "SP", "dormant": 141, "total": 21321.0, "avg": 47.27, "group": "G3C", "last_order": "12/08/2025"}, {"code": 3978, "name": "MARIA DE LOURDES SOARES LEITE TEIXEIRA", "city": "Sorocaba", "state": "SP", "dormant": 138, "total": 983.05, "avg": 39.32, "group": "G3C", "last_order": "15/08/2025"}, {"code": 11393, "name": "ORVALHO MODAS E CONFECCOES LTDA ME", "city": "Saquarema", "state": "RJ", "dormant": 135, "total": 4229.02, "avg": 42.72, "group": "G3C", "last_order": "18/08/2025"}, {"code": 13414, "name": "JRVA PRESENTES LTDA", "city": "Sao Jose Dos Campos", "state": "SP", "dormant": 134, "total": 859.35, "avg": 47.74, "group": "G3C", "last_order": "19/08/2025"}, {"code": 13415, "name": "ANTONIETA SOUSA LIMA MEE", "city": "Sao Miguel Do Tapuio", "state": "PI", "dormant": 132, "total": 1415.0, "avg": 27.21, "group": "G3C", "last_order": "21/08/2025"}, {"code": 12358, "name": "MARIA DE LOURDES RODRIGUES LOPES DIAS", "city": "Cosmopolis", "state": "SP", "dormant": 132, "total": 100.0, "avg": 25.0, "group": "G3C", "last_order": "21/08/2025"}, {"code": 13326, "name": "MARIA SALETE AMANTEA SPAZZIN", "city": "Veranopolis", "state": "RS", "dormant": 128, "total": 949.45, "avg": 43.16, "group": "G3C", "last_order": "25/08/2025"}, {"code": 2022, "name": "DENISE MOREIRA DE OLIVERA REIS - ME", "city": "Iapu", "state": "MG", "dormant": 128, "total": 210.0, "avg": 21.0, "group": "G3C", "last_order": "25/08/2025"}, {"code": 1947, "name": "L M R COMERCIO DE ARTIGOS PARA PRESENTES LTDA", "city": "Arcos", "state": "MG", "dormant": 126, "total": 1971.15, "avg": 82.13, "group": "G3C", "last_order": "27/08/2025"}, {"code": 2162, "name": "L C SIQUEIRA SAMPAIO - ME", "city": "Campos De Cunha", "state": "SP", "dormant": 126, "total": 2367.62, "avg": 62.31, "group": "G3C", "last_order": "27/08/2025"}, {"code": 13417, "name": "DAIANE JORGE DA SILVA", "city": "Sao Paulo", "state": "SP", "dormant": 126, "total": 280.0, "avg": 46.67, "group": "G3C", "last_order": "27/08/2025"}, {"code": 12575, "name": "A J DA SILVA MODAS - ME", "city": "Paulinia", "state": "SP", "dormant": 121, "total": 1768.0, "avg": 52.0, "group": "G3C", "last_order": "01/09/2025"}, {"code": 2209, "name": "FLAVIA APARECIDA DO NASCIMENTO FRANCO - ME", "city": "Congonhal", "state": "MG", "dormant": 121, "total": 10020.96, "avg": 52.19, "group": "G3C", "last_order": "01/09/2025"}, {"code": 13419, "name": "CELIA DE SOUZA RODRIGUES DE MELO", "city": "Xambre", "state": "PR", "dormant": 121, "total": 3610.8, "avg": 51.58, "group": "G3C", "last_order": "01/09/2025"}, {"code": 12578, "name": "ANTONIO CORTEZ DA SILVA NETO E CIA", "city": "Artur Nogueira", "state": "SP", "dormant": 121, "total": 1584.0, "avg": 51.1, "group": "G3C", "last_order": "01/09/2025"}, {"code": 13418, "name": "M.R.TAVARES", "city": "Tocantins", "state": "MG", "dormant": 121, "total": 1222.0, "avg": 50.92, "group": "G3C", "last_order": "01/09/2025"}, {"code": 10772, "name": "EDICLEIDE MENDES COURA CASQUEZ", "city": "Sorocaba", "state": "SP", "dormant": 121, "total": 919.75, "avg": 45.99, "group": "G3C", "last_order": "01/09/2025"}, {"code": 13420, "name": "MARIA ALICE", "city": "Exterior", "state": "EX", "dormant": 121, "total": 100.0, "avg": 20.0, "group": "G3C", "last_order": "01/09/2025"}, {"code": 1340, "name": "FABIANA APARECIDA INFANTE DE MELO- ME", "city": "Sao Paulo", "state": "SP", "dormant": 120, "total": 24342.63, "avg": 72.88, "group": "G3C", "last_order": "02/09/2025"}, {"code": 12160, "name": "MARIA MADALENA SILVA SANTOS MODAS - ME", "city": "Sao Paulo", "state": "SP", "dormant": 120, "total": 220.0, "avg": 20.0, "group": "G3C", "last_order": "02/09/2025"}, {"code": 13421, "name": "PATRICIA CARLA SOUZA DOS SANTOS", "city": "Moreno", "state": "PE", "dormant": 119, "total": 1203.18, "avg": 52.31, "group": "G3C", "last_order": "03/09/2025"}, {"code": 12684, "name": "ANDREIA CAMARGO DA SILVA", "city": "Barueri", "state": "SP", "dormant": 118, "total": 2060.0, "avg": 54.21, "group": "G3C", "last_order": "04/09/2025"}, {"code": 13424, "name": "SIMONE SOARES DA SILVA SALVARES", "city": "Coronel Fabriciano", "state": "MG", "dormant": 114, "total": 810.9, "avg": 62.38, "group": "G3C", "last_order": "08/09/2025"}, {"code": 645, "name": "SEXY R & B COMERCIO DE ROUPAS LTDA - ME", "city": "Franco Da Rocha", "state": "SP", "dormant": 113, "total": 9890.25, "avg": 54.95, "group": "G3C", "last_order": "09/09/2025"}, {"code": 12466, "name": "MARIA APARECIDA MAGRO XAVIER E CIA LT-ME", "city": "Pirassununga", "state": "SP", "dormant": 112, "total": 2394.5, "avg": 79.82, "group": "G3C", "last_order": "10/09/2025"}, {"code": 177, "name": "LEONARDO DE PAULA ME", "city": "Sumare", "state": "SP", "dormant": 112, "total": 1398.0, "avg": 55.92, "group": "G3C", "last_order": "10/09/2025"}, {"code": 2848, "name": "IDALINA DE CASSIA QUINTEIRO OLIVEIRA CORREA ME", "city": "Sorocaba", "state": "SP", "dormant": 112, "total": 240.0, "avg": 30.0, "group": "G3C", "last_order": "10/09/2025"}, {"code": 13425, "name": "ELIZANJA NUNES DA SILVA AGUIAR", "city": "Ribeirao Das Neves", "state": "MG", "dormant": 111, "total": 574.6, "avg": 44.2, "group": "G3C", "last_order": "11/09/2025"}, {"code": 166, "name": "AGNA MUNIZ MARQUES", "city": "Vitoria Da Conquista", "state": "BA", "dormant": 111, "total": 51031.7, "avg": 30.07, "group": "G3C", "last_order": "11/09/2025"}, {"code": 12840, "name": "M DE FATIMA FERREIRA BATISTA ME", "city": "Santa Isabel Do Para", "state": "PA", "dormant": 110, "total": 9129.25, "avg": 56.01, "group": "G3C", "last_order": "12/09/2025"}, {"code": 10691, "name": "ELVANI BASTOS RODRIGUES - ME", "city": "Jequie", "state": "BA", "dormant": 107, "total": 1002.6, "avg": 55.7, "group": "G3C", "last_order": "15/09/2025"}, {"code": 13426, "name": "BIANKA TOLFO DE SOUZA", "city": "Bage", "state": "RS", "dormant": 106, "total": 1445.12, "avg": 80.28, "group": "G3C", "last_order": "16/09/2025"}, {"code": 2188, "name": "S.R.B MICHELAN EIRELI LTDA", "city": "Americana", "state": "SP", "dormant": 104, "total": 3501.05, "avg": 57.39, "group": "G3C", "last_order": "18/09/2025"}, {"code": 1423, "name": "MENDES & CEZAR COMERCIO DO VESTUARIO LTDA. - ME", "city": "Aguai", "state": "SP", "dormant": 104, "total": 582.3, "avg": 48.52, "group": "G3C", "last_order": "18/09/2025"}, {"code": 13428, "name": "C A SARTORI & CIA LTDA", "city": "Tres Barras Do Parana", "state": "PR", "dormant": 100, "total": 2115.22, "avg": 57.17, "group": "G3C", "last_order": "22/09/2025"}, {"code": 11187, "name": "JOSE RAMIRO CORREA ME", "city": "Palhoca", "state": "SC", "dormant": 100, "total": 2631.6, "avg": 50.61, "group": "G3C", "last_order": "22/09/2025"}, {"code": 13427, "name": "MARIA FRANCISCA DA SILVA", "city": "Taubate", "state": "SP", "dormant": 100, "total": 1897.2, "avg": 46.27, "group": "G3C", "last_order": "22/09/2025"}, {"code": 12185, "name": "ADALTO LUCAS KNUPP - ME", "city": "Luisburgo", "state": "MG", "dormant": 100, "total": 654.7, "avg": 40.92, "group": "G3C", "last_order": "22/09/2025"}, {"code": 13408, "name": "JUSSARA BARBOSA LIMA DE MATOS BOUTIQUE BRECHO", "city": "Taubate", "state": "SP", "dormant": 100, "total": 1265.0, "avg": 23.87, "group": "G3C", "last_order": "22/09/2025"}, {"code": 13430, "name": "LIDIANE FALCAO DORIGON", "city": "Suzano", "state": "SP", "dormant": 99, "total": 1040.0, "avg": 30.59, "group": "G3C", "last_order": "23/09/2025"}, {"code": 12480, "name": "DANIELA MOURA DE SOUSA", "city": "Uberlandia", "state": "MG", "dormant": 98, "total": 994.5, "avg": 52.34, "group": "G3C", "last_order": "24/09/2025"}, {"code": 417, "name": "RITA DE OLIVEIRA CASTELLI ME", "city": "Sorriso", "state": "MT", "dormant": 98, "total": 549.0, "avg": 45.75, "group": "G3C", "last_order": "24/09/2025"}, {"code": 13018, "name": "NEUZA MARIA LAUDARES SILVA", "city": "Rio Claro", "state": "SP", "dormant": 97, "total": 526.5, "avg": 43.88, "group": "G3C", "last_order": "25/09/2025"}, {"code": 13431, "name": "PAMELLA DE BRITO LIMA", "city": "Guaruja", "state": "SP", "dormant": 96, "total": 569.7, "avg": 47.48, "group": "G3C", "last_order": "26/09/2025"}, {"code": 13403, "name": "NG MENDONCA MODAS LTDA", "city": "Ribeirao Preto", "state": "SP", "dormant": 95, "total": 14889.68, "avg": 58.85, "group": "G3C", "last_order": "27/09/2025"}, {"code": 11608, "name": "LUIZA MARA STANISLASKI BAZANA", "city": "Santiago", "state": "RS", "dormant": 93, "total": 1186.0, "avg": 49.42, "group": "G3C", "last_order": "29/09/2025"}, {"code": 3798, "name": "MARIA BERNADETE BEDENDO - ME", "city": "Aparecida", "state": "SP", "dormant": 92, "total": 190.0, "avg": 23.75, "group": "G3C", "last_order": "30/09/2025"}, {"code": 2457, "name": "MARCIA RENATA PEREIRA VIEIRA", "city": "Pouso Alegre", "state": "MG", "dormant": 92, "total": 640.0, "avg": 22.86, "group": "G3C", "last_order": "30/09/2025"}, {"code": 13328, "name": "C S ECOMMERCE LTDA", "city": "Rolim De Moura", "state": "RO", "dormant": 91, "total": 8378.0, "avg": 59.84, "group": "G3C", "last_order": "01/10/2025"}];
+let _g3bPage = 1, _g3bFiltered = [...G3B_LIST];
+const G3B_PER = 20;
+
+function initG3B() {
+  _g3bFiltered = [...G3B_LIST];
+  renderG3B();
+}
+
+function filterG3B() {
+  const q = (document.getElementById('g3b-search')||{}).value?.toLowerCase()||'';
+  _g3bFiltered = G3B_LIST.filter(b =>
+    !q || b.name.toLowerCase().includes(q) || String(b.code).includes(q)
+  );
+  _g3bPage = 1;
+  renderG3B();
+}
+
+function renderG3B() {
+  const el = document.getElementById('g3b-tbody');
+  if(!el) return;
+  const slice = _g3bFiltered.slice((_g3bPage-1)*G3B_PER, _g3bPage*G3B_PER);
+  el.innerHTML = slice.map(b => `
+    <tr class="clickable" onclick="openHistoricoModal(${b.code})">
+      <td class="mono">${b.code}</td>
+      <td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
+      <td style="font-size:11px;">${b.city} ${b.state}</td>
+      <td class="right" style="color:#d97706;font-weight:600;">${b.dormant}d</td>
+      <td class="right">R$${b.total.toLocaleString('pt-BR',{maximumFractionDigits:0})}</td>
+      <td class="right">R$${b.avg.toFixed(2)}</td>
+    </tr>`).join('');
+  renderPagination('g3b-pagination', _g3bFiltered.length, _g3bPage, G3B_PER,
+    p => { _g3bPage=p; renderG3B(); });
+}
+
 function initAlerts() {
+  initG3B();
   const el = document.getElementById('alert-total-cnt');
   if (el) el.textContent = '⚠ ' + DORMANT_LIST.length;
   _alertFiltered = [...DORMANT_LIST];
@@ -1325,14 +1290,7 @@ function renderAlertTable() {
 // ── Tendências Visão Comparativa ──────────────────────────
 let _tendInit=false, _fluxoInit=false, _histInit=false;
 
-const _origShowPage = showPage;
-function showPage(id, el) {
-  _origShowPage(id, el);
-  if (id==='alertas'    && !window._alertInit){ initAlerts(); window._alertInit=true; }
-  if (id==='tendencias' && !_tendInit){ buildTendencias(); _tendInit=true; }
-  if (id==='fluxo'      && !_fluxoInit){ buildFluxo('2023_2024'); _fluxoInit=true; }
-  if (id==='historico'  && !_histInit){ buildHistorico(); _histInit=true; }
-}
+// showPage lazy init → v3 showPage에 통합됨
 
 const T_YEARS  = ['2023','2024','2025'];
 const T_GROUPS = ['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'];
@@ -1651,12 +1609,16 @@ function showPage(id, el) {
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(el) el.classList.add('active');
+  if(id==='alertas'    && !window._alertInit){ initAlerts(); window._alertInit=true; }
+  if(id==='tendencias' && !_tendInit){ buildTendencias(); _tendInit=true; }
+  if(id==='fluxo'      && !_fluxoInit){ buildFluxo('2023_2024'); _fluxoInit=true; }
+  if(id==='historico'  && !_histInit){ buildHistorico(); _histInit=true; }
 }
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
 // ── DATA ─────────────────────────────────────────────────────
-const MESES = ['Q1 Jan-Mar','Q2 Abr-Jun','Q3 Jul-Set','Q4 Out-Dez'];
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const monthlyReg = [53.88,56.99,60.96,66.52,70.53,71.85,68.33,66.35,61.87,56.70,61.16,60.20];
 const monthlyEst = [63.1,37.5,25.0,22.2,30.3,36.7,57.5,28.8,22.2,32.9,28.6,39.3];
 const monthlyVal = [169906,270558,414391,724798,689077,359852,335631,472520,729410,642315,1099328,1156463];
@@ -1722,7 +1684,7 @@ const C = {green:'#2d6a4f',amber:'#d97706',red:'#dc2626',blue:'#1e3a5f',border:'
 Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
 Chart.defaults.color=C.muted;
 
-window._chartMensal=new Chart(document.getElementById('chartMensal'),{
+window._chartMensal=window._chartMensal=new Chart(document.getElementById('chartMensal'),{
   data:{
     labels:MESES,
     datasets:[
@@ -1818,8 +1780,8 @@ cats.forEach(c=>{
     </div>`;
 });
 
-// 초기 히트 테이블 렌더링 — loadAllData() 완료 후 initDashboard()에서 실행
-// renderHitInsights / renderHitTable 은 loader가 호출
+// 초기화는 loader initDashboard()에서 실행
+
 
 function openGroupModal(grp) {
   const g = BUYERS_DATA[grp];
@@ -1839,11 +1801,11 @@ function openGroupModal(grp) {
       </div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
         <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Preço Médio</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">R$${Number(s.avg).toFixed(2)}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">R$${Number(s.avg_price).toFixed(2)}</div>
       </div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
         <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Freq. Média</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">${Number(s.freq).toFixed(1)}×</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">${Number(s.avg_freq).toFixed(1)}×</div>
       </div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
         <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Potencial</div>
@@ -1887,6 +1849,78 @@ function openGroupModal(grp) {
 
 // ── HIT DATA ─────────────────────────────────────────────────
 
+
+
 </script>
 </body>
+</htmlfunction switchBuyersYear(yr, btn){
+  if(btn){
+    btn.parentElement.querySelectorAll('button').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const panel = document.getElementById('comp-new-panel');
+  if(panel) panel.style.display='none';
+
+  const GROUPS = ['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'];
+  const prof = {G1A:'VIP Grande',G1B:'Médio Cresc.',G1C:'Pequeno Desenv.',
+    G2A:'Alto Preço',G2B:'Alta Freq.',G2C:'Padrão',
+    G3A:'Promoção Imed.',G3B:'Reativação',G3C:'Desenv. LP'};
+
+  let buyers, totalSales, totalBuyers;
+
+  if(yr === '2025') {
+    // 2025: groups_2025 공식 소그룹 기준
+    const g = BUYERS_DATA;
+    totalSales   = Object.values(g).reduce((s,d)=>s+d.summary.sales,0);
+    totalBuyers  = Object.values(g).reduce((s,d)=>s+d.summary.buyers,0);
+    const tbody = document.getElementById('comp-group-tbody');
+    if(tbody){
+      tbody.innerHTML = GROUPS.map(gk=>{
+        const d=g[gk]; if(!d||d.summary.buyers===0) return '';
+        const cls=gk.startsWith('G1')?'blue':gk.startsWith('G2')?'amber':'green';
+        const pct=totalSales>0?(d.summary.sales/totalSales*100).toFixed(1):0;
+        return `<tr class="clickable" onclick="openGroupModal('${gk}')">
+          <td><span class="pill ${cls}">${gk}</span></td>
+          <td style="font-size:11px;">${prof[gk]||''}</td>
+          <td class="right">${d.summary.buyers}</td>
+          <td class="right">R$${Math.round(d.summary.sales).toLocaleString('pt-BR')}</td>
+          <td class="right">R$${d.summary.avg_price.toFixed(2)}</td>
+          <td class="right">${d.summary.avg_freq.toFixed(1)}×</td>
+          <td class="right">${pct}%</td>
+          <td>—</td>
+        </tr>`;
+      }).join('');
+    }
+  } else {
+    // 2023/2024: GROUP_BY_YEAR 기준
+    const gData = GROUP_BY_YEAR[yr];
+    if(!gData) return;
+    const allBuyers = Object.values(TREND_DATA.years[yr]?.buyers||{});
+    totalSales  = allBuyers.reduce((s,b)=>s+b.total,0);
+    totalBuyers = allBuyers.length;
+    const tbody = document.getElementById('comp-group-tbody');
+    if(tbody){
+      tbody.innerHTML = GROUPS.map(gk=>{
+        const d=gData[gk]; if(!d||d.count===0) return '';
+        const cls=gk.startsWith('G1')?'blue':gk.startsWith('G2')?'amber':'green';
+        const pct=totalSales>0?(d.sales/totalSales*100).toFixed(1):0;
+        return `<tr class="clickable" onclick="openGroupModal('${gk}')">
+          <td><span class="pill ${cls}">${gk}</span></td>
+          <td style="font-size:11px;">${prof[gk]||''}</td>
+          <td class="right">${d.count}</td>
+          <td class="right">R$${Math.round(d.sales).toLocaleString('pt-BR')}</td>
+          <td class="right">R$${d.avg_price.toFixed(2)}</td>
+          <td class="right">${d.avg_freq.toFixed(1)}×</td>
+          <td class="right">${pct}%</td>
+          <td>—</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  const sub = document.querySelector('#page-compradores .page-subtitle');
+  if(sub) sub.textContent = `${yr} · ${totalBuyers} compradores`;
+}
+
+>
 </html>
