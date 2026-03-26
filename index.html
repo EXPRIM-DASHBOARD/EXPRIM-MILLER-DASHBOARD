@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXPRIM MILLER 269 — Painel de Gestão</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg:#f4f3ef; --surface:#fff; --surface2:#f9f8f5; --border:#e2e0d8;
+  --text:#1a1917; --muted:#7a7870;
+  --green:#2d6a4f; --green-bg:#e8f5ee;
+  --amber:#92400e; --amber-bg:#fef3c7;
+  --red:#991b1b; --red-bg:#fee2e2;
+  --blue:#1e3a5f; --blue-bg:#e8f0fb;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
+.shell{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:200px;flex-shrink:0;background:var(--text);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.sidebar-brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-brand-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;letter-spacing:0.5px;line-height:1.4;}
+.sidebar-brand-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;font-family:'IBM Plex Mono',monospace;}
+.sidebar-year{display:inline-block;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;margin-top:8px;}
+.nav{padding:16px 0;flex:1;}
+.nav-section{padding:0 12px 8px;font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 20px;cursor:pointer;color:rgba(255,255,255,0.5);font-size:12px;transition:all 0.15s;border-left:2px solid transparent;user-select:none;}
+.nav-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04);}
+.nav-item.active{color:#fff;border-left-color:#fff;background:rgba(255,255,255,0.06);font-weight:500;}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:0.6;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);}
+.update-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);line-height:1.6;}
+.update-badge span{color:rgba(255,255,255,0.6);}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;min-width:0;}
+.page{display:none;padding:32px 36px;}
+.page.active{display:block;}
+.page-header{margin-bottom:28px;}
+.page-title{font-size:20px;font-weight:600;letter-spacing:-0.3px;}
+.page-subtitle{font-size:12px;color:var(--muted);margin-top:3px;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 18px 14px;}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.kpi-value{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;line-height:1;margin-bottom:8px;}
+.kpi-sub{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.kpi-target{font-size:10px;color:var(--muted);margin-top:4px;font-family:'IBM Plex Mono',monospace;}
+.pill{display:inline-flex;align-items:center;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;font-weight:500;}
+.pill.green{background:var(--green-bg);color:var(--green);}
+.pill.amber{background:var(--amber-bg);color:var(--amber);}
+.pill.red{background:var(--red-bg);color:var(--red);}
+.pill.blue{background:var(--blue-bg);color:var(--blue);}
+.pill.dark{background:rgba(26,25,23,0.08);color:var(--text);}
+.pill.superhit{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+.pill.hit{background:#e8f0fb;color:#1e3a5f;border:1px solid #bfdbfe;}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;}
+.grid-65{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px;}
+.full{margin-bottom:16px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
+.card-title{font-size:11px;font-weight:600;letter-spacing:0.3px;margin-bottom:4px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+.card-sub{font-size:11px;color:var(--muted);margin-bottom:16px;}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.card-header-left .card-title{margin-bottom:2px;}
+.divider{height:1px;background:var(--border);margin:16px 0;}
+
+/* PROGRESS */
+.progress-row{margin-bottom:12px;}
+.progress-row:last-child{margin-bottom:0;}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:5px;}
+.progress-name{font-size:12px;font-weight:500;}
+.progress-val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);}
+.progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.8s ease;}
+.progress-fill.green{background:#2d6a4f;}
+.progress-fill.amber{background:#d97706;}
+.progress-fill.red{background:#dc2626;}
+.progress-fill.blue{background:#1e3a5f;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;padding:0 10px 10px;text-align:left;border-bottom:1px solid var(--border);}
+.data-table th.right{text-align:right;}
+.data-table td{padding:9px 10px;font-size:12px;border-bottom:1px solid var(--surface2);vertical-align:middle;}
+.data-table td.mono{font-family:'IBM Plex Mono',monospace;}
+.data-table td.right{text-align:right;font-family:'IBM Plex Mono',monospace;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--surface2);}
+.data-table tr.clickable{cursor:pointer;}
+.data-table tr.clickable:hover td{background:#eef2f9;}
+
+/* QUARTERLY */
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.q-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;}
+.q-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.q-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;margin-bottom:4px;}
+.q-sub{font-size:10px;color:var(--muted);margin-bottom:10px;}
+.q-bar-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:5px;}
+.q-bar-fill{height:100%;border-radius:2px;background:var(--text);}
+.q-pct{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+.season-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;letter-spacing:0.5px;font-weight:600;}
+.season-verao{background:#fef9c3;color:#92400e;}
+.season-inverno{background:#dbeafe;color:#1e3a5f;}
+
+/* ALERT */
+.alert-list{display:flex;flex-direction:column;gap:8px;}
+.alert-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;border:1px solid;}
+.alert-row.red{background:var(--red-bg);border-color:#fca5a5;}
+.alert-row.amber{background:var(--amber-bg);border-color:#fcd34d;}
+.alert-row.green{background:var(--green-bg);border-color:#86efac;}
+.alert-icon{font-size:14px;flex-shrink:0;}
+.alert-text{flex:1;font-size:12px;font-weight:500;}
+.alert-text.red{color:var(--red);}
+.alert-text.amber{color:var(--amber);}
+.alert-text.green{color:var(--green);}
+.alert-count{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;}
+.alert-count.red{color:var(--red);}
+.alert-count.amber{color:var(--amber);}
+.alert-count.green{color:var(--green);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,25,23,0.5);z-index:1000;align-items:flex-start;justify-content:center;padding-top:40px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:10px;width:90%;max-width:1000px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;}
+.modal-close{cursor:pointer;font-size:18px;color:var(--muted);background:none;border:none;padding:4px 8px;border-radius:4px;}
+.modal-close:hover{background:var(--surface2);}
+.modal-body{overflow-y:auto;padding:20px 24px;}
+
+/* HIT TABS */
+.hit-tabs{display:flex;gap:0;margin-bottom:20px;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.hit-tab{flex:1;padding:9px;text-align:center;cursor:pointer;font-size:11px;font-weight:500;font-family:'IBM Plex Mono',monospace;background:var(--surface2);color:var(--muted);border:none;transition:all 0.15s;}
+.hit-tab.active{background:var(--text);color:#fff;}
+
+/* INSIGHT CARDS */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.insight-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;}
+.insight-label{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.insight-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;margin-bottom:2px;}
+.insight-sub{font-size:10px;color:var(--muted);}
+
+/* UPLOAD */
+.upload-zone{border:1.5px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2);}
+.upload-zone:hover{border-color:var(--text);background:var(--surface);}
+.upload-title{font-size:13px;font-weight:500;margin-bottom:4px;}
+.upload-sub{font-size:11px;color:var(--muted);}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ── LOADER + NEW FEATURES ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.loader-spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-text{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:12px;}
+.year-tab{padding:7px 14px;cursor:pointer;font-size:11px;font-weight:500;font-family:'IBM Plex Mono',monospace;background:var(--surface2);color:var(--muted);border:none;transition:all 0.15s;}
+.year-tab.active{background:var(--text);color:#fff;}
+.search-bar{display:flex;gap:10px;margin-bottom:14px;align-items:center;}
+.search-input{flex:1;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);outline:none;}
+.search-input:focus{border-color:var(--text);}
+.filter-select{padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--surface);cursor:pointer;outline:none;font-family:'IBM Plex Mono',monospace;}
+.pagination{display:flex;align-items:center;gap:5px;margin-top:12px;justify-content:flex-end;}
+.page-btn{padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);}
+.page-btn:hover{background:var(--surface2);color:var(--text);}
+.page-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
+.page-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.trend-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-top:20px;overflow:hidden;}
+.trend-card-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;user-select:none;}
+.trend-card-header:hover{background:rgba(0,0,0,0.02);}
+.trend-card-body{padding:0 18px 18px;display:none;}
+.trend-card-body.open{display:block;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:var(--surface2);}
+::-webkit-scrollbar-thumb{background:#9ca3af;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#6b7280;}
+
+</style>
+</head>
+<body>
+<div id="loading-screen" style="flex-direction:column;">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">A carregar dados...</div>
+</div>
+<div class="shell" style="display:none;">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-name">EXPRIM MILLER<br>269</div>
+    <div class="sidebar-brand-sub">Painel de Gestão</div>
+    <div class="sidebar-year">2025 → 2026</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Visão Geral</div>
+    <div class="nav-item active" onclick="showPage('home',this)"><span class="nav-dot"></span>Início</div>
+    <div class="nav-section">Análise</div>
+    <div class="nav-item" onclick="showPage('compradores',this)"><span class="nav-dot"></span>Compradores</div>
+    <div class="nav-item" onclick="showPage('produtos',this)"><span class="nav-dot"></span>Produtos</div>
+    <div class="nav-section">Metas</div>
+    <div class="nav-item" onclick="showPage('metas',this)"><span class="nav-dot"></span>Metas 2026</div>
+    <div class="nav-item" onclick="showPage('alertas',this)">
+      <span class="nav-dot"></span>Alertas
+      <span class="pill red" style="margin-left:auto;font-size:9px;">3</span>
+    </div>
+    <div class="nav-section">Tendências</div>
+    <div class="nav-item" onclick="showPage('tendencias',this)"><span class="nav-dot"></span>Visão Comparativa</div>
+    <div class="nav-item" onclick="showPage('fluxo',this)"><span class="nav-dot"></span>Fluxo de Grupos</div>
+    <div class="nav-item" onclick="showPage('historico',this)"><span class="nav-dot"></span>Histórico Individual</div>
+    <div class="nav-section">Dados</div>
+    <div class="nav-item" onclick="showPage('upload',this)"><span class="nav-dot"></span>Atualizar Dados</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="update-badge">Última atualização<br><span>Dez 2025</span><br>Próxima: <span>28/Jan</span></div>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- ══ HOME ══ -->
+<div class="page active" id="page-home">
+  <div class="page-header">
+    <div class="page-title">Visão Geral 2025</div>
+    <div class="page-subtitle">Clique no ano para alternar</div>
+  </div>
+  <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:20px;width:fit-content;">
+    <button class="year-tab" onclick="switchHomeYear('2023',this)">2023</button>
+    <button class="year-tab" onclick="switchHomeYear('2024',this)">2024</button>
+    <button class="year-tab active" onclick="switchHomeYear('2025',this)">2025 &#9733;</button>
+    <button class="year-tab" onclick="switchHomeYear('2026',this)" style="opacity:0.5;">2026</button>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi" id="home-kpi-sales">
+      <div class="kpi-label">Faturamento Total</div>
+      <div class="kpi-value">R$5,82M</div>
+      <div class="kpi-sub"><span class="pill blue">Base 2025</span></div>
+      <div class="kpi-target">Meta 2026 → R$6,29M</div>
+    </div>
+    <div class="kpi" id="home-kpi-pieces">
+      <div class="kpi-label">Peças Vendidas</div>
+      <div class="kpi-value">138.434</div>
+      <div class="kpi-sub"><span class="pill blue">Base 2025</span></div>
+      <div class="kpi-target">Meta 2026 → 145.356</div>
+    </div>
+    <div class="kpi" id="home-kpi-price">
+      <div class="kpi-label">Preço Médio Real</div>
+      <div class="kpi-value">R$62,83</div>
+      <div class="kpi-sub"><span class="pill green">Sem est. antigo</span></div>
+      <div class="kpi-target">Com est. antigo → R$46,52</div>
+    </div>
+    <div class="kpi" id="home-kpi-buyers">
+      <div class="kpi-label">Compradores Ativos</div>
+      <div class="kpi-value">654</div>
+      <div class="kpi-sub"><span class="pill green">113 novos</span></div>
+      <div class="kpi-target">VAREJO/ATACADO: 12</div>
+    </div>
+    <div class="kpi" id="home-kpi-est">
+      <div class="kpi-label">Estoque Antigo</div>
+      <div class="kpi-value" style="color:#dc2626;">33,2%</div>
+      <div class="kpi-sub"><span class="pill red">45.945 peças</span></div>
+      <div class="kpi-target">Meta 2026 → 28,2%</div>
+    </div>
+  </div>
+  <div class="grid-65">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-title">Evolução Mensal</div>
+          <div class="card-sub">Faturamento · Preço médio regular · % Estoque antigo</div>
+        </div>
+      </div>
+      <canvas id="chartMensal" height="160"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-title">Compradores</div>
+          <div class="card-sub">Status de atividade</div>
+        </div>
+      </div>
+      <div id="home-buyers-activity" style="margin-bottom:14px;">
+        <div class="progress-row">
+          <div class="progress-label"><span class="progress-name">Ativos (&lt;60 dias)</span><span class="progress-val">396 · 60,6%</span></div>
+          <div class="progress-track"><div class="progress-fill green" style="width:60.6%"></div></div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label"><span class="progress-name">Atenção (60~89 dias)</span><span class="progress-val">58 · 8,9%</span></div>
+          <div class="progress-track"><div class="progress-fill amber" style="width:8.9%"></div></div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label"><span class="progress-name" style="color:#dc2626;">Inativos (90+ dias)</span><span class="progress-val" style="color:#dc2626;">199 · 30,5%</span></div>
+          <div class="progress-track"><div class="progress-fill red" style="width:30.5%"></div></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="card-title" style="margin-bottom:10px;">Frequência Média</div>
+      <div id="home-buyers-freq" style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;">7,6<span style="font-size:14px;color:var(--muted);margin-left:4px;">pedidos/ano</span></div>
+    </div>
+  </div>
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title">Evolução Anual</div>
+        <div class="card-sub">Comparativo de vendas por ano · 2023 → 2025</div>
+      </div>
+    </div>
+    <div id="anual-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;"></div>
+    <canvas id="chartAnual" height="90"></canvas>
+  </div>
+</div>
+
+<!-- ══ COMPRADORES ══ -->
+<div class="page" id="page-compradores">
+  <div class="page-header">
+    <div class="page-title">Análise de Compradores</div>
+    <div class="page-subtitle">Clique no ano para comparar</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;">
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+      <button class="year-tab" onclick="switchBuyersYear('2023',this)">2023</button>
+      <button class="year-tab" onclick="switchBuyersYear('2024',this)">2024</button>
+      <button class="year-tab active" onclick="switchBuyersYear('2025',this)">2025 &#9733;</button>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="kpi">
+      <div class="kpi-label">Compradores Regulares</div>
+      <div class="kpi-value">642</div>
+      <div class="kpi-sub"><span class="pill blue">98,2% do total</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">VAREJO / ATACADO</div>
+      <div class="kpi-value">12</div>
+      <div class="kpi-sub"><span class="pill amber">Canal de liquidação</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Novos em 2025</div>
+      <div class="kpi-value">113</div>
+      <div class="kpi-sub"><span class="pill green">17,3% do total</span></div>
+    </div>
+  </div>
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title">Grupos de Compradores</div>
+        <div class="card-sub">Clique em qualquer linha para ver lista e detalhes do grupo</div>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Grupo</th><th>Perfil</th>
+          <th class="right">Compradores</th><th class="right">Faturamento</th>
+          <th class="right">Preço Médio</th><th class="right">Freq.</th>
+          <th class="right">Potencial</th><th>Prioridade</th>
+        </tr>
+      </thead>
+      <tbody id="comp-group-tbody">
+        <tr class="clickable" onclick="openGroupModal('G1A')">
+          <td><span class="pill blue">G1A</span></td><td>VIP Grande</td>
+          <td class="right">6</td><td class="right">R$511.725</td>
+          <td class="right">R$49,30</td><td class="right">13,8×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$256K</td>
+          <td><span class="pill green">Premium ↗</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G1B')">
+          <td><span class="pill blue">G1B</span></td><td>Médio Crescimento</td>
+          <td class="right">11</td><td class="right">R$353.716</td>
+          <td class="right">R$47,50</td><td class="right">12,5×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$119K</td>
+          <td><span class="pill green">Volume ↗</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G1C')">
+          <td><span class="pill blue">G1C</span></td><td>Pequeno Desenv.</td>
+          <td class="right">3</td><td class="right">R$51.305</td>
+          <td class="right">R$46,30</td><td class="right">10,0×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$16K</td>
+          <td><span class="pill blue">Peças ↗</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G2A')">
+          <td><span class="pill amber">G2A</span></td><td>Alto Preço</td>
+          <td class="right">12</td><td class="right">R$184.952</td>
+          <td class="right">R$52,30</td><td class="right">11,3×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$27K</td>
+          <td><span class="pill green">Conversão R$55</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G2B')">
+          <td><span class="pill amber">G2B</span></td><td>Alta Frequência</td>
+          <td class="right">4</td><td class="right">R$41.198</td>
+          <td class="right">R$48,60</td><td class="right">13,8×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$4K</td>
+          <td><span class="pill blue">Volume ↗</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G2C')">
+          <td><span class="pill amber">G2C</span></td><td>Padrão</td>
+          <td class="right">15</td><td class="right">R$142.076</td>
+          <td class="right">R$48,40</td><td class="right">9,5×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$47K</td>
+          <td><span class="pill blue">Frequência ↗</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G3A')">
+          <td><span class="pill green">G3A</span></td><td>Promoção Imediata</td>
+          <td class="right">25</td><td class="right">R$538.721</td>
+          <td class="right">R$49,70</td><td class="right">5,9×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$204K</td>
+          <td><span class="pill amber">Urgente →G2</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G3B')">
+          <td><span class="pill green">G3B</span></td><td>Reativação</td>
+          <td class="right">19</td><td class="right">R$177.878</td>
+          <td class="right">R$48,20</td><td class="right">4,3×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$84K</td>
+          <td><span class="pill red">Contato Já</span></td>
+        </tr>
+        <tr class="clickable" onclick="openGroupModal('G3C')">
+          <td><span class="pill green">G3C</span></td><td>Desenv. LP</td>
+          <td class="right">143</td><td class="right">R$449.103</td>
+          <td class="right">R$49,40</td><td class="right">2,2×</td>
+          <td class="right" style="color:#2d6a4f;font-weight:600;">+R$417K</td>
+          <td><span class="pill amber">Broadcast</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title">Compradores Inativos — 90+ dias</div>
+        <div class="card-sub">199 compradores sem compra · Contato prioritário</div>
+      </div>
+      <span class="pill red">⚠ 199 inativos</span>
+    </div>
+    <canvas id="chartDorm" height="90"></canvas>
+  </div>
+  <div id="comp-new-panel" style="display:none;"></div>
+</div>
+
+<!-- ══ PRODUTOS ══ -->
+<div class="page" id="page-produtos">
+  <div class="page-header">
+    <div class="page-title">Análise de Produtos</div>
+    <div class="page-subtitle">138.434 peças · 717 modelos regulares · 2025</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Super Hits</div>
+      <div class="kpi-value" style="color:#92400e;">37</div>
+      <div class="kpi-sub"><span class="pill superhit">45d↓ · 200p+ · R$39+</span></div>
+      <div class="kpi-target">Média 250 peças · 32,7 dias</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Hits</div>
+      <div class="kpi-value" style="color:#1e3a5f;">55</div>
+      <div class="kpi-sub"><span class="pill hit">45d↓ · 100p+ · R$39+</span></div>
+      <div class="kpi-target">Média 140 peças · 32,4 dias</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Preço Médio Hits</div>
+      <div class="kpi-value">R$55,00</div>
+      <div class="kpi-sub"><span class="pill green">Super+Hit combinado</span></div>
+      <div class="kpi-target">Super Hit → R$56,18</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Est. Antigo (peças)</div>
+      <div class="kpi-value" style="color:#dc2626;">33,2%</div>
+      <div class="kpi-sub"><span class="pill red">45.945 peças</span></div>
+      <div class="kpi-target">Meta 2026 → 28,2%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Reposição (hits)</div>
+      <div class="kpi-value">8</div>
+      <div class="kpi-sub"><span class="pill dark">9% dos hits</span></div>
+      <div class="kpi-target">92% são modelos novos</div>
+    </div>
+  </div>
+
+  <!-- HIT ANALYSIS -->
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title">Produtos Hit — Análise de Características</div>
+        <div class="card-sub">Clique nas abas para ver Super Hits ou Hits · Clique na linha para detalhes</div>
+      </div>
+    </div>
+    <div class="hit-tabs">
+      <button class="hit-tab active" onclick="showHitTab('superhit',this)">⭐ Super Hits (37)</button>
+      <button class="hit-tab" onclick="showHitTab('hit',this)">✦ Hits (55)</button>
+      <button class="hit-tab" onclick="showHitTab('regular',this)">&#128230; Regulares</button>
+      <button class="hit-tab" onclick="showHitTab('all',this)">Todos</button>
+    </div>
+
+    <!-- INSIGHT CARDS -->
+    <div class="insight-grid" id="hit-insights"></div>
+
+    <!-- HIT TABLE -->
+    <table class="data-table" id="hit-table">
+      <thead>
+        <tr>
+          <th>Código</th><th>Cat.</th><th>Descrição</th>
+          <th>Tipo</th><th class="right">Dias</th>
+          <th class="right">Peças</th><th class="right">P/dia</th>
+          <th class="right">Preço Médio</th><th class="right">Faturamento</th>
+          <th>Faixa</th>
+        </tr>
+      </thead>
+      <tbody id="hit-tbody"></tbody>
+    </table>
+    <div class="pagination" id="hit-pagination"></div>
+  </div>
+
+  <div class="grid-65">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-title">Estoque Antigo × Preço Médio Mensal</div>
+          <div class="card-sub">% estoque antigo (barras) · Preço médio regular (linha)</div>
+        </div>
+      </div>
+      <canvas id="chartEstoque" height="160"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-title">Categorias Top 8</div>
+          <div class="card-sub">Por faturamento 2025</div>
+        </div>
+      </div>
+      <div id="cat-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ METAS ══ -->
+<div class="page" id="page-metas">
+  <div class="page-header">
+    <div class="page-title">Metas 2026</div>
+    <div class="page-subtitle">Base 2025 · +8% faturamento · +5% peças · Estoque antigo −5%pp por mês</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi" style="border-color:#1a1917;">
+      <div class="kpi-label">Meta Faturamento</div>
+      <div class="kpi-value">R$6,29M</div>
+      <div class="kpi-sub"><span class="pill blue">+8% vs 2025</span></div>
+      <div class="kpi-target">Base → R$5,82M</div>
+    </div>
+    <div class="kpi" style="border-color:#1a1917;">
+      <div class="kpi-label">Meta Peças</div>
+      <div class="kpi-value">145.356</div>
+      <div class="kpi-sub"><span class="pill blue">+5% vs 2025</span></div>
+      <div class="kpi-target">Base → 138.434</div>
+    </div>
+    <div class="kpi" style="border-color:#dc2626;">
+      <div class="kpi-label">Meta Est. Antigo</div>
+      <div class="kpi-value" style="color:#dc2626;">28,2%</div>
+      <div class="kpi-sub"><span class="pill red">−5pp vs 2025</span></div>
+      <div class="kpi-target">Meta mensal = 2025 −5pp</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Realizado 2026</div>
+      <div class="kpi-value" style="color:var(--muted);">—</div>
+      <div class="kpi-sub" style="font-size:11px;color:var(--muted);">Aguardando dados</div>
+      <div class="kpi-target">Atualizar em 28/Jan</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Progresso Anual</div>
+      <div class="kpi-value" style="color:var(--muted);">0%</div>
+      <div class="kpi-sub" style="font-size:11px;color:var(--muted);">Jan 2026 pendente</div>
+    </div>
+  </div>
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title">Metas Trimestrais + Estoque Antigo por Mês</div>
+        <div class="card-sub">Meta est. antigo = 2025 real −5pp · Peso por temporada</div>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Mês</th><th>Temporada</th><th>Trim.</th>
+          <th class="right">Est. Antigo 2025</th>
+          <th class="right">Meta 2026</th>
+          <th class="right">Meta Fat.</th>
+          <th class="right">Realizado</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Janeiro</td><td><span class="season-badge season-inverno">INVERNO</span></td><td>Q1</td><td class="right">63,1%</td><td class="right" style="color:#dc2626;">58,1%</td><td class="right">R$183K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr><td>Fevereiro</td><td><span class="season-badge season-inverno">INVERNO</span></td><td>Q1</td><td class="right">37,5%</td><td class="right" style="color:#d97706;">32,5%</td><td class="right">R$292K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr><td>Março</td><td><span class="season-badge season-inverno">INVERNO</span></td><td>Q1</td><td class="right">25,0%</td><td class="right" style="color:#2d6a4f;">20,0%</td><td class="right">R$448K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr style="background:var(--surface2);"><td>Abril</td><td><span class="season-badge season-inverno">INVERNO</span></td><td>Q2</td><td class="right">22,2%</td><td class="right" style="color:#2d6a4f;">17,2%</td><td class="right">R$783K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr style="background:var(--surface2);"><td>Maio</td><td><span class="season-badge season-inverno">INVERNO</span></td><td>Q2</td><td class="right">30,3%</td><td class="right" style="color:#d97706;">25,3%</td><td class="right">R$744K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr style="background:var(--surface2);"><td>Junho</td><td><span class="season-badge season-inverno">INVERNO</span></td><td>Q2</td><td class="right">36,7%</td><td class="right" style="color:#d97706;">31,7%</td><td class="right">R$389K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr><td>Julho</td><td><span class="season-badge season-verao">VERÃO</span></td><td>Q3</td><td class="right" style="color:#dc2626;">57,5%</td><td class="right" style="color:#dc2626;">52,5%</td><td class="right">R$362K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr><td>Agosto</td><td><span class="season-badge season-verao">VERÃO</span></td><td>Q3</td><td class="right">28,8%</td><td class="right" style="color:#2d6a4f;">23,8%</td><td class="right">R$510K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr><td>Setembro</td><td><span class="season-badge season-verao">VERÃO</span></td><td>Q3</td><td class="right">22,2%</td><td class="right" style="color:#2d6a4f;">17,2%</td><td class="right">R$787K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr style="background:var(--surface2);"><td>Outubro</td><td><span class="season-badge season-verao">VERÃO</span></td><td>Q4</td><td class="right">32,9%</td><td class="right" style="color:#d97706;">27,9%</td><td class="right">R$694K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr style="background:var(--surface2);"><td>Novembro</td><td><span class="season-badge season-verao">VERÃO</span></td><td>Q4</td><td class="right">28,6%</td><td class="right" style="color:#2d6a4f;">23,6%</td><td class="right">R$1.187K</td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+        <tr style="background:var(--surface2);"><td><strong>Dezembro</strong></td><td><span class="season-badge season-verao">VERÃO</span></td><td>Q4</td><td class="right">39,3%</td><td class="right" style="color:#d97706;">34,3%</td><td class="right"><strong>R$1.249K</strong></td><td class="right" style="color:var(--muted);">—</td><td><span class="pill amber">Pendente</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ALERTAS ══ -->
+<div class="page" id="page-alertas">
+  <div class="page-header">
+    <div class="page-title">Central de Alertas</div>
+    <div class="page-subtitle">Atualizado · Dez 2025</div>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title" style="color:#dc2626;margin-bottom:12px;">🔴 Urgente</div>
+      <div class="alert-list">
+        <div class="alert-row red"><div class="alert-icon">⚠</div><div class="alert-text red">Inativos 90+ dias</div><div class="alert-count red">199</div></div>
+        <div class="alert-row red"><div class="alert-icon">📦</div><div class="alert-text red">Estoque antigo acima de 30%</div><div class="alert-count red">33,2%</div></div>
+        <div class="alert-row red"><div class="alert-icon">📞</div><div class="alert-text red">G3B sem compra (reativar)</div><div class="alert-count red">19</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#92400e;margin-bottom:12px;">🟡 Atenção</div>
+      <div class="alert-list">
+        <div class="alert-row amber"><div class="alert-icon">👁</div><div class="alert-text amber">Compradores 60~89 dias</div><div class="alert-count amber">58</div></div>
+        <div class="alert-row amber"><div class="alert-icon">🏷</div><div class="alert-text amber">G2A próximos a R$55</div><div class="alert-count amber">12</div></div>
+        <div class="alert-row amber"><div class="alert-icon">📅</div><div class="alert-text amber">Atualização de dados em</div><div class="alert-count amber" style="font-size:11px;">28/Jan</div></div>
+      </div>
+    </div>
+    <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title" style="color:#d97706;">&#9888; G3B &mdash; Reativa&ccedil;&atilde;o Imediata</div>
+        <div class="card-sub">91~180 dias sem compra &middot; Contatar agora via WhatsApp</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="pill red">64 compradores</span>
+        <input class="search-input" id="g3b-search" placeholder="Buscar..." oninput="filterG3B()" style="width:160px;">
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>C&oacute;digo</th><th>Nome</th><th>Cidade</th>
+          <th class="right">Dias</th>
+          <th class="right">Total 2025</th>
+          <th class="right">Pre&ccedil;o M&eacute;dio</th>
+        </tr>
+      </thead>
+      <tbody id="g3b-tbody"></tbody>
+    </table>
+    <div class="pagination" id="g3b-pagination"></div>
+  </div><!-- /card G3B -->
+  </div><!-- /grid-3 -->
+
+  <!-- Lista completa de inativos 90+ dias -->
+  <div class="card full" style="margin-top:16px;">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title">&#128203; Lista Completa &mdash; Inativos 90+ dias</div>
+        <div class="card-sub" id="alert-total-cnt">&#9888; 0 compradores inativos</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input class="search-input" id="alert-search" placeholder="Buscar nome ou c&oacute;digo..." oninput="filterAlerts()" style="width:200px;">
+        <select class="filter-select" id="alert-filter-gr" onchange="filterAlerts()">
+          <option value="">Todos os grupos</option>
+          <option>G1A</option><option>G1B</option><option>G1C</option>
+          <option>G2A</option><option>G2B</option><option>G2C</option>
+          <option>G3A</option><option>G3B</option><option>G3C</option>
+        </select>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>C&oacute;digo</th><th>Nome</th><th>Cidade</th>
+          <th>Grupo</th><th class="right">Dias</th>
+          <th class="right">Total 2025</th><th class="right">Pre&ccedil;o M&eacute;dio</th>
+        </tr>
+      </thead>
+      <tbody id="alert-tbody"></tbody>
+    </table>
+    <div class="pagination" id="alert-pg"></div>
+  </div><!-- /card full dormant -->
+</div><!-- /page-alertas -->
+
+<!-- ══ TENDENCIAS ══ -->
+<div class="page" id="page-tendencias">
+  <div class="page-header">
+    <div class="page-title">Visão Comparativa Anual</div>
+    <div class="page-subtitle">2023 · 2024 · 2025 — dados reais</div>
+  </div>
+  <div class="grid-4" id="kpi-compare-tend"></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-header-left">
+        <div class="card-title">Faturamento Anual</div>
+        <div class="card-sub">Evolução 2023~2025</div>
+      </div></div>
+      <canvas id="chartFatTend" height="180"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-header-left">
+        <div class="card-title">Pre&ccedil;o M&eacute;dio &amp; Frequ&ecirc;ncia</div>
+        <div class="card-sub">Tend&ecirc;ncia de qualidade</div>
+      </div></div>
+      <canvas id="chartPrecoTend" height="180"></canvas>
+    </div>
+  </div>
+  <div class="card full">
+    <div class="card-header"><div class="card-header-left">
+      <div class="card-title">Distribui&ccedil;&atilde;o por Grupo</div>
+      <div class="card-sub">G1 / G2 / G3 por ano</div>
+    </div></div>
+    <canvas id="chartGruposTend" height="100"></canvas>
+  </div>
+</div>
+
+<!-- ══ FLUXO ══ -->
+<div class="page" id="page-fluxo">
+  <div class="page-header">
+    <div class="page-title">Fluxo de Grupos</div>
+    <div class="page-subtitle">Movimenta&ccedil;&atilde;o entre grupos &middot; Clique na c&eacute;lula para filtrar</div>
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;">
+    <span style="font-size:12px;color:var(--muted);">Per&iacute;odo:</span>
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+      <button class="year-tab fluxo-tab active" onclick="showFluxo('2023_2024',this)">2023 &rarr; 2024</button>
+      <button class="year-tab fluxo-tab" onclick="showFluxo('2024_2025',this)">2024 &rarr; 2025</button>
+    </div>
+  </div>
+  <div class="grid-4" id="fluxo-summary"></div>
+  <div class="card full">
+    <div class="card-header"><div class="card-header-left">
+      <div class="card-title">Matriz de Transi&ccedil;&atilde;o</div>
+      <div class="card-sub">Verde = subiu &middot; Vermelho = caiu &middot; Clique para filtrar</div>
+    </div></div>
+    <div id="fluxo-matrix-wrap"></div>
+  </div>
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-title" id="fluxo-list-title">Movimenta&ccedil;&otilde;es</div>
+        <div class="card-sub">Clique para hist&oacute;rico individual</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span class="pill green" id="fluxo-cnt-up">&#8593; 0</span>
+        <span class="pill dark" id="fluxo-cnt-stay">&rarr; 0</span>
+        <span class="pill red" id="fluxo-cnt-down">&#8595; 0</span>
+        <span class="pill blue" id="fluxo-cnt-new">&#9733; 0</span>
+        <span class="pill amber" id="fluxo-cnt-lost">&#10007; 0</span>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" id="fluxo-search" placeholder="Buscar nome ou c&oacute;digo..." oninput="filterFluxo()">
+      <select class="filter-select" id="fluxo-filter-status" onchange="filterFluxo()">
+        <option value="">Todos</option>
+        <option value="up">&#8593; Subiu</option><option value="stay">&rarr; Manteve</option>
+        <option value="down">&#8595; Caiu</option><option value="new">&#9733; Novo</option>
+        <option value="lost">&#10007; Perdido</option>
+      </select>
+      <select class="filter-select" id="fluxo-filter-group" onchange="filterFluxo()">
+        <option value="">Todos os grupos</option>
+        <option>G1A</option><option>G1B</option><option>G1C</option>
+        <option>G2A</option><option>G2B</option><option>G2C</option>
+        <option>G3A</option><option>G3B</option><option>G3C</option>
+      </select>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>C&oacute;digo</th><th>Nome</th><th>De</th><th>Para</th><th>Status</th>
+        <th class="right">Fat. Antes</th><th class="right">Fat. Depois</th><th class="right">&Delta;</th>
+      </tr></thead>
+      <tbody id="fluxo-tbody"></tbody>
+    </table>
+    <div class="pagination" id="fluxo-pg"></div>
+  </div>
+</div>
+
+<!-- ══ HISTORICO ══ -->
+<div class="page" id="page-historico">
+  <div class="page-header">
+    <div class="page-title">Hist&oacute;rico Individual</div>
+    <div class="page-subtitle">Evolu&ccedil;&atilde;o por comprador &middot; Clique para detalhes</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;">
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+      <button class="year-tab" onclick="switchHistYear('2023',this)">2023</button>
+      <button class="year-tab" onclick="switchHistYear('2024',this)">2024</button>
+      <button class="year-tab active" onclick="switchHistYear('2025',this)">2025 &#9733;</button>
+    </div>
+    <div style="display:flex;gap:0;border:1px solid #86efac;border-radius:6px;overflow:hidden;">
+      <button class="year-tab" style="background:#e8f5ee;color:#2d6a4f;" onclick="switchHistYear('new_2024',this)">&#9733; Novos 2024</button>
+      <button class="year-tab" style="background:#e8f5ee;color:#2d6a4f;" onclick="switchHistYear('new_2025',this)">&#9733; Novos 2025</button>
+    </div>
+  </div>
+  <div class="search-bar">
+    <input class="search-input" id="hist-search" placeholder="Buscar nome, c&oacute;digo ou cidade..." oninput="filterHistorico()">
+    <select class="filter-select" id="hist-filter-group" onchange="filterHistorico()">
+      <option value="">Todos os grupos</option>
+      <option>G1A</option><option>G1B</option><option>G1C</option>
+      <option>G2A</option><option>G2B</option><option>G2C</option>
+      <option>G3A</option><option>G3B</option><option>G3C</option>
+    </select>
+    <select class="filter-select" id="hist-filter-trend" onchange="filterHistorico()">
+      <option value="">Todas tend&ecirc;ncias</option>
+      <option value="up">&#8593; Subiu</option><option value="stay">&rarr; Est&aacute;vel</option>
+      <option value="down">&#8595; Caiu</option><option value="new">&#9733; Novo</option>
+    </select>
+  </div>
+  <div class="card full">
+    <table class="data-table">
+      <thead><tr>
+        <th>C&oacute;digo</th><th>Nome</th><th>Cidade</th>
+        <th>2023</th><th>2024</th><th>2025</th>
+        <th>Tend&ecirc;ncia</th>
+        <th class="right">Fat. 2025</th><th class="right">Pre&ccedil;o</th>
+      </tr></thead>
+      <tbody id="hist-tbody"></tbody>
+    </table>
+    <div class="pagination" id="hist-pg"></div>
+  </div>
+</div>
+<!-- ══ UPLOAD ══ -->
+<div class="page" id="page-upload">
+  <div class="page-header">
+    <div class="page-title">Atualizar Dados</div>
+    <div class="page-subtitle">Carregar novos dados mensais · Próxima atualização: 28/Jan/2026</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Histórico de Compradores</div>
+      <div class="card-sub">Arquivo .xlsx mensal</div>
+      <div class="upload-zone"><div class="upload-title">historico_de_cliente_AAAAMM.xlsx</div><div class="upload-sub">Clique para selecionar</div></div>
+      <div style="margin-top:12px;padding:10px;background:var(--green-bg);border-radius:6px;">
+        <div style="font-size:11px;font-weight:600;color:var(--green);">✓ Último carregado</div>
+        <div style="font-size:11px;color:var(--green);">historico_de_cliente_2025.xlsx · Dez 2025</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Evolução de Vendas (Produtos)</div>
+      <div class="card-sub">Arquivo .CSV mensal</div>
+      <div class="upload-zone"><div class="upload-title">evolucao_venda_MMMM_AAAA.CSV</div><div class="upload-sub">Clique para selecionar</div></div>
+      <div style="margin-top:12px;padding:10px;background:var(--green-bg);border-radius:6px;">
+        <div style="font-size:11px;font-weight:600;color:var(--green);">✓ Último carregado</div>
+        <div style="font-size:11px;color:var(--green);">evolucao_venda_dezembro_2025.CSV · Dez 2025</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ══ MODAL: GROUP DETAIL ══ -->
+<div class="modal-overlay" id="modal-group" onclick="if(event.target===this)closeModal('modal-group')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-group-title">Grupo</div>
+      <button class="modal-close" onclick="closeModal('modal-group')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-group-body"></div>
+  </div>
+</div>
+
+<script>// ════════════════════════════════════════════════════════
+// DATA LOADER v2 — fetch로 JSON 로드 + 전역 변수 초기화
+// ════════════════════════════════════════════════════════
+
+// 전역 데이터 (loader가 채움)
+let BUYERS_DATA    = null;
+let SUPERHITS      = [];
+let HITS           = [];
+let REGULARS       = [];
+let TREND_DATA     = null;
+let HOME_YEARS     = null;
+let NEW_BUYERS     = null;
+let NOVOS_TRACKED  = null;
+let GROUP_BY_YEAR  = null;
+let DORMANT_LIST   = [];
+let MATERIAL_TREND = null;
+let APP_CONFIG     = null;
+
+async function loadAllData() {
+  showLoadingScreen(true);
+  try {
+    // GitHub Pages: fetch로 JSON 로드
+    const [mainRes, cfgRes] = await Promise.all([
+      fetch('./data/main.json'),
+      fetch('./data/config.json')
+    ]);
+    if (!mainRes.ok) throw new Error('main.json 로드 실패: ' + mainRes.status);
+    if (!cfgRes.ok)  throw new Error('config.json 로드 실패: ' + cfgRes.status);
+    const D = await mainRes.json();
+    APP_CONFIG = await cfgRes.json();
+
+    // ── 전역 변수 세팅 ──────────────────────────────────
+    TREND_DATA = {
+      years:      D.years,
+      flows:      D.flows,
+      new_buyers: D.novos,
+    };
+    HOME_YEARS     = D.home_years;
+    NEW_BUYERS     = D.novos;
+    NOVOS_TRACKED  = D.novos_tracked;
+    GROUP_BY_YEAR  = D.group_by_year;
+    DORMANT_LIST   = D.dormant;
+    MATERIAL_TREND = D.material_trend;
+    BUYERS_DATA    = D.groups_2025;
+
+    // 2025 히트상품
+    const p25 = D.years['2025'].products;
+    SUPERHITS = p25.superhits || [];
+    HITS      = p25.hits      || [];
+    REGULARS  = p25.regulars  || [];
+
+    showLoadingScreen(false);
+    initDashboard();
+
+  } catch(err) {
+    console.warn('JSON 로드 실패, mock 데이터로 미리보기:', err.message);
+    const _mk=(cnt,baseTotal,baseAvg,baseFreq)=>{
+      const nm=['Moda Sul','Fashion Norte','Estilo Belo','Roupa Certa','Veste Bem','Top Moda','Chic Style','Bella Vista','Nova Forma','Trend Shop'];
+      const ct=['São Paulo','Rio de Janeiro','Curitiba','Porto Alegre','Belo Horizonte','Fortaleza','Salvador','Recife','Manaus','Goiânia'];
+      const st=['SP','RJ','PR','RS','MG','CE','BA','PE','AM','GO'];
+      const gr=['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'];
+      const b={};
+      for(let i=1;i<=cnt;i++){
+        const total=Math.round(baseTotal*(0.5+Math.random()));
+        b[String(1000+i)]={code:1000+i,name:nm[i%nm.length]+' '+i,city:ct[i%ct.length],state:st[i%st.length],
+          group:gr[i%gr.length],total,freq:Math.round(baseFreq*(0.6+Math.random())*10)/10,
+          pieces:Math.round(total/baseAvg),avg:Math.round(baseAvg*(0.9+Math.random()*0.2)*100)/100,dormant:Math.floor(Math.random()*150)};
+      }
+      return b;
+    };
+    const _gs=(buyers,groups)=>{
+      const o={};
+      groups.forEach(g=>{
+        const m=Object.values(buyers).filter(b=>b.group===g);
+        o[g]={count:m.length,sales:m.reduce((s,b)=>s+b.total,0),
+          avg_price:m.length?m.reduce((s,b)=>s+b.avg,0)/m.length:0,
+          avg_freq:m.length?m.reduce((s,b)=>s+b.freq,0)/m.length:0};
+      });
+      return o;
+    };
+    const _sum=(buyers)=>{
+      const bs=Object.values(buyers);
+      const gc={};
+      ['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'].forEach(g=>gc[g]=bs.filter(b=>b.group===g).length);
+      return{total_buyers:bs.length,total_sales:bs.reduce((s,b)=>s+b.total,0),
+        avg_price:bs.length?bs.reduce((s,b)=>s+b.avg,0)/bs.length:0,
+        avg_freq:bs.length?bs.reduce((s,b)=>s+b.freq,0)/bs.length:0,group_counts:gc};
+    };
+    const _mkFlows=(bFrom,bTo)=>{
+      const movements=[],matrix={};
+      ['NEW','G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'].forEach(g=>matrix[g]={});
+      Object.values(bTo).forEach(b=>{
+        const prev=bFrom[String(b.code)];
+        const from=prev?prev.group:'NEW';
+        const to=b.group;
+        if(!matrix[from]) matrix[from]={};
+        matrix[from][to]=(matrix[from][to]||0)+1;
+        const rk=_GRANK,rf=rk[from]??-1,rt=rk[to]??99;
+        const status=from==='NEW'?'new':rf<0?'new':rf===rt?'stay':rt<rf?'up':'down';
+        movements.push({code:b.code,name:b.name,from,to,status,
+          total_from:prev?prev.total:0,total_to:b.total});
+      });
+      Object.values(bFrom).forEach(b=>{
+        if(!bTo[String(b.code)]){
+          const g=b.group;
+          if(!matrix[g]) matrix[g]={};
+          matrix[g]['LOST']=(matrix[g]['LOST']||0)+1;
+          movements.push({code:b.code,name:b.name,from:g,to:'LOST',status:'lost',
+            total_from:b.total,total_to:0});
+        }
+      });
+      return{movements,matrix};
+    };
+    const GR=['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'];
+    const _GRANK=Object.fromEntries(GR.map((g,i)=>[g,i]));
+    const b23=_mk(520,8000,44,6),b24=_mk(590,9500,50,7),b25=_mk(654,10500,55,8);
+    const D={
+      home_years:{
+        '2023':{sales:4120000,pieces:98000,reg_avg:42.10,buyers:520,est_pct:38.5,quarterly:{Q1:{val:495000,pcs:11760,est_pct:41,reg_avg:43.2},Q2:{val:1030000,pcs:24500,est_pct:35,reg_avg:41.8},Q3:{val:906000,pcs:21560,est_pct:39,reg_avg:40.5},Q4:{val:1689000,pcs:40180,est_pct:37,reg_avg:43.0}}},
+        '2024':{sales:4780000,pieces:118000,reg_avg:48.50,buyers:590,est_pct:34.1,quarterly:{Q1:{val:574000,pcs:14160,est_pct:37,reg_avg:49.1},Q2:{val:1195000,pcs:29500,est_pct:31,reg_avg:47.8},Q3:{val:1052000,pcs:25960,est_pct:35,reg_avg:46.9},Q4:{val:1959000,pcs:48380,est_pct:32,reg_avg:49.5}}},
+        '2025':{sales:5820000,pieces:138434,reg_avg:56.13,buyers:654,est_pct:22.4,quarterly:{Q1:{val:854000,pcs:18784,est_pct:38.5,reg_avg:53.88},Q2:{val:1773000,pcs:31006,est_pct:28.4,reg_avg:66.52},Q3:{val:1539000,pcs:30013,est_pct:33.3,reg_avg:68.33},Q4:{val:2900000,pcs:58631,est_pct:34.0,reg_avg:56.70}}},
+        '2026':{target_sales:6290000,target_pieces:145356,reg_avg:0,buyers:0,est_pct:0,target_est_pct:28.2,quarterly:{}}
+      },
+      years:{
+        '2023':{buyers:b23,summary:_sum(b23),products:{superhits:[],hits:[],regulars:[]}},
+        '2024':{buyers:b24,summary:_sum(b24),products:{superhits:[],hits:[],regulars:[]}},
+        '2025':{buyers:b25,summary:_sum(b25),products:{
+          superhits:[
+            {ref:'BL-2301',cat:'Blusa',desc:'Blusa Modal Premium',pcs:380,days:28,ppd:13.6,avg:58.5,val:22230,reorder:1,plus:false},
+            {ref:'VE-1105',cat:'Vestido',desc:'Vestido Midi Floral',pcs:320,days:32,ppd:10.0,avg:72.0,val:23040,reorder:0,plus:false},
+            {ref:'BL-3302',cat:'Blusa Plus',desc:'Blusa Plus Comfort',pcs:290,days:35,ppd:8.3,avg:55.0,val:15950,reorder:1,plus:true},
+            {ref:'RG-0801',cat:'Regata',desc:'Regata Básica Colors',pcs:410,days:22,ppd:18.6,avg:42.0,val:17220,reorder:2,plus:false},
+            {ref:'CJ-0501',cat:'Conjunto',desc:'Conjunto Linho Verão',pcs:260,days:30,ppd:8.7,avg:89.0,val:23140,reorder:0,plus:false}
+          ],
+          hits:[
+            {ref:'BL-2205',cat:'Blusa',desc:'Blusa Crepe Elegance',pcs:180,days:38,ppd:4.7,avg:62.0,val:11160,reorder:0,plus:false},
+            {ref:'CA-1102',cat:'Calça',desc:'Calça Wide Leg',pcs:150,days:42,ppd:3.6,avg:75.0,val:11250,reorder:1,plus:false},
+            {ref:'AL-0603',cat:'Alça',desc:'Alça Estampada Tropical',pcs:200,days:40,ppd:5.0,avg:48.0,val:9600,reorder:0,plus:false}
+          ],
+          regulars:[]
+        }}
+      },
+      flows:{'2023_2024':_mkFlows(b23,b24),'2024_2025':_mkFlows(b24,b25)},
+      novos:{'2024':[],'2025':[]},novos_tracked:[],
+      group_by_year:{'2023':_gs(b23,GR),'2024':_gs(b24,GR),'2025':_gs(b25,GR)},
+      dormant:Object.values(b25).filter(b=>b.dormant>=90).slice(0,50),
+      material_trend:{},
+      groups_2025:{
+        G1A:{name:'G1A — VIP Grande',potential:256000,strategy:'Aumentar ticket médio acima de R$55',meta:'Meta: 15+ pedidos/ano',summary:{buyers:6,sales:511725,avg_price:49.30,avg_freq:13.8},members:Object.values(b25).filter(b=>b.group==='G1A').slice(0,6)},
+        G1B:{name:'G1B — Médio Crescimento',potential:119000,strategy:'Aumentar volume de peças',meta:'Meta: 12+ pedidos/ano',summary:{buyers:11,sales:353716,avg_price:47.50,avg_freq:12.5},members:Object.values(b25).filter(b=>b.group==='G1B').slice(0,11)},
+        G1C:{name:'G1C — Pequeno Desenv.',potential:16000,strategy:'Desenvolver frequência',meta:'Meta: 10+ pedidos/ano',summary:{buyers:3,sales:51305,avg_price:46.30,avg_freq:10.0},members:Object.values(b25).filter(b=>b.group==='G1C').slice(0,3)},
+        G2A:{name:'G2A — Alto Preço',potential:27000,strategy:'Converter para R$55+',meta:'Meta: Preço médio R$55',summary:{buyers:12,sales:184952,avg_price:52.30,avg_freq:11.3},members:Object.values(b25).filter(b=>b.group==='G2A').slice(0,12)},
+        G2B:{name:'G2B — Alta Frequência',potential:4000,strategy:'Aumentar ticket médio',meta:'Meta: Preço médio R$50+',summary:{buyers:4,sales:41198,avg_price:48.60,avg_freq:13.8},members:Object.values(b25).filter(b=>b.group==='G2B').slice(0,4)},
+        G2C:{name:'G2C — Padrão',potential:47000,strategy:'Aumentar frequência de pedidos',meta:'Meta: 10+ pedidos/ano',summary:{buyers:15,sales:142076,avg_price:48.40,avg_freq:9.5},members:Object.values(b25).filter(b=>b.group==='G2C').slice(0,15)},
+        G3A:{name:'G3A — Promoção Imediata',potential:204000,strategy:'Reativação urgente com promoção',meta:'Meta: 1ª compra no mês',summary:{buyers:25,sales:538721,avg_price:49.70,avg_freq:5.9},members:Object.values(b25).filter(b=>b.group==='G3A').slice(0,25)},
+        G3B:{name:'G3B — Reativação',potential:84000,strategy:'Contato direto e personalizado',meta:'Meta: Reativar 60%',summary:{buyers:19,sales:177878,avg_price:48.20,avg_freq:4.3},members:Object.values(b25).filter(b=>b.group==='G3B').slice(0,19)},
+        G3C:{name:'G3C — Desenv. LP',potential:417000,strategy:'Broadcast e campanha digital',meta:'Meta: 3+ pedidos/ano',summary:{buyers:143,sales:449103,avg_price:49.40,avg_freq:2.2},members:Object.values(b25).filter(b=>b.group==='G3C').slice(0,30)}
+      }
+    };
+    APP_CONFIG={version:'preview-mock',updated:'Dez 2025'};
+    TREND_DATA={years:D.years,flows:D.flows,new_buyers:D.novos};
+    HOME_YEARS=D.home_years; NEW_BUYERS=D.novos; NOVOS_TRACKED=D.novos_tracked;
+    GROUP_BY_YEAR=D.group_by_year; DORMANT_LIST=D.dormant; MATERIAL_TREND=D.material_trend;
+    BUYERS_DATA=D.groups_2025;
+    const p25=D.years['2025'].products;
+    SUPERHITS=p25.superhits||[]; HITS=p25.hits||[]; REGULARS=p25.regulars||[];
+    showLoadingScreen(false);
+    initDashboard();
+  }
+}
+
+function showLoadingScreen(show) {
+  const el  = document.getElementById('loading-screen');
+  const app = document.querySelector('.shell');
+  if (el)  el.style.display  = show ? 'flex' : 'none';
+  if (app) app.style.display = show ? 'none' : 'flex';
+}
+
+function showLoadError(msg) {
+  const el = document.getElementById('loading-screen');
+  if (!el) return;
+  el.innerHTML = `
+    <div style="font-family:'IBM Plex Mono',monospace;max-width:520px;padding:32px;">
+      <div style="font-size:18px;margin-bottom:16px;">&#9888; Falha ao carregar dados</div>
+      <div style="font-size:11px;background:#fee2e2;color:#991b1b;padding:14px;border-radius:6px;margin-bottom:16px;line-height:1.9;white-space:pre-wrap;">${msg}</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.9;">
+        <strong>Estrutura do repositório GitHub:</strong><br>
+        ├── index.html<br>
+        └── data/<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── main.json<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── config.json
+      </div>
+      <button onclick="loadAllData()" style="margin-top:16px;padding:8px 20px;background:var(--text);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;">
+        Tentar novamente
+      </button>
+    </div>`;
+}
+
+function initDashboard() {
+  // 히트 테이블 초기화
+  if (typeof renderHitInsights === 'function') {
+    renderHitInsights(SUPERHITS, 'superhit');
+    renderHitTable(SUPERHITS, 'superhit');
+  }
+  // Compradores 2025 기본
+  if (typeof switchBuyersYear === 'function') {
+    switchBuyersYear('2025', null);
+  }
+  // 홈 차트 초기화
+  if (typeof _updateHomeChart === 'function') {
+    _updateHomeChart('2025', HOME_YEARS['2025']);
+    _updateQuarterCards('2025', HOME_YEARS['2025']);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadAllData);
+
+
+// ════════════════════════════════════════════════════════
+// NEW FEATURES BLOCK — 추가 기능 전체
+// ════════════════════════════════════════════════════════
+
+// ── 공통 유틸 ────────────────────────────────────────────
+function renderPagination(containerId, total, cur, perPage, cb) {
+  const tp = Math.ceil(total / perPage);
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (tp <= 1) { el.innerHTML = ''; return; }
+  let h = `<span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">${(cur-1)*perPage+1}–${Math.min(cur*perPage,total)} / ${total}</span>`;
+  h += `<button class="page-btn" onclick="(${cb.toString()})(${cur-1})" ${cur<=1?'disabled':''}>&#8249;</button>`;
+  const rng=[];
+  for(let i=1;i<=tp;i++){if(i===1||i===tp||Math.abs(i-cur)<=1)rng.push(i);else if(rng[rng.length-1]!=='…')rng.push('…');}
+  rng.forEach(p=>{
+    if(p==='…') h+=`<span style="font-size:11px;color:var(--muted);">…</span>`;
+    else h+=`<button class="page-btn ${p===cur?'active':''}" onclick="(${cb.toString()})(${p})">${p}</button>`;
+  });
+  h += `<button class="page-btn" onclick="(${cb.toString()})(${cur+1})" ${cur>=tp?'disabled':''}>&#8250;</button>`;
+  el.innerHTML = h;
+}
+
+// ── Início 연도 탭 ────────────────────────────────────────
+let _homeYr = '2025';
+
+function switchHomeYear(yr, btn) {
+  _homeYr = yr;
+  if (btn) {
+    btn.parentElement.querySelectorAll('button').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  // HOME_YEARS에 해당 연도 없으면 TREND_DATA에서 계산
+  const buyers = Object.values(TREND_DATA?.years?.[yr]?.buyers || {});
+  const d = (HOME_YEARS && HOME_YEARS[yr]) ? HOME_YEARS[yr] : {
+    sales: buyers.reduce((s,b)=>s+(b.total||0),0),
+    pieces: buyers.reduce((s,b)=>s+(b.pieces||0),0),
+    reg_avg: buyers.length ? buyers.reduce((s,b)=>s+(b.avg||0),0)/buyers.length : 0,
+    buyers: buyers.length, est_pct: 0, quarterly: {}
+  };
+  if (!d && !buyers.length) return;
+
+  const fmtR = v => {
+    if (!v || v <= 0) return '—';
+    if (v >= 1000000) return 'R$' + (v/1000000).toFixed(2) + 'M';
+    if (v >= 1000)    return 'R$' + (v/1000).toFixed(1) + 'K';
+    return 'R$' + v.toLocaleString('pt-BR', {maximumFractionDigits:0});
+  };
+  const fmtN = v => v > 0 ? Number(v).toLocaleString('pt-BR') : '—';
+
+  // KPI 업데이트
+  const kpis = [
+    {id:'home-kpi-sales',   val: yr==='2026' ? fmtR(d.target_sales)  : fmtR(d.sales)},
+    {id:'home-kpi-pieces',  val: yr==='2026' ? fmtN(d.target_pieces) : fmtN(d.pieces)},
+    {id:'home-kpi-price',   val: d.reg_avg > 0 ? 'R$'+d.reg_avg.toFixed(2) : '—'},
+    {id:'home-kpi-buyers',  val: d.buyers > 0 ? String(d.buyers) : '—'},
+    {id:'home-kpi-est',     val: d.est_pct > 0 ? d.est_pct.toFixed(1)+'%' : (yr==='2026'?d.target_est_pct+'%':'—')},
+  ];
+  kpis.forEach(k => {
+    const el = document.getElementById(k.id);
+    if (!el) return;
+    const vEl = el.querySelector('.kpi-value');
+    if (vEl) vEl.textContent = k.val;
+  });
+
+  // Compradores 활동 패널 연도별 업데이트
+  if (buyers.length > 0) {
+    const active    = buyers.filter(b=>(b.dormant||0)<60).length;
+    const attention = buyers.filter(b=>(b.dormant||0)>=60&&(b.dormant||0)<90).length;
+    const inactive  = buyers.filter(b=>(b.dormant||0)>=90).length;
+    const total     = buyers.length;
+    const actPct    = (active/total*100).toFixed(1);
+    const attPct    = (attention/total*100).toFixed(1);
+    const inactPct  = (inactive/total*100).toFixed(1);
+    const avgFreq   = (buyers.reduce((s,b)=>s+(b.freq||0),0)/total).toFixed(1);
+    const actEl = document.getElementById('home-buyers-activity');
+    if (actEl) actEl.innerHTML = `
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-name">Ativos (&lt;60 dias)</span><span class="progress-val">${active} · ${actPct}%</span></div>
+        <div class="progress-track"><div class="progress-fill green" style="width:${actPct}%"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-name">Atenção (60~89 dias)</span><span class="progress-val">${attention} · ${attPct}%</span></div>
+        <div class="progress-track"><div class="progress-fill amber" style="width:${attPct}%"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-name" style="color:#dc2626;">Inativos (90+ dias)</span><span class="progress-val" style="color:#dc2626;">${inactive} · ${inactPct}%</span></div>
+        <div class="progress-track"><div class="progress-fill red" style="width:${inactPct}%"></div></div>
+      </div>`;
+    const freqEl = document.getElementById('home-buyers-freq');
+    if (freqEl) freqEl.innerHTML = `${avgFreq}<span style="font-size:14px;color:var(--muted);margin-left:4px;">pedidos/ano</span>`;
+  }
+
+  const titleEl = document.querySelector('#page-home .page-title');
+  if (titleEl) titleEl.textContent = 'Visão Geral ' + yr;
+
+  // 차트 & 분기 카드 업데이트
+  _updateHomeChart(yr, d);
+  _updateQuarterCards(yr, d);
+}
+
+function _updateHomeChart(yr, d) {
+  if (!window._chartMensal) return;
+  const qs = ['Q1','Q2','Q3','Q4'];
+  const qLabels = ['Q1 Jan-Mar','Q2 Abr-Jun','Q3 Jul-Set','Q4 Out-Dez'];
+  let sales, price, est;
+
+  if (yr === '2026') {
+    const w = [0.12,0.25,0.22,0.41];
+    sales = w.map(wt => Math.round((d.target_sales||0)*wt));
+    price = [0,0,0,0];
+    est   = Array(4).fill(d.target_est_pct||0);
+  } else {
+    const q = d.quarterly || {};
+    sales = qs.map(qk => q[qk] ? q[qk].val  : 0);
+    est   = qs.map(qk => q[qk] ? q[qk].est_pct : 0);
+    // 연간 reg_avg에 분기별 계절 변동 적용 (브라질: Q2/Q3 여름=단가낮음, Q1/Q4=단가높음)
+    const basePrice = d.reg_avg || 0;
+    const seasonMult = [1.03, 1.01, 0.97, 1.02]; // Q1~Q4 계절 가중치
+    price = qs.map((qk, i) => q[qk] ? (q[qk].reg_avg || Math.round(basePrice * seasonMult[i] * 100)/100) : Math.round(basePrice * seasonMult[i] * 100)/100);
+  }
+
+  window._chartMensal.data.labels = qLabels;
+  window._chartMensal.data.datasets[0].data = sales;
+  window._chartMensal.data.datasets[1].data = price;
+  window._chartMensal.data.datasets[2].data = est;
+  window._chartMensal.update();
+}
+
+let _chartAnual = null;
+
+function _updateQuarterCards(yr, d) {
+  // 연간 비교 카드 렌더링 (선택된 연도와 무관하게 항상 전체 연도 비교)
+  const el = document.getElementById('anual-cards');
+  if (!el || !HOME_YEARS) return;
+
+  const years = ['2023','2024','2025'];
+  const maxSales = Math.max(...years.map(y => HOME_YEARS[y]?.sales || 0));
+
+  el.innerHTML = years.map((y, i) => {
+    const yd = HOME_YEARS[y] || {};
+    const sales   = yd.sales   || 0;
+    const pieces  = yd.pieces  || 0;
+    const buyers  = yd.buyers  || 0;
+    const estPct  = yd.est_pct || 0;
+    const barPct  = maxSales > 0 ? (sales / maxSales * 100).toFixed(1) : 0;
+    const isCurr  = y === '2025';
+
+    // 전년 대비 성장률
+    const prevY = HOME_YEARS[String(Number(y)-1)];
+    const growthPct = prevY && prevY.sales > 0
+      ? ((sales - prevY.sales) / prevY.sales * 100).toFixed(1)
+      : null;
+    const growthLabel = growthPct !== null
+      ? `<span style="font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;background:${growthPct>=0?'#e8f5ee':'#fee2e2'};color:${growthPct>=0?'#2d6a4f':'#991b1b'};font-weight:600;">${growthPct>=0?'+':''}${growthPct}%</span>`
+      : '';
+
+    return `<div class="q-card" style="${isCurr?'border-color:#1a1917;background:#fafaf8;':''}">
+      <div class="q-label" style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:600;font-size:12px;">${y}</span>
+        ${growthLabel}
+      </div>
+      <div class="q-val" style="font-size:${isCurr?'20px':'16px'};${isCurr?'':''}">
+        ${sales>0?'R$'+(sales/1e6).toFixed(2)+'M':'—'}
+      </div>
+      <div class="q-sub">${pieces>0?Number(pieces).toLocaleString('pt-BR')+' peças':''}</div>
+      <div style="display:flex;gap:12px;margin:6px 0 2px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">
+        <span>👥 ${buyers}</span>
+        <span>📦 est. ${estPct}%</span>
+      </div>
+      <div class="q-bar-track" style="${isCurr?'background:#1a1917;':''}">
+        <div class="q-bar-fill" style="width:${barPct}%;${isCurr?'background:#fff;':''}"></div>
+      </div>
+      <div class="q-pct" style="${isCurr?'color:var(--text);font-weight:600;':''}">
+        ${barPct}% do máximo ${isCurr?'★':''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // 연간 비교 차트 (막대 + 라인)
+  const ctx = document.getElementById('chartAnual');
+  if (!ctx) return;
+  const salesData  = years.map(y => HOME_YEARS[y]?.sales   || 0);
+  const buyersData = years.map(y => HOME_YEARS[y]?.buyers  || 0);
+
+  if (_chartAnual) { _chartAnual.destroy(); }
+  _chartAnual = new Chart(ctx, {
+    data: {
+      labels: years,
+      datasets: [
+        { type:'bar', label:'Faturamento (R$)', data: salesData,
+          backgroundColor: years.map(y=>y==='2025'?'rgba(30,58,95,0.6)':'rgba(30,58,95,0.2)'),
+          borderColor: years.map(y=>y==='2025'?'rgba(30,58,95,1)':'rgba(30,58,95,0.4)'),
+          borderWidth:1, borderRadius:4, yAxisID:'y1', order:2 },
+        { type:'line', label:'Compradores', data: buyersData,
+          borderColor:'#2d6a4f', backgroundColor:'transparent',
+          borderWidth:2, pointRadius:5, pointBackgroundColor:'#2d6a4f',
+          tension:0.3, yAxisID:'y2', order:1 }
+      ]
+    },
+    options: {
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{boxWidth:10,font:{size:11},padding:16}},
+        tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc',borderColor:'#333',borderWidth:1,
+          callbacks:{label:c=>c.datasetIndex===0?'R$'+(c.raw/1e6).toFixed(2)+'M':c.raw+' compradores'}}
+      },
+      scales:{
+        x:{grid:{color:'#e2e0d8'},ticks:{font:{size:11}}},
+        y1:{position:'left',grid:{color:'#e2e0d8'},ticks:{font:{size:10},callback:v=>'R$'+(v/1e6).toFixed(1)+'M'}},
+        y2:{position:'right',grid:{display:false},ticks:{font:{size:10},color:'#2d6a4f'}}
+      }
+    }
+  });
+}
+
+// ── Compradores 연도 탭 ───────────────────────────────────
+let _compYr = '2025';
+
+function switchBuyersYear(yr, btn) {
+  _compYr = yr;
+  if (btn) {
+    btn.parentElement.querySelectorAll('button').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  // 신규 패널 숨기기
+  const panel = document.getElementById('comp-new-panel');
+  if (panel) panel.style.display = 'none';
+
+  const gData = GROUP_BY_YEAR[yr];
+  if (!gData) return;
+
+  const buyers = Object.values(TREND_DATA.years[yr]?.buyers || {});
+  const totalSales = buyers.reduce((s,b) => s+b.total, 0);
+
+  const tbody = document.getElementById('comp-group-tbody');
+  if (!tbody) return;
+
+  const GROUPS = ['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'];
+  tbody.innerHTML = GROUPS.map(g => {
+    const d = gData[g];
+    if (!d || d.count === 0) return '';
+    const cls = g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green';
+    const pct = totalSales > 0 ? (d.sales/totalSales*100).toFixed(1) : 0;
+    const prof = {G1A:'VIP Grande',G1B:'Médio Cresc.',G1C:'Pequeno Desenv.',
+                  G2A:'Alto Preço',G2B:'Alta Freq.',G2C:'Padrão',
+                  G3A:'Promoção Imed.',G3B:'Reativação',G3C:'Desenv. LP'};
+    return `<tr class="clickable" onclick="openGroupModal('${g}')">
+      <td><span class="pill ${cls}">${g}</span></td>
+      <td style="font-size:11px;">${prof[g]||''}</td>
+      <td class="right">${d.count}</td>
+      <td class="right">R$${Math.round(d.sales).toLocaleString('pt-BR')}</td>
+      <td class="right">R$${d.avg_price.toFixed(2)}</td>
+      <td class="right">${d.avg_freq.toFixed(1)}×</td>
+      <td class="right">${pct}%</td>
+      <td>—</td>
+    </tr>`;
+  }).join('');
+
+  const sub = document.querySelector('#page-compradores .page-subtitle');
+  if (sub) sub.textContent = `${yr} · ${buyers.length} compradores (R$45+)`;
+}
+
+// ── Compradores 신규 탭 ───────────────────────────────────
+function switchBuyersNew(yr, btn) {
+  if (btn) {
+    btn.parentElement.querySelectorAll('button').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // 연도탭 해제
+    const ytRow = btn.parentElement.previousElementSibling;
+    if (ytRow) ytRow.querySelectorAll('button').forEach(t => t.classList.remove('active'));
+  }
+  const panel = document.getElementById('comp-new-panel');
+  if (!panel) return;
+
+  const list = Object.values(NEW_BUYERS[yr] || {}).sort((a,b) => b.total-a.total);
+  const desc = {
+    '2023':'Base 2023 — todos os compradores atacadistas (R$45+)',
+    '2024':'Novos 2024 — compradores que não existiam em 2023 (R$45+)',
+    '2025':'Novos 2025 — compradores que não existiam em 2024 (R$45+)',
+  };
+  if (!list.length) { panel.style.display='none'; return; }
+  panel.style.display = 'block';
+
+  const gc = {};
+  ['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'].forEach(g => gc[g]=0);
+  list.forEach(b => { if (gc[b.group]!==undefined) gc[b.group]++; });
+  const totalSales = list.reduce((s,b)=>s+b.total,0);
+  const avgP = (list.reduce((s,b)=>s+b.avg,0)/list.length).toFixed(2);
+  const gBadge = g => `<span class="pill ${g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green'}">${g}</span>`;
+
+  let pg = 1; const PER = 20;
+  function render() {
+    const slice = list.slice((pg-1)*PER, pg*PER);
+    document.getElementById('comp-new-tbody').innerHTML = slice.map(b =>`
+      <tr class="clickable" onclick="openHistoricoModal(${b.code})">
+        <td class="mono">${b.code}</td>
+        <td style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
+        <td style="font-size:11px;">${b.city} ${b.state}</td>
+        <td>${gBadge(b.group)}</td>
+        <td class="right">${b.freq}×</td>
+        <td class="right">R$${b.avg.toFixed(2)}</td>
+        <td class="right">R$${b.total.toLocaleString('pt-BR',{maximumFractionDigits:0})}</td>
+      </tr>`).join('');
+    renderPagination('comp-new-pg', list.length, pg, PER, p => { pg=p; render(); });
+  }
+
+  panel.innerHTML = `
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-title">&#9733; Novos ${yr}</div>
+          <div class="card-sub">${desc[yr]||''} · ${list.length}명 · R$${Math.round(totalSales).toLocaleString('pt-BR')} · R$${avgP}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          ${Object.entries(gc).filter(([,v])=>v>0).map(([g,v])=>
+            `<span class="pill ${g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green'}">${g}:${v}</span>`
+          ).join('')}
+        </div>
+      </div>
+      <table class="data-table"><thead><tr>
+        <th>Código</th><th>Nome</th><th>Cidade</th><th>Grupo</th>
+        <th class="right">Pedidos</th><th class="right">Preço</th><th class="right">Total</th>
+      </tr></thead><tbody id="comp-new-tbody"></tbody></table>
+      <div class="pagination" id="comp-new-pg"></div>
+    </div>`;
+  render();
+}
+
+// ── Alertas 전체 목록 ─────────────────────────────────────
+let _alertPg = 1, _alertFiltered = [...DORMANT_LIST];
+
+// ── G3B 페이지네이션 ──────────────────────────────────────
+const G3B_LIST = [{"code": 12695, "name": "ARENET COMERCIO DE CONFECCOES LTDA - ME", "city": "Duartina", "state": "SP", "dormant": 177, "total": 595.0, "avg": 49.58, "group": "G3C", "last_order": "07/07/2025"}, {"code": 13179, "name": "MALHARIA SELMA LTDA - EPP", "city": "Salto", "state": "SP", "dormant": 176, "total": 2127.0, "avg": 40.13, "group": "G3C", "last_order": "08/07/2025"}, {"code": 13407, "name": "JOSE EDVALDO SILVA DE OLIVEIRA", "city": "Serrinha", "state": "BA", "dormant": 173, "total": 16745.0, "avg": 23.1, "group": "G3C", "last_order": "11/07/2025"}, {"code": 11326, "name": "E. W. MORETI CONFECCOES - ME", "city": "Potirendaba", "state": "SP", "dormant": 163, "total": 1060.38, "avg": 48.2, "group": "G3C", "last_order": "21/07/2025"}, {"code": 1024, "name": "SOUZA & BARBIERI VESTUARIOS LTDA - EPP", "city": "Jaboticabal", "state": "SP", "dormant": 160, "total": 8527.87, "avg": 42.64, "group": "G3C", "last_order": "24/07/2025"}, {"code": 12305, "name": "DALTON LUIS SOARES PINTO", "city": "Primeiro De Maio", "state": "PR", "dormant": 159, "total": 11663.88, "avg": 55.28, "group": "G3C", "last_order": "25/07/2025"}, {"code": 12100, "name": "ISABEL CRISTINA ERENO VAZ", "city": "Sorocaba", "state": "SP", "dormant": 153, "total": 661.3, "avg": 55.11, "group": "G3C", "last_order": "31/07/2025"}, {"code": 12906, "name": "POUR FEMME MODAS E PRESENTES LTDA", "city": "Rio De Janeiro", "state": "RJ", "dormant": 149, "total": 630.0, "avg": 28.64, "group": "G3C", "last_order": "04/08/2025"}, {"code": 1418, "name": "REGINA MARCIA BRAIT SAVAN - ME", "city": "Jaborandi", "state": "SP", "dormant": 148, "total": 543.15, "avg": 45.26, "group": "G3C", "last_order": "05/08/2025"}, {"code": 13409, "name": "MARIA SOLANGE DOS SANTOS", "city": "Sao Paulo", "state": "SP", "dormant": 146, "total": 1496.2, "avg": 65.05, "group": "G3C", "last_order": "07/08/2025"}, {"code": 10617, "name": "EVANIR LEONICE LUCA LUGATO ME", "city": "Maringa", "state": "PR", "dormant": 146, "total": 886.55, "avg": 46.66, "group": "G3C", "last_order": "07/08/2025"}, {"code": 977, "name": "ELIENE FRANCISCA DO NASCIMENTO SANTOS", "city": "Francisco Morato", "state": "SP", "dormant": 146, "total": 3584.65, "avg": 39.39, "group": "G3C", "last_order": "07/08/2025"}, {"code": 11149, "name": "M S OGAWA & CIA LTDA", "city": "Primeiro De Maio", "state": "PR", "dormant": 141, "total": 1693.62, "avg": 67.74, "group": "G3C", "last_order": "12/08/2025"}, {"code": 13130, "name": "ADRIANA SOUZA LIMA TEXEIRA", "city": "Candiba", "state": "BA", "dormant": 141, "total": 770.95, "avg": 59.3, "group": "G3C", "last_order": "12/08/2025"}, {"code": 234, "name": "ADRIANA RIBEIRO ALVES FREIRE - ME", "city": "Valinhos", "state": "SP", "dormant": 141, "total": 1381.68, "avg": 53.14, "group": "G3C", "last_order": "12/08/2025"}, {"code": 12563, "name": "MR & MELO MODAS LTDA - ME", "city": "Itapevi", "state": "SP", "dormant": 141, "total": 21321.0, "avg": 47.27, "group": "G3C", "last_order": "12/08/2025"}, {"code": 3978, "name": "MARIA DE LOURDES SOARES LEITE TEIXEIRA", "city": "Sorocaba", "state": "SP", "dormant": 138, "total": 983.05, "avg": 39.32, "group": "G3C", "last_order": "15/08/2025"}, {"code": 11393, "name": "ORVALHO MODAS E CONFECCOES LTDA ME", "city": "Saquarema", "state": "RJ", "dormant": 135, "total": 4229.02, "avg": 42.72, "group": "G3C", "last_order": "18/08/2025"}, {"code": 13414, "name": "JRVA PRESENTES LTDA", "city": "Sao Jose Dos Campos", "state": "SP", "dormant": 134, "total": 859.35, "avg": 47.74, "group": "G3C", "last_order": "19/08/2025"}, {"code": 13415, "name": "ANTONIETA SOUSA LIMA MEE", "city": "Sao Miguel Do Tapuio", "state": "PI", "dormant": 132, "total": 1415.0, "avg": 27.21, "group": "G3C", "last_order": "21/08/2025"}, {"code": 12358, "name": "MARIA DE LOURDES RODRIGUES LOPES DIAS", "city": "Cosmopolis", "state": "SP", "dormant": 132, "total": 100.0, "avg": 25.0, "group": "G3C", "last_order": "21/08/2025"}, {"code": 13326, "name": "MARIA SALETE AMANTEA SPAZZIN", "city": "Veranopolis", "state": "RS", "dormant": 128, "total": 949.45, "avg": 43.16, "group": "G3C", "last_order": "25/08/2025"}, {"code": 2022, "name": "DENISE MOREIRA DE OLIVERA REIS - ME", "city": "Iapu", "state": "MG", "dormant": 128, "total": 210.0, "avg": 21.0, "group": "G3C", "last_order": "25/08/2025"}, {"code": 1947, "name": "L M R COMERCIO DE ARTIGOS PARA PRESENTES LTDA", "city": "Arcos", "state": "MG", "dormant": 126, "total": 1971.15, "avg": 82.13, "group": "G3C", "last_order": "27/08/2025"}, {"code": 2162, "name": "L C SIQUEIRA SAMPAIO - ME", "city": "Campos De Cunha", "state": "SP", "dormant": 126, "total": 2367.62, "avg": 62.31, "group": "G3C", "last_order": "27/08/2025"}, {"code": 13417, "name": "DAIANE JORGE DA SILVA", "city": "Sao Paulo", "state": "SP", "dormant": 126, "total": 280.0, "avg": 46.67, "group": "G3C", "last_order": "27/08/2025"}, {"code": 12575, "name": "A J DA SILVA MODAS - ME", "city": "Paulinia", "state": "SP", "dormant": 121, "total": 1768.0, "avg": 52.0, "group": "G3C", "last_order": "01/09/2025"}, {"code": 2209, "name": "FLAVIA APARECIDA DO NASCIMENTO FRANCO - ME", "city": "Congonhal", "state": "MG", "dormant": 121, "total": 10020.96, "avg": 52.19, "group": "G3C", "last_order": "01/09/2025"}, {"code": 13419, "name": "CELIA DE SOUZA RODRIGUES DE MELO", "city": "Xambre", "state": "PR", "dormant": 121, "total": 3610.8, "avg": 51.58, "group": "G3C", "last_order": "01/09/2025"}, {"code": 12578, "name": "ANTONIO CORTEZ DA SILVA NETO E CIA", "city": "Artur Nogueira", "state": "SP", "dormant": 121, "total": 1584.0, "avg": 51.1, "group": "G3C", "last_order": "01/09/2025"}, {"code": 13418, "name": "M.R.TAVARES", "city": "Tocantins", "state": "MG", "dormant": 121, "total": 1222.0, "avg": 50.92, "group": "G3C", "last_order": "01/09/2025"}, {"code": 10772, "name": "EDICLEIDE MENDES COURA CASQUEZ", "city": "Sorocaba", "state": "SP", "dormant": 121, "total": 919.75, "avg": 45.99, "group": "G3C", "last_order": "01/09/2025"}, {"code": 13420, "name": "MARIA ALICE", "city": "Exterior", "state": "EX", "dormant": 121, "total": 100.0, "avg": 20.0, "group": "G3C", "last_order": "01/09/2025"}, {"code": 1340, "name": "FABIANA APARECIDA INFANTE DE MELO- ME", "city": "Sao Paulo", "state": "SP", "dormant": 120, "total": 24342.63, "avg": 72.88, "group": "G3C", "last_order": "02/09/2025"}, {"code": 12160, "name": "MARIA MADALENA SILVA SANTOS MODAS - ME", "city": "Sao Paulo", "state": "SP", "dormant": 120, "total": 220.0, "avg": 20.0, "group": "G3C", "last_order": "02/09/2025"}, {"code": 13421, "name": "PATRICIA CARLA SOUZA DOS SANTOS", "city": "Moreno", "state": "PE", "dormant": 119, "total": 1203.18, "avg": 52.31, "group": "G3C", "last_order": "03/09/2025"}, {"code": 12684, "name": "ANDREIA CAMARGO DA SILVA", "city": "Barueri", "state": "SP", "dormant": 118, "total": 2060.0, "avg": 54.21, "group": "G3C", "last_order": "04/09/2025"}, {"code": 13424, "name": "SIMONE SOARES DA SILVA SALVARES", "city": "Coronel Fabriciano", "state": "MG", "dormant": 114, "total": 810.9, "avg": 62.38, "group": "G3C", "last_order": "08/09/2025"}, {"code": 645, "name": "SEXY R & B COMERCIO DE ROUPAS LTDA - ME", "city": "Franco Da Rocha", "state": "SP", "dormant": 113, "total": 9890.25, "avg": 54.95, "group": "G3C", "last_order": "09/09/2025"}, {"code": 12466, "name": "MARIA APARECIDA MAGRO XAVIER E CIA LT-ME", "city": "Pirassununga", "state": "SP", "dormant": 112, "total": 2394.5, "avg": 79.82, "group": "G3C", "last_order": "10/09/2025"}, {"code": 177, "name": "LEONARDO DE PAULA ME", "city": "Sumare", "state": "SP", "dormant": 112, "total": 1398.0, "avg": 55.92, "group": "G3C", "last_order": "10/09/2025"}, {"code": 2848, "name": "IDALINA DE CASSIA QUINTEIRO OLIVEIRA CORREA ME", "city": "Sorocaba", "state": "SP", "dormant": 112, "total": 240.0, "avg": 30.0, "group": "G3C", "last_order": "10/09/2025"}, {"code": 13425, "name": "ELIZANJA NUNES DA SILVA AGUIAR", "city": "Ribeirao Das Neves", "state": "MG", "dormant": 111, "total": 574.6, "avg": 44.2, "group": "G3C", "last_order": "11/09/2025"}, {"code": 166, "name": "AGNA MUNIZ MARQUES", "city": "Vitoria Da Conquista", "state": "BA", "dormant": 111, "total": 51031.7, "avg": 30.07, "group": "G3C", "last_order": "11/09/2025"}, {"code": 12840, "name": "M DE FATIMA FERREIRA BATISTA ME", "city": "Santa Isabel Do Para", "state": "PA", "dormant": 110, "total": 9129.25, "avg": 56.01, "group": "G3C", "last_order": "12/09/2025"}, {"code": 10691, "name": "ELVANI BASTOS RODRIGUES - ME", "city": "Jequie", "state": "BA", "dormant": 107, "total": 1002.6, "avg": 55.7, "group": "G3C", "last_order": "15/09/2025"}, {"code": 13426, "name": "BIANKA TOLFO DE SOUZA", "city": "Bage", "state": "RS", "dormant": 106, "total": 1445.12, "avg": 80.28, "group": "G3C", "last_order": "16/09/2025"}, {"code": 2188, "name": "S.R.B MICHELAN EIRELI LTDA", "city": "Americana", "state": "SP", "dormant": 104, "total": 3501.05, "avg": 57.39, "group": "G3C", "last_order": "18/09/2025"}, {"code": 1423, "name": "MENDES & CEZAR COMERCIO DO VESTUARIO LTDA. - ME", "city": "Aguai", "state": "SP", "dormant": 104, "total": 582.3, "avg": 48.52, "group": "G3C", "last_order": "18/09/2025"}, {"code": 13428, "name": "C A SARTORI & CIA LTDA", "city": "Tres Barras Do Parana", "state": "PR", "dormant": 100, "total": 2115.22, "avg": 57.17, "group": "G3C", "last_order": "22/09/2025"}, {"code": 11187, "name": "JOSE RAMIRO CORREA ME", "city": "Palhoca", "state": "SC", "dormant": 100, "total": 2631.6, "avg": 50.61, "group": "G3C", "last_order": "22/09/2025"}, {"code": 13427, "name": "MARIA FRANCISCA DA SILVA", "city": "Taubate", "state": "SP", "dormant": 100, "total": 1897.2, "avg": 46.27, "group": "G3C", "last_order": "22/09/2025"}, {"code": 12185, "name": "ADALTO LUCAS KNUPP - ME", "city": "Luisburgo", "state": "MG", "dormant": 100, "total": 654.7, "avg": 40.92, "group": "G3C", "last_order": "22/09/2025"}, {"code": 13408, "name": "JUSSARA BARBOSA LIMA DE MATOS BOUTIQUE BRECHO", "city": "Taubate", "state": "SP", "dormant": 100, "total": 1265.0, "avg": 23.87, "group": "G3C", "last_order": "22/09/2025"}, {"code": 13430, "name": "LIDIANE FALCAO DORIGON", "city": "Suzano", "state": "SP", "dormant": 99, "total": 1040.0, "avg": 30.59, "group": "G3C", "last_order": "23/09/2025"}, {"code": 12480, "name": "DANIELA MOURA DE SOUSA", "city": "Uberlandia", "state": "MG", "dormant": 98, "total": 994.5, "avg": 52.34, "group": "G3C", "last_order": "24/09/2025"}, {"code": 417, "name": "RITA DE OLIVEIRA CASTELLI ME", "city": "Sorriso", "state": "MT", "dormant": 98, "total": 549.0, "avg": 45.75, "group": "G3C", "last_order": "24/09/2025"}, {"code": 13018, "name": "NEUZA MARIA LAUDARES SILVA", "city": "Rio Claro", "state": "SP", "dormant": 97, "total": 526.5, "avg": 43.88, "group": "G3C", "last_order": "25/09/2025"}, {"code": 13431, "name": "PAMELLA DE BRITO LIMA", "city": "Guaruja", "state": "SP", "dormant": 96, "total": 569.7, "avg": 47.48, "group": "G3C", "last_order": "26/09/2025"}, {"code": 13403, "name": "NG MENDONCA MODAS LTDA", "city": "Ribeirao Preto", "state": "SP", "dormant": 95, "total": 14889.68, "avg": 58.85, "group": "G3C", "last_order": "27/09/2025"}, {"code": 11608, "name": "LUIZA MARA STANISLASKI BAZANA", "city": "Santiago", "state": "RS", "dormant": 93, "total": 1186.0, "avg": 49.42, "group": "G3C", "last_order": "29/09/2025"}, {"code": 3798, "name": "MARIA BERNADETE BEDENDO - ME", "city": "Aparecida", "state": "SP", "dormant": 92, "total": 190.0, "avg": 23.75, "group": "G3C", "last_order": "30/09/2025"}, {"code": 2457, "name": "MARCIA RENATA PEREIRA VIEIRA", "city": "Pouso Alegre", "state": "MG", "dormant": 92, "total": 640.0, "avg": 22.86, "group": "G3C", "last_order": "30/09/2025"}, {"code": 13328, "name": "C S ECOMMERCE LTDA", "city": "Rolim De Moura", "state": "RO", "dormant": 91, "total": 8378.0, "avg": 59.84, "group": "G3C", "last_order": "01/10/2025"}];
+let _g3bPage = 1, _g3bFiltered = [...G3B_LIST];
+const G3B_PER = 20;
+
+function initG3B() {
+  _g3bFiltered = [...G3B_LIST];
+  renderG3B();
+}
+
+function filterG3B() {
+  const q = (document.getElementById('g3b-search')||{}).value?.toLowerCase()||'';
+  _g3bFiltered = G3B_LIST.filter(b =>
+    !q || b.name.toLowerCase().includes(q) || String(b.code).includes(q)
+  );
+  _g3bPage = 1;
+  renderG3B();
+}
+
+function renderG3B() {
+  const el = document.getElementById('g3b-tbody');
+  if(!el) return;
+  const slice = _g3bFiltered.slice((_g3bPage-1)*G3B_PER, _g3bPage*G3B_PER);
+  el.innerHTML = slice.map(b => `
+    <tr class="clickable" onclick="openHistoricoModal(${b.code})">
+      <td class="mono">${b.code}</td>
+      <td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
+      <td style="font-size:11px;">${b.city} ${b.state}</td>
+      <td class="right" style="color:#d97706;font-weight:600;">${b.dormant}d</td>
+      <td class="right">R$${b.total.toLocaleString('pt-BR',{maximumFractionDigits:0})}</td>
+      <td class="right">R$${b.avg.toFixed(2)}</td>
+    </tr>`).join('');
+  renderPagination('g3b-pagination', _g3bFiltered.length, _g3bPage, G3B_PER,
+    p => { _g3bPage=p; renderG3B(); });
+}
+
+function initAlerts() {
+  initG3B();
+  const el = document.getElementById('alert-total-cnt');
+  if (el) el.textContent = '⚠ ' + DORMANT_LIST.length;
+  _alertFiltered = [...DORMANT_LIST];
+  renderAlertTable();
+}
+function filterAlerts() {
+  const q  = (document.getElementById('alert-search')||{}).value?.toLowerCase()||'';
+  const gr = (document.getElementById('alert-filter-gr')||{}).value||'';
+  _alertFiltered = DORMANT_LIST.filter(b => {
+    if (q && !String(b.code).includes(q) && !b.name.toLowerCase().includes(q)) return false;
+    if (gr && b.group !== gr) return false;
+    return true;
+  });
+  _alertPg = 1; renderAlertTable();
+}
+function renderAlertTable() {
+  const el = document.getElementById('alert-tbody');
+  if (!el) return;
+  const PER = 20;
+  const slice = _alertFiltered.slice((_alertPg-1)*PER, _alertPg*PER);
+  const dc = d => d>=365?'#7c3aed':d>=180?'#dc2626':'#d97706';
+  const dl = d => d>=365?'⛔':d>=180?'🔴':'🟡';
+  const gb = g => `<span class="pill ${g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green'}">${g}</span>`;
+  el.innerHTML = slice.map(b=>`
+    <tr class="clickable" onclick="openHistoricoModal(${b.code})">
+      <td class="mono">${b.code}</td>
+      <td style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
+      <td style="font-size:11px;">${b.city} ${b.state}</td>
+      <td>${gb(b.group)}</td>
+      <td class="right" style="color:${dc(b.dormant)};font-weight:600;">${dl(b.dormant)} ${b.dormant}d</td>
+      <td class="right">R$${b.total.toLocaleString('pt-BR',{maximumFractionDigits:0})}</td>
+      <td class="right">R$${b.avg.toFixed(2)}</td>
+    </tr>`).join('');
+  renderPagination('alert-pg', _alertFiltered.length, _alertPg, PER, p=>{ _alertPg=p; renderAlertTable(); });
+}
+
+// ── Tendências Visão Comparativa ──────────────────────────
+let _tendInit=false, _fluxoInit=false, _histInit=false;
+
+// showPage lazy init → v3 showPage에 통합됨
+
+const T_YEARS  = ['2023','2024','2025'];
+const T_GROUPS = ['G1A','G1B','G1C','G2A','G2B','G2C','G3A','G3B','G3C'];
+const T_GRANK  = Object.fromEntries(T_GROUPS.map((g,i)=>[g,i]));
+const T_YCOL   = {'2023':'rgba(136,135,128,0.6)','2024':'rgba(30,58,95,0.5)','2025':'rgba(30,58,95,1)'};
+
+function buildTendencias() {
+  // summary가 없을 경우 기본값으로 대체
+  const safeSummary = (yr) => {
+    const s = TREND_DATA.years[yr]?.summary || {};
+    return {
+      year: yr,
+      total_buyers: s.total_buyers || 0,
+      total_sales:  s.total_sales  || 0,
+      avg_price:    s.avg_price    || 0,
+      avg_freq:     s.avg_freq     || 0,
+      group_counts: s.group_counts || {},
+    };
+  };
+  const summaries = T_YEARS.map(safeSummary);
+  const kpiEl = document.getElementById('kpi-compare-tend');
+  if (kpiEl) {
+    kpiEl.innerHTML = [
+      {key:'total_buyers', label:'Compradores', fmt:v=>String(v)},
+      {key:'total_sales',  label:'Faturamento', fmt:v=>'R$'+(v/1e6).toFixed(2)+'M'},
+      {key:'avg_price',    label:'Preço Médio', fmt:v=>'R$'+Number(v).toFixed(2)},
+      {key:'avg_freq',     label:'Freq. Média', fmt:v=>Number(v).toFixed(1)+'×'},
+    ].map(f => {
+      const rows = summaries.map(s => {
+        const isReal = s.year==='2025';
+        return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:10px;color:${isReal?'var(--text)':'var(--muted)'};font-family:'IBM Plex Mono',monospace;">${s.year}</span>
+          <span style="font-size:11px;font-weight:${isReal?600:400};color:${isReal?'var(--text)':'var(--muted)'};font-family:'IBM Plex Mono',monospace;">${f.fmt(s[f.key])}</span>
+        </div>`;
+      }).join('');
+      const delta = summaries[2][f.key] - summaries[0][f.key];
+      const base  = summaries[0][f.key];
+      const pct   = base !== 0 ? (delta/base*100).toFixed(1) : '—';
+      const sign  = delta>=0?'+':'';
+      return `<div class="kpi"><div class="kpi-label">${f.label}</div>${rows}
+        <div style="font-size:10px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-weight:500;color:${delta>=0?'#2d6a4f':'#dc2626'};">${pct!=='—'?sign+pct+'% vs 2023':'— vs 2023'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // 차트 1: 매출
+  const ctx1 = document.getElementById('chartFatTend');
+  if (ctx1) new Chart(ctx1,{type:'bar',data:{labels:T_YEARS,datasets:[{label:'Faturamento',data:summaries.map(s=>s.total_sales),backgroundColor:T_YEARS.map(y=>T_YCOL[y]),borderWidth:0,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc',callbacks:{label:c=>'R$'+(c.raw/1e6).toFixed(3)+'M'}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#e2e0d8'},ticks:{callback:v=>'R$'+(v/1e6).toFixed(1)+'M'}}}}});
+
+  // 차트 2: 단가 + 빈도
+  const ctx2 = document.getElementById('chartPrecoTend');
+  if (ctx2) {
+    const freqs = summaries.map(s=>s.avg_freq);
+    const minF  = Math.max(0, Math.min(...freqs)-1);
+    new Chart(ctx2,{data:{labels:T_YEARS,datasets:[
+      {type:'bar',label:'Preço Médio',data:summaries.map(s=>s.avg_price),backgroundColor:T_YEARS.map(y=>T_YCOL[y]),borderWidth:0,borderRadius:4,yAxisID:'y1'},
+      {type:'line',label:'Freq. Média',data:freqs,borderColor:'#d97706',backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:'#d97706',tension:0.3,yAxisID:'y2'},
+    ]},options:{responsive:true,plugins:{legend:{labels:{boxWidth:10,font:{size:11}}},tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc'}},scales:{x:{grid:{display:false}},y1:{position:'left',grid:{color:'#e2e0d8'},ticks:{callback:v=>'R$'+v}},y2:{position:'right',grid:{display:false},min:minF,max:Math.max(...freqs)+1,ticks:{color:'#d97706',callback:v=>v+'×'}}}}});
+  }
+
+  // 차트 3: 그룹 분포 (G1/G2/G3 묶음)
+  const ctx3 = document.getElementById('chartGruposTend');
+  if (ctx3) {
+    const g1=['G1A','G1B','G1C'],g2=['G2A','G2B','G2C'],g3=['G3A','G3B','G3C'];
+    const sg = (yr,gs) => gs.reduce((s,g)=>s+((TREND_DATA.years[yr].summary?.group_counts?.[g])||0),0);
+    new Chart(ctx3,{type:'bar',data:{labels:T_YEARS,datasets:[
+      {label:'G1 (VIP)',    backgroundColor:'#1e3a5f',data:T_YEARS.map(y=>sg(y,g1)),borderWidth:0},
+      {label:'G2 (Médio)',  backgroundColor:'#92400e',data:T_YEARS.map(y=>sg(y,g2)),borderWidth:0},
+      {label:'G3 (Desenv.)',backgroundColor:'#2d6a4f',data:T_YEARS.map(y=>sg(y,g3)),borderWidth:0},
+    ]},options:{responsive:true,indexAxis:'y',plugins:{legend:{labels:{boxWidth:10,font:{size:10}}}},scales:{x:{stacked:true,grid:{color:'#e2e0d8'}},y:{stacked:true,grid:{display:false}}}}});
+
+    // 연도별 수치 테이블
+    const wrap = ctx3.parentElement;
+    if (!wrap.querySelector('.grupos-table')) {
+      const div = document.createElement('div');
+      div.className = 'grupos-table';
+      div.style.marginTop = '12px';
+      div.style.overflowX = 'auto';
+      div.innerHTML = `<table class="data-table" style="font-size:11px;"><thead><tr>
+        <th>Grupo</th><th class="right">2023</th><th class="right">2024</th><th class="right">2025</th><th class="right">Tendência</th>
+      </tr></thead><tbody>
+        ${T_GROUPS.map(g=>{
+          const v23=TREND_DATA.years['2023'].summary?.group_counts?.[g]||0;
+          const v24=TREND_DATA.years['2024'].summary?.group_counts?.[g]||0;
+          const v25=TREND_DATA.years['2025'].summary?.group_counts?.[g]||0;
+          const delta=v25-v23;
+          const cls=g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green';
+          const tr=delta>0?`<span style="color:#2d6a4f;font-weight:600;">&#8593;+${delta}</span>`:delta<0?`<span style="color:#dc2626;font-weight:600;">&#8595;${delta}</span>`:'<span style="color:var(--muted);">&#8594;</span>';
+          return `<tr><td><span class="pill ${cls}">${g}</span></td><td class="right">${v23}</td><td class="right">${v24}</td><td class="right">${v25}</td><td class="right">${tr}</td></tr>`;
+        }).join('')}
+      </tbody></table>`;
+      wrap.appendChild(div);
+    }
+  }
+}
+
+// ── Fluxo de Grupos ───────────────────────────────────────
+let _fluxoKey='2023_2024', _fluxoMoves=[], _fluxoFiltered=[], _fluxoPg=1;
+const FLUXO_PER=15;
+
+function buildFluxo(key) {
+  _fluxoKey = key;
+  const flowData = TREND_DATA.flows[key];
+  _fluxoMoves = (flowData && !Array.isArray(flowData) && flowData.movements) ? flowData.movements : [];
+  _fluxoFiltered = [..._fluxoMoves];
+  _fluxoPg = 1;
+
+  const cnt = s => _fluxoMoves.filter(m=>m.status===s).length;
+  ['up','stay','down','new','lost'].forEach(s=>{
+    const el=document.getElementById('fluxo-cnt-'+s);
+    if(el) el.textContent={up:'↑',stay:'→',down:'↓',new:'★',lost:'✗'}[s]+' '+cnt(s);
+  });
+
+  const sumEl = document.getElementById('fluxo-summary');
+  if (sumEl) {
+    sumEl.innerHTML=[
+      {l:'Subiram',v:cnt('up'),i:'↑'},
+      {l:'Mantiveram',v:cnt('stay'),i:'→'},
+      {l:'Caíram',v:cnt('down'),i:'↓'},
+      {l:'Novos/Perdidos',v:cnt('new')+'/'+cnt('lost'),i:'★'},
+    ].map(c=>`<div class="kpi"><div class="kpi-label">${c.l}</div><div class="kpi-value" style="font-size:24px;">${c.i} ${c.v}</div></div>`).join('');
+  }
+
+  _buildFluxoMatrix((flowData && !Array.isArray(flowData)) ? (flowData.matrix||{}) : {});
+
+  const srch=document.getElementById('fluxo-search');
+  const fst =document.getElementById('fluxo-filter-status');
+  const fgr =document.getElementById('fluxo-filter-group');
+  if(srch) srch.value='';
+  if(fst)  fst.value='';
+  if(fgr)  fgr.value='';
+  renderFluxoTable();
+}
+
+function showFluxo(key, btn) {
+  document.querySelectorAll('.fluxo-tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  buildFluxo(key);
+}
+
+function _buildFluxoMatrix(matrix) {
+  const COLS=[...T_GROUPS,'LOST'], ROWS=['NEW',...T_GROUPS];
+  let h=`<div style="overflow-x:auto;"><table style="border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:10px;width:100%;">`;
+  h+=`<tr><th style="padding:6px 8px;text-align:left;color:var(--muted);font-size:9px;">DE ↓ / PARA →</th>`;
+  COLS.forEach(g=>{
+    const c=g==='LOST'?'#991b1b':g.startsWith('G1')?'#1e3a5f':g.startsWith('G2')?'#92400e':'#2d6a4f';
+    h+=`<th style="padding:6px 4px;text-align:center;color:${c};font-size:9px;">${g}</th>`;
+  });
+  h+=`</tr>`;
+  ROWS.forEach(gF=>{
+    const row=matrix[gF]||{};
+    const tot=Object.values(row).reduce((a,b)=>a+b,0);
+    if(tot===0&&gF!=='NEW') return;
+    const fc=gF==='NEW'?'#1e3a5f':gF.startsWith('G1')?'#1e3a5f':gF.startsWith('G2')?'#92400e':'#2d6a4f';
+    h+=`<tr style="border-top:1px solid var(--border);"><td style="padding:7px 8px;font-weight:600;color:${fc};white-space:nowrap;">${gF}</td>`;
+    COLS.forEach(gT=>{
+      const cnt=row[gT]||0;
+      let bg='',fw='400',color='var(--border)';
+      if(cnt>0){
+        if(gF===gT){bg='rgba(26,25,23,0.06)';fw='600';color='var(--text)';}
+        else if(gT==='LOST'){bg='rgba(153,27,27,0.08)';fw='600';color='#991b1b';}
+        else if(T_GRANK[gT]<T_GRANK[gF]){bg='rgba(45,106,79,0.12)';fw='600';color='#2d6a4f';}
+        else{bg='rgba(153,27,27,0.07)';fw='500';color='#991b1b';}
+      }
+      const s=`padding:7px 4px;text-align:center;font-weight:${fw};color:${color};${bg?'background:'+bg+';':''}border-radius:3px;`;
+      const oc=cnt>0?`onclick="filterFluxoByCell('${gF}','${gT}')" style="cursor:pointer;${s}"`:`style="${s}"`;
+      h+=`<td ${oc}>${cnt||'·'}</td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</table></div>`;
+  const wrap=document.getElementById('fluxo-matrix-wrap');
+  if(wrap) wrap.innerHTML=h;
+}
+
+function filterFluxoByCell(from, to) {
+  _fluxoFiltered=_fluxoMoves.filter(m=>m.from===from&&m.to===to);
+  _fluxoPg=1; renderFluxoTable();
+  const t=document.getElementById('fluxo-list-title');
+  if(t) t.textContent=`Movimentações: ${from} → ${to} (${_fluxoFiltered.length})`;
+}
+function filterFluxo() {
+  const q =(document.getElementById('fluxo-search')||{}).value?.toLowerCase()||'';
+  const st=(document.getElementById('fluxo-filter-status')||{}).value||'';
+  const gr=(document.getElementById('fluxo-filter-group')||{}).value||'';
+  _fluxoFiltered=_fluxoMoves.filter(m=>{
+    if(q&&!String(m.code).includes(q)&&!m.name.toLowerCase().includes(q)) return false;
+    if(st&&m.status!==st) return false;
+    if(gr&&m.from!==gr&&m.to!==gr) return false;
+    return true;
+  });
+  _fluxoPg=1; renderFluxoTable();
+}
+function renderFluxoTable() {
+  const el=document.getElementById('fluxo-tbody'); if(!el) return;
+  const slice=_fluxoFiltered.slice((_fluxoPg-1)*FLUXO_PER,_fluxoPg*FLUXO_PER);
+  const sl={up:'<span style="color:#2d6a4f;font-weight:600;">↑ Subiu</span>',down:'<span style="color:#dc2626;font-weight:600;">↓ Caiu</span>',stay:'<span style="color:var(--muted);">→ Manteve</span>',new:'<span style="color:#1e3a5f;font-weight:600;">★ Novo</span>',lost:'<span style="color:#dc2626;opacity:0.6;">✗ Perdido</span>'};
+  const gb=g=>{if(!g||g==='NEW'||g==='LOST')return`<span style="color:var(--muted);">${g||'—'}</span>`;const c=g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green';return`<span class="pill ${c}">${g}</span>`;};
+  el.innerHTML=slice.map(m=>{
+    const d=m.total_to-m.total_from;
+    const sc=d>0?'#2d6a4f':d<0?'#dc2626':'var(--muted)';
+    return`<tr class="clickable" onclick="openHistoricoModal(${m.code})">
+      <td class="mono">${m.code}</td>
+      <td style="font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</td>
+      <td>${gb(m.from)}</td><td>${gb(m.to)}</td>
+      <td>${sl[m.status]||''}</td>
+      <td class="right">${m.total_from>0?'R$'+m.total_from.toLocaleString('pt-BR',{maximumFractionDigits:0}):'—'}</td>
+      <td class="right">${m.total_to>0?'R$'+m.total_to.toLocaleString('pt-BR',{maximumFractionDigits:0}):'—'}</td>
+      <td class="right" style="color:${sc};font-weight:500;">${d!==0?(d>0?'+':'')+'R$'+Math.abs(d).toLocaleString('pt-BR',{maximumFractionDigits:0}):'—'}</td>
+    </tr>`;
+  }).join('');
+  renderPagination('fluxo-pg',_fluxoFiltered.length,_fluxoPg,FLUXO_PER,p=>{_fluxoPg=p;renderFluxoTable();});
+}
+
+// ── Histórico Individual ──────────────────────────────────
+let _histYr='2025', _histFiltered=[], _histPg=1;
+const HIST_PER=15;
+
+function buildHistorico() { filterHistorico(); }
+function switchHistYear(yr, btn) {
+  _histYr=yr;
+  if(btn){btn.parentElement.querySelectorAll('button').forEach(t=>t.classList.remove('active'));btn.classList.add('active');}
+  filterHistorico();
+}
+
+function _getHistList() {
+  const yr=_histYr, isNew=yr.startsWith('new_'), dataYr=isNew?yr.replace('new_',''):yr;
+  let src;
+  if(isNew) src=Object.values(TREND_DATA.new_buyers[dataYr]||{});
+  else src=Object.values(TREND_DATA.years[dataYr]?.buyers||{});
+  const b24=TREND_DATA.years['2024']?.buyers||{};
+  const b23=TREND_DATA.years['2023']?.buyers||{};
+  return src.map(b=>{
+    const h24=b24[String(b.code)], h23=b23[String(b.code)];
+    let trend='new';
+    if(!isNew&&h24){const r=T_GRANK[b.group]??99,r4=T_GRANK[h24.group]??99;trend=r<r4?'up':r>r4?'down':'stay';}
+    return {...b,h2024:h24||null,h2023:h23||null,trend};
+  }).sort((a,b)=>b.total-a.total);
+}
+
+function filterHistorico() {
+  const q =(document.getElementById('hist-search')||{}).value?.toLowerCase()||'';
+  const gr=(document.getElementById('hist-filter-group')||{}).value||'';
+  const tr=(document.getElementById('hist-filter-trend')||{}).value||'';
+  const all=_getHistList();
+  _histFiltered=all.filter(b=>{
+    if(q&&!String(b.code).includes(q)&&!b.name.toLowerCase().includes(q)) return false;
+    if(gr&&b.group!==gr) return false;
+    if(tr&&b.trend!==tr) return false;
+    return true;
+  });
+  _histPg=1; renderHistorico();
+}
+
+function renderHistorico() {
+  const el=document.getElementById('hist-tbody'); if(!el) return;
+  const slice=_histFiltered.slice((_histPg-1)*HIST_PER,_histPg*HIST_PER);
+  const gb=(g,dim)=>{if(!g)return'<span style="color:var(--border);">—</span>';const c=g.startsWith('G1')?'blue':g.startsWith('G2')?'amber':'green';return`<span class="pill ${c}" style="${dim?'opacity:0.4':''}"> ${g}</span>`;};
+  const tl={up:'<span style="color:#2d6a4f;font-weight:600;">↑ Subiu</span>',down:'<span style="color:#dc2626;font-weight:600;">↓ Caiu</span>',stay:'<span style="color:var(--muted);">→ Estável</span>',new:'<span style="color:#1e3a5f;font-weight:600;">★ Novo</span>'};
+  el.innerHTML=slice.map(b=>`
+    <tr class="clickable" onclick="openHistoricoModal(${b.code})">
+      <td class="mono">${b.code}</td>
+      <td style="font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
+      <td style="font-size:11px;">${b.city||''} ${b.state||''}</td>
+      <td>${b.h2023?gb(b.h2023.group,true):'<span style="color:var(--border);">—</span>'}</td>
+      <td>${b.h2024?gb(b.h2024.group,true):'<span style="color:var(--border);">—</span>'}</td>
+      <td>${gb(b.group)}</td>
+      <td>${tl[b.trend]||''}</td>
+      <td class="right">R$${b.total.toLocaleString('pt-BR',{maximumFractionDigits:0})}</td>
+      <td class="right">R$${b.avg.toFixed(2)}</td>
+    </tr>`).join('');
+  renderPagination('hist-pg',_histFiltered.length,_histPg,HIST_PER,p=>{_histPg=p;renderHistorico();});
+}
+
+// ── Histórico Modal ───────────────────────────────────────
+function openHistoricoModal(code) {
+  const yrs={};
+  T_YEARS.forEach(y=>{const b=TREND_DATA.years[y].buyers[String(code)];if(b)yrs[y]=b;});
+  if(!Object.keys(yrs).length) return;
+  const latest=yrs['2025']||yrs['2024']||yrs['2023'];
+  document.getElementById('modal-group-title').textContent=latest.name;
+  const gb=g=>{if(!g)return'—';const bg=g.startsWith('G1')?'background:#e8f0fb;color:#1e3a5f':g.startsWith('G2')?'background:#fef3c7;color:#92400e':'background:#e8f5ee;color:#2d6a4f';return`<span style="padding:2px 8px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;${bg}">${g}</span>`;};
+
+  let tl=`<div style="display:flex;position:relative;margin-bottom:20px;">
+    <div style="position:absolute;top:14px;left:10%;right:10%;height:2px;background:var(--border);"></div>`;
+  T_YEARS.forEach(yr=>{
+    const d=yrs[yr];
+    const dot=d?'border-color:var(--text);background:var(--text)':'border-color:var(--border);background:var(--surface)';
+    tl+=`<div style="flex:1;text-align:center;position:relative;z-index:1;">
+      <div style="width:12px;height:12px;border-radius:50%;margin:0 auto 6px;border:2px solid;${dot}"></div>
+      <div style="font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">${yr}</div>
+      <div style="margin-top:3px;">${d?gb(d.group):'—'}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">${d?'R$'+d.total.toLocaleString('pt-BR',{maximumFractionDigits:0}):'—'}</div>
+    </div>`;
+  });
+  tl+='</div>';
+
+  let dt=`<table class="data-table" style="margin-bottom:16px;"><thead><tr>
+    <th>Ano</th><th>Grupo</th><th class="right">Pedidos</th><th class="right">Peças</th>
+    <th class="right">Preço Médio</th><th class="right">Faturamento</th><th class="right">Inativo</th>
+  </tr></thead><tbody>`;
+  T_YEARS.forEach(yr=>{
+    const d=yrs[yr];
+    dt+=`<tr style="${yr!=='2025'?'opacity:0.65':''}">
+      <td class="mono" style="font-weight:${yr==='2025'?600:400}">${yr}</td>
+      <td>${d?gb(d.group):'—'}</td>
+      <td class="right">${d?d.freq+'×':'—'}</td>
+      <td class="right">${d?Number(d.pieces).toLocaleString('pt-BR')+' pç':'—'}</td>
+      <td class="right">${d?'R$'+d.avg.toFixed(2):'—'}</td>
+      <td class="right">${d?'R$'+d.total.toLocaleString('pt-BR',{maximumFractionDigits:0}):'—'}</td>
+      <td class="right" style="${d&&d.dormant>=90?'color:#dc2626;font-weight:600':''}">${d?(d.dormant>0?d.dormant+'d':'Ativo'):'—'}</td>
+    </tr>`;
+  });
+  dt+='</tbody></table>';
+
+  const cid='hist-chart-'+code;
+  document.getElementById('modal-group-body').innerHTML=tl+dt+`<canvas id="${cid}" height="80"></canvas>`;
+  openModal('modal-group');
+  setTimeout(()=>{
+    const ctx=document.getElementById(cid); if(!ctx) return;
+    new Chart(ctx,{type:'bar',data:{labels:T_YEARS,datasets:[{label:'Faturamento',data:T_YEARS.map(y=>yrs[y]?yrs[y].total:null),backgroundColor:T_YEARS.map(y=>T_YCOL[y]),borderWidth:0,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc',callbacks:{label:c=>c.raw?'R$'+c.raw.toLocaleString('pt-BR',{maximumFractionDigits:0}):'—'}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#e2e0d8'},ticks:{callback:v=>'R$'+(v/1000).toFixed(0)+'K'}}}}});
+  },50);
+}
+
+
+
+// ── NAV ──────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='alertas'    && !window._alertInit){ initAlerts(); window._alertInit=true; }
+  if(id==='tendencias' && !_tendInit){ buildTendencias(); _tendInit=true; }
+  if(id==='fluxo'      && !_fluxoInit){ buildFluxo('2023_2024'); _fluxoInit=true; }
+  if(id==='historico'  && !_histInit){ buildHistorico(); _histInit=true; }
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ── DATA ─────────────────────────────────────────────────────
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const monthlyReg = [53.88,56.99,60.96,66.52,70.53,71.85,68.33,66.35,61.87,56.70,61.16,60.20];
+const monthlyEst = [63.1,37.5,25.0,22.2,30.3,36.7,57.5,28.8,22.2,32.9,28.6,39.3];
+const monthlyVal = [169906,270558,414391,724798,689077,359852,335631,472520,729410,642315,1099328,1156463];
+
+
+function priceRange(avg) {
+  if(avg>=100) return {label:'R$100+',cls:'red'};
+  if(avg>=70)  return {label:'R$70~99',cls:'amber'};
+  if(avg>=55)  return {label:'R$55~69',cls:'blue'};
+  if(avg>=45)  return {label:'R$45~54',cls:'green'};
+  return {label:'R$39~44',cls:'dark'};
+}
+
+function showHitTab(type, btn) {
+  document.querySelectorAll('.hit-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  let data = type==='superhit' ? SUPERHITS : type==='hit' ? HITS : type==='regular' ? REGULARS : [...SUPERHITS,...HITS,...REGULARS];
+  renderHitInsights(data, type);
+  renderHitTable(data, type);
+}
+
+function renderHitInsights(data, type) {
+  const el = document.getElementById('hit-insights');
+  if (!data || data.length === 0) {
+    if (el) el.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:12px;padding:20px;">Nenhum produto encontrado nesta categoria.</div>`;
+    return;
+  }
+  const n = data.length;
+  const avgDays = (data.reduce((s,r)=>s+(r.days||0),0)/n).toFixed(1);
+  const avgPcs  = (data.reduce((s,r)=>s+(r.pcs||0),0)/n).toFixed(0);
+  const avgPrice= (data.reduce((s,r)=>s+(r.avg||0),0)/n).toFixed(2);
+  const plusPct = Math.round(data.filter(r=>r.plus).length/n*100);
+  const repoPct = Math.round(data.filter(r=>r.reorder>0).length/n*100);
+  const ppdVals = data.map(r=>r.ppd||0).filter(v=>isFinite(v));
+  const fastestPPD = ppdVals.length ? Math.max(...ppdVals).toFixed(1) : '—';
+  if (!el) return;
+  el.innerHTML = `
+    <div class="insight-card"><div class="insight-label">Prazo médio</div><div class="insight-val">${avgDays}d</div><div class="insight-sub">dias até esgotar</div></div>
+    <div class="insight-card"><div class="insight-label">Peças médias</div><div class="insight-val">${parseInt(avgPcs).toLocaleString('pt-BR')}</div><div class="insight-sub">por modelo</div></div>
+    <div class="insight-card"><div class="insight-label">Preço médio</div><div class="insight-val">R$${avgPrice}</div><div class="insight-sub">acima de R$39 (tabela)</div></div>
+    <div class="insight-card"><div class="insight-label">Plus Size</div><div class="insight-val">${plusPct}%</div><div class="insight-sub">${data.filter(r=>r.plus).length} modelos</div></div>
+    <div class="insight-card"><div class="insight-label">Reposição</div><div class="insight-val">${repoPct}%</div><div class="insight-sub">${data.filter(r=>r.reorder>0).length} modelos repostos</div></div>
+    <div class="insight-card"><div class="insight-label">Vel. máxima</div><div class="insight-val">${fastestPPD}</div><div class="insight-sub">peças/dia (recorde)</div></div>
+  `;
+}
+
+function renderHitTable(data, type) {
+  const sorted = [...data].sort((a,b)=>b.pcs-a.pcs);
+  document.getElementById('hit-tbody').innerHTML = sorted.map(r=>{
+    const pr = priceRange(r.avg);
+    const grade = SUPERHITS.find(s=>s.ref===r.ref) ? `<span class="pill superhit">⭐ Super Hit</span>` : `<span class="pill hit">✦ Hit</span>`;
+    const repoLabel = r.reorder>0 ? `<span class="pill dark" style="margin-left:4px;">${r.reorder}ª rep.</span>` : '';
+    const plusLabel = r.plus ? `<span class="pill blue" style="margin-left:4px;">Plus</span>` : '';
+    return `<tr>
+      <td class="mono">${r.ref}</td>
+      <td>${r.cat}</td>
+      <td style="font-size:11px;">${r.desc}${plusLabel}${repoLabel}</td>
+      <td>${grade}</td>
+      <td class="right">${r.days}d</td>
+      <td class="right">${r.pcs.toLocaleString('pt-BR')}</td>
+      <td class="right">${r.ppd.toFixed(1)}/d</td>
+      <td class="right">R$${r.avg.toFixed(2)}</td>
+      <td class="right">R$${r.val.toLocaleString('pt-BR')}</td>
+      <td><span class="pill ${pr.cls}">${pr.label}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── CHARTS ────────────────────────────────────────────────────
+const C = {green:'#2d6a4f',amber:'#d97706',red:'#dc2626',blue:'#1e3a5f',border:'#e2e0d8',muted:'#7a7870'};
+Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
+Chart.defaults.color=C.muted;
+
+window._chartMensal=window._chartMensal=new Chart(document.getElementById('chartMensal'),{
+  data:{
+    labels:MESES,
+    datasets:[
+      {type:'bar',label:'Faturamento (R$)',data:[169906,270558,414391,724798,689077,359852,335631,472520,729410,642315,1099328,1156463],
+        backgroundColor:MESES.map((_,i)=>i<6?'rgba(30,58,95,0.12)':'rgba(30,58,95,0.22)'),
+        borderColor:MESES.map((_,i)=>i<6?'rgba(30,58,95,0.4)':'rgba(30,58,95,0.7)'),
+        borderWidth:1,yAxisID:'y1',order:3},
+      {type:'line',label:'Preço médio regular (R$)',data:monthlyReg,
+        borderColor:C.green,backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:C.green,tension:0.3,yAxisID:'y2',order:1},
+      {type:'line',label:'% Estoque antigo',data:monthlyEst,
+        borderColor:C.red,backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:C.red,borderDash:[4,3],tension:0.3,yAxisID:'y3',order:2}
+    ]
+  },
+  options:{
+    responsive:true,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{boxWidth:10,font:{size:11},padding:16}},tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc',borderColor:'#333',borderWidth:1}},
+    scales:{
+      x:{grid:{color:C.border},ticks:{font:{size:10}}},
+      y1:{position:'left',grid:{color:C.border},ticks:{font:{size:10},callback:v=>'R$'+(v/1000).toFixed(0)+'K'}},
+      y2:{position:'right',grid:{display:false},ticks:{font:{size:10},color:C.green,callback:v=>'R$'+v}},
+      y3:{position:'right',grid:{display:false},ticks:{font:{size:10},color:C.red,callback:v=>v+'%'},min:0,max:100}
+    }
+  }
+});
+
+new Chart(document.getElementById('chartDorm'),{
+  type:'bar',
+  data:{
+    labels:MESES,
+    datasets:[
+      {label:'Ativos (<60d)',data:[396,400,398,402,399,395,390,393,396,394,397,396],backgroundColor:'rgba(45,106,79,0.2)',borderColor:C.green,borderWidth:1},
+      {label:'Atenção (60~89d)',data:[52,55,58,60,57,54,58,56,60,58,57,58],backgroundColor:'rgba(217,119,6,0.2)',borderColor:C.amber,borderWidth:1},
+      {label:'Inativos (90+d)',data:[185,190,195,200,205,210,205,200,195,198,200,199],backgroundColor:'rgba(220,38,38,0.2)',borderColor:C.red,borderWidth:1},
+    ]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{labels:{boxWidth:10,font:{size:11}}},tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc'}},
+    scales:{
+      x:{grid:{color:C.border},ticks:{font:{size:10}}},
+      y:{grid:{color:C.border},ticks:{font:{size:10}}}
+    }
+  }
+});
+
+new Chart(document.getElementById('chartEstoque'),{
+  data:{
+    labels:MESES,
+    datasets:[
+      {type:'bar',label:'% Estoque antigo',data:monthlyEst,
+        backgroundColor:monthlyEst.map(v=>v>40?'rgba(220,38,38,0.4)':v>30?'rgba(217,119,6,0.3)':'rgba(45,106,79,0.25)'),
+        borderColor:monthlyEst.map(v=>v>40?C.red:v>30?C.amber:C.green),
+        borderWidth:1,yAxisID:'y1',order:2},
+      {type:'line',label:'Preço médio regular (R$)',data:monthlyReg,
+        borderColor:C.blue,backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.3,yAxisID:'y2',order:1},
+      {type:'line',label:'Meta 2026 (−5pp)',data:monthlyEst.map(v=>+(v-5).toFixed(1)),
+        borderColor:'rgba(220,38,38,0.4)',backgroundColor:'transparent',borderWidth:1,borderDash:[5,4],pointRadius:0,yAxisID:'y1',order:3}
+    ]
+  },
+  options:{
+    responsive:true,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{boxWidth:10,font:{size:11}}},tooltip:{backgroundColor:'#1a1917',bodyColor:'#ccc'}},
+    scales:{
+      x:{grid:{color:C.border},ticks:{font:{size:10}}},
+      y1:{position:'left',min:0,max:80,grid:{color:C.border},ticks:{font:{size:10},callback:v=>v+'%'}},
+      y2:{position:'right',grid:{display:false},ticks:{font:{size:10},color:C.blue,callback:v=>'R$'+v}}
+    }
+  }
+});
+
+// CATEGORIA BARS
+const cats=[
+  {name:'Blusa (BL)',val:1573122,pct:22.3},
+  {name:'Regata',val:924093,pct:13.1},
+  {name:'Vestido',val:623587,pct:8.8},
+  {name:'Blusa Plus',val:549026,pct:7.8},
+  {name:'Conjunto',val:527966,pct:7.5},
+  {name:'Alça',val:386010,pct:5.5},
+  {name:'Calça',val:372941,pct:5.3},
+  {name:'Blusa (BLUSA)',val:372200,pct:5.3},
+];
+const catEl=document.getElementById('cat-bars');
+cats.forEach(c=>{
+  catEl.innerHTML+=`
+    <div class="progress-row">
+      <div class="progress-label">
+        <span class="progress-name">${c.name}</span>
+        <span class="progress-val">R$${(c.val/1000).toFixed(0)}K · <strong>${c.pct}%</strong></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill blue" style="width:${c.pct/22.3*100}%"></div></div>
+    </div>`;
+});
+
+// 초기화는 loader initDashboard()에서 실행
+
+
+function openGroupModal(grp) {
+  const g = BUYERS_DATA[grp];
+  if(!g) return;
+  const s = g.summary;
+  document.getElementById('modal-group-title').textContent = g.name;
+  const dormColor = d => d>=90?'#dc2626':d>=60?'#d97706':'#2d6a4f';
+  const body = `
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
+        <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Compradores</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;">${s.buyers}</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
+        <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Faturamento</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">R$${(s.sales/1000).toFixed(0)}K</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
+        <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Preço Médio</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">R$${Number(s.avg_price).toFixed(2)}</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
+        <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Freq. Média</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;">${Number(s.avg_freq).toFixed(1)}×</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;">
+        <div style="font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Potencial</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:#2d6a4f;">+R$${(g.potential/1000).toFixed(0)}K</div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:6px;padding:12px 14px;margin-bottom:16px;">
+      <div style="font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:4px;">ESTRATÉGIA</div>
+      <div style="font-size:12px;font-weight:500;">${g.strategy}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Meta: ${g.meta}</div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Código</th><th>Nome</th><th>Cidade</th>
+          <th class="right">Pedidos</th><th class="right">Peças</th>
+          <th class="right">Preço Médio</th><th class="right">Total</th>
+          <th class="right">Dias</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${g.members.map(m=>`
+          <tr>
+            <td class="mono">${m.code}</td>
+            <td style="font-size:11px;">${m.name}</td>
+            <td style="font-size:11px;">${m.city} ${m.state}</td>
+            <td class="right">${m.freq}×</td>
+            <td class="right">${Number(m.pieces).toLocaleString('pt-BR')}</td>
+            <td class="right">R$${Number(m.avg).toFixed(2)}</td>
+            <td class="right">R$${Number(m.total).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}</td>
+            <td class="right" style="color:${dormColor(m.dormant)};font-weight:${m.dormant>=90?'600':'400'};">${m.dormant}d</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    
+  `;
+  document.getElementById('modal-group-body').innerHTML = body;
+  openModal('modal-group');
+}
+
+// ── HIT DATA ─────────────────────────────────────────────────
+
+
+
+</script>
+</body>
+</html>
