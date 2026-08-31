@@ -289,12 +289,71 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 #gate[hidden]{display:none}
 .gbox{text-align:center;max-width:380px}.gbox b{display:block;font:800 14px var(--mono);letter-spacing:.14em;color:var(--indigo);margin-bottom:8px}.gbox p{color:var(--ink2);font-size:13px}.gbox .btn{background:var(--indigo);color:#fff;border-color:var(--indigo);padding:9px 16px;margin-top:6px}
 header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tapp .tb{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;font:700 11px var(--mono);letter-spacing:.06em;color:var(--ink2);cursor:pointer}
+.tapp .tb.pri{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.tapp .tb.ok{background:var(--green);color:#fff;border-color:var(--green)}
+.tapp .tb.red{color:var(--red);border-color:#E3B6B2}
+.tapp .tb:disabled{opacity:.45;cursor:default}
+.tapp /* pedidos */
+.pc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center}
+.tapp .pc .ph{width:52px;height:52px;border-radius:6px;background:#EAE4D8;overflow:hidden}
+.tapp .pc .ph img{width:100%;height:100%;object-fit:cover}
+.tapp .pc .nm{font:600 13px var(--sans)}
+.tapp .pc .sub{font:600 10px var(--mono);color:var(--ink2)}
+.tapp .pc .st{font:800 9px var(--mono);letter-spacing:.1em;padding:3px 7px;border-radius:4px;background:#E4E9F3;color:var(--indigo);white-space:nowrap}
+.tapp .pc .st.rec{background:#E7F1EB;color:var(--green)}
+.tapp .pc .warn{font:700 10px var(--mono);color:var(--red);margin-top:3px}
+.tapp /* modal */
+.tmod{position:fixed;inset:0;background:rgba(28,26,23,.55);display:none;z-index:50;overflow:auto;padding:0}
+.tmod.on{display:block}
+.tmod .box{background:var(--paper);max-width:760px;margin:0 auto;min-height:100%;padding:0 0 80px}
+.tmod .mh{position:sticky;top:0;background:var(--indigo);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;z-index:2}
+.tmod .mh h2{font:800 12px var(--mono);letter-spacing:.12em;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmod .mh button{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:5px 9px;font:700 10px var(--mono);cursor:pointer}
+.tmod .mb{padding:12px 14px}
+.tapp .sec{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.tapp .sec h3{font:800 10px var(--mono);letter-spacing:.14em;color:var(--indigo);margin:0 0 8px}
+.tapp .f{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tapp .f.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tapp .fi label{display:block;font:700 9px var(--mono);letter-spacing:.08em;color:var(--ink2);margin-bottom:2px}
+.tapp .fi input, .tapp .fi select, .tapp .fi textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 8px;background:#fff}
+.tapp .fi textarea{min-height:56px;resize:vertical}
+.tapp .fi input.miss{border-color:#E3B6B2;background:#FBF1F0}
+.tapp .fi.w{grid-column:1/-1}
+.tapp .photo{display:flex;gap:10px;align-items:center}
+.tapp .photo .ph{width:120px;height:120px;border-radius:8px;background:#EAE4D8;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center;font:700 10px var(--mono);color:var(--ink2)}
+.tapp .photo .ph img{width:100%;height:100%;object-fit:cover}
+.tapp .photo .ops{display:flex;flex-direction:column;gap:6px}
+.tapp table.t{width:100%;border-collapse:collapse;font-size:12px}
+.tapp table.t th{font:700 9px var(--mono);letter-spacing:.06em;color:var(--ink2);text-align:left;padding:3px 4px;border-bottom:1px solid var(--line)}
+.tapp table.t td{padding:3px 4px;border-bottom:1px dashed var(--line)}
+.tapp table.t td input{width:100%;border:1px solid var(--line);border-radius:5px;padding:4px 6px;background:#fff}
+.tapp table.t td.n{text-align:right;font:600 11px var(--mono)}
+.tapp .pend{font:600 10.5px var(--mono);color:var(--red);margin-top:6px}
+.tapp .hist{font-size:12px}
+.tapp .hist div{display:flex;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.tapp .hist .d{font:600 10px var(--mono);color:var(--ink2);white-space:nowrap}
+.tapp .hist .v{font:700 11px var(--mono);min-width:60px;text-align:right}
+.tapp .hist .v.neg{color:var(--red)}
+.tapp .hist .v.pos{color:var(--green)}
+.tapp .foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:8px 12px;display:flex;gap:8px;justify-content:flex-end;z-index:60}
+.tapp .foot .tb{padding:10px 14px}
+.tapp .drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--ink2);font-size:12.5px;background:#fff}
+.tapp .drop.hover{border-color:var(--indigo);background:#F3F5F9}
+.tapp .sm{font:600 10px var(--mono);color:var(--ink2)}
+@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}
+.tapp .f.c3{grid-template-columns:1fr 1fr}
+.tapp .pks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}.tapp .pk{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px}.tapp .pk b{display:block;font:800 22px/1 var(--sans);color:var(--indigo)}.tapp .pk span{font:600 9.5px var(--mono);color:var(--ink2);letter-spacing:.06em}.tapp .pk.warn b{color:var(--red)}
+.tapp .bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.tmod{position:fixed;inset:0;background:rgba(28,26,23,.55);display:none;z-index:150;overflow:auto}.tmod.on{display:block}.tmod .box{background:var(--paper);max-width:760px;margin:0 auto;min-height:100%;padding:0 0 80px}
+@media(max-width:600px){.tapp .pks{grid-template-columns:repeat(2,1fr)}.tapp .f.c3{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem</span></div>
-  <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
+  <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -312,15 +371,16 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 <div id="mp"><div class="mpw"><button id="mpClose">✕ fechar</button><div id="mpBody"></div></div></div>
 <div id="drop">Solte DEBORA, ROBERTO ou ESTOQUE_TECIDOS (.xlsx)</div>
 <div id="toast"></div>
+<div class="tmod" id="tmod"><div class="box tapp"><div class="mh"><h2 id="tmTitle"></h2><button id="tmClose">FECHAR</button></div><div class="mb" id="tmBody"></div></div></div>
 <div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><button id="gIn" class="btn">ENTRAR COM GOOGLE</button><p id="gMsg" class="sm"></p></div></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 if(!(typeof META!=='undefined'&&META&&META.snapshot)){
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,signOut:()=>signOut(auth),
+  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,query,orderBy,limit,signOut:()=>signOut(auth),
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
   onAuthStateChanged(auth,u=>window.onFBAuth&&window.onFBAuth(u));
@@ -586,7 +646,7 @@ async function importFile(file){
     const zip=await JSZip.loadAsync(file); const book=await openBook(zip); const k=kind(book);
     if(k==='debora'){ const models=await parseDebora(book); toast('⏳ Enviando DEBORA p/ nuvem…',60000); await cloudSaveDeb(models,file.name); toast(`✅ DEBORA: ${models.length} modelos (${models.filter(m=>!m.concl).length} em andamento) · na nuvem`); }
     else if(k==='roberto'){ const {lots,custo,ofic}=await parseRoberto(book); const r={lots,custo,ofic,at:new Date().toISOString(),file:file.name}; await cloudSaveRob(r); toast(`✅ ROBERTO: ${lots.length} lotes · ${custo.length} consumos · na nuvem`); }
-    else if(k==='estoque'){ toast('ℹ️ O estoque agora vem do app TECIDOS (nuvem). Importe o ESTOQUE lá, em ⚙ DADOS.',8000); }
+    else if(k==='estoque'){ const items=await parseEstoque(book); toast('⏳ Enviando ESTOQUE p/ nuvem…',60000); const r=await cloudImportEstoque(items,file.name); toast(`✅ ESTOQUE: ${r.novos} novo(s) · ${r.atual} atualizado(s) · ${r.ig} mantido(s) (editados no app)`,7000); }
     else toast('❌ Arquivo não reconhecido: '+file.name,7000);
   }catch(e){ console.error(e); toast('❌ '+file.name+': '+e.message,9000); }
 }
@@ -602,10 +662,12 @@ async function cloudSaveDeb(models,fname){
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[];
+let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
-  FBUNSUB.push(onSnapshot(collection(db,'tecidos'),s=>{ TEC={items:tecFromCloud(s.docs.map(d=>d.data())),at:new Date().toISOString(),file:'app TECIDOS (nuvem)'}; render(); },e=>toast('Erro tecidos: '+e.code)));
+  FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
+  FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
+  FBUNSUB.push(onSnapshot(collection(db,'tecidos'),s=>{ TDOCS=s.docs.map(d=>d.data()); TEC={items:tecFromCloud(TDOCS),at:new Date().toISOString(),file:'app TECIDOS (nuvem)'}; render(); },e=>toast('Erro tecidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'elo_deb'),s=>{ const models=s.docs.map(d=>d.data()).sort((a,b)=>+a.aba.replace(/\D/g,'')-+b.aba.replace(/\D/g,'')); DEB={models,at:DEB.at,file:DEB.file}; render(); },e=>toast('Erro DEBORA: '+e.code)));
   FBUNSUB.push(onSnapshot(doc(db,'elo','deb_meta'),s=>{ if(s.exists()){ const m=s.data(); DEB.at=m.at; DEB.file=m.file; render(); } }));
   FBUNSUB.push(onSnapshot(doc(db,'elo','rob'),s=>{ if(s.exists()){ ROB=s.data(); render(); } }));
@@ -889,7 +951,8 @@ function renderTecidos(A){
   const kpi=(k,lbl,val,sub)=>`<button class="tk ${TF===k?'on':''}" onclick="TF='${k}';render()"><b>${lbl}</b><em>${val}</em><span>${sub}</span></button>`;
   const semFoto=T.filter(t=>!t.foto&&t.status==='estoque').map(t=>t.code);
   const alertFoto=semFoto.length?`<div class="empty" style="margin:6px 0 10px;border:1px dashed #c77;color:#a33;padding:8px 12px;border-radius:8px">⚠ caixa ① RECEBIDO sem foto (${semFoto.length}): ${semFoto.join(', ')} — inserir a foto do tecido em J:K na aba T</div>`:'';
-  return `${alertFoto}<div class="tkpis">
+  const tbar=`<div class="tapp" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="tb" onclick="exportXlsx()">⬇ TECIDOS.xlsx</button><button class="tb pri" onclick="openTecNew()">+ TECIDO</button></div>`;
+  return `${tbar}${alertFoto}<div class="tkpis">
     ${kpi('estoque','EM ESTOQUE',fmt(Math.round(mTot))+'<small>m</small>',est.length+' tecidos')}
     ${kpi('prod','EM PRODUÇÃO',fmt(Math.round(mProd))+'<small>m</small>',prod.length+' tecidos · '+nMod+' modelos')}
     ${kpi('esgotado','ESGOTADOS',esg.length,'histórico')}
@@ -921,7 +984,7 @@ function openTecido(code){
   const row=r=>`<div class="prow" onclick="openModel('${r.m.aba}')">${r.m.foto?`<img src="${r.m.foto}" alt="">`:'<i class="noth"></i>'}<span class="mc">${r.m.aba} · ${r.m.codigo||'—'}${isRep(r.m.codigo)?'<small>REP</small>':''}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}${r.m.qt?` <i>· ${fmt(r.m.qt)} pçs</i>`:''}</span><span class="st">${rail(r.elo)}${r.m.concl?'OK '+(dtBR(r.m.term)||''):(r.m.fase||'?').toUpperCase()+(r.m.prog!=null?' '+r.m.prog+'%':'')}</span>${badge(r)}</div>`;
   $('#mpBody').innerHTML=`
     <div class="mph"><div><span class="mc big">${t.code} · NF ${esc(t.nf||'—')}</span><h2>${esc(t.nome)}</h2><div class="sm">${esc(t.forn)}${t.comp?` · ${esc(t.comp)}`:''}</div></div>
-      <div class="elo"><span class="badge ${t.status!=='estoque'?'out':''}" style="position:static">${t.status!=='estoque'?'ESGOTADO':fmt(Math.round(t.estoque))+' m'}</span><b>${atv.length} modelo(s) em produção</b></div></div>
+      <div class="elo"><span class="badge ${t.status!=='estoque'?'out':''}" style="position:static">${t.status!=='estoque'?'ESGOTADO':fmt(Math.round(t.estoque))+' m'}</span><b>${atv.length} modelo(s) em produção</b><button class="btn" style="margin-top:6px" onclick="closeModel();openTecEdit('${t.code}')">✎ EDITAR</button></div></div>
     <div class="mpc"><section>${t.foto?`<img class="tfoto" src="${t.foto}" alt="">`:'<div class="noph tfoto">sem foto</div>'}<div class="kv">${kv.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join('')}</div>${cores}</section>
       <section><h4>EM PRODUÇÃO · ${atv.length}</h4>${atv.map(row).join('')||`<div class="empty">${!DEB.models.length?'arraste a DEBORA':(t.nf?'nenhum modelo da DEBORA com esta NF':'tecido sem NF')}</div>`}
       ${hist.length?`<h4>histórico · ${hist.length}</h4>${hist.map(row).join('')}`:''}</section></div>`;
@@ -941,9 +1004,10 @@ function render(){
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===VIEW));
   $('#snap').innerHTML=META&&META.snapshot?`📤 snapshot de <b>${esc(META.by)}</b> · ${esc(META.at)}`:'';
-  $('#ref').innerHTML=`${TEC.items.length?`TECIDOS ${esc(TEC.file||'embutido')} · ${TEC.items.length} &nbsp;·&nbsp; `:''}${DEB.models.length?`DEBORA ${esc(DEB.file||'embutida')} · ${DEB.models.filter(m=>!m.concl).length} em andamento`:'<b>DEBORA: arraste o .xlsx</b>'} &nbsp;·&nbsp; ${ROB.lots.length?`ROBERTO ${esc(ROB.file||'embutido')} · ${ROB.lots.filter(l=>!l.real).length} lotes abertos`:'<b>ROBERTO: arraste o .xlsx</b>'}`;
+  $('#ref').innerHTML=`${TEC.items.length?`TECIDOS ${esc(TEC.file||'embutido')} · ${TEC.items.length}${PED.filter(p=>p.status!=='RECEBIDO').length?` · ${PED.filter(p=>p.status!=='RECEBIDO').length} pedido(s) aberto(s)`:''} &nbsp;·&nbsp; `:''}${DEB.models.length?`DEBORA ${esc(DEB.file||'embutida')} · ${DEB.models.filter(m=>!m.concl).length} em andamento`:'<b>DEBORA: arraste o .xlsx</b>'} &nbsp;·&nbsp; ${ROB.lots.length?`ROBERTO ${esc(ROB.file||'embutido')} · ${ROB.lots.filter(l=>!l.real).length} lotes abertos`:'<b>ROBERTO: arraste o .xlsx</b>'}`;
   const main=$('#main');
   if(VIEW==='tecidos'){ main.innerHTML=renderTecidos(A); return; }
+  if(VIEW==='pedidos'){ main.innerHTML=renderPedidos(); bindPed(); return; }
   if(!DEB.models.length){ main.innerHTML='<div class="empty big">Arraste a DEBORA (.xlsx) e o ROBERTO (.xlsx) para esta janela.<br>Os dados ficam só neste navegador.</div>'; return; }
   main.innerHTML=VIEW==='debora'?renderDebora(A):VIEW==='roberto'?renderRoberto(A):VIEW==='tecidos'?renderTecidos(A):VIEW==='plano'?renderPlano(A):renderLista(A);
 }
@@ -1006,6 +1070,171 @@ function exportSnapshot(){
   document.addEventListener('touchstart',e=>{ const el=e.target.closest&&e.target.closest(SEL); if(!el) return; const p=e.touches[0]; clearTimeout(t); t=setTimeout(()=>{ cur=el; show(el,p.clientX,p.clientY); },450); },{passive:true});
   ['touchend','touchcancel','touchmove'].forEach(ev=>document.addEventListener(ev,()=>{ clearTimeout(t); if(cur) hide(); },{passive:true}));
 })();
+/* ---------- TECIDOS / PEDIDOS (edição na nuvem) ---------- */
+const tfmt=(n,d=0)=>n==null||isNaN(n)?"—":Number(n).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const tnum=v=>{if(v==null||v==='')return null;let s=String(v).trim();if(/,\d{1,2}$/.test(s))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=parseFloat(s);return isNaN(n)?null:n};
+const todayISO=()=>new Date().toISOString().slice(0,10);
+const brToISO=v=>{if(!v)return '';let s=String(v).trim();let m=/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/.exec(s);if(m){let y=m[3].length===2?'20'+m[3]:m[3];return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`}if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;return s};
+const DEF_FORN=['IMATEX','GRIFE TEXTIL','EUROTEX','DIAGONAL','BETA','LUNELLI','COMPANY TEXTIL','ROVITEX'];
+const DEF_FIB=['VISCOSE','POLIESTER','POLIAMIDA','ELASTANO','ALGODAO','LINHO','LYOCELL','MODAL','ACRILICO','SEDA','LÃ','RAMI'];
+const codeNum=c=>+(String(c||'').replace(/\D/g,'')||0);
+const nextT=()=>'T'+String(Math.max(0,...TDOCS.map(t=>codeNum(t.code)))+1).padStart(2,'0');
+const by=()=>FBUSER?(FBUSER.email||'').split('@')[0]:'?';
+function renderPedidos(){
+  const ab=PED.filter(p=>p.status!=='RECEBIDO'), rc=PED.filter(p=>p.status==='RECEBIDO');
+  const rows=(PFILT==='PEDIDO'?ab:rc).slice().sort((a,b)=>String(b.criado||'').localeCompare(a.criado||''));
+  const mAb=ab.reduce((s,p)=>s+totalM(p),0), nv=ab.filter(p=>pendencias(p).ped.length).length;
+  return `<div class="tapp"><div class="pks"><div class="pk"><b>${ab.length}</b><span>PEDIDOS ABERTOS</span></div><div class="pk"><b>${tfmt(mAb)}</b><span>UNID. A RECEBER</span></div><div class="pk ${nv?'warn':''}"><b>${nv}</b><span>⚠ A VERIFICAR</span></div><div class="pk"><b>${rc.length}</b><span>RECEBIDOS</span></div></div>
+  <div class="bar"><button class="tb ${PFILT==='PEDIDO'?'pri':''}" data-pf="PEDIDO">ABERTOS</button><button class="tb ${PFILT==='RECEBIDO'?'pri':''}" data-pf="RECEBIDO">RECEBIDOS</button><span style="flex:1"></span><button class="tb" id="bKey" title="chave da API Anthropic (compartilhada)">${CFG.apiKey?'🔑 API OK':'🔑 CHAVE API'}</button><button class="tb pri" id="bNewP">+ PEDIDO</button></div>
+  ${rows.length?rows.map(p=>{const pd=pendencias(p);const n=p.status==='RECEBIDO'?0:pd.ped.length;return `<div class="pc" data-id="${esc(p.id)}"><div class="ph">${p.cores.some(c=>c.thumb)?`<div style="display:grid;grid-template-columns:1fr 1fr;width:52px;height:52px;gap:1px">${p.cores.filter(c=>c.thumb).slice(0,4).map(c=>`<img src="${c.thumb}" style="width:100%;height:100%;object-fit:cover">`).join('')}</div>`:(p.foto?`<img src="${p.foto}">`:'')}</div><div><div class="nm">${esc(p.nome||'(sem nome)')}</div><div class="sub">${esc(p.fornecedor||'—')} · ${dtBR(p.data)} · ${tfmt(totalM(p))} ${esc(p.unid||'m')} · ${p.cores.filter(c=>c.cor).length} cor(es)${p.prazo?' · prazo '+dtBR(p.prazo):''}</div>${n?`<div class="warn">⚠ ${n} campo(s) por preencher</div>`:''}</div><span class="st ${p.status==='RECEBIDO'?'rec':''}">${p.status==='RECEBIDO'?(p.entrada.t||'RECEBIDO'):'PEDIDO'}</span></div>`}).join(''):'<div class="empty">nenhum pedido</div>'}</div>`;
+}
+/* ---------- modal helpers ---------- */
+function openMod(title,html,foot){ $('#tmTitle').textContent=title; $('#tmBody').innerHTML=html+(foot?`<div class="foot">${foot}</div>`:''); $('#tmod').classList.add('on'); document.body.style.overflow='hidden'; }
+function closeMod(){ $('#tmod').classList.remove('on'); document.body.style.overflow=''; cur=null; }
+$('#tmClose').onclick=closeMod;
+async function pickPhoto(cb,max=800){ const i=document.createElement('input'); i.type='file'; i.accept='image/*'; i.onchange=async()=>{ const f=i.files[0]; if(!f) return; const d=await resizeBlob(f,max); if(d&&d.length>900000){ toast('Foto muito grande, tente outra'); return; } cb(d); }; i.click(); }
+
+/* ---------- tecido ---------- */
+function openTec(t){ if(!t) return; cur=JSON.parse(JSON.stringify(t)); if(!cur.cores) cur.cores=[]; drawTec(); }
+function drawTec(){ const t=cur; const inp=(k,l,type='text',cls='')=>`<div class="fi ${cls}"><label>${l}</label><input data-k="${k}" type="${type}" value="${esc(t[k]==null?'':t[k])}"></div>`;
+  const corRows=t.cores.map((c,i)=>`<tr><td><input data-cor="${i}" data-f="cor" value="${esc(c.cor||'')}"></td><td><input data-cor="${i}" data-f="entrada" value="${c.entrada??''}"></td><td><input data-cor="${i}" data-f="saldo" value="${c.saldo??''}"></td></tr>`).join('');
+  openMod((t.novo?'NOVO · ':'')+t.code+(t.nome?' · '+t.nome:''),`
+  <div class="sec"><div class="photo"><div class="ph" id="tPh">${t.foto?`<img src="${t.foto}">`:'SEM FOTO'}</div><div class="ops"><button class="tb" id="tFoto">📷 FOTO</button>${t.foto?'<button class="tb red" id="tFotoDel">REMOVER</button>':''}</div></div></div>
+  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('code','CÓDIGO T')}${inp('nome','NOME')}${inp('forn','FORNECEDOR')}${inp('nf','NF')}${inp('comp','COMPOSIÇÃO (ex.: 100% VISCOSE)')}${inp('estacao','ESTAÇÃO')}</div>
+    <div class="f c3" style="margin-top:8px">${inp('preco','PREÇO R$/m')}${inp('largura','LARGURA (m)')}${inp('gramatura','GRAMATURA g/m²')}</div>
+    <div class="f" style="margin-top:8px">${inp('dataEntrada','ENTRADA (dd/mm/aa)')}<div class="fi"><label>OBS</label><input data-k="obs" value="${esc(t.obs||'')}"></div></div></div>
+  <div class="sec"><h3>ESTOQUE · ${tfmt(t.estoque,1)} m</h3><div class="f c3"><div class="fi"><label>AJUSTE (m, use − p/ saída)</label><input id="ajM" placeholder="ex.: -120 ou 300"></div><div class="fi" style="grid-column:span 2"><label>MOTIVO</label><input id="ajMot" placeholder="corte lote 12185 · sobra · inventário…"></div></div><button class="tb" id="bAj" style="margin-top:8px">APLICAR AJUSTE</button>
+    <div class="hist" id="hist" style="margin-top:8px"><div class="sm">carregando histórico…</div></div></div>
+  <div class="sec"><h3>CORES</h3><table class="t"><thead><tr><th>COR</th><th>ENTRADA m</th><th>SALDO m</th></tr></thead><tbody id="corBody">${corRows}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button></div>
+  ${t.novo?'':'<div class="sec"><button class="tb red" id="bDelT">EXCLUIR TECIDO</button></div>'}`,
+  `<button class="tb" id="bCancel">CANCELAR</button><button class="tb ok" id="bSaveT">SALVAR</button>`);
+  $('#bCancel').onclick=closeMod; $('#bSaveT').onclick=saveTec;
+  $('#tFoto').onclick=()=>pickPhoto(d=>{cur.foto=d;$('#tPh').innerHTML=`<img src="${d}">`;});
+  const fd=$('#tFotoDel'); if(fd) fd.onclick=()=>{cur.foto=null;$('#tPh').textContent='SEM FOTO';};
+  $('#bAddCor').onclick=()=>{readTec(true);cur.cores.push({cor:'',entrada:null,saldo:null});drawTec();};
+  $('#bAj').onclick=applyAjuste;
+  const dl=$('#bDelT'); if(dl) dl.onclick=async()=>{ if(!confirm('Excluir '+cur.code+'? Isso não apaga o histórico.')) return; await FB.deleteDoc(FB.doc(FB.db,'tecidos',cur.code)); closeMod(); toast('Tecido excluído'); };
+  loadHist(t.code);
+}
+function readTec(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k; let v=i.value.trim(); if(['preco','largura','gramatura'].includes(k)) v=tnum(v); else if(k==='dataEntrada') v=brToISO(v); else if(k==='code') v=v.toUpperCase(); cur[k]=v===''?null:v; });
+  $$('#corBody input').forEach(i=>{ const c=cur.cores[+i.dataset.cor]; if(!c) return; const f=i.dataset.f; c[f]=f==='cor'?i.value.trim().toUpperCase():tnum(i.value); }); if(!keep) cur.cores=cur.cores.filter(c=>c.cor); }
+async function saveTec(){ readTec(); if(!cur.code||!/^T\d+$/i.test(cur.code)){ toast('Código deve ser T + número (ex.: T54)'); return; }
+  if(cur.novo&&TDOCS.find(t=>t.code===cur.code)){ toast(cur.code+' já existe'); return; }
+  const t={...cur}; delete t.novo; t.status=t.estoque>0?'estoque':'esgotado'; t.updatedAt=new Date().toISOString(); t.updatedBy=by(); if(!t.createdAt) t.createdAt=t.updatedAt;
+  try{ await FB.setDoc(FB.doc(FB.db,'tecidos',t.code),t); toast('Salvo · '+t.code); closeMod(); }catch(e){ toast('Erro ao salvar: '+e.code,5000); } }
+async function applyAjuste(){ readTec(); const d=tnum($('#ajM').value); const mot=$('#ajMot').value.trim(); if(d==null||!d){ toast('Informe os metros'); return; } if(!mot){ toast('Escreva o motivo'); return; }
+  const antes=cur.estoque||0; cur.estoque=Math.round((antes+d)*100)/100; if(d<0) cur.usado=Math.round(((cur.usado||0)-d)*100)/100;
+  const mv={id:'M'+Date.now().toString(36),code:cur.code,delta:d,antes,depois:cur.estoque,motivo:mot,at:new Date().toISOString(),by:by()};
+  try{ await FB.setDoc(FB.doc(FB.db,'movs',mv.id),mv); const t={...cur}; delete t.novo; t.status=t.estoque>0?'estoque':'esgotado'; t.updatedAt=mv.at; t.updatedBy=by(); await FB.setDoc(FB.doc(FB.db,'tecidos',t.code),t); toast(`Ajuste ${d>0?'+':''}${tfmt(d,1)} m → ${tfmt(t.estoque,1)} m`); drawTec(); }catch(e){ toast('Erro: '+e.code,5000); } }
+async function loadHist(code){ try{ const s=await FB.getDocs(FB.query(FB.collection(FB.db,'movs'),FB.orderBy('at','desc'),FB.limit(200))); const rows=s.docs.map(d=>d.data()).filter(m=>m.code===code).slice(0,30); const h=$('#hist'); if(!h) return; h.innerHTML=rows.length?rows.map(m=>`<div><span class="d">${dtBR(m.at)} ${m.at.slice(11,16)} · ${esc(m.by)}</span><span style="flex:1">${esc(m.motivo)}</span><span class="v ${m.delta<0?'neg':'pos'}">${m.delta>0?'+':''}${tfmt(m.delta,1)}</span></div>`).join(''):'<div class="sm">sem movimentos registrados</div>'; }catch(e){ const h=$('#hist'); if(h) h.innerHTML='<div class="sm">histórico indisponível ('+e.code+')</div>'; } }
+
+/* ---------- pedidos ---------- */
+function blankPed(){ return {id:'P'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),status:'PEDIDO',criado:new Date().toISOString(),data:todayISO(),fornecedor:'',vendedor:'',pagto:'',prazo:'',numforn:'',quem:by(),codigo:'',nome:'',gram:null,larg:null,unid:'m',preco:null,tipo:'LISO',comp:[],cores:[],obs:'',foto:null,entrada:{nf:'',data:'',m:null,kg:null,insp:'OK',t:'',rolos:{}}}; }
+const totalM=p=>(p.cores||[]).reduce((a,c)=>a+(tnum(c.qtd)||0),0);
+function pendencias(p){ const ped=[]; if(!p.fornecedor)ped.push('fornecedor'); if(!p.nome)ped.push('nome'); if(tnum(p.gram)==null)ped.push('gramatura'); if(tnum(p.larg)==null)ped.push('largura'); if(tnum(p.preco)==null)ped.push('preço');
+  if(!(p.comp||[]).some(r=>r.fibra&&tnum(r.pct)!=null))ped.push('composição'); if(!(p.cores||[]).some(c=>c.cor&&tnum(c.qtd)))ped.push('1 cor com qtd');
+  const e=p.entrada||{},ent=[]; if(!e.nf)ent.push('NF'); if(!e.data)ent.push('data de entrada'); if(tnum(e.m)==null&&tnum(e.kg)==null)ent.push('qtd recebida'); return {ped,ent}; }
+function openPed(p){ if(!p) return; cur=JSON.parse(JSON.stringify(p)); cur.comp=cur.comp||[]; cur.cores=cur.cores||[]; cur.entrada=Object.assign({nf:'',data:'',m:null,kg:null,insp:'OK',t:'',rolos:{}},cur.entrada||{}); drawPed(); }
+function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pendencias(p);
+  const inp=(k,l,ph='')=>`<div class="fi"><label>${l}</label><input data-k="${k}" value="${esc(p[k]==null?'':p[k])}" placeholder="${ph}" class="${pd.ped.includes(l.toLowerCase().split(' ')[0])&&p._try?'miss':''}"></div>`;
+  const sel=(k,l,opts)=>`<div class="fi"><label>${l}</label><select data-k="${k}">${opts.map(o=>`<option ${p[k]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  const comp=p.comp.map((c,i)=>`<tr><td><input data-comp="${i}" data-f="pct" value="${c.pct??''}" placeholder="%"></td><td><input data-comp="${i}" data-f="fibra" value="${esc(c.fibra||'')}" list="fibras"></td></tr>`).join('');
+  const cores=p.cores.map((c,i)=>`<tr><td>${c.thumb?`<img src="${c.thumb}" style="width:32px;height:30px;border-radius:4px;object-fit:cover;border:1px solid var(--line)" title="${esc(c.obs||'')}">`:(c.hex?`<i style="display:block;width:32px;height:30px;border-radius:4px;background:${c.hex}"></i>`:'')}</td><td><input data-cor="${i}" data-f="cor" value="${esc(c.cor||'')}"></td><td><input data-cor="${i}" data-f="qtd" value="${c.qtd??''}"></td><td><input data-cor="${i}" data-f="rolosPrev" value="${c.rolosPrev??''}"></td><td><input data-rol="${i}" value="${p.entrada.rolos[i]??''}"></td></tr>`).join('');
+  const gram=tnum(p.gram),larg=tnum(p.larg),preco=tnum(p.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(p.unid==='kg'?(rend?preco/rend:null):preco);
+  openMod((rec?p.entrada.t+' · ':'PEDIDO · ')+(p.nome||'novo'),`
+  <div class="sec"><div class="photo"><div class="ph" id="pPh">${p.foto?`<img src="${p.foto}">`:'FOTO / AMOSTRA'}</div><div class="ops"><button class="tb" id="pFoto">📷 FOTO</button><button class="tb pri" id="bRead" ${p.foto?'':'disabled'}>🤖 LER COM CLAUDE</button><button class="tb" id="bPaste">📋 COLAR LEITURA</button><span class="sm">status: <b>${p.status}</b>${rec?' · '+p.entrada.t:''}</span></div></div>${(p.unsure||[]).length?`<div class="pend">🤖 sem certeza: ${p.unsure.join(', ')} — confira</div>`:''}</div>
+  <div class="sec"><h3>PEDIDO</h3><div class="f c3">${inp('data','DATA (dd/mm/aa)')}<div class="fi"><label>FORNECEDOR</label><input data-k="fornecedor" value="${esc(p.fornecedor||'')}" list="forns" class="${p._try&&!p.fornecedor?'miss':''}"></div>${inp('vendedor','VENDEDOR')}${inp('pagto','PAGTO','30/60/90')}${inp('prazo','PRAZO ENTREGA (dd/mm/aa)')}${inp('numforn','Nº PEDIDO FORN.')}</div></div>
+  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>RENDIMENTO / PREÇO m</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}"></div></div>
+    <table class="t" style="margin-top:8px"><thead><tr><th style="width:80px">%</th><th>FIBRA</th></tr></thead><tbody id="compBody">${comp}</tbody></table><button class="tb" id="bAddComp" style="margin-top:6px">+ FIBRA</button><datalist id="fibras">${DEF_FIB.map(f=>`<option value="${f}">`).join('')}</datalist><datalist id="forns">${[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
+  <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.some(c=>c.box)?'':'disabled'}>✂ RECORTAR SWATCHES</button></div>
+  <div class="sec"><div class="fi"><label>OBS</label><textarea data-k="obs">${esc(p.obs||'')}</textarea></div>${pd.ped.length?`<div class="pend">⚠ falta: ${pd.ped.join(', ')}</div>`:''}</div>
+  <div class="sec"><h3>ENTRADA${rec?' · CONFIRMADA':''}</h3><div class="f c3"><div class="fi"><label>NF</label><input data-e="nf" value="${esc(p.entrada.nf||'')}"></div><div class="fi"><label>DATA ENTRADA</label><input data-e="data" value="${esc(p.entrada.data||'')}"></div><div class="fi"><label>CÓDIGO T</label><input data-e="t" value="${esc(p.entrada.t||'')}" placeholder="${nextT()}"></div><div class="fi"><label>RECEBIDO m</label><input data-e="m" value="${p.entrada.m??''}"></div><div class="fi"><label>RECEBIDO kg</label><input data-e="kg" value="${p.entrada.kg??''}"></div><div class="fi"><label>INSPEÇÃO</label><select data-e="insp">${['OK','COM RESSALVA','REPROVADO'].map(o=>`<option ${p.entrada.insp===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
+    <p class="help">${rec?'Entrada confirmada — o tecido '+p.entrada.t+' já está no ESTOQUE. Editar aqui não altera o estoque.':'Ao confirmar: cria o tecido no ESTOQUE com o código T, foto, cores e metragem recebida.'}</p></div>
+  <div class="sec"><button class="tb red" id="bDelP">EXCLUIR PEDIDO</button></div>`,
+  `<button class="tb" id="bCancel">CANCELAR</button><button class="tb" id="bSaveP">SALVAR</button>${rec?'':'<button class="tb ok" id="bConf">CONFIRMAR ENTRADA</button>'}`);
+  $('#bCancel').onclick=closeMod; $('#bSaveP').onclick=()=>savePed(false); const bc=$('#bConf'); if(bc) bc.onclick=confirmPed;
+  $('#pFoto').onclick=()=>pickPhoto(d=>{cur.foto=d;$('#pPh').innerHTML=`<img src="${d}">`;$('#bRead').disabled=false;},1400);
+  $('#bRead').onclick=lerComClaude; $('#bPaste').onclick=colarLeitura; $('#bCrop').onclick=()=>{readPed(true);autoCropAll();}; $('#bKey').onclick=setApiKey;
+  $('#bAddComp').onclick=()=>{readPed(true);cur.comp.push({pct:null,fibra:''});drawPed();};
+  $('#bAddCor').onclick=()=>{readPed(true);cur.cores.push({cor:'',qtd:null,rolosPrev:null});drawPed();};
+  $('#bDelP').onclick=async()=>{ if(!confirm('Excluir este pedido?')) return; await FB.deleteDoc(FB.doc(FB.db,'pedidos',cur.id)); closeMod(); toast('Pedido excluído'); };
+}
+function readPed(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k; let v=i.value.trim(); if(['gram','larg','preco'].includes(k)) v=tnum(v); else if(['data','prazo'].includes(k)) v=brToISO(v); cur[k]=v; });
+  $$('#tmBody [data-e]').forEach(i=>{ const k=i.dataset.e; let v=i.value.trim(); if(['m','kg'].includes(k)) v=tnum(v); else if(k==='data') v=brToISO(v); else if(k==='t') v=v.toUpperCase(); cur.entrada[k]=v; });
+  $$('#compBody input').forEach(i=>{ const c=cur.comp[+i.dataset.comp]; if(!c) return; c[i.dataset.f]=i.dataset.f==='pct'?tnum(i.value):i.value.trim().toUpperCase(); }); if(!keep) cur.comp=cur.comp.filter(c=>c.fibra||c.pct!=null);
+  $$('#corBody input[data-cor]').forEach(i=>{ const c=cur.cores[+i.dataset.cor]; if(!c) return; c[i.dataset.f]=i.dataset.f==='cor'?i.value.trim().toUpperCase():tnum(i.value); });
+  const rol={}; $$('#corBody input[data-rol]').forEach(i=>{ const v=tnum(i.value); if(v!=null) rol[i.dataset.rol]=v; }); cur.entrada.rolos=rol; if(!keep) cur.cores=cur.cores.filter(c=>c.cor||c.qtd!=null); }
+async function savePed(silent){ readPed(); const p={...cur}; delete p._try; p.atualizado=new Date().toISOString(); p.por=by(); try{ await FB.setDoc(FB.doc(FB.db,'pedidos',p.id),p); if(!silent){ const n=pendencias(p).ped.length; toast(n?`Salvo · ⚠ ${n} campo(s) por preencher`:'Pedido salvo'); closeMod(); } }catch(e){ toast('Erro: '+e.code,5000); } }
+async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.length){ cur._try=true; toast('Falta p/ confirmar: '+ent.join(', '),5000); return; }
+  const e=cur.entrada; if(!e.t) e.t=nextT(); e.t=e.t.toUpperCase(); if(TDOCS.find(t=>t.code===e.t)){ toast(e.t+' já existe no estoque — informe outro código T'); return; }
+  const gram=tnum(cur.gram),larg=tnum(cur.larg),preco=tnum(cur.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(cur.unid==='kg'?(rend?preco/rend:null):preco);
+  const m=tnum(e.m)!=null?tnum(e.m):(rend&&tnum(e.kg)!=null?Math.round(tnum(e.kg)*rend*10)/10:0);
+  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:'',preco:precoM,largura:larg,gramatura:gram,dataEntrada:e.data,cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
+  cur.status='RECEBIDO';
+  try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); await b.commit(); toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000); closeMod(); }catch(err){ toast('Erro: '+err.code,5000); } }
+
+/* ---------- import / export ---------- */
+function exportJson(){ const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),tecidos:TDOCS,pedidos:PED})],{type:'application/json'}); dl(blob,'tecidos_backup_'+todayISO()+'.json'); }
+async function exportXlsx(){ toast('Gerando…'); const X=await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mjs').catch(()=>null); if(!X){ toast('Sem internet p/ baixar o gerador de xlsx'); return; }
+  const H=['T','NOME','FORNECEDOR','NF','ESTOQUE m','USADO m','STATUS','COMPOSIÇÃO','ESTAÇÃO','PREÇO/m','LARGURA','GRAMATURA','ENTRADA','CORES','ATUALIZADO','POR'];
+  const rows=TDOCS.slice().sort((a,b)=>codeNum(a.code)-codeNum(b.code)).map(t=>[t.code,t.nome,t.forn,t.nf,t.estoque,t.usado||0,t.status,t.comp,t.estacao,t.preco,t.largura,t.gramatura,dtBR(t.dataEntrada),(t.cores||[]).map(c=>c.cor+(c.saldo!=null?' '+c.saldo+'m':'')).join(' / '),dtBR(t.updatedAt),t.updatedBy||'']);
+  const cores=[['T','COR','ENTRADA m','SALDO m']]; TDOCS.forEach(t=>(t.cores||[]).forEach(c=>cores.push([t.code,c.cor,c.entrada,c.saldo])));
+  const wb=X.utils.book_new(); X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet([H,...rows]),'TECIDOS'); X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(cores),'CORES');
+  const ped=[['ID','STATUS','DATA','FORNECEDOR','NOME','UNID','QTD','PREÇO','PRAZO','NF','T','ENTRADA']]; PED.forEach(p=>ped.push([p.id,p.status,dtBR(p.data),p.fornecedor,p.nome,p.unid,totalM(p),p.preco,dtBR(p.prazo),p.entrada?.nf||'',p.entrada?.t||'',dtBR(p.entrada?.data)])); X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(ped),'PEDIDOS');
+  const out=X.write(wb,{bookType:'xlsx',type:'array'}); dl(new Blob([out]),'TECIDOS_'+todayISO()+'.xlsx'); }
+function dl(blob,name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
+
+function bindPed(){ const bk=$('#bKey'); if(bk) bk.onclick=setApiKey; $$('.pc').forEach(el=>el.onclick=()=>openPed(PED.find(p=>p.id===el.dataset.id))); $$('[data-pf]').forEach(b=>b.onclick=()=>{PFILT=b.dataset.pf;render()}); const np=$('#bNewP'); if(np) np.onclick=()=>openPed(blankPed()); }
+function openTecNew(){ openTec({code:nextT(),nome:'',forn:'',nf:'',estoque:0,usado:0,status:'estoque',comp:'',estacao:'',preco:null,largura:null,gramatura:null,dataEntrada:todayISO(),cores:[],foto:null,obs:'',novo:true}); }
+function openTecEdit(code){ const t=TDOCS.find(x=>x.code===code); if(t) openTec(t); else toast('Tecido não encontrado na nuvem'); }
+async function cloudImportEstoque(items,fname){
+  let novos=0,atual=0,ig=0; const now=new Date().toISOString(); let batch=FB.writeBatch(FB.db),n=0;
+  for(const it of items){ const ex=TDOCS.find(t=>t.code===it.code);
+    const d={code:it.code,nome:it.nome||'',forn:it.forn||'',nf:it.nf||'',estoque:it.estoque||0,usado:it.usado||0,status:it.status,comp:it.comp||'',estacao:it.estacao||'',preco:it.preco??null,largura:it.largura??null,gramatura:it.gramatura??null,mediaRolo:it.mediaRolo??null,dataEntrada:it.dataEntrada||'',cores:(it.cores||[]).map(c=>({cor:c.cor,entrada:c.entrada,saldo:c.saldo,pct:c.pct,data:c.data||null})),foto:it.foto||null,obs:'',fonte:fname,updatedAt:now,updatedBy:by()};
+    if(!ex){ d.createdAt=now; batch.set(FB.doc(FB.db,'tecidos',d.code),d); novos++; }
+    else if(!ex.updatedBy||ex.fonte){ if(!d.foto&&ex.foto) d.foto=ex.foto; d.createdAt=ex.createdAt||now; d.obs=ex.obs||''; batch.set(FB.doc(FB.db,'tecidos',d.code),d); atual++; }
+    else ig++;
+    if(++n%40===0){ await batch.commit(); batch=FB.writeBatch(FB.db); } }
+  await batch.commit(); return {novos,atual,ig};
+}
+
+/* ---------- Claude lê a foto do pedido ---------- */
+const PROMPT_PED=`Você lê pedidos de compra de TECIDO escritos à mão em formulários de fornecedores brasileiros (IMATEX, GRIFE TÊXTIL, DIAGONAL etc.) para uma confecção de moda feminina. Extraia os dados da foto e responda SOMENTE com JSON válido, sem markdown, neste formato:
+{"data":"dd/mm/aa ou vazio","fornecedor":"nome do fornecedor (cabeçalho impresso)","vendedor":"","pagto":"ex. 80/90/100","prazo":"PE ou data","numforn":"nº proposta/pedido impresso","quem":"assinatura/quem fechou","codigo":"código do artigo","nome":"nome do tecido em MAIÚSCULAS","composicao":[{"pct":87,"fibra":"VISCOSE"}],"gram":"gramatura g/m² ou vazio","larg":"largura em m ou vazio","unid":"m ou kg","preco":"preço unitário só número, vírgula decimal","tipo":"LISO ou ESTAMPADO","cores":[{"cor":"nome ou nº da cor como escrito","qtd":"quantidade só número","descricao":"cor vista na amostra, em pt-BR","box":[35,20,12,8]}],"obs":"observações","unsure":["lista de chaves em que você NÃO teve certeza"]}
+Sobre "box": posição APROXIMADA da amostra de tecido (swatch) daquela cor na foto, em PORCENTAGEM da imagem: [esquerda,topo,largura,altura], números 0-100. Cubra só o tecido, evitando fita e papel; se não houver amostra visível p/ a cor, omita "box".
+Regras: mantenha os nomes das cores exatamente como escritos. Se algo estiver cortado ou ilegível, deixe vazio e inclua a chave em "unsure". Não invente valores.`;
+async function setApiKey(){ const k=prompt('Chave da API Anthropic (sk-ant-…). Fica salva na nuvem, compartilhada com quem tem acesso ao ELO.',CFG.apiKey||''); if(k===null) return; try{ await FB.setDoc(FB.doc(FB.db,'config','cfg'),{...CFG,apiKey:k.trim(),apiKeyBy:by(),apiKeyAt:new Date().toISOString()}); toast(k.trim()?'Chave salva na nuvem':'Chave removida'); }catch(e){ toast('Erro: '+e.code); } }
+async function lerComClaude(){ if(!cur||!cur.foto) return; if(!CFG.apiKey){ toast('Falta a chave da API — botão 🔑 CHAVE API na aba PEDIDOS',6000); return; }
+  const b=$('#bRead'); b.disabled=true; b.textContent='⏳ LENDO…'; readPed(true);
+  try{ const m=cur.foto.match(/^data:(image\/\w+);base64,(.+)$/);
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':CFG.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:m[1],data:m[2]}},{type:'text',text:PROMPT_PED}]}]})});
+    if(!r.ok){ const t=await r.text(); throw new Error(r.status===401?'Chave da API inválida (🔑 CHAVE API)':'Erro '+r.status+': '+t.slice(0,140)); }
+    const data=await r.json(); const txt=data.content.filter(x=>x.type==='text').map(x=>x.text).join(''); const j=JSON.parse(txt.replace(/\`\`\`json|\`\`\`/g,'').trim());
+    applyRead(j); toast('Leitura aplicada · confira os campos marcados',5000);
+  }catch(e){ console.error(e); toast('Não consegui ler: '+(/Failed to fetch|NetworkError/i.test(e.message)?'sem resposta da API (internet? chave?)':e.message),7000); const bb=$('#bRead'); if(bb){ bb.disabled=false; bb.textContent='🤖 LER COM CLAUDE'; } } }
+function colarLeitura(){ const t=prompt('Cole aqui o JSON gerado pelo Claude (alternativa sem chave):',''); if(!t) return; try{ readPed(true); applyRead(JSON.parse(t.replace(/\`\`\`json|\`\`\`/g,'').trim())); toast('Leitura aplicada'); }catch(e){ toast('JSON inválido — cole o bloco inteiro',4500); } }
+function applyRead(j){ const s=k=>j[k]==null?'':String(j[k]).trim();
+  ['fornecedor','vendedor','pagto','numforn','quem','codigo','nome','obs'].forEach(k=>{ if(s(k)) cur[k]=s(k); });
+  ['gram','larg','preco'].forEach(k=>{ if(s(k)) cur[k]=tnum(s(k)); });
+  if(s('data')) cur.data=brToISO(s('data')); if(s('prazo')&&/\d/.test(s('prazo'))) cur.prazo=brToISO(s('prazo'));
+  if(/kg/i.test(s('unid'))) cur.unid='kg'; if(/ESTAMP/i.test(s('tipo'))) cur.tipo='ESTAMPADO';
+  if(Array.isArray(j.composicao)&&j.composicao.length) cur.comp=j.composicao.map(c=>({pct:tnum(String(c.pct??'').replace('%','')),fibra:String(c.fibra??'').toUpperCase()}));
+  if(Array.isArray(j.cores)&&j.cores.length) cur.cores=j.cores.map(c=>({cor:String(c.cor??'').toUpperCase(),qtd:tnum(String(c.qtd??'')),rolosPrev:null,obs:String(c.descricao??''),thumb:null,hex:null,box:Array.isArray(c.box)&&c.box.length===4?c.box.map(Number):null}));
+  cur.unsure=Array.isArray(j.unsure)?j.unsure:[];
+  const forn=[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].find(f=>cur.fornecedor&&f.replace(/\s|TEXTIL|TÊXTIL/gi,'').startsWith(cur.fornecedor.replace(/\s|TEXTIL|TÊXTIL/gi,'').slice(0,4).toUpperCase())); if(forn) cur.fornecedor=forn;
+  cur._try=true; drawPed(); autoCropAll(); }
+function loadImg(src){ return new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
+function cropFromImage(img,sx,sy,sw,sh){ const c=document.createElement('canvas'); c.width=160; c.height=150; const ctx=c.getContext('2d'); ctx.drawImage(img,sx,sy,sw,sh,0,0,160,150);
+  const d=ctx.getImageData(0,0,160,150).data; let r=0,g=0,b=0,n=0; for(let i=0;i<d.length;i+=16){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+  return {thumb:c.toDataURL('image/jpeg',.85),hex:'#'+[r,g,b].map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join('').toUpperCase()}; }
+async function autoCropAll(){ if(!cur||!cur.foto) return; if(!cur.cores.some(c=>c.box&&!c.thumb)) return;
+  try{ const img=await loadImg(cur.foto); let n=0;
+    for(const c of cur.cores){ if(!c.box||c.thumb) continue; let [bx,by_,bw,bh]=c.box.map(v=>Math.max(0,Math.min(100,+v||0))); if(bw<2||bh<2) continue;
+      const inx=bw*0.12,iny=bh*0.12; bx+=inx; by_+=iny; bw-=2*inx; bh-=2*iny;
+      const r=cropFromImage(img,img.width*bx/100,img.height*by_/100,img.width*bw/100,img.height*bh/100); c.thumb=r.thumb; c.hex=r.hex; n++; }
+    if(n){ drawPed(); toast(`Swatches recortados (${n})`,3500); }
+  }catch(e){ console.error(e); } }
 /* ---------- boot ---------- */
 async function boot(){
   if(META&&META.snapshot){ /* arquivo recebido por WhatsApp: mostra exatamente o que foi exportado */
