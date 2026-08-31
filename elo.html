@@ -345,6 +345,13 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 .tmod{position:fixed;inset:0;background:rgba(28,26,23,.55);display:none;z-index:150;overflow:auto}.tmod.on{display:block}.tmod .box{background:var(--paper);max-width:760px;margin:0 auto;min-height:100%;padding:0 0 80px}
 @media(max-width:600px){.tapp .pks{grid-template-columns:repeat(2,1fr)}.tapp .f.c3{grid-template-columns:1fr 1fr}}
 
+#cropBox{position:fixed;inset:0;background:rgba(28,26,23,.7);z-index:300;display:none;overflow:auto;padding:12px}#cropBox.on{display:block}
+#cropBox .cb{background:var(--paper);max-width:900px;margin:0 auto;border-radius:10px;overflow:hidden}
+#cropBox .cbh{display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--indigo);color:#fff}#cropBox .cbh b{font:800 11px var(--mono);letter-spacing:.12em}#cropBox .cbh span{flex:1;font-size:12px;opacity:.8}
+#cropBox .cbh .tb{border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:6px;padding:5px 9px;font:700 10px var(--mono);cursor:pointer}#cropBox .cbh .tb.ok{background:var(--green);border-color:var(--green)}#cropBox .cbh .tb:disabled{opacity:.4}
+#cropBox .cbw{position:relative;user-select:none;touch-action:none;cursor:crosshair;line-height:0}#cropBox .cbw img{width:100%;display:block;pointer-events:none}
+#cropSel{position:absolute;display:none;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.35);pointer-events:none}
+#cropBox .cbp{display:flex;gap:12px;align-items:center;padding:10px 12px}#cropBox .cbp canvas{width:80px;height:75px;border-radius:6px;border:1px solid var(--line);background:#fff}
 </style>
 </head>
 <body>
@@ -988,6 +995,7 @@ function openTecido(code){
   $('#mp').classList.add('on');
 }
 function renderLista(A){
+  if(FILTER==='ficha'){ const ls=A.semFicha; return `<div class="empty" style="text-align:left"><b>${ls.length} lote(s) aberto(s) no CONTROLE sem ficha na DEBORA</b> — criar a aba M do modelo ou conferir o código.</div>${ls.length?`<table class="tb"><thead><tr><th>modelo</th><th>descrição</th><th>qtd</th><th>corte</th><th>situação</th></tr></thead><tbody>${ls.map(l=>`<tr><td class="mc">${esc(l.modelo)}</td><td>${esc(l.desc||'')}</td><td>${fmt(l.qtd)}</td><td>${dtBR(l.corte)}</td><td>${lotLine(l)}</td></tr>`).join('')}</tbody></table>`:''}`; }
   const rows=A.rows.filter(passFilter).sort((a,b)=>FASES.indexOf(a.m.fase)-FASES.indexOf(b.m.fase)||a.m.aba.localeCompare(b.m.aba,undefined,{numeric:true}));
   return `<table class="tb"><thead><tr><th>M</th><th>código</th><th>modelo</th><th>DEBORA</th><th>elo</th><th>ROBERTO</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr onclick="openModel('${r.m.aba}')">
     <td class="mc">${r.m.aba}</td><td class="mc">${r.m.codigo||'—'}</td><td>${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</td>
@@ -1055,7 +1063,7 @@ function exportSnapshot(){
 (function(){
   const pv=document.createElement('div'); pv.id='pv'; pv.innerHTML='<img alt="">'; document.body.appendChild(pv);
   const im=pv.querySelector('img'); let t=null, cur=null;
-  const SEL='.card img.th,.fgh img,.ofl img,.tf img,.tfoto,.fotos img,.fup img';
+  const SEL='.card img.th,.fgh img,.ofl img,.tc img,.tfoto,.fotos img,.fup img,.pc .ph img,.tmod .ph img,.sw-th';
   const show=(el,x,y)=>{ if(!el||!el.src||el.src.length<200) return; im.src=el.src; pv.classList.add('on'); place(x,y); };
   const place=(x,y)=>{ const W=window.innerWidth,H=window.innerHeight; const w=Math.min(328,W-16),h=Math.min(328,H-16);
     let L=x+18,T=y+18; if(L+w>W-8) L=x-w-18; if(L<8) L=8; if(T+h>H-8) T=Math.max(8,H-8-h); pv.style.left=L+'px'; pv.style.top=T+'px'; };
@@ -1136,14 +1144,14 @@ function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pende
   const inp=(k,l,ph='')=>`<div class="fi"><label>${l}</label><input data-k="${k}" value="${esc(p[k]==null?'':p[k])}" placeholder="${ph}" class="${pd.ped.includes(l.toLowerCase().split(' ')[0])&&p._try?'miss':''}"></div>`;
   const sel=(k,l,opts)=>`<div class="fi"><label>${l}</label><select data-k="${k}">${opts.map(o=>`<option ${p[k]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
   const comp=p.comp.map((c,i)=>`<tr><td><input data-comp="${i}" data-f="pct" value="${c.pct??''}" placeholder="%"></td><td><input data-comp="${i}" data-f="fibra" value="${esc(c.fibra||'')}" list="fibras"></td></tr>`).join('');
-  const cores=p.cores.map((c,i)=>`<tr><td>${c.thumb?`<img src="${c.thumb}" style="width:32px;height:30px;border-radius:4px;object-fit:cover;border:1px solid var(--line)" title="${esc(c.obs||'')}">`:(c.hex?`<i style="display:block;width:32px;height:30px;border-radius:4px;background:${c.hex}"></i>`:'')}</td><td><input data-cor="${i}" data-f="cor" value="${esc(c.cor||'')}"></td><td><input data-cor="${i}" data-f="qtd" value="${c.qtd??''}"></td><td><input data-cor="${i}" data-f="rolosPrev" value="${c.rolosPrev??''}"></td><td><input data-rol="${i}" value="${p.entrada.rolos[i]??''}"></td></tr>`).join('');
+  const cores=p.cores.map((c,i)=>`<tr><td class="swc" data-sw="${i}" title="recortar swatch" style="cursor:${p.foto?'crosshair':'default'}">${c.thumb?`<img class="sw-th" src="${c.thumb}" style="width:32px;height:30px;border-radius:4px;object-fit:cover;border:1px solid var(--line)" title="${esc(c.obs||'')}">`:(c.hex?`<i style="display:block;width:32px;height:30px;border-radius:4px;background:${c.hex}"></i>`:`<i style="display:block;width:32px;height:30px;border-radius:4px;border:1px dashed var(--line)"></i>`)}</td><td><input data-cor="${i}" data-f="cor" value="${esc(c.cor||'')}"></td><td><input data-cor="${i}" data-f="qtd" value="${c.qtd??''}"></td><td><input data-cor="${i}" data-f="rolosPrev" value="${c.rolosPrev??''}"></td><td><input data-rol="${i}" value="${p.entrada.rolos[i]??''}"></td></tr>`).join('');
   const gram=tnum(p.gram),larg=tnum(p.larg),preco=tnum(p.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(p.unid==='kg'?(rend?preco/rend:null):preco);
   openMod((rec?p.entrada.t+' · ':'PEDIDO · ')+(p.nome||'novo'),`
   <div class="sec"><div class="photo"><div class="ph" id="pPh">${p.foto?`<img src="${p.foto}">`:'FOTO / AMOSTRA'}</div><div class="ops"><button class="tb" id="pFoto">📷 FOTO</button><button class="tb pri" id="bRead" ${p.foto?'':'disabled'}>🤖 LER COM CLAUDE</button><button class="tb" id="bPaste">📋 COLAR LEITURA</button><span class="sm">status: <b>${p.status}</b>${rec?' · '+p.entrada.t:''}</span></div></div>${(p.unsure||[]).length?`<div class="pend">🤖 sem certeza: ${p.unsure.join(', ')} — confira</div>`:''}</div>
   <div class="sec"><h3>PEDIDO</h3><div class="f c3">${inp('data','DATA (dd/mm/aa)')}<div class="fi"><label>FORNECEDOR</label><input data-k="fornecedor" value="${esc(p.fornecedor||'')}" list="forns" class="${p._try&&!p.fornecedor?'miss':''}"></div>${inp('vendedor','VENDEDOR')}${inp('pagto','PAGTO','30/60/90')}${inp('prazo','PRAZO ENTREGA (dd/mm/aa)')}${inp('numforn','Nº PEDIDO FORN.')}</div></div>
   <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>RENDIMENTO / PREÇO m</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}"></div></div>
     <table class="t" style="margin-top:8px"><thead><tr><th style="width:80px">%</th><th>FIBRA</th></tr></thead><tbody id="compBody">${comp}</tbody></table><button class="tb" id="bAddComp" style="margin-top:6px">+ FIBRA</button><datalist id="fibras">${DEF_FIB.map(f=>`<option value="${f}">`).join('')}</datalist><datalist id="forns">${[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
-  <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.some(c=>c.box)?'':'disabled'}>✂ RECORTAR SWATCHES</button></div>
+  <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.length?'':'disabled'}>✂ RECORTAR SWATCHES</button><span class="sm" style="margin-left:8px">toque na 1ª coluna p/ recortar à mão</span></div>
   <div class="sec"><div class="fi"><label>OBS</label><textarea data-k="obs">${esc(p.obs||'')}</textarea></div>${pd.ped.length?`<div class="pend">⚠ falta: ${pd.ped.join(', ')}</div>`:''}</div>
   <div class="sec"><h3>ENTRADA${rec?' · CONFIRMADA':''}</h3><div class="f c3"><div class="fi"><label>NF</label><input data-e="nf" value="${esc(p.entrada.nf||'')}"></div><div class="fi"><label>DATA ENTRADA</label><input data-e="data" value="${esc(p.entrada.data||'')}"></div><div class="fi"><label>CÓDIGO T</label><input data-e="t" value="${esc(p.entrada.t||'')}" placeholder="${nextT()}"></div><div class="fi"><label>RECEBIDO m</label><input data-e="m" value="${p.entrada.m??''}"></div><div class="fi"><label>RECEBIDO kg</label><input data-e="kg" value="${p.entrada.kg??''}"></div><div class="fi"><label>INSPEÇÃO</label><select data-e="insp">${['OK','COM RESSALVA','REPROVADO'].map(o=>`<option ${p.entrada.insp===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
     <p class="help">${rec?'Entrada confirmada — o tecido '+p.entrada.t+' já está no ESTOQUE. Editar aqui não altera o estoque.':'Ao confirmar: cria o tecido no ESTOQUE com o código T, foto, cores e metragem recebida.'}</p></div>
@@ -1151,7 +1159,8 @@ function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pende
   `<button class="tb" id="bCancel">CANCELAR</button><button class="tb" id="bSaveP">SALVAR</button>${rec?'':'<button class="tb ok" id="bConf">CONFIRMAR ENTRADA</button>'}`);
   $('#bCancel').onclick=closeMod; $('#bSaveP').onclick=()=>savePed(false); const bc=$('#bConf'); if(bc) bc.onclick=confirmPed;
   $('#pFoto').onclick=()=>pickPhoto(d=>{cur.foto=d;$('#pPh').innerHTML=`<img src="${d}">`;$('#bRead').disabled=false;},1400);
-  $('#bRead').onclick=lerComClaude; $('#bPaste').onclick=colarLeitura; $('#bCrop').onclick=()=>{readPed(true);autoCropAll();}; $('#bKey').onclick=setApiKey;
+  $('#bRead').onclick=lerComClaude; $('#bPaste').onclick=colarLeitura; $('#bCrop').onclick=async()=>{readPed(true); if(!cur.cores.some(c=>c.box&&!c.thumb)){ toast('Sem posições da leitura — toque na 1ª coluna da cor p/ recortar à mão',5000); return; } await autoCropAll(); };
+  $$('#corBody .swc').forEach(td=>td.onclick=()=>{ if(!cur.foto){ toast('Carregue a foto do pedido primeiro'); return; } readPed(true); openCrop(+td.dataset.sw); }); $('#bKey').onclick=setApiKey;
   $('#bAddComp').onclick=()=>{readPed(true);cur.comp.push({pct:null,fibra:''});drawPed();};
   $('#bAddCor').onclick=()=>{readPed(true);cur.cores.push({cor:'',qtd:null,rolosPrev:null});drawPed();};
   $('#bDelP').onclick=async()=>{ if(!confirm('Excluir este pedido?')) return; await FB.deleteDoc(FB.doc(FB.db,'pedidos',cur.id)); closeMod(); toast('Pedido excluído'); };
@@ -1166,7 +1175,7 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
   const e=cur.entrada; if(!e.t) e.t=nextT(); e.t=e.t.toUpperCase(); if(TDOCS.find(t=>t.code===e.t)){ toast(e.t+' já existe no estoque — informe outro código T'); return; }
   const gram=tnum(cur.gram),larg=tnum(cur.larg),preco=tnum(cur.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(cur.unid==='kg'?(rend?preco/rend:null):preco);
   const m=tnum(e.m)!=null?tnum(e.m):(rend&&tnum(e.kg)!=null?Math.round(tnum(e.kg)*rend*10)/10:0);
-  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:'',preco:precoM,largura:larg,gramatura:gram,dataEntrada:e.data,cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
+  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:'',preco:precoM,largura:larg,gramatura:gram,dataEntrada:e.data,cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
   cur.status='RECEBIDO';
   try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); await b.commit(); toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000); closeMod(); }catch(err){ toast('Erro: '+err.code,5000); } }
 
@@ -1232,6 +1241,23 @@ async function autoCropAll(){ if(!cur||!cur.foto) return; if(!cur.cores.some(c=>
       const r=cropFromImage(img,img.width*bx/100,img.height*by_/100,img.width*bw/100,img.height*bh/100); c.thumb=r.thumb; c.hex=r.hex; n++; }
     if(n){ drawPed(); toast(`Swatches recortados (${n})`,3500); }
   }catch(e){ console.error(e); } }
+/* ---------- recorte manual de swatch ---------- */
+let CROP={i:-1,img:null,sel:null,drag:null};
+async function openCrop(i){ CROP.i=i; const c=cur.cores[i]; let box=document.getElementById('cropBox'); if(!box){ box=document.createElement('div'); box.id='cropBox'; document.body.appendChild(box); }
+  box.innerHTML=`<div class="cb"><div class="cbh"><b>RECORTAR · ${esc(c.cor||'cor '+(i+1))}</b><span>arraste um retângulo sobre o tecido</span><button class="tb" id="cropCancel">CANCELAR</button><button class="tb ok" id="cropUse" disabled>USAR</button></div><div class="cbw"><img id="cropImg" src="${cur.foto}" draggable="false"><div id="cropSel"></div></div><div class="cbp"><canvas id="cropPv" width="160" height="150"></canvas><span class="sm" id="cropHex"></span></div></div>`;
+  box.classList.add('on'); CROP.sel=null; CROP.img=await loadImg(cur.foto);
+  const w=box.querySelector('.cbw'), sel=box.querySelector('#cropSel'), im=box.querySelector('#cropImg');
+  const pos=e=>{ const r=im.getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return {x:Math.max(0,Math.min(r.width,p.clientX-r.left)),y:Math.max(0,Math.min(r.height,p.clientY-r.top)),W:r.width,H:r.height}; };
+  const draw=()=>{ const s=CROP.sel; if(!s){ sel.style.display='none'; return; } sel.style.display='block'; sel.style.left=s.x+'px'; sel.style.top=s.y+'px'; sel.style.width=s.w+'px'; sel.style.height=s.h+'px'; };
+  const down=e=>{ e.preventDefault(); const p=pos(e); CROP.drag={x:p.x,y:p.y,W:p.W,H:p.H}; CROP.sel={x:p.x,y:p.y,w:0,h:0}; draw(); };
+  const move=e=>{ if(!CROP.drag) return; e.preventDefault(); const p=pos(e); const d=CROP.drag; CROP.sel={x:Math.min(d.x,p.x),y:Math.min(d.y,p.y),w:Math.abs(p.x-d.x),h:Math.abs(p.y-d.y)}; draw(); };
+  const up=e=>{ if(!CROP.drag) return; const d=CROP.drag; CROP.drag=null; const s=CROP.sel; if(!s||s.w<6||s.h<6){ CROP.sel=null; draw(); return; }
+    const kx=CROP.img.width/d.W, ky=CROP.img.height/d.H; const r=cropFromImage(CROP.img,s.x*kx,s.y*ky,s.w*kx,s.h*ky); CROP.res=r;
+    const cv=box.querySelector('#cropPv'); const ctx=cv.getContext('2d'); const ii=new Image(); ii.onload=()=>ctx.drawImage(ii,0,0,160,150); ii.src=r.thumb; box.querySelector('#cropHex').textContent=r.hex; box.querySelector('#cropUse').disabled=false; };
+  w.onmousedown=down; w.onmousemove=move; w.onmouseup=up; w.onmouseleave=up; w.ontouchstart=down; w.ontouchmove=move; w.ontouchend=up;
+  box.querySelector('#cropCancel').onclick=()=>{ box.classList.remove('on'); };
+  box.querySelector('#cropUse').onclick=()=>{ if(!CROP.res) return; const cc=cur.cores[CROP.i]; cc.thumb=CROP.res.thumb; cc.hex=CROP.res.hex; cc.box=null; box.classList.remove('on'); drawPed(); toast('Swatch recortado · salve o pedido'); };
+}
 /* ---------- boot ---------- */
 async function boot(){
   if(META&&META.snapshot){ /* arquivo recebido por WhatsApp: mostra exatamente o que foi exportado */
