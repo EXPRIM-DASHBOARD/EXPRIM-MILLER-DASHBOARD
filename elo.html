@@ -233,7 +233,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .kacc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start;margin-bottom:14px}
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
-.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}
 .kc .khead{cursor:pointer}
 .kc:hover{box-shadow:0 2px 8px rgba(28,26,23,.10)}
 .kc .ktab{position:absolute;left:-1px;top:-1px;font:800 10px var(--mono);letter-spacing:.12em;padding:4px 10px;border-radius:8px 0 8px 0;color:#fff;background:var(--indigo);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -899,15 +899,19 @@ function custoMensal(){
   return `<div class="cvm"><div class="lg"><i style="background:#1D2A3F"></i>tecido <i style="background:#7C8DA6"></i>costura <i style="background:#C9BFA9"></i>aviam.+embal. <span>R$/pç · ponderado por qtd do lote · mês do corte</span></div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W*1.4}px;display:block"><line x1="12" x2="${W-12}" y1="${H-bot}" y2="${H-bot}" stroke="#DDD5C6"/>${bars}</svg></div>`;
 }function renderRoberto(A){
+  const qq=Q?Q.toUpperCase():'';
+  const lotHit=l=>!qq||String(l.modelo||'').toUpperCase().includes(qq)||String(l.desc||'').toUpperCase().includes(qq)||String(l.oficina||'').toUpperCase().includes(qq);
+  const rowHit=r=>!qq||r.m.aba.includes(qq)||String(r.m.codigo||'').includes(qq)||r.m.nome.toUpperCase().includes(qq)||r.lots.some(lotHit);
   const open=ROB.lots.filter(l=>!l.real);
-  const ofi=open.filter(l=>l.saida), par=open.filter(l=>!l.saida&&l.corte);
+  const ofi=open.filter(l=>l.saida&&lotHit(l)), par=open.filter(l=>!l.saida&&l.corte&&lotHit(l));
   const late=ofi.filter(l=>l.prev&&l.prev<TODAY);
-  const prep=A.fila.filter(r=>r.elo==='preparando'), wait=A.fila.filter(r=>r.elo==='fila');
+  const prep=A.fila.filter(r=>r.elo==='preparando'&&rowHit(r)), wait=A.fila.filter(r=>r.elo==='fila'&&rowHit(r));
+  const filaR=prep.concat(wait);
   const byOf={}; ofi.forEach(l=>(byOf[l.oficina||'SEM OFICINA']=byOf[l.oficina||'SEM OFICINA']||[]).push(l));
   const filaRow=r=>`<div class="frow" onclick="openModel('${r.m.aba}')"><span class="mc">${r.m.aba} · ${r.m.codigo||'—'}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="sm">${r.m.qt?fmt(r.m.qt)+' pçs':''}${r.m.prazo?' · prazo '+dtBR(r.m.prazo):''}${r.m.nf?' · NF '+esc(r.m.nf):''}</span></div>`;
   const lotRow=l=>{ const r=A.rows.find(x=>x.lots.includes(l)); return `<div class="frow" ${r?`onclick="openModel('${r.m.aba}')"`:''}><span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc)}</span><span class="sm">${lotLine(l)}</span></div>`; };
   /* fila agrupada por tecido (mesma NF) → cortar junto; grupos recolhidos por padrão */
-  const groups=filaGroups(A);
+  const groups=filaGroups(A).map(g=>Object.assign({},g,{rows:g.rows.filter(rowHit)})).filter(g=>g.rows.length);
   const juntos=groups.filter(g=>g.rows.length>1);
   const grpHtml=groups.map(g=>{const pr=g.rows.filter(r=>r.elo==='preparando'), ag=g.rows.filter(r=>r.elo==='fila'); const pcs=g.rows.reduce((s,r)=>s+(r.m.qt||0),0);
     const gk=g.key.replace(/'/g,''); const isOpen=UI.fgAll||!!UI.fg[gk];
@@ -922,11 +926,11 @@ function custoMensal(){
   const nextIn=ofi.filter(l=>l.prev&&l.prev>=TODAY).map(l=>l.prev).sort()[0];
   const cv=custoVerao();
   const todoAll=todoItems(A,{prep,par,late,ofi}); const todoPend=todoAll.filter(i=>!TODO.done[i.id]).length;
-  const K=(k,tab,tabCls,num,l1,l2,l2Cls,body,hint)=>{const o=!!UI.rob[k]; return `<div class="kc ${o?'open':''}"><span class="ktab ${tabCls}">${tab}</span>
+  const K=(k,tab,tabCls,num,l1,l2,l2Cls,body,hint)=>{const o=!!UI.rob[k]; return `<div class="kc ${o?'open':''} ${qq&&typeof num==='number'&&!num?'dim':''}"><span class="ktab ${tabCls}">${tab}</span>
     <div class="khead" onclick="togK('rob','${k}')"><div><em>${num}</em><div class="l1">${l1}</div><div class="l2 ${l2Cls}">${l2}</div></div>${o&&hint?`<div class="khint">${hint}</div>`:''}</div>
     ${o?`<div class="kbody">${body()}</div><div class="kclose" onclick="togK('rob','${k}')">CLIQUE P/ FECHAR</div>`:''}</div>`;};
   return `<div class="kacc">
-    ${K('fila','FILA DE CORTE','g',A.fila.length,`${fmt(A.fila.reduce((s,r)=>s+(r.m.qt||0),0))} pçs · da DEBORA`,`${prep.length} prontos (risco ✓) · ${wait.length} aguardando risco`,prep.length?'ok':'',()=>`
+    ${K('fila','FILA DE CORTE','g',filaR.length,`${fmt(filaR.reduce((s,r)=>s+(r.m.qt||0),0))} pçs · da DEBORA`,`${prep.length} prontos (risco ✓) · ${wait.length} aguardando risco`,prep.length?'ok':'',()=>`
       <div class="ptog"><span class="hint" style="padding:0">${FGRP&&juntos.length?`${juntos.length} tecido(s) com 2+ modelos na fila — cortar no mesmo enfesto aproveita melhor o tecido.`:''}</span>
         ${FGRP?`<button class="tg ${UI.fgAll?'on':''}" onclick="fgAll()">${UI.fgAll?'recolher tudo':'expandir tudo'}</button>`:''}<button class="tg ${FGRP?'on':''}" onclick="FGRP=!FGRP;render()">${FGRP?'por tecido (mesma NF)':'por prontidão'}</button></div>
       ${FGRP?grpHtml||'<div class="empty">nenhum</div>':`<h3>prontos (RISCO ✓) <span>${prep.length}</span></h3>${prep.map(filaRow).join('')||'<div class="empty">nenhum</div>'}<h3>aguardando risco <span>${wait.length}</span></h3>${wait.map(filaRow).join('')||'<div class="empty">nenhum</div>'}`}`,FGRP?'por tecido (mesma NF)':'por prontidão')}
@@ -1270,7 +1274,7 @@ async function boot(){
   $('#expBtn').onclick=exportSnapshot;
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{VIEW=t.dataset.v; render();});
   document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{FILTER=(FILTER===c.dataset.f?'':c.dataset.f); if(FILTER&&VIEW==='roberto') VIEW='lista'; render();});
-  $('#q').oninput=e=>{Q=e.target.value.trim(); if(Q&&VIEW==='roberto') VIEW='lista'; render();};
+  $('#q').oninput=e=>{Q=e.target.value.trim(); render();};
   $('#fileIn').onchange=e=>importFiles(e.target.files);
   $('#upBtn').onclick=()=>$('#fileIn').click();
   $('#mpClose').onclick=closeModel; document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModel(); });
