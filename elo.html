@@ -233,7 +233,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .kacc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start;margin-bottom:14px}
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
-.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.bkpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.bkpi{background:#fff;border:1px solid rgba(28,26,23,.12);border-radius:10px;padding:8px 14px;min-width:110px}.bkpi small{display:block;font-size:10px;letter-spacing:.08em;color:#6b6459}.bkpi b{font-size:20px}.bkpi span{display:block;font-size:11px;color:#6b6459}.bkpi.k-late b{color:#c0392b}.bkpi.k-soon b{color:#b8860b}.bkpi.k-ok b{color:#2e7d32}tr.bvcd td{color:#c0392b}tr.bvam td{color:#8a6d00}.frm{display:grid;grid-template-columns:1fr 1fr;gap:8px}.frm label{display:flex;flex-direction:column;font-size:11px;color:#6b6459;gap:3px}.frm input,.frm select{padding:7px 8px;border:1px solid rgba(28,26,23,.2);border-radius:7px;font:inherit}
 .kc .khead{cursor:pointer}
 .kc:hover{box-shadow:0 2px 8px rgba(28,26,23,.10)}
 .kc .ktab{position:absolute;left:-1px;top:-1px;font:800 10px var(--mono);letter-spacing:.12em;padding:4px 10px;border-radius:8px 0 8px 0;color:#fff;background:var(--indigo);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -358,7 +358,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 <body>
 <header class="top">
   <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem</span></div>
-  <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
+  <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -374,7 +374,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </div>
 <main id="main"></main>
 <div id="mp"><div class="mpw"><button id="mpClose">✕ fechar</button><div id="mpBody"></div></div></div>
-<div id="drop">Solte DEBORA, ROBERTO ou ESTOQUE_TECIDOS (.xlsx)</div>
+<div id="drop">Solte DEBORA, ROBERTO, ESTOQUE_TECIDOS ou BOLETOS (.xlsx)</div>
 <div id="toast"></div>
 <div class="tmod" id="tmod"><div class="box tapp"><div class="mh"><h2 id="tmTitle"></h2><button id="tmClose">FECHAR</button></div><div class="mb" id="tmBody"></div></div></div>
 <div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><button id="gIn" class="btn">ENTRAR COM GOOGLE</button><p id="gMsg" class="sm"></p></div></div>
@@ -477,7 +477,7 @@ async function resizeBlob(blob,max=440){
   if(typeof createImageBitmap==='undefined') return null;
   try{ const bm=await createImageBitmap(blob); const k=Math.min(1,max/Math.max(bm.width,bm.height)); const c=document.createElement('canvas'); c.width=Math.round(bm.width*k); c.height=Math.round(bm.height*k); c.getContext('2d').drawImage(bm,0,0,c.width,c.height); return c.toDataURL('image/jpeg',.78); }catch(e){ return null; }
 }
-function kind(book){ if(book.sheets.RESUMO && book.order.filter(n=>/^M\d+$/i.test(n)).length>50) return 'debora'; if(book.sheets.CONTROLE && book.sheets.OFICINA) return 'roberto'; if(book.order.filter(n=>/^T\d+$/i.test(n)).length>5) return 'estoque'; return 'desconhecido'; }
+function kind(book){ if(book.sheets.RESUMO && book.order.filter(n=>/^M\d+$/i.test(n)).length>50) return 'debora'; if(book.sheets.CONTROLE && book.sheets.OFICINA) return 'roberto'; if(book.order.filter(n=>/^T\d+$/i.test(n)).length>5) return 'estoque'; if(book.sheets.AGENDA&&(book.sheets['LANÇAMENTOS']||book.sheets['BOLETOS 2026 (orig)'])) return 'boletos'; return 'desconhecido'; }
 
 /* ---------- códigos de modelo ---------- */
 function tokensOf(s){ const out=[]; const re=/B\s?\d{4,7}(?:-\d{2})?|\d{5,7}(?:-\d{2})?/gi; let m; while((m=re.exec(String(s||'').toUpperCase()))){ const c=m[0].replace(/\s/g,'').replace('-',''); if(!out.includes(c)) out.push(c);} return out; }
@@ -652,7 +652,7 @@ async function importFile(file){
     if(k==='debora'){ const models=await parseDebora(book); toast('⏳ Enviando DEBORA p/ nuvem…',60000); await cloudSaveDeb(models,file.name); toast(`✅ DEBORA: ${models.length} modelos (${models.filter(m=>!m.concl).length} em andamento) · na nuvem`); }
     else if(k==='roberto'){ const {lots,custo,ofic}=await parseRoberto(book); const r={lots,custo,ofic,at:new Date().toISOString(),file:file.name}; await cloudSaveRob(r); toast(`✅ ROBERTO: ${lots.length} lotes · ${custo.length} consumos · na nuvem`); }
     else if(k==='estoque'){ const items=await parseEstoque(book); toast('⏳ Enviando ESTOQUE p/ nuvem…',60000); const r=await cloudImportEstoque(items,file.name); toast(`✅ ESTOQUE: ${r.novos} novo(s) · ${r.atual} atualizado(s) · ${r.ig} mantido(s) (editados no app)`,7000); }
-    else toast('❌ Arquivo não reconhecido: '+file.name,7000);
+    else if(k==='boletos'){ const list=await parseBoletos(book); toast('⏳ Enviando BOLETOS p/ nuvem…',60000); const r=await cloudImportBoletos(list,file.name); toast(`✅ BOLETOS: ${r.novos} novo(s) · ${r.atual} atualizado(s) · ${r.ig} mantido(s) (editados no app)`,8000); }     else toast('❌ Arquivo não reconhecido: '+file.name,7000);
   }catch(e){ console.error(e); toast('❌ '+file.name+': '+e.message,9000); }
 }
 /* ---------- nuvem (Firestore) ---------- */
@@ -667,11 +667,11 @@ async function cloudSaveDeb(models,fname){
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}; const $$=q=>[...document.querySelectorAll(q)];
+let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}; let BOL=[], BOLF='PEND'; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
   FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
-  FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
+  FBUNSUB.push(onSnapshot(collection(db,'boletos'),s=>{ BOL=s.docs.map(d=>d.data()); render(); },e=>toast('Erro boletos: '+e.code)));   FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'tecidos'),s=>{ TDOCS=s.docs.map(d=>d.data()); TEC={items:tecFromCloud(TDOCS),at:new Date().toISOString(),file:'app TECIDOS (nuvem)'}; render(); },e=>toast('Erro tecidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'elo_deb'),s=>{ const models=s.docs.map(d=>d.data()).sort((a,b)=>+a.aba.replace(/\D/g,'')-+b.aba.replace(/\D/g,'')); DEB={models,at:DEB.at,file:DEB.file}; render(); },e=>toast('Erro DEBORA: '+e.code)));
   FBUNSUB.push(onSnapshot(doc(db,'elo','deb_meta'),s=>{ if(s.exists()){ const m=s.data(); DEB.at=m.at; DEB.file=m.file; render(); } }));
@@ -804,10 +804,12 @@ function todoItems(A,ctx){
   A.atualizar.forEach(r=>it.push({id:'atu:'+r.m.aba, g:'📝 avisar Debora', t:`${r.m.aba} · ${r.m.codigo||'—'} — ${r.alert.t}`, aba:r.m.aba}));
   A.semFicha.forEach(l=>it.push({id:'ficha:'+l.modelo, g:'⚠ verificar', t:`${l.modelo} sem ficha na DEBORA`}));
   TODO.extra.forEach(x=>it.push({id:'x:'+x.id, g:'✎ manual', t:x.t, manual:true}));
+  BOL.filter(b=>!b.pago&&b.venc).forEach(b=>{ if(b.venc<TODAY) it.push({id:'bol:'+b.id, g:'💰 boletos', t:`VENCIDO · ${b.cedente} R$ ${brl(b.valor)} · venceu ${dtBR(b.venc)}${b.nf?' · NF '+b.nf:''}`, pri:0});
+    else { const dd=daysBetween(TODAY,b.venc); if(dd<=3) it.push({id:'bol:'+b.id+':'+b.venc, g:'💰 boletos', t:`${b.cedente} R$ ${brl(b.valor)} · vence ${dtBR(b.venc)} (${dd===0?'HOJE':dd+'d'})${b.nf?' · NF '+b.nf:''}`, pri:1}); } });
   return it.sort((a,b)=>(a.pri??5)-(b.pri??5));
 }
 function renderTodo(A,ctx){
-  const items=todoItems(A,ctx); const ORDER=['✂ cortar','📐 risco p/ cortar junto','❓ cortar ou pode juntar?','📦 dar saída','📞 cobrar oficina','📝 avisar Debora','⚠ verificar','✎ manual'];
+  const items=todoItems(A,ctx); const ORDER=['✂ cortar','📐 risco p/ cortar junto','❓ cortar ou pode juntar?','📦 dar saída','📞 cobrar oficina','📝 avisar Debora','⚠ verificar','💰 boletos','✎ manual'];
   const groups=[...new Set(items.map(i=>i.g))].sort((a,b)=>(ORDER.indexOf(a)+99)%99-(ORDER.indexOf(b)+99)%99);
   const done=items.filter(i=>TODO.done[i.id]).length;
   return `<div class="panel todo"><div class="ptog"><h3>Checklist do dia <span>${done}/${items.length}</span></h3><button class="tg" onclick="todoClear()">limpar feitos</button></div>
@@ -1005,8 +1007,9 @@ function renderLista(A){
   return `<table class="tb"><thead><tr><th>M</th><th>código</th><th>modelo</th><th>DEBORA</th><th>elo</th><th>ROBERTO</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr onclick="openModel('${r.m.aba}')">
     <td class="mc">${r.m.aba}</td><td class="mc">${r.m.codigo||'—'}</td><td>${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</td>
     <td>${r.m.fase||'?'} ${r.m.prog!=null?r.m.prog+'%':''}</td><td>${rail(r.elo)} <small>${ELO_LBL[r.elo]||r.elo}</small></td>
-    <td>${r.lots.map(lotLine).join('<br>')||'<small>—</small>'}</td><td>${badge(r)}</td></tr>`).join('')}</tbody></table>`;
+    <td>${r.lots.map(lotLine).join('<br>')||'<small>—</small>'}</td><td>${badge(r)}</td></tr>`).join('')}</tbody></table>${semFichaRows(A)}`;
 }
+function semFichaRows(A){ const qq2=Q?Q.toUpperCase():''; if(!qq2) return ''; const sf=A.semFicha.filter(l=>String(l.modelo||'').toUpperCase().includes(qq2)||String(l.desc||'').toUpperCase().includes(qq2)||String(l.oficina||'').toUpperCase().includes(qq2)); if(!sf.length) return ''; return '<div class="empty" style="text-align:left;margin-top:10px"><b>⚠ '+sf.length+' lote(s) sem ficha na DEBORA</b></div><table class="tb"><tbody>'+sf.map(l=>'<tr><td class="mc">'+esc(l.modelo)+'</td><td>'+esc(l.desc||'')+'</td><td>'+fmt(l.qtd)+'</td><td>'+lotLine(l)+'</td></tr>').join('')+'</tbody></table>'; }
 
 function render(){
   const A=computeAll();
@@ -1017,7 +1020,7 @@ function render(){
   $('#ref').innerHTML=`${TEC.items.length?`TECIDOS ${esc(TEC.file||'embutido')} · ${TEC.items.length}${PED.filter(p=>p.status!=='RECEBIDO').length?` · ${PED.filter(p=>p.status!=='RECEBIDO').length} pedido(s) aberto(s)`:''} &nbsp;·&nbsp; `:''}${DEB.models.length?`DEBORA ${esc(DEB.file||'embutida')} · ${DEB.models.filter(m=>!m.concl).length} em andamento`:'<b>DEBORA: arraste o .xlsx</b>'} &nbsp;·&nbsp; ${ROB.lots.length?`ROBERTO ${esc(ROB.file||'embutido')} · ${ROB.lots.filter(l=>!l.real).length} lotes abertos`:'<b>ROBERTO: arraste o .xlsx</b>'}`;
   const main=$('#main');
   if(VIEW==='tecidos'){ main.innerHTML=renderTecidos(A); return; }
-  if(VIEW==='pedidos'){ main.innerHTML=renderPedidos(); bindPed(); return; }
+  if(VIEW==='pedidos'){ main.innerHTML=renderPedidos(); bindPed(); return; }   if(VIEW==='boletos'){ main.innerHTML=renderBoletos(); return; }
   if(!DEB.models.length){ main.innerHTML='<div class="empty big">Arraste a DEBORA (.xlsx) e o ROBERTO (.xlsx) para esta janela.<br>Os dados ficam só neste navegador.</div>'; return; }
   main.innerHTML=VIEW==='debora'?renderDebora(A):VIEW==='roberto'?renderRoberto(A):VIEW==='tecidos'?renderTecidos(A):VIEW==='plano'?renderPlano(A):renderLista(A);
 }
@@ -1055,7 +1058,7 @@ function exportSnapshot(){
   const stamp=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${String(now.getFullYear()).slice(2)} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
   const meta={snapshot:true, by:quem||'—', at:stamp, deb:DEB.file, rob:ROB.file, tec:TEC.file};
   const js=x=>JSON.stringify(x).replace(/<\//g,'<\\/');
-  const seed=`<script id="seed">const SEED_DEB=${js(DEB)};\nconst SEED_ROB=${js(ROB)};\nconst SEED_TEC=${js(TEC)};\nconst SEED_TODO=${js(TODO)};\nconst SEED_META=${js(meta)};<\/script>`;
+  const seed=`<script id="seed">const SEED_DEB=${js(DEB)};\nconst SEED_ROB=${js(ROB)};\nconst SEED_TEC=${js(TEC)};\nconst SEED_TODO=${js(TODO)};\nconst SEED_BOL=${js(BOL)};\nconst SEED_META=${js(meta)};<\/script>`;
   if(!/<script id="seed">[\s\S]*?<\/script>/.test(SRC)){ toast('❌ não achei o bloco de dados nesta página'); return; }
   const html='<!DOCTYPE html>\n'+SRC.replace(/<script id="seed">[\s\S]*?<\/script>/,seed);
   const blob=new Blob([html],{type:'text/html'}); const a=document.createElement('a');
@@ -1098,6 +1101,89 @@ function renderPedidos(){
   <div class="bar"><button class="tb ${PFILT==='PEDIDO'?'pri':''}" data-pf="PEDIDO">ABERTOS</button><button class="tb ${PFILT==='RECEBIDO'?'pri':''}" data-pf="RECEBIDO">RECEBIDOS</button><span style="flex:1"></span><button class="tb" id="bKey" title="chave da API Anthropic (compartilhada)">${CFG.apiKey?'🔑 API OK':'🔑 CHAVE API'}</button><button class="tb pri" id="bNewP">+ PEDIDO</button></div>
   ${rows.length?rows.map(p=>{const pd=pendencias(p);const n=p.status==='RECEBIDO'?0:pd.ped.length;return `<div class="pc" data-id="${esc(p.id)}"><div class="ph">${p.cores.some(c=>c.thumb)?`<div style="display:grid;grid-template-columns:1fr 1fr;width:52px;height:52px;gap:1px">${p.cores.filter(c=>c.thumb).slice(0,4).map(c=>`<img src="${c.thumb}" style="width:100%;height:100%;object-fit:cover">`).join('')}</div>`:(p.foto?`<img src="${p.foto}">`:'')}</div><div><div class="nm">${esc(p.nome||'(sem nome)')}</div><div class="sub">${esc(p.fornecedor||'—')} · ${dtBR(p.data)} · ${tfmt(totalM(p))} ${esc(p.unid||'m')} · ${p.cores.filter(c=>c.cor).length} cor(es)${p.prazo?' · prazo '+dtBR(p.prazo):''}</div>${n?`<div class="warn">⚠ ${n} campo(s) por preencher</div>`:''}</div><span class="st ${p.status==='RECEBIDO'?'rec':''}">${p.status==='RECEBIDO'?(p.entrada.t||'RECEBIDO'):'PEDIDO'}</span></div>`}).join(''):'<div class="empty">nenhum pedido</div>'}</div>`;
 }
+/* ---------- BOLETOS ---------- */
+function bolId(b){ return ('b_'+String(b.nf||'x')+'_'+String(b.parcela||'').replace(/\//g,'-')+'_'+String(b.cedente||'').toUpperCase().replace(/[^A-Z0-9]+/g,'').slice(0,18)+'_'+String(b.venc||'').replace(/-/g,'')).slice(0,120); }
+async function parseBoletos(book){
+  const g=mkGetters(await book.cellsOf('AGENDA'),book.SST); const out=[]; let vazio=0;
+  for(let r=6;r<=2000;r++){
+    const ced=g.txt('B'+r); const venc=anyISO(g,'D'+r); const val=g.num('C'+r);
+    if(!ced&&val==null){ if(++vazio>30) break; continue; } vazio=0;
+    if(!ced||val==null) continue;
+    const st=g.txt('G'+r);
+    const b={cedente:ced,valor:val,venc:venc||'',nf:g.txt('E'+r),parcela:g.txt('F'+r),status:st,ref:g.txt('H'+r),obs:g.txt('I'+r),pago:/ok|pago/i.test(st)};
+    b.id=bolId(b); out.push(b);
+  }
+  if(!out.length) throw new Error('aba AGENDA sem boletos legíveis');
+  return out;
+}
+async function cloudImportBoletos(list,fname){
+  const {db,doc,writeBatch}=FB; const now=new Date().toISOString();
+  const ex={}; BOL.forEach(b=>ex[b.id]=b);
+  let novos=0,atual=0,ig=0,b=writeBatch(db),n=0; const flush=async()=>{ await b.commit(); b=writeBatch(db); n=0; };
+  for(const it of list){
+    const e=ex[it.id];
+    if(e&&e.updatedBy==='app'){ ig++; continue; }
+    const d={...it,fonte:fname,updatedAt:now}; if(e){ if(e.pagoAt) d.pagoAt=e.pagoAt; atual++; } else { novos++; }
+    b.set(doc(db,'boletos',d.id),d); if(++n>=400) await flush();
+  }
+  await b.commit(); return {novos,atual,ig};
+}
+function bolSets(){
+  const pend=BOL.filter(b=>!b.pago), pag=BOL.filter(b=>b.pago);
+  const venc=pend.filter(b=>b.venc&&b.venc<TODAY);
+  const d7=pend.filter(b=>b.venc>=TODAY&&daysBetween(TODAY,b.venc)<=7);
+  const d30=pend.filter(b=>b.venc>=TODAY&&daysBetween(TODAY,b.venc)<=30);
+  const sum=a=>a.reduce((s,x)=>s+(+x.valor||0),0);
+  return {pend,pag,venc,d7,d30,sum};
+}
+function renderBoletos(){
+  const qq=Q?Q.toUpperCase():'';
+  const hit=b=>!qq||String(b.cedente||'').toUpperCase().includes(qq)||String(b.nf||'').includes(qq)||String(b.ref||'').toUpperCase().includes(qq)||String(b.valor||'').includes(qq);
+  const S=bolSets();
+  const list=(BOLF==='PEND'?S.pend:BOLF==='PAGOS'?S.pag:BOL.slice()).filter(hit)
+    .sort((a,b)=>String(a.venc||'9999').localeCompare(String(b.venc||'9999'))*(BOLF==='PAGOS'?-1:1));
+  const kpi=(t,a,cls)=>`<div class="bkpi ${cls||''}"><small>${t}</small><b>${a.length}</b><span>R$ ${brl(S.sum(a))}</span></div>`;
+  const chip=f=>`<button class="tg ${BOLF===f?'on':''}" onclick="BOLF='${f}';render()">${f==='PEND'?'PENDENTES':f==='PAGOS'?'PAGOS':'TODOS'}</button>`;
+  const rows=list.map(b=>{
+    const late=!b.pago&&b.venc&&b.venc<TODAY; const soon=!b.pago&&!late&&b.venc&&daysBetween(TODAY,b.venc)<=7;
+    return `<tr onclick="openBoleto('${b.id}')" class="${late?'bvcd':soon?'bvam':''}">
+      <td class="mc">${dtBR(b.venc)||'—'}</td><td>${esc(b.cedente)}</td>
+      <td class="mc">${esc(b.nf||'—')}${b.parcela?' · '+esc(b.parcela):''}</td>
+      <td><b>R$ ${brl(b.valor)}</b></td><td><small>${esc(b.ref||'')}</small></td>
+      <td>${b.pago?`<small>💰 pago${b.pagoAt?' '+dtBR(b.pagoAt):''}</small>`:`<button class="tg" onclick="event.stopPropagation();bolPago('${b.id}')">✔ PAGO</button>`}</td></tr>`;
+  }).join('');
+  return `<div class="panel"><div class="ptog"><h3>💰 Boletos <span>${S.pend.length} pendente(s) · R$ ${brl(S.sum(S.pend))}</span></h3>
+      <span>${chip('PEND')}${chip('PAGOS')}${chip('TODOS')} <button class="tg" onclick="openBoleto()">➕ NOVO</button></span></div>
+    <div class="bkpis">${kpi('VENCIDOS',S.venc,'k-late')}${kpi('7 DIAS',S.d7,'k-soon')}${kpi('30 DIAS',S.d30)}${kpi('PAGOS',S.pag,'k-ok')}</div>
+    ${BOL.length?`<table class="tb"><thead><tr><th>venc</th><th>cedente</th><th>NF · parcela</th><th>valor</th><th>ref</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6"><div class="empty">nada com esse filtro</div></td></tr>`}</tbody></table>`
+      :'<div class="empty big">Arraste o Excel <b>Boletos 2026</b> para esta janela — os boletos entram na nuvem e o Excel se aposenta.<br>Ou registre um novo com ➕ NOVO.</div>'}</div>`;
+}
+async function bolPago(id){ const b=BOL.find(x=>x.id===id); if(!b) return; const d={...b,pago:true,status:'PAGO',pagoAt:new Date().toISOString().slice(0,10),updatedBy:'app',updatedAt:new Date().toISOString()}; try{ await FB.setDoc(FB.doc(FB.db,'boletos',id),d); toast('💰 Pago · '+b.cedente); }catch(e){ toast('Erro: '+e.code,5000); } }
+function openBoleto(id){
+  const b=id?BOL.find(x=>x.id===id):null;
+  const v=(k,d)=>esc(b?(b[k]!=null?b[k]:(d||'')):(d||''));
+  openMod(b?('Boleto · '+b.cedente):'Novo boleto',`
+    <div class="frm">
+      <label>Cedente<input id="bCed" value="${v('cedente')}"></label>
+      <label>Valor (R$)<input id="bVal" type="number" step="0.01" value="${b?b.valor:''}"></label>
+      <label>Vencimento<input id="bVen" type="date" value="${v('venc')}"></label>
+      <label>NF<input id="bNf" value="${v('nf')}"></label>
+      <label>Parcela<input id="bPar" value="${v('parcela')}" placeholder="ex.: 2/6"></label>
+      <label>Ref<input id="bRef" value="${v('ref')}" placeholder="VERÃO/26"></label>
+      <label>Obs<input id="bObs" value="${v('obs')}"></label>
+      <label>Status<select id="bPag"><option value="0"${b&&b.pago?'':' selected'}>pendente</option><option value="1"${b&&b.pago?' selected':''}>pago</option></select></label>
+    </div>`,
+    `<button class="tg" onclick="saveBoleto('${id||''}')">💾 SALVAR</button>${b?`<button class="tg" onclick="delBoleto('${id}')">🗑 EXCLUIR</button>`:''}`);
+}
+async function saveBoleto(id){
+  const now=new Date().toISOString();
+  const d={cedente:$('#bCed').value.trim(),valor:parseFloat($('#bVal').value)||0,venc:$('#bVen').value,nf:$('#bNf').value.trim(),parcela:$('#bPar').value.trim(),ref:$('#bRef').value.trim(),obs:$('#bObs').value.trim(),pago:$('#bPag').value==='1',updatedBy:'app',updatedAt:now};
+  if(!d.cedente||!d.valor){ toast('Preencha cedente e valor'); return; }
+  d.status=d.pago?'PAGO':''; if(d.pago){ const old=id?BOL.find(x=>x.id===id):null; d.pagoAt=(old&&old.pagoAt)||now.slice(0,10); }
+  d.id=id||bolId(d);
+  try{ await FB.setDoc(FB.doc(FB.db,'boletos',d.id),d); closeMod(); toast('Salvo · '+d.cedente); }catch(e){ toast('Erro: '+e.code,5000); }
+}
+async function delBoleto(id){ if(!confirm('Excluir este boleto?')) return; try{ await FB.deleteDoc(FB.doc(FB.db,'boletos',id)); closeMod(); toast('Excluído'); }catch(e){ toast('Erro: '+e.code,5000); } }
 /* ---------- modal helpers ---------- */
 function openMod(title,html,foot){ $('#tmTitle').textContent=title; $('#tmBody').innerHTML=html+(foot?`<div class="foot">${foot}</div>`:''); $('#tmod').classList.add('on'); document.body.style.overflow='hidden'; }
 function closeMod(){ $('#tmod').classList.remove('on'); document.body.style.overflow=''; cur=null; }
@@ -1266,7 +1352,7 @@ async function openCrop(i){ CROP.i=i; const c=cur.cores[i]; let box=document.get
 /* ---------- boot ---------- */
 async function boot(){
   if(META&&META.snapshot){ /* arquivo recebido por WhatsApp: mostra exatamente o que foi exportado */
-    DEB=SEED_DEB; ROB=SEED_ROB; TEC=SEED_TEC; if(typeof SEED_TODO!=='undefined') TODO=Object.assign({done:{},extra:[]},SEED_TODO); $('#gate').hidden=true;
+    DEB=SEED_DEB; ROB=SEED_ROB; TEC=SEED_TEC; if(typeof SEED_TODO!=='undefined') TODO=Object.assign({done:{},extra:[]},SEED_TODO); if(typeof SEED_BOL!=='undefined') BOL=SEED_BOL; $('#gate').hidden=true;
   } else {
     const ui=await dbGet('ui'); if(ui) UI=Object.assign({rob:{},deb:{},fg:{},fgAll:false,kanban:false},ui);
     $('#gIn').onclick=()=>window.FB?window.FB.login():toast('Sem conexão com o Firebase — verifique a internet'); $('#outBtn').onclick=()=>window.FB.signOut();
