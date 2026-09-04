@@ -233,7 +233,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .kacc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start;margin-bottom:14px}
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
-.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.dlog{background:#F4F7F1;border:1px solid #cfe0c4;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:11.5px;line-height:1.7;color:#3c4a35}.bkpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.bkpi{background:#fff;border:1px solid rgba(28,26,23,.12);border-radius:10px;padding:8px 14px;min-width:110px}.bkpi small{display:block;font-size:10px;letter-spacing:.08em;color:#6b6459}.bkpi b{font-size:20px}.bkpi span{display:block;font-size:11px;color:#6b6459}.bkpi.k-late b{color:#c0392b}.bkpi.k-soon b{color:#b8860b}.bkpi.k-ok b{color:#2e7d32}tr.bvcd td{color:#c0392b}tr.bvam td{color:#8a6d00}tr.bnew td{background:#eef6e9}.bcalc{color:#b8860b;font-weight:700;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;font-size:10px}.frm{display:grid;grid-template-columns:1fr 1fr;gap:8px}.frm label{display:flex;flex-direction:column;font-size:11px;color:#6b6459;gap:3px}.frm input,.frm select{padding:7px 8px;border:1px solid rgba(28,26,23,.2);border-radius:7px;font:inherit}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.nflink{text-decoration:underline;cursor:pointer;color:var(--indigo,#1D2A3F)}.srt{cursor:pointer;user-select:none}.dlog{background:#F4F7F1;border:1px solid #cfe0c4;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:11.5px;line-height:1.7;color:#3c4a35}.bkpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.bkpi{background:#fff;border:1px solid rgba(28,26,23,.12);border-radius:10px;padding:8px 14px;min-width:110px}.bkpi small{display:block;font-size:10px;letter-spacing:.08em;color:#6b6459}.bkpi b{font-size:20px}.bkpi span{display:block;font-size:11px;color:#6b6459}.bkpi.k-late b{color:#c0392b}.bkpi.k-soon b{color:#b8860b}.bkpi.k-ok b{color:#2e7d32}tr.bvcd td{color:#c0392b}tr.bvam td{color:#8a6d00}tr.bnew td{background:#eef6e9}.bcalc{color:#b8860b;font-weight:700;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;font-size:10px}.frm{display:grid;grid-template-columns:1fr 1fr;gap:8px}.frm label{display:flex;flex-direction:column;font-size:11px;color:#6b6459;gap:3px}.frm input,.frm select{padding:7px 8px;border:1px solid rgba(28,26,23,.2);border-radius:7px;font:inherit}
 .kc .khead{cursor:pointer}
 .kc:hover{box-shadow:0 2px 8px rgba(28,26,23,.10)}
 .kc .ktab{position:absolute;left:-1px;top:-1px;font:800 10px var(--mono);letter-spacing:.12em;padding:4px 10px;border-radius:8px 0 8px 0;color:#fff;background:var(--indigo);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -357,7 +357,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.3</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.4</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -667,7 +667,7 @@ async function cloudSaveDeb(models,fname){
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}; let BOL=[], BOLF='PEND'; const $$=q=>[...document.querySelectorAll(q)];
+let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
   FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
@@ -989,9 +989,9 @@ function fallbackCopy(txt,cb){ const ta=document.createElement('textarea'); ta.v
 function openTecido(code){
   const t=TEC.items.find(x=>x.code===code); if(!t) return;
   const ms=modelosDe(t).map(m=>({m,...eloOf(m)})); const atv=ms.filter(r=>!r.m.concl), hist=ms.filter(r=>r.m.concl);
-  const kv=[['NF',t.nf||'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
+  const kv=[['NF',t.nf?`<span class="nflink" onclick="verNF('${esc(String(t.nf))}')">${esc(String(t.nf))}</span>`:'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['c/ imposto',t.precoImp!=null?'R$ '+t.precoImp.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/m'+(t.imposto?' ('+t.imposto+'%)':''):'—'],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
   const mR=t.mediaRolo;
-  const cores=t.cores.length?`<h4>CORES${mR?' · ROLOS':''}</h4><div class="cores">${t.cores.map(c=>`<div><b>${esc(c.cor)}</b><span>${fmt(c.saldo)} / ${fmt(c.entrada)} ${mR?'rolos':'m'}${mR?` · ${fmt(Math.round(c.saldo*mR))} m`:''} · ${Math.round((c.pct||0)*100)}%</span></div>`).join('')}</div>`:'';
+  const cores=t.cores.length?`<h4>CORES${mR?' · ROLOS':''}</h4><div class="cores">${t.cores.map(c=>`<div><b>${esc(c.cor)}</b><span>${fmt(c.saldo)} / ${fmt(c.entrada)} ${mR?'rolos':'m'}${!mR&&c.rolos?` · ${fmt(c.rolos)} rolo(s)`:''}${mR?` · ${fmt(Math.round(c.saldo*mR))} m`:''} · ${Math.round((c.pct||0)*100)}%</span></div>`).join('')}</div>`:'';
   const row=r=>`<div class="prow" onclick="openModel('${r.m.aba}')">${r.m.foto?`<img src="${r.m.foto}" alt="">`:'<i class="noth"></i>'}<span class="mc">${r.m.aba} · ${r.m.codigo||'—'}${isRep(r.m.codigo)?'<small>REP</small>':''}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}${r.m.qt?` <i>· ${fmt(r.m.qt)} pçs</i>`:''}</span><span class="st">${rail(r.elo)}${r.m.concl?'OK '+(dtBR(r.m.term)||''):(r.m.fase||'?').toUpperCase()+(r.m.prog!=null?' '+r.m.prog+'%':'')}</span>${badge(r)}</div>`;
   $('#mpBody').innerHTML=`
     <div class="mph"><div><span class="mc big">${t.code} · NF ${esc(t.nf||'—')}</span><h2>${esc(t.nome)}</h2><div class="sm">${esc(t.forn)}${t.comp?` · ${esc(t.comp)}`:''}</div></div>
@@ -1095,12 +1095,13 @@ const nextT=()=>'T'+String(Math.max(0,...TDOCS.map(t=>codeNum(t.code)))+1).padSt
 const by=()=>FBUSER?(FBUSER.email||'').split('@')[0]:'?';
 function renderPedidos(){
   const ab=PED.filter(p=>p.status!=='RECEBIDO'), rc=PED.filter(p=>p.status==='RECEBIDO');
-  const rows=(PFILT==='PEDIDO'?ab:rc).slice().sort((a,b)=>String(b.criado||'').localeCompare(a.criado||''));
+  const dv=PED.filter(p=>divInfo(p)); const rows=(PFILT==='PEDIDO'?ab:PFILT==='DIVERG'?dv:rc).slice().sort((a,b)=>String(b.criado||'').localeCompare(a.criado||''));
   const mAb=ab.reduce((s,p)=>s+totalM(p),0), nv=ab.filter(p=>pendencias(p).ped.length).length;
   return `<div class="tapp"><div class="pks"><div class="pk"><b>${ab.length}</b><span>PEDIDOS ABERTOS</span></div><div class="pk"><b>${tfmt(mAb)}</b><span>UNID. A RECEBER</span></div><div class="pk ${nv?'warn':''}"><b>${nv}</b><span>⚠ A VERIFICAR</span></div><div class="pk"><b>${rc.length}</b><span>RECEBIDOS</span></div></div>
-  <div class="bar"><button class="tb ${PFILT==='PEDIDO'?'pri':''}" data-pf="PEDIDO">ABERTOS</button><button class="tb ${PFILT==='RECEBIDO'?'pri':''}" data-pf="RECEBIDO">RECEBIDOS</button><span style="flex:1"></span><button class="tb" id="bKey" title="chave da API Anthropic (compartilhada)">${CFG.apiKey?'🔑 API OK':'🔑 CHAVE API'}</button><button class="tb pri" id="bNewP">+ PEDIDO</button></div>
-  ${rows.length?rows.map(p=>{const pd=pendencias(p);const n=p.status==='RECEBIDO'?0:pd.ped.length;return `<div class="pc" data-id="${esc(p.id)}"><div class="ph">${p.cores.some(c=>c.thumb)?`<div style="display:grid;grid-template-columns:1fr 1fr;width:52px;height:52px;gap:1px">${p.cores.filter(c=>c.thumb).slice(0,4).map(c=>`<img src="${c.thumb}" style="width:100%;height:100%;object-fit:cover">`).join('')}</div>`:(p.foto?`<img src="${p.foto}">`:'')}</div><div><div class="nm">${esc(p.nome||'(sem nome)')}</div><div class="sub">${esc(p.fornecedor||'—')} · ${dtBR(p.data)} · ${tfmt(totalM(p))} ${esc(p.unid||'m')} · ${p.cores.filter(c=>c.cor).length} cor(es)${p.prazo?' · prazo '+dtBR(p.prazo):''}</div>${n?`<div class="warn">⚠ ${n} campo(s) por preencher</div>`:''}</div><span class="st ${p.status==='RECEBIDO'?'rec':''}">${p.status==='RECEBIDO'?(p.entrada.t||'RECEBIDO'):'PEDIDO'}</span></div>`}).join(''):'<div class="empty">nenhum pedido</div>'}</div>`;
+  <div class="bar"><button class="tb ${PFILT==='PEDIDO'?'pri':''}" data-pf="PEDIDO">ABERTOS</button><button class="tb ${PFILT==='RECEBIDO'?'pri':''}" data-pf="RECEBIDO">RECEBIDOS</button><button class="tb ${PFILT==='DIVERG'?'pri':''}" data-pf="DIVERG">⚠ DIVERG.${dv.length?' '+dv.length:''}</button><span style="flex:1"></span><button class="tb" id="bKey" title="chave da API Anthropic (compartilhada)">${CFG.apiKey?'🔑 API OK':'🔑 CHAVE API'}</button><button class="tb pri" id="bNewP">+ PEDIDO</button></div>
+  ${rows.length?rows.map(p=>{const pd=pendencias(p);const n=p.status==='RECEBIDO'?0:pd.ped.length;return `<div class="pc" data-id="${esc(p.id)}"><div class="ph">${p.cores.some(c=>c.thumb)?`<div style="display:grid;grid-template-columns:1fr 1fr;width:52px;height:52px;gap:1px">${p.cores.filter(c=>c.thumb).slice(0,4).map(c=>`<img src="${c.thumb}" style="width:100%;height:100%;object-fit:cover">`).join('')}</div>`:(p.foto?`<img src="${p.foto}">`:'')}</div><div><div class="nm">${esc(p.nome||'(sem nome)')}</div><div class="sub">${esc(p.fornecedor||'—')} · ${dtBR(p.data)} · ${tfmt(totalM(p))} ${esc(p.unid||'m')} · ${p.cores.filter(c=>c.cor).length} cor(es)${p.prazo?' · prazo '+dtBR(p.prazo):''}</div>${n?`<div class="warn">⚠ ${n} campo(s) por preencher</div>`:''}${(d=>d?`<div class="warn" style="color:#8a6d00">⇄ pedido ${tfmt(d.ped)} → recebido ${tfmt(d.rec)} ${esc(p.unid||'m')} (${d.pct>0?'+':''}${d.pct}%)</div>`:'')(divInfo(p))}</div><span class="st ${p.status==='RECEBIDO'?'rec':''}">${p.status==='RECEBIDO'?(p.entrada.t||'RECEBIDO'):'PEDIDO'}</span></div>`}).join(''):'<div class="empty">nenhum pedido</div>'}</div>`;
 }
+function divInfo(p){ if(p.qtdPedida==null) return null; const tot=p.cores.reduce((s,c)=>s+(tnum(c.qtd)||0),0); if(!tot) return null; const d=tot-p.qtdPedida; if(Math.abs(d)/p.qtdPedida<0.02) return null; return {ped:p.qtdPedida,rec:tot,pct:Math.round(d/p.qtdPedida*100)}; }
 /* ---------- BOLETOS ---------- */
 function bolId(b){ return ('b_'+String(b.nf||'x')+'_'+String(b.parcela||'').replace(/\//g,'-')+'_'+String(b.cedente||'').toUpperCase().replace(/[^A-Z0-9]+/g,'').slice(0,18)+'_'+String(b.venc||'').replace(/-/g,'')).slice(0,120); }
 async function parseBoletos(book){
@@ -1140,24 +1141,27 @@ function renderBoletos(){
   const qq=Q?Q.toUpperCase():'';
   const hit=b=>!qq||String(b.cedente||'').toUpperCase().includes(qq)||String(b.nf||'').includes(qq)||String(b.ref||'').toUpperCase().includes(qq)||String(b.valor||'').includes(qq);
   const S=bolSets();
+  const K=BOLSORT.k, D=BOLSORT.d;
   const list=(BOLF==='PEND'?S.pend:BOLF==='PAGOS'?S.pag:BOL.slice()).filter(hit)
-    .sort((a,b)=>String(a.venc||'9999').localeCompare(String(b.venc||'9999'))*(BOLF==='PAGOS'?-1:1));
+    .sort((a,b)=>{ const va=K==='valor'?(+a.valor||0):String(a[K]||K==='venc'?a[K]||'9999':'').toUpperCase(); const vb=K==='valor'?(+b.valor||0):String(b[K]||K==='venc'?b[K]||'9999':'').toUpperCase(); return (va<vb?-1:va>vb?1:0)*D; });
   const kpi=(t,a,cls)=>`<div class="bkpi ${cls||''}"><small>${t}</small><b>${a.length}</b><span>R$ ${brl(S.sum(a))}</span></div>`;
   const chip=f=>`<button class="tg ${BOLF===f?'on':''}" onclick="BOLF='${f}';render()">${f==='PEND'?'PENDENTES':f==='PAGOS'?'PAGOS':'TODOS'}</button>`;
   const rows=list.map(b=>{
     const late=!b.pago&&b.venc&&b.venc<TODAY; const soon=!b.pago&&!late&&b.venc&&daysBetween(TODAY,b.venc)<=7;
     return `<tr onclick="openBoleto('${b.id}')" class="${late?'bvcd':soon?'bvam':''} ${b.novoAt===TODAY?'bnew':''}">
       <td class="mc">${dtBR(b.venc)||'—'}</td><td>${b.novoAt===TODAY?'🆕 ':''}${esc(b.cedente)}${b.forma==='PIX'?' 💵':''}${b.semPedido?' <small title="sem pedido">◇</small>':''}</td>
-      <td class="mc">${esc(b.nf||'—')}${b.parcela?' · '+esc(b.parcela):''}</td>
+      <td class="mc">${b.nf?`<span class="nflink" onclick="event.stopPropagation();verNF('${esc(String(b.nf))}')">${esc(String(b.nf))}</span>`:'—'}${b.parcela?' · '+esc(b.parcela):''}</td>
       <td><b>R$ ${brl(b.valor)}</b></td><td><small>${esc(b.ref||'')}</small></td>
       <td>${b.pago?`<small>💰 pago${b.pagoAt?' '+dtBR(b.pagoAt):''}</small>`:`${b.calc?'<small class="bcalc">CALCULADO</small> ':''}<button class="tg" onclick="event.stopPropagation();bolPago('${b.id}')">✔ PAGO</button>`}</td></tr>`;
   }).join('');
   return `<div class="panel"><div class="ptog"><h3>💰 Boletos <span>${S.pend.length} pendente(s) · R$ ${brl(S.sum(S.pend))}</span></h3>
       <span>${chip('PEND')}${chip('PAGOS')}${chip('TODOS')} <button class="tg" onclick="docPick(null)">📷 LER NF/ROM</button> <button class="tg" onclick="openBoleto()">➕ NOVO</button></span></div>
     <div class="bkpis">${kpi('VENCIDOS',S.venc,'k-late')}${kpi('7 DIAS',S.d7,'k-soon')}${kpi('30 DIAS',S.d30)}${kpi('PAGOS',S.pag,'k-ok')}</div>
-    ${BOL.length?`<table class="tb"><thead><tr><th>venc</th><th>cedente</th><th>NF · parcela</th><th>valor</th><th>ref</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6"><div class="empty">nada com esse filtro</div></td></tr>`}</tbody></table>`
+    ${BOL.length?`<table class="tb"><thead><tr><th class="srt" onclick="bolSort('venc')">venc${K==='venc'?(D>0?' ▲':' ▼'):''}</th><th class="srt" onclick="bolSort('cedente')">cedente${K==='cedente'?(D>0?' ▲':' ▼'):''}</th><th>NF · parcela</th><th class="srt" onclick="bolSort('valor')">valor${K==='valor'?(D>0?' ▲':' ▼'):''}</th><th>ref</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6"><div class="empty">nada com esse filtro</div></td></tr>`}</tbody></table>`
       :'<div class="empty big">Arraste o Excel <b>Boletos 2026</b> para esta janela — os boletos entram na nuvem e o Excel se aposenta.<br>Ou registre um novo com ➕ NOVO.</div>'}</div>`;
 }
+async function verNF(nf){ try{ const s=await FB.getDoc(FB.doc(FB.db,'nfs',String(nf))); if(s.exists&&s.exists()&&s.data().foto) fotoFull(s.data().foto); else toast('Sem foto guardada p/ a NF '+nf+' — leia a NF por foto uma vez (📷) e ela fica salva',7000); }catch(e){ toast('Erro: '+(e.code||e),5000); } }
+function bolSort(k){ if(BOLSORT.k===k) BOLSORT.d*=-1; else BOLSORT={k,d:1}; render(); }
 async function bolPago(id){ const b=BOL.find(x=>x.id===id); if(!b) return; const d={...b,pago:true,status:'PAGO',pagoAt:new Date().toISOString().slice(0,10),updatedBy:'app',updatedAt:new Date().toISOString()}; try{ await FB.setDoc(FB.doc(FB.db,'boletos',id),d); toast('💰 Pago · '+b.cedente); }catch(e){ toast('Erro: '+e.code,5000); } }
 function openBoleto(id){
   const b=id?BOL.find(x=>x.id===id):null;
@@ -1191,7 +1195,7 @@ async function delBoleto(id){ if(!confirm('Excluir este boleto?')) return; try{ 
 const PROMPT_DOC=`Você vai receber a FOTO de um documento de fornecedor de tecidos no Brasil. Identifique o tipo e extraia os dados. Responda SOMENTE com JSON válido, sem markdown, sem comentários.
 Tipos:
 1) "nf" — DANFE / nota fiscal eletrônica. Formato: {"tipo":"nf","cedente":"razão social do EMITENTE (topo da nota, quem vende)","nf":"número da NF-e só com dígitos significativos","emissao":"AAAA-MM-DD","valorTotal":número,"faturas":[{"parcela":"001","venc":"AAAA-MM-DD","valor":número}]} — as faturas ficam no quadro FATURA (colunas NÚMERO / DATA VENC. / VALOR). Sem quadro FATURA: "faturas":[].
-2) "romaneio" — romaneio ou lista de entrega com metragens. Formato: {"tipo":"romaneio","fornecedor":"empresa emissora","romaneio":"número","data":"AAAA-MM-DD","condPagto":"texto tal como impresso (ex 80/90/100 DDL) ou vazio","itens":[{"artigo":"nome do artigo","cor":"cor (inclui anotação manuscrita se houver)","metros":número}],"totalMetros":número,"totalKg":número} — use o Total Item de cada bloco como metros do item; totalMetros = Total Geral.
+2) "romaneio" — romaneio ou lista de entrega com metragens. Formato: {"tipo":"romaneio","fornecedor":"empresa emissora","romaneio":"número","data":"AAAA-MM-DD","condPagto":"texto tal como impresso (ex 80/90/100 DDL) ou vazio","itens":[{"artigo":"nome do artigo","cor":"cor (inclui anotação manuscrita se houver)","metros":número,"rolos":número de peças/rolos do item (qtde de linhas Peça/Seq ou o valor pç(s))}],"totalMetros":número,"totalKg":número} — use o Total Item de cada bloco como metros do item; totalMetros = Total Geral.
 3) "boleto" — boleto bancário avulso. Formato: {"tipo":"boleto","cedente":"beneficiário","nf":"nº da NF se citado","parcela":"","venc":"AAAA-MM-DD","valor":número}
 4) outro documento: {"tipo":"outro"}
 Regras: números com ponto decimal; datas AAAA-MM-DD; não invente — campo ilegível fica "" ou null e a chave entra em "unsure":[].`;
@@ -1201,7 +1205,7 @@ async function claudeVision(dataUrl,prompt){ if(!CFG.apiKey) throw new Error('Fa
   if(!r.ok){ const t=await r.text(); throw new Error(r.status===401?'Chave da API inválida (🔑 CHAVE API)':'Erro '+r.status+': '+t.slice(0,120)); }
   const data=await r.json(); const txt=data.content.filter(x=>x.type==='text').map(x=>x.text).join('');
   return JSON.parse(txt.replace(/```json|```/g,'').trim()); }
-function fileToDataUrl(file,max){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onerror=rej; fr.onload=async()=>{ try{ const img=await loadImg(fr.result); const M=max||1700; const sc=Math.min(1,M/Math.max(img.width,img.height)); if(sc>=1) return res(fr.result); const c=document.createElement('canvas'); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext('2d').drawImage(img,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',.85)); }catch(e){ res(fr.result); } }; fr.readAsDataURL(file); }); }
+function fileToDataUrl(file,max,q){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onerror=rej; fr.onload=async()=>{ try{ const img=await loadImg(fr.result); const M=max||1700; const sc=Math.min(1,M/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext('2d').drawImage(img,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',q||.85)); }catch(e){ res(fr.result); } }; fr.readAsDataURL(file); }); }
 function normName(s){ return String(s||'').toUpperCase().replace(/\b(LTDA|IND|COM|TEXTIL|TÊXTIL|MALHAS|TECIDOS|DE|DO|DA|E)\b/g,' ').replace(/[^A-Z0-9]+/g,' ').trim(); }
 function matchPedido(nome){ const cw=normName(nome).split(' ').filter(w=>w.length>=4); if(!cw.length) return null;
   const cand=PED.filter(p=>{ const fw=normName(p.fornecedor).split(' ').filter(w=>w.length>=4); return fw.some(w=>cw.includes(w)); });
@@ -1220,7 +1224,8 @@ function offerDocAfterEntrada(ctx){ OFFCTX=ctx; openMod('📷 Registrar NF / Rom
   '<button class="tg" onclick="closeMod();docPick(OFFCTX)">📷 TIRAR / ESCOLHER FOTO</button><button class="tg" onclick="closeMod()">depois</button>'); }
 async function docPicked(inp){ const f=inp.files&&inp.files[0]; if(!f) return; const ctx=DOCCTX; toast('⏳ Lendo documento…',90000);
   try{ const url=await fileToDataUrl(f); const j=await claudeVision(url,PROMPT_DOC);
-    if(ctx&&ctx.cur){ if(j.tipo==='romaneio'){ applyRomaneio(j); return; } if(j.tipo==='nf'){ const nfn=String(j.nf||'?'); if(j.nf){ cur.entrada.nf=String(j.nf); }
+    if(j&&j.tipo==='nf'&&j.nf){ fileToDataUrl(f,1150,0.72).then(small=>FB.setDoc(FB.doc(FB.db,'nfs',String(j.nf)),{nf:String(j.nf),cedente:j.cedente||'',foto:small,at:new Date().toISOString()})).catch(()=>{}); }
+    if(ctx&&ctx.cur){ if(j.tipo==='romaneio'){ applyRomaneio(j); return; } if(j.tipo==='nf'){ const nfn=String(j.nf||'?'); if(j.nf){ cur.entrada.nf=String(j.nf); } if(j.emissao){ cur.entrada.data=dtBR(j.emissao); }
       cur.docLog=[...(cur.docLog||[]),'📷 NF '+nfn+' lida → '+((j.faturas||[]).length)+' boleto(s) na fila de registro'];
       PENDNF={j,ctx:{pedidoId:cur.id,fornecedor:cur.fornecedor||'',precoM:pedPrecoM(cur)}};
       cur._try=true; drawPed();
@@ -1236,9 +1241,10 @@ function applyRomaneio(j){ let hit=0; const used=new Set();
   (j.itens||[]).forEach(it=>{ const art=normColor(it.artigo), cor=normColor(it.cor);
     let c=art.length>=3?pick(cc=>art.includes(cc)||cc.includes(art)):null; /* nome impresso: contém */
     if(!c&&cor.length>=3) c=pick(cc=>cc===cor);                            /* manuscrito: só igualdade */
-    if(c&&it.metros!=null){ c.qtd=it.metros; used.add(c); c._doc=it.metros; hit++; } else if(it.metros!=null){ (j._na=j._na||[]).push((it.cor||it.artigo||'?')+' '+fmt(it.metros)+'m'); } });
+    if(c&&it.metros!=null){ c.qtd=it.metros; used.add(c); c._doc=it.metros; const ix=cur.cores.indexOf(c); if(it.rolos!=null&&ix>=0){ cur.entrada.rolos=cur.entrada.rolos||[]; cur.entrada.rolos[ix]=it.rolos; } hit++; } else if(it.metros!=null){ (j._na=j._na||[]).push((it.cor||it.artigo||'?')+' '+fmt(it.metros)+'m'); } });
   const tot=j.totalMetros||((j.itens||[]).reduce((s,x)=>s+(+x.metros||0),0)); if(tot) cur.entrada.m=tot;
-  if(j.data) cur.entrada.data=dtBR(j.data);
+  if(j.data&&!cur.entrada.data) cur.entrada.data=dtBR(j.data); /* NF tem prioridade sobre romaneio */
+  if(cur.qtdPedida==null){ const qp=cur.cores.reduce((s,c)=>s+(tnum(c.qtd)||0),0); if(qp) cur.qtdPedida=qp; }
   const apl=cur.cores.filter(c=>c._doc!=null).map(c=>c.cor+' '+fmt(c._doc)).join(' · ');
   cur.docLog=[...(cur.docLog||[]),'📷 romaneio '+(j.romaneio||'?')+' → '+(apl||'—')+' · total '+fmt(tot)+' m'+(j._na&&j._na.length?'  ⚠ não aplicado: '+j._na.join(', '):'')];
   cur.cores.forEach(c=>delete c._doc); cur._try=true; drawPed();
@@ -1250,7 +1256,7 @@ function showNfConfirm(j,ctx){
   const rows=fats.map((f,i)=>{ const par=((f.parcela?String(+String(f.parcela).replace(/\D/g,'')||(i+1)):String(i+1)))+'/'+tot;
     const b={cedente:j.cedente||'',nf:String(j.nf||''),parcela:par,venc:f.venc||'',valor:f.valor};
     return {b,dup:BOL.some(x=>x.id===bolId(b))}; });
-  DOCPEND={tipo:'nf',cedente:j.cedente||'',nf:String(j.nf||''),pedId:ped?ped.id:'',n:rows.length};
+  DOCPEND={tipo:'nf',cedente:j.cedente||'',nf:String(j.nf||''),emissao:j.emissao||'',pedId:ped?ped.id:'',n:rows.length};
   openMod('NF '+(j.nf||'?')+' · '+(j.cedente||''),`
     ${ped?`<div class="sm">📎 será ligada ao pedido <b>${esc((ped.fornecedor||'')+' '+(ped.nome||''))}</b></div>`:'<div class="pend">⚠ nenhum pedido encontrado p/ este fornecedor — os boletos entram com a etiqueta ◇ sem pedido</div>'}
     <table class="t"><thead><tr><th>parcela</th><th>vencimento</th><th>valor R$</th><th></th></tr></thead><tbody>
@@ -1266,7 +1272,7 @@ async function regNf(){ const P=DOCPEND; if(!P||P.tipo!=='nf') return; const now
   if(!items.length){ toast('Nada novo p/ registrar (parcelas vazias ou já existentes)',6000); return; }
   try{ const bt=FB.writeBatch(FB.db); items.forEach(b=>bt.set(FB.doc(FB.db,'boletos',b.id),b));
     if(P.pedId){ const p=PED.find(x=>x.id===P.pedId); if(p){ const np={...p,atualizado:now,por:by()};
-      np.entrada={...(p.entrada||{})}; if(!np.entrada.nf&&P.nf) np.entrada.nf=P.nf;
+      np.entrada={...(p.entrada||{})}; if(!np.entrada.nf&&P.nf) np.entrada.nf=P.nf; if(P.emissao) np.entrada.data=dtBR(P.emissao);
       np.docLog=[...(p.docLog||[]),'📷 NF '+P.nf+' → boletos: '+items.map(b=>dtBR(b.venc)+' R$ '+brl(b.valor)).join(' · ')+' ✓ registrados'];
       bt.set(FB.doc(FB.db,'pedidos',P.pedId),np); } }
     await bt.commit(); closeMod(); toast(`💰 ${items.length} boleto(s) registrado(s)${P.pedId?' · NF ligada ao pedido':''} 🆕`,7000);
@@ -1365,6 +1371,7 @@ function pendencias(p){ const ped=[]; if(!p.fornecedor)ped.push('fornecedor'); i
   const e=p.entrada||{},ent=[]; if(!e.nf)ent.push('NF'); if(!e.data)ent.push('data de entrada'); if(tnum(e.m)==null&&tnum(e.kg)==null)ent.push('qtd recebida'); return {ped,ent}; }
 function openPed(p){ if(!p) return; cur=JSON.parse(JSON.stringify(p)); cur.comp=cur.comp||[]; cur.cores=cur.cores||[]; cur.entrada=Object.assign({nf:'',data:'',m:null,kg:null,insp:'OK',t:'',rolos:{}},cur.entrada||{}); drawPed(); }
 function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pendencias(p);
+  if((p.imposto==null||p.imposto==='')&&p.fornecedor){ const prev=PED.filter(x=>x.id!==p.id&&x.imposto!=null&&x.imposto!==''&&normName(x.fornecedor)===normName(p.fornecedor)).sort((a,b)=>String(b.atualizado||'').localeCompare(String(a.atualizado||'')))[0]; if(prev) p.imposto=prev.imposto; }
   const inp=(k,l,ph='')=>`<div class="fi"><label>${l}</label><input data-k="${k}" value="${esc(p[k]==null?'':p[k])}" placeholder="${ph}" class="${pd.ped.includes(l.toLowerCase().split(' ')[0])&&p._try?'miss':''}"></div>`;
   const sel=(k,l,opts)=>`<div class="fi"><label>${l}</label><select data-k="${k}">${opts.map(o=>`<option ${p[k]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
   const comp=p.comp.map((c,i)=>`<tr><td><input data-comp="${i}" data-f="pct" value="${c.pct??''}" placeholder="%"></td><td><input data-comp="${i}" data-f="fibra" value="${esc(c.fibra||'')}" list="fibras"></td></tr>`).join('');
@@ -1373,7 +1380,7 @@ function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pende
   openMod((rec?p.entrada.t+' · ':'PEDIDO · ')+(p.nome||'novo'),`
   <div class="sec"><div class="photo"><div class="ph" id="pPh">${p.foto?`<img src="${p.foto}">`:'FOTO / AMOSTRA'}</div><div class="ops"><button class="tb" id="pFoto">📷 FOTO</button><button class="tb pri" id="bRead" ${p.foto?'':'disabled'}>🤖 LER COM CLAUDE</button><button class="tb" id="bPaste">📋 COLAR LEITURA</button><span class="sm">status: <b>${p.status}</b>${rec?' · '+p.entrada.t:''}</span></div></div>${(p.unsure||[]).length?`<div class="pend">🤖 sem certeza: ${p.unsure.join(', ')} — confira</div>`:''}</div>
   <div class="sec"><h3>PEDIDO</h3><div class="f c3">${inp('data','DATA (dd/mm/aa)')}<div class="fi"><label>FORNECEDOR</label><input data-k="fornecedor" value="${esc(p.fornecedor||'')}" list="forns" class="${p._try&&!p.fornecedor?'miss':''}"></div>${inp('vendedor','VENDEDOR')}${inp('pagto','PAGTO','30/60/90')}${inp('prazo','PRAZO ENTREGA (dd/mm/aa)')}${inp('numforn','Nº PEDIDO FORN.')}</div></div>
-  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>RENDIMENTO / PREÇO m</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}"></div></div>
+  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${inp('imposto','IMPOSTO %')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>RENDIMENTO / PREÇO m</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}${precoM!=null&&tnum(p.imposto)?' · c/imp R$ '+tfmt(precoM*(1+tnum(p.imposto)/100),2)+'/m':''}"></div></div>
     <table class="t" style="margin-top:8px"><thead><tr><th style="width:80px">%</th><th>FIBRA</th></tr></thead><tbody id="compBody">${comp}</tbody></table><button class="tb" id="bAddComp" style="margin-top:6px">+ FIBRA</button><datalist id="fibras">${DEF_FIB.map(f=>`<option value="${f}">`).join('')}</datalist><datalist id="forns">${[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
   <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.length?'':'disabled'}>✂ RECORTAR SWATCHES</button><span class="sm" style="margin-left:8px">toque na 1ª coluna p/ recortar à mão</span></div>
   <div class="sec"><div class="fi"><label>OBS</label><textarea data-k="obs">${esc(p.obs||'')}</textarea></div>${pd.ped.length?`<div class="pend">⚠ falta: ${pd.ped.join(', ')}</div>`:''}</div>
@@ -1400,7 +1407,7 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
   if(e.nf){ const dupT=TDOCS.find(t=>t.nf&&String(t.nf).trim()===String(e.nf).trim()); if(dupT&&!confirm('⚠ A NF '+e.nf+' já tem tecido no ESTOQUE ('+dupT.code+').\nConfirmar de novo cria OUTRO tecido e DUPLICA o estoque.\nContinuar mesmo assim?')) return; }
   const gram=tnum(cur.gram),larg=tnum(cur.larg),preco=tnum(cur.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(cur.unid==='kg'?(rend?preco/rend:null):preco);
   const m=tnum(e.m)!=null?tnum(e.m):(rend&&tnum(e.kg)!=null?Math.round(tnum(e.kg)*rend*10)/10:0);
-  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:'',preco:precoM,largura:larg,gramatura:gram,dataEntrada:e.data,cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
+  const imp=tnum(cur.imposto); const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',imposto:imp,precoImp:(precoM!=null&&imp)?Math.round(precoM*(1+imp/100)*10000)/10000:null,estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:'',preco:precoM,largura:larg,gramatura:gram,dataEntrada:e.data,cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
   cur.status='RECEBIDO';
   try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); await b.commit(); toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000); const _dc={pedidoId:p.id,fornecedor:p.fornecedor||'',precoM:precoM}; closeMod(); setTimeout(()=>offerDocAfterEntrada(_dc),350); }catch(err){ toast('Erro: '+err.code,5000); } }
 
