@@ -233,7 +233,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .kacc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start;margin-bottom:14px}
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
-.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.bkpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.bkpi{background:#fff;border:1px solid rgba(28,26,23,.12);border-radius:10px;padding:8px 14px;min-width:110px}.bkpi small{display:block;font-size:10px;letter-spacing:.08em;color:#6b6459}.bkpi b{font-size:20px}.bkpi span{display:block;font-size:11px;color:#6b6459}.bkpi.k-late b{color:#c0392b}.bkpi.k-soon b{color:#b8860b}.bkpi.k-ok b{color:#2e7d32}tr.bvcd td{color:#c0392b}tr.bvam td{color:#8a6d00}.frm{display:grid;grid-template-columns:1fr 1fr;gap:8px}.frm label{display:flex;flex-direction:column;font-size:11px;color:#6b6459;gap:3px}.frm input,.frm select{padding:7px 8px;border:1px solid rgba(28,26,23,.2);border-radius:7px;font:inherit}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.bkpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.bkpi{background:#fff;border:1px solid rgba(28,26,23,.12);border-radius:10px;padding:8px 14px;min-width:110px}.bkpi small{display:block;font-size:10px;letter-spacing:.08em;color:#6b6459}.bkpi b{font-size:20px}.bkpi span{display:block;font-size:11px;color:#6b6459}.bkpi.k-late b{color:#c0392b}.bkpi.k-soon b{color:#b8860b}.bkpi.k-ok b{color:#2e7d32}tr.bvcd td{color:#c0392b}tr.bvam td{color:#8a6d00}tr.bnew td{background:#eef6e9}.bcalc{color:#b8860b;font-weight:700;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;font-size:10px}.frm{display:grid;grid-template-columns:1fr 1fr;gap:8px}.frm label{display:flex;flex-direction:column;font-size:11px;color:#6b6459;gap:3px}.frm input,.frm select{padding:7px 8px;border:1px solid rgba(28,26,23,.2);border-radius:7px;font:inherit}
 .kc .khead{cursor:pointer}
 .kc:hover{box-shadow:0 2px 8px rgba(28,26,23,.10)}
 .kc .ktab{position:absolute;left:-1px;top:-1px;font:800 10px var(--mono);letter-spacing:.12em;padding:4px 10px;border-radius:8px 0 8px 0;color:#fff;background:var(--indigo);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -375,7 +375,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 <main id="main"></main>
 <div id="mp"><div class="mpw"><button id="mpClose">✕ fechar</button><div id="mpBody"></div></div></div>
 <div id="drop">Solte DEBORA, ROBERTO, ESTOQUE_TECIDOS ou BOLETOS (.xlsx)</div>
-<div id="toast"></div>
+<div id="toast"></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
 <div class="tmod" id="tmod"><div class="box tapp"><div class="mh"><h2 id="tmTitle"></h2><button id="tmClose">FECHAR</button></div><div class="mb" id="tmBody"></div></div></div>
 <div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><button id="gIn" class="btn">ENTRAR COM GOOGLE</button><p id="gMsg" class="sm"></p></div></div>
 <script type="module">
@@ -1123,7 +1123,7 @@ async function cloudImportBoletos(list,fname){
   for(const it of list){
     const e=ex[it.id];
     if(e&&e.updatedBy==='app'){ ig++; continue; }
-    const d={...it,fonte:fname,updatedAt:now}; if(e){ if(e.pagoAt) d.pagoAt=e.pagoAt; atual++; } else { novos++; }
+    const d={...it,fonte:fname,updatedAt:now}; if(e){ if(e.pagoAt) d.pagoAt=e.pagoAt; if(e.novoAt) d.novoAt=e.novoAt; atual++; } else { d.novoAt=now.slice(0,10); novos++; }
     b.set(doc(db,'boletos',d.id),d); if(++n>=400) await flush();
   }
   await b.commit(); return {novos,atual,ig};
@@ -1146,14 +1146,14 @@ function renderBoletos(){
   const chip=f=>`<button class="tg ${BOLF===f?'on':''}" onclick="BOLF='${f}';render()">${f==='PEND'?'PENDENTES':f==='PAGOS'?'PAGOS':'TODOS'}</button>`;
   const rows=list.map(b=>{
     const late=!b.pago&&b.venc&&b.venc<TODAY; const soon=!b.pago&&!late&&b.venc&&daysBetween(TODAY,b.venc)<=7;
-    return `<tr onclick="openBoleto('${b.id}')" class="${late?'bvcd':soon?'bvam':''}">
-      <td class="mc">${dtBR(b.venc)||'—'}</td><td>${esc(b.cedente)}</td>
+    return `<tr onclick="openBoleto('${b.id}')" class="${late?'bvcd':soon?'bvam':''} ${b.novoAt===TODAY?'bnew':''}">
+      <td class="mc">${dtBR(b.venc)||'—'}</td><td>${b.novoAt===TODAY?'🆕 ':''}${esc(b.cedente)}${b.forma==='PIX'?' 💵':''}${b.semPedido?' <small title="sem pedido">◇</small>':''}</td>
       <td class="mc">${esc(b.nf||'—')}${b.parcela?' · '+esc(b.parcela):''}</td>
       <td><b>R$ ${brl(b.valor)}</b></td><td><small>${esc(b.ref||'')}</small></td>
-      <td>${b.pago?`<small>💰 pago${b.pagoAt?' '+dtBR(b.pagoAt):''}</small>`:`<button class="tg" onclick="event.stopPropagation();bolPago('${b.id}')">✔ PAGO</button>`}</td></tr>`;
+      <td>${b.pago?`<small>💰 pago${b.pagoAt?' '+dtBR(b.pagoAt):''}</small>`:`${b.calc?'<small class="bcalc">CALCULADO</small> ':''}<button class="tg" onclick="event.stopPropagation();bolPago('${b.id}')">✔ PAGO</button>`}</td></tr>`;
   }).join('');
   return `<div class="panel"><div class="ptog"><h3>💰 Boletos <span>${S.pend.length} pendente(s) · R$ ${brl(S.sum(S.pend))}</span></h3>
-      <span>${chip('PEND')}${chip('PAGOS')}${chip('TODOS')} <button class="tg" onclick="openBoleto()">➕ NOVO</button></span></div>
+      <span>${chip('PEND')}${chip('PAGOS')}${chip('TODOS')} <button class="tg" onclick="docPick(null)">📷 LER NF/ROM</button> <button class="tg" onclick="openBoleto()">➕ NOVO</button></span></div>
     <div class="bkpis">${kpi('VENCIDOS',S.venc,'k-late')}${kpi('7 DIAS',S.d7,'k-soon')}${kpi('30 DIAS',S.d30)}${kpi('PAGOS',S.pag,'k-ok')}</div>
     ${BOL.length?`<table class="tb"><thead><tr><th>venc</th><th>cedente</th><th>NF · parcela</th><th>valor</th><th>ref</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6"><div class="empty">nada com esse filtro</div></td></tr>`}</tbody></table>`
       :'<div class="empty big">Arraste o Excel <b>Boletos 2026</b> para esta janela — os boletos entram na nuvem e o Excel se aposenta.<br>Ou registre um novo com ➕ NOVO.</div>'}</div>`;
@@ -1171,19 +1171,134 @@ function openBoleto(id){
       <label>Parcela<input id="bPar" value="${v('parcela')}" placeholder="ex.: 2/6"></label>
       <label>Ref<input id="bRef" value="${v('ref')}" placeholder="VERÃO/26"></label>
       <label>Obs<input id="bObs" value="${v('obs')}"></label>
+      <label>Forma<select id="bForma"><option value="BOLETO"${b&&b.forma==='PIX'?'':' selected'}>boleto</option><option value="PIX"${b&&b.forma==='PIX'?' selected':''}>PIX / dinheiro</option></select></label>
       <label>Status<select id="bPag"><option value="0"${b&&b.pago?'':' selected'}>pendente</option><option value="1"${b&&b.pago?' selected':''}>pago</option></select></label>
+      <label>Pago em (se pago)<input id="bPgAt" type="date" value="${b&&b.pagoAt?esc(String(b.pagoAt).slice(0,10)):''}"></label>
     </div>`,
     `<button class="tg" onclick="saveBoleto('${id||''}')">💾 SALVAR</button>${b?`<button class="tg" onclick="delBoleto('${id}')">🗑 EXCLUIR</button>`:''}`);
 }
 async function saveBoleto(id){
   const now=new Date().toISOString();
-  const d={cedente:$('#bCed').value.trim(),valor:parseFloat($('#bVal').value)||0,venc:$('#bVen').value,nf:$('#bNf').value.trim(),parcela:$('#bPar').value.trim(),ref:$('#bRef').value.trim(),obs:$('#bObs').value.trim(),pago:$('#bPag').value==='1',updatedBy:'app',updatedAt:now};
+  const d={cedente:$('#bCed').value.trim(),valor:parseFloat($('#bVal').value)||0,venc:$('#bVen').value,nf:$('#bNf').value.trim(),parcela:$('#bPar').value.trim(),ref:$('#bRef').value.trim(),obs:$('#bObs').value.trim(),pago:$('#bPag').value==='1',forma:$('#bForma').value,updatedBy:'app',updatedAt:now};
   if(!d.cedente||!d.valor){ toast('Preencha cedente e valor'); return; }
-  d.status=d.pago?'PAGO':''; if(d.pago){ const old=id?BOL.find(x=>x.id===id):null; d.pagoAt=(old&&old.pagoAt)||now.slice(0,10); }
+  d.status=d.pago?'PAGO':''; if(d.pago){ d.pagoAt=$('#bPgAt').value||((id?(BOL.find(x=>x.id===id)||{}).pagoAt:null)||now.slice(0,10)); }
+  const old=id?BOL.find(x=>x.id===id):null; d.novoAt=old&&old.novoAt?old.novoAt:now.slice(0,10);
   d.id=id||bolId(d);
   try{ await FB.setDoc(FB.doc(FB.db,'boletos',d.id),d); closeMod(); toast('Salvo · '+d.cedente); }catch(e){ toast('Erro: '+e.code,5000); }
 }
 async function delBoleto(id){ if(!confirm('Excluir este boleto?')) return; try{ await FB.deleteDoc(FB.doc(FB.db,'boletos',id)); closeMod(); toast('Excluído'); }catch(e){ toast('Erro: '+e.code,5000); } }
+/* ---------- LER DOCUMENTO (NF / ROMANEIO / BOLETO por foto) ---------- */
+const PROMPT_DOC=`Você vai receber a FOTO de um documento de fornecedor de tecidos no Brasil. Identifique o tipo e extraia os dados. Responda SOMENTE com JSON válido, sem markdown, sem comentários.
+Tipos:
+1) "nf" — DANFE / nota fiscal eletrônica. Formato: {"tipo":"nf","cedente":"razão social do EMITENTE (topo da nota, quem vende)","nf":"número da NF-e só com dígitos significativos","emissao":"AAAA-MM-DD","valorTotal":número,"faturas":[{"parcela":"001","venc":"AAAA-MM-DD","valor":número}]} — as faturas ficam no quadro FATURA (colunas NÚMERO / DATA VENC. / VALOR). Sem quadro FATURA: "faturas":[].
+2) "romaneio" — romaneio ou lista de entrega com metragens. Formato: {"tipo":"romaneio","fornecedor":"empresa emissora","romaneio":"número","data":"AAAA-MM-DD","condPagto":"texto tal como impresso (ex 80/90/100 DDL) ou vazio","itens":[{"artigo":"nome do artigo","cor":"cor (inclui anotação manuscrita se houver)","metros":número}],"totalMetros":número,"totalKg":número} — use o Total Item de cada bloco como metros do item; totalMetros = Total Geral.
+3) "boleto" — boleto bancário avulso. Formato: {"tipo":"boleto","cedente":"beneficiário","nf":"nº da NF se citado","parcela":"","venc":"AAAA-MM-DD","valor":número}
+4) outro documento: {"tipo":"outro"}
+Regras: números com ponto decimal; datas AAAA-MM-DD; não invente — campo ilegível fica "" ou null e a chave entra em "unsure":[].`;
+async function claudeVision(dataUrl,prompt){ if(!CFG.apiKey) throw new Error('Falta a chave da API — 🔑 CHAVE API na aba PEDIDOS');
+  const m=dataUrl.match(/^data:(image\/[\w.+-]+);base64,(.+)$/); if(!m) throw new Error('imagem inválida');
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':CFG.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:m[1],data:m[2]}},{type:'text',text:prompt}]}]})});
+  if(!r.ok){ const t=await r.text(); throw new Error(r.status===401?'Chave da API inválida (🔑 CHAVE API)':'Erro '+r.status+': '+t.slice(0,120)); }
+  const data=await r.json(); const txt=data.content.filter(x=>x.type==='text').map(x=>x.text).join('');
+  return JSON.parse(txt.replace(/```json|```/g,'').trim()); }
+function fileToDataUrl(file,max){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onerror=rej; fr.onload=async()=>{ try{ const img=await loadImg(fr.result); const M=max||1700; const sc=Math.min(1,M/Math.max(img.width,img.height)); if(sc>=1) return res(fr.result); const c=document.createElement('canvas'); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext('2d').drawImage(img,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',.85)); }catch(e){ res(fr.result); } }; fr.readAsDataURL(file); }); }
+function normName(s){ return String(s||'').toUpperCase().replace(/\b(LTDA|IND|COM|TEXTIL|TÊXTIL|MALHAS|TECIDOS|DE|DO|DA|E)\b/g,' ').replace(/[^A-Z0-9]+/g,' ').trim(); }
+function matchPedido(nome){ const cw=normName(nome).split(' ').filter(w=>w.length>=4); if(!cw.length) return null;
+  const cand=PED.filter(p=>{ const fw=normName(p.fornecedor).split(' ').filter(w=>w.length>=4); return fw.some(w=>cw.includes(w)); });
+  const abertos=cand.filter(p=>p.status!=='RECEBIDO');
+  const list=(abertos.length?abertos:cand).sort((a,b)=>String(b.atualizado||'').localeCompare(String(a.atualizado||'')));
+  return list[0]||null; }
+function pedPrecoM(p){ const g=tnum(p.gram),l=tnum(p.larg),pr=tnum(p.preco); const rend=g&&l?1000/(g*l):null; return pr==null?null:(p.unid==='kg'?(rend?Math.round(pr/rend*10000)/10000:null):pr); }
+function addDays(iso,d){ const t=new Date((iso||TODAY)+'T12:00:00'); t.setDate(t.getDate()+d); return t.toISOString().slice(0,10); }
+function parseCond(s){ const ds=(String(s||'').match(/\d{1,3}/g)||[]).map(Number).filter(n=>n>=5&&n<=400); return (ds.length>=1&&ds.length<=6)?ds:[]; }
+function splitVal(total,n,i){ const base=Math.floor(total/n*100)/100; return i<n-1?base:Math.round((total-base*(n-1))*100)/100; }
+let DOCCTX=null, DOCPEND=null, OFFCTX=null;
+function docPick(ctx){ DOCCTX=ctx||null; const el=$('#docIn'); el.value=''; el.click(); }
+function docPickCur(){ docPick({cur:true}); }
+function offerDocAfterEntrada(ctx){ OFFCTX=ctx; openMod('📷 Registrar NF / Romaneio?',
+  '<div class="sm">Tire a foto da <b>NF</b> para lançar os boletos automaticamente, ou do <b>romaneio</b> para conferir metragens e gerar parcelas CALCULADAS.</div>',
+  '<button class="tg" onclick="closeMod();docPick(OFFCTX)">📷 TIRAR / ESCOLHER FOTO</button><button class="tg" onclick="closeMod()">depois</button>'); }
+async function docPicked(inp){ const f=inp.files&&inp.files[0]; if(!f) return; const ctx=DOCCTX; toast('⏳ Lendo documento…',90000);
+  try{ const url=await fileToDataUrl(f); const j=await claudeVision(url,PROMPT_DOC);
+    if(ctx&&ctx.cur){ if(j.tipo==='romaneio'){ applyRomaneio(j); return; } if(j.tipo==='nf'){ if(j.nf){ cur.entrada.nf=String(j.nf); cur._try=true; drawPed(); } toast('NF anotada · p/ lançar os boletos, confirme a entrada e use a oferta que aparece em seguida',8000); return; } }
+    if(j.tipo==='nf') showNfConfirm(j,ctx);
+    else if(j.tipo==='romaneio') showRomConfirm(j,ctx);
+    else if(j.tipo==='boleto') showBolConfirm(j,ctx);
+    else toast('Não reconheci NF, romaneio ou boleto nesta foto',6000);
+  }catch(e){ toast('Erro na leitura: '+(e.message||e),8000); } }
+function applyRomaneio(j){ let hit=0; (j.itens||[]).forEach(it=>{ const alvo=String(it.cor||it.artigo||'').toUpperCase(); if(!alvo) return;
+    const c=cur.cores.find(c=>c.cor&&(alvo.includes(c.cor.toUpperCase())||c.cor.toUpperCase().includes(alvo))); if(c&&it.metros!=null){ c.qtd=it.metros; hit++; } });
+  const tot=j.totalMetros||((j.itens||[]).reduce((s,x)=>s+(+x.metros||0),0)); if(tot) cur.entrada.m=tot;
+  if(j.data) cur.entrada.data=dtBR(j.data); cur._try=true; drawPed();
+  toast(`Romaneio aplicado · ${hit} cor(es) preenchida(s) · total ${fmt(tot)} m — confira e confirme a entrada`,8000); }
+function showNfConfirm(j,ctx){
+  const ped=ctx&&ctx.pedidoId?PED.find(p=>p.id===ctx.pedidoId):matchPedido(j.cedente);
+  const fats=(j.faturas&&j.faturas.length)?j.faturas:(j.valorTotal?[{parcela:'',venc:'',valor:j.valorTotal}]:[]);
+  const tot=fats.length||1;
+  const rows=fats.map((f,i)=>{ const par=((f.parcela?String(+String(f.parcela).replace(/\D/g,'')||(i+1)):String(i+1)))+'/'+tot;
+    const b={cedente:j.cedente||'',nf:String(j.nf||''),parcela:par,venc:f.venc||'',valor:f.valor};
+    return {b,dup:BOL.some(x=>x.id===bolId(b))}; });
+  DOCPEND={tipo:'nf',cedente:j.cedente||'',nf:String(j.nf||''),pedId:ped?ped.id:'',n:rows.length};
+  openMod('NF '+(j.nf||'?')+' · '+(j.cedente||''),`
+    ${ped?`<div class="sm">📎 será ligada ao pedido <b>${esc((ped.fornecedor||'')+' '+(ped.nome||''))}</b></div>`:'<div class="pend">⚠ nenhum pedido encontrado p/ este fornecedor — os boletos entram com a etiqueta ◇ sem pedido</div>'}
+    <table class="t"><thead><tr><th>parcela</th><th>vencimento</th><th>valor R$</th><th></th></tr></thead><tbody>
+    ${rows.map((r,i)=>`<tr><td><input id="nfP${i}" value="${esc(r.b.parcela)}" style="width:64px"></td><td><input id="nfV${i}" type="date" value="${r.b.venc}"></td><td><input id="nfR${i}" type="number" step="0.01" value="${r.b.valor!=null?r.b.valor:''}"></td><td>${r.dup?'<small>já existe</small>':''}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="sm">total da nota: R$ ${brl(j.valorTotal)} · emissão ${dtBR(j.emissao)||'—'}${(j.unsure&&j.unsure.length)?' · ⚠ conferir: '+esc(j.unsure.join(', ')):''}</div>`,
+    `<button class="tg" onclick="regNf()">💾 REGISTRAR BOLETO(S)</button>`); }
+async function regNf(){ const P=DOCPEND; if(!P||P.tipo!=='nf') return; const now=new Date().toISOString(); const items=[];
+  for(let i=0;i<P.n;i++){ const par=$('#nfP'+i).value.trim(), venc=$('#nfV'+i).value, val=parseFloat($('#nfR'+i).value)||0; if(!venc||!val) continue;
+    const b={cedente:P.cedente,nf:P.nf,parcela:par,venc,valor:val,status:'',ref:'',obs:'',pago:false,forma:'BOLETO',novoAt:now.slice(0,10),updatedAt:now,fonte:'foto NF'};
+    if(P.pedId) b.pedidoId=P.pedId; else b.semPedido=true;
+    b.id=bolId(b); if(BOL.some(x=>x.id===b.id)||items.some(x=>x.id===b.id)) continue; items.push(b); }
+  if(!items.length){ toast('Nada novo p/ registrar (parcelas vazias ou já existentes)',6000); return; }
+  try{ const bt=FB.writeBatch(FB.db); items.forEach(b=>bt.set(FB.doc(FB.db,'boletos',b.id),b));
+    if(P.pedId){ const p=PED.find(x=>x.id===P.pedId); if(p&&(!p.entrada||!p.entrada.nf)){ bt.set(FB.doc(FB.db,'pedidos',P.pedId),{...p,entrada:{...(p.entrada||{}),nf:P.nf},atualizado:now,por:by()}); } }
+    await bt.commit(); closeMod(); toast(`💰 ${items.length} boleto(s) registrado(s)${P.pedId?' · NF ligada ao pedido':''} 🆕`,7000);
+  }catch(e){ toast('Erro: '+e.code,6000); } }
+function showRomConfirm(j,ctx){
+  const ped=ctx&&ctx.pedidoId?PED.find(p=>p.id===ctx.pedidoId):matchPedido(j.fornecedor);
+  const precoM=ctx&&ctx.precoM!=null?ctx.precoM:(ped?pedPrecoM(ped):null);
+  const tot=j.totalMetros||((j.itens||[]).reduce((s,x)=>s+(+x.metros||0),0));
+  const valor=(precoM!=null&&tot)?Math.round(tot*precoM*100)/100:null;
+  const cond=parseCond(j.condPagto); const base=j.data||TODAY;
+  DOCPEND={tipo:'rom',forn:j.fornecedor||'',num:String(j.romaneio||''),pedId:ped?ped.id:'',valor,cond,base};
+  openMod('Romaneio '+(j.romaneio||'?')+' · '+(j.fornecedor||''),`
+    ${ped?`<div class="sm">📎 pedido <b>${esc((ped.fornecedor||'')+' '+(ped.nome||''))}</b> · preço ${precoM!=null?'R$ '+brl(precoM)+'/m':'—'}</div>`:'<div class="pend">⚠ nenhum pedido encontrado — sem preço não dá para calcular parcelas</div>'}
+    <table class="t"><thead><tr><th>artigo / cor</th><th>metros</th></tr></thead><tbody>
+    ${(j.itens||[]).map(x=>`<tr><td>${esc([x.artigo,x.cor].filter(Boolean).join(' · '))}</td><td>${fmt(x.metros)}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="sm"><b>${fmt(tot)} m</b>${valor!=null?` × R$ ${brl(precoM)}/m = <b>R$ ${brl(valor)}</b>`:''} · cond. pagto: ${esc(j.condPagto||'—')}</div>
+    ${valor!=null&&cond.length?`<div class="sm">→ ${cond.length} parcela(s) CALCULADA(s): ${cond.map((d,i)=>dtBR(addDays(base,d))+' · R$ '+brl(splitVal(valor,cond.length,i))).join(' &nbsp; ')}</div>`:''}
+    ${(j.unsure&&j.unsure.length)?`<div class="sm">⚠ conferir: ${esc(j.unsure.join(', '))}</div>`:''}`,
+    `${valor!=null&&cond.length?'<button class="tg" onclick="regRom()">💾 REGISTRAR CALCULADO(S)</button>':''}<button class="tg" onclick="romLembrete()">✎ só lembrete no checklist</button>`); }
+async function regRom(){ const P=DOCPEND; if(!P||P.tipo!=='rom') return; const now=new Date().toISOString(); const items=[];
+  P.cond.forEach((d,i)=>{ const b={cedente:P.forn,nf:'',parcela:(i+1)+'/'+P.cond.length,venc:addDays(P.base,d),valor:splitVal(P.valor,P.cond.length,i),status:'CALCULADO',calc:true,ref:'CALC · romaneio '+P.num,obs:'',pago:false,forma:'BOLETO',novoAt:now.slice(0,10),updatedAt:now,fonte:'foto romaneio'};
+    if(P.pedId) b.pedidoId=P.pedId; else b.semPedido=true; b.id=bolId(b); if(!BOL.some(x=>x.id===b.id)) items.push(b); });
+  if(!items.length){ toast('Parcelas já existiam'); return; }
+  try{ const bt=FB.writeBatch(FB.db); items.forEach(b=>bt.set(FB.doc(FB.db,'boletos',b.id),b)); await bt.commit(); closeMod(); toast(`🟡 ${items.length} parcela(s) CALCULADA(s) registradas — troque pelos boletos reais quando chegarem 🆕`,8000); }catch(e){ toast('Erro: '+e.code,6000); } }
+async function romLembrete(){ const P=DOCPEND||{}; await todoAdd(`💰 ${P.forn||'fornecedor'} — conferir boleto (romaneio ${P.num||'?'})`); closeMod(); toast('Lembrete no CHECK LIST'); }
+function showBolConfirm(j,ctx){
+  const ped=ctx&&ctx.pedidoId?PED.find(p=>p.id===ctx.pedidoId):matchPedido(j.cedente);
+  const calc=BOL.find(b=>b.calc&&!b.pago&&normName(b.cedente).split(' ')[0]&&normName(b.cedente).split(' ')[0]===normName(j.cedente).split(' ')[0]&&j.valor&&Math.abs(b.valor-j.valor)<=Math.max(1,j.valor*0.02));
+  DOCPEND={tipo:'bol',pedId:ped?ped.id:'',calcId:calc?calc.id:''};
+  openMod('Boleto · '+(j.cedente||''),`
+    ${calc?`<div class="sm">🟡 substituirá a parcela CALCULADA de ${dtBR(calc.venc)} (R$ ${brl(calc.valor)})</div>`:(ped?`<div class="sm">📎 pedido <b>${esc((ped.fornecedor||'')+' '+(ped.nome||''))}</b></div>`:'<div class="pend">⚠ sem pedido correspondente — entra com etiqueta ◇</div>')}
+    <div class="frm">
+      <label>Cedente<input id="xbCed" value="${esc(j.cedente||'')}"></label>
+      <label>Valor (R$)<input id="xbVal" type="number" step="0.01" value="${j.valor!=null?j.valor:''}"></label>
+      <label>Vencimento<input id="xbVen" type="date" value="${j.venc||''}"></label>
+      <label>NF<input id="xbNf" value="${esc(j.nf||'')}"></label>
+      <label>Parcela<input id="xbPar" value="${esc(j.parcela||'')}"></label>
+    </div>`,
+    `<button class="tg" onclick="regBol()">💾 REGISTRAR</button>`); }
+async function regBol(){ const P=DOCPEND; if(!P||P.tipo!=='bol') return; const now=new Date().toISOString();
+  const d={cedente:$('#xbCed').value.trim(),valor:parseFloat($('#xbVal').value)||0,venc:$('#xbVen').value,nf:$('#xbNf').value.trim(),parcela:$('#xbPar').value.trim(),status:'',calc:false,ref:'',obs:'',pago:false,forma:'BOLETO',novoAt:now.slice(0,10),updatedAt:now,updatedBy:'app',fonte:'foto boleto'};
+  if(!d.cedente||!d.valor||!d.venc){ toast('Preencha cedente, valor e vencimento'); return; }
+  if(P.calcId){ const old=BOL.find(x=>x.id===P.calcId)||{}; d.id=P.calcId; d.pedidoId=old.pedidoId||undefined; d.ref=old.ref||''; }
+  else { if(P.pedId) d.pedidoId=P.pedId; else d.semPedido=true; d.id=bolId(d); if(BOL.some(x=>x.id===d.id)){ toast('Este boleto já existe',6000); return; } }
+  Object.keys(d).forEach(k=>d[k]===undefined&&delete d[k]);
+  try{ await FB.setDoc(FB.doc(FB.db,'boletos',d.id),d); closeMod(); toast(P.calcId?'🟡→💰 CALCULADO substituído pelo boleto real 🆕':'💰 Boleto registrado 🆕',7000); }catch(e){ toast('Erro: '+e.code,6000); } }
 /* ---------- modal helpers ---------- */
 function openMod(title,html,foot){ $('#tmTitle').textContent=title; $('#tmBody').innerHTML=html+(foot?`<div class="foot">${foot}</div>`:''); $('#tmod').classList.add('on'); document.body.style.overflow='hidden'; }
 function closeMod(){ $('#tmod').classList.remove('on'); document.body.style.overflow=''; cur=null; }
@@ -1244,7 +1359,7 @@ function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pende
     <table class="t" style="margin-top:8px"><thead><tr><th style="width:80px">%</th><th>FIBRA</th></tr></thead><tbody id="compBody">${comp}</tbody></table><button class="tb" id="bAddComp" style="margin-top:6px">+ FIBRA</button><datalist id="fibras">${DEF_FIB.map(f=>`<option value="${f}">`).join('')}</datalist><datalist id="forns">${[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
   <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.length?'':'disabled'}>✂ RECORTAR SWATCHES</button><span class="sm" style="margin-left:8px">toque na 1ª coluna p/ recortar à mão</span></div>
   <div class="sec"><div class="fi"><label>OBS</label><textarea data-k="obs">${esc(p.obs||'')}</textarea></div>${pd.ped.length?`<div class="pend">⚠ falta: ${pd.ped.join(', ')}</div>`:''}</div>
-  <div class="sec"><h3>ENTRADA${rec?' · CONFIRMADA':''}</h3><div class="f c3"><div class="fi"><label>NF</label><input data-e="nf" value="${esc(p.entrada.nf||'')}"></div><div class="fi"><label>DATA ENTRADA</label><input data-e="data" value="${esc(p.entrada.data||'')}"></div><div class="fi"><label>CÓDIGO T</label><input data-e="t" value="${esc(p.entrada.t||'')}" placeholder="${nextT()}"></div><div class="fi"><label>RECEBIDO m</label><input data-e="m" value="${p.entrada.m??''}"></div><div class="fi"><label>RECEBIDO kg</label><input data-e="kg" value="${p.entrada.kg??''}"></div><div class="fi"><label>INSPEÇÃO</label><select data-e="insp">${['OK','COM RESSALVA','REPROVADO'].map(o=>`<option ${p.entrada.insp===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
+  <div class="sec"><h3>ENTRADA${rec?' · CONFIRMADA':''}${rec?'':' <button class="tg" onclick="docPickCur()" style="margin-left:8px">📷 LER ROMANEIO/NF</button>'}</h3><div class="f c3"><div class="fi"><label>NF</label><input data-e="nf" value="${esc(p.entrada.nf||'')}"></div><div class="fi"><label>DATA ENTRADA</label><input data-e="data" value="${esc(p.entrada.data||'')}"></div><div class="fi"><label>CÓDIGO T</label><input data-e="t" value="${esc(p.entrada.t||'')}" placeholder="${nextT()}"></div><div class="fi"><label>RECEBIDO m</label><input data-e="m" value="${p.entrada.m??''}"></div><div class="fi"><label>RECEBIDO kg</label><input data-e="kg" value="${p.entrada.kg??''}"></div><div class="fi"><label>INSPEÇÃO</label><select data-e="insp">${['OK','COM RESSALVA','REPROVADO'].map(o=>`<option ${p.entrada.insp===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
     <p class="help">${rec?'Entrada confirmada — o tecido '+p.entrada.t+' já está no ESTOQUE. Editar aqui não altera o estoque.':'Ao confirmar: cria o tecido no ESTOQUE com o código T, foto, cores e metragem recebida.'}</p></div>
   <div class="sec"><button class="tb red" id="bDelP">EXCLUIR PEDIDO</button></div>`,
   `<button class="tb" id="bCancel">CANCELAR</button><button class="tb" id="bSaveP">SALVAR</button>${rec?'':'<button class="tb ok" id="bConf">CONFIRMAR ENTRADA</button>'}`);
@@ -1268,7 +1383,7 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
   const m=tnum(e.m)!=null?tnum(e.m):(rend&&tnum(e.kg)!=null?Math.round(tnum(e.kg)*rend*10)/10:0);
   const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:'',preco:precoM,largura:larg,gramatura:gram,dataEntrada:e.data,cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
   cur.status='RECEBIDO';
-  try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); await b.commit(); toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000); closeMod(); }catch(err){ toast('Erro: '+err.code,5000); } }
+  try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); await b.commit(); toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000); const _dc={pedidoId:p.id,fornecedor:p.fornecedor||'',precoM:precoM}; closeMod(); setTimeout(()=>offerDocAfterEntrada(_dc),350); }catch(err){ toast('Erro: '+err.code,5000); } }
 
 /* ---------- import / export ---------- */
 function exportJson(){ const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),tecidos:TDOCS,pedidos:PED})],{type:'application/json'}); dl(blob,'tecidos_backup_'+todayISO()+'.json'); }
