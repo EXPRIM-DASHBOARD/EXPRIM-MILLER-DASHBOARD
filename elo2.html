@@ -374,7 +374,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12a.3</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12b</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -950,7 +950,9 @@ function custoMensal(){
   const lotHit=l=>!qq||String(l.modelo||'').toUpperCase().includes(qq)||String(l.desc||'').toUpperCase().includes(qq)||String(l.oficina||'').toUpperCase().includes(qq);
   const rowHit=r=>!qq||r.m.aba.includes(qq)||String(r.m.codigo||'').includes(qq)||r.m.nome.toUpperCase().includes(qq)||r.lots.some(lotHit);
   const open=ROB.lots.filter(l=>!l.real);
-  const ofi=open.filter(l=>l.saida&&lotHit(l)), par=open.filter(l=>!l.saida&&l.corte&&lotHit(l));
+  const cloudOf=CEVT.filter(d=>d.env&&!d.cheg).map(d=>({modelo:d.aba||d.nm,desc:d.nm,qtd:d.pcs,saida:d.env.saida,prev:d.env.prev,oficina:d.env.oficina,real:null,cloud:d}));
+  const cloudCheg=CEVT.filter(d=>d.env&&d.cheg);
+  const ofi=open.filter(l=>l.saida&&lotHit(l)).concat(cloudOf.filter(lotHit)), par=open.filter(l=>!l.saida&&l.corte&&lotHit(l));
   const late=ofi.filter(l=>l.prev&&l.prev<TODAY);
   const confSet=new Set(CCONF.map(c=>c.aba).filter(Boolean));
   const prep=A.fila.filter(r=>r.elo==='preparando'&&rowHit(r)&&!confSet.has(r.m.aba)), wait=A.fila.filter(r=>r.elo==='fila'&&rowHit(r)&&!confSet.has(r.m.aba));
@@ -999,7 +1001,7 @@ function custoMensal(){
          ${cores}
          <button class="tg on" style="background:#2E7D32;border-color:#2E7D32;margin-top:6px" onclick="regCorteCloud('${tc}')">CORTADO ✓</button>
         </div>`:''}</div>`; }).join('');
-    const pendRows=cloudPend.map(d=>`<div class="frow"><span class="mc">${esc(d.aba||'—')}${d.cod?' · '+esc(d.cod):''}</span><span class="nm">${esc(d.nm)}</span><span class="sm">${fmt(d.pcs)} pçs · ✂ ${dtBR(d.corte)}${d.junto>1?' · junto +'+(d.junto-1):''} · ${esc(d.tec)} ${d.mt} m · ${esc(d.who)}</span><button class="tg" style="margin-left:auto" onclick="desCorteCloud('${d.id}')">↩ desfazer</button></div>`).join('');
+    const pendRows=cloudPend.map(d=>`<div class="frow"><span class="mc">${esc(d.aba||'—')}${d.cod?' · '+esc(d.cod):''}</span><span class="nm">${esc(d.nm)}</span><span class="sm">${fmt(d.pcs)} pçs · ✂ ${dtBR(d.corte)}${d.junto>1?' · junto +'+(d.junto-1):''} · ${esc(d.tec)} ${d.mt} m</span><span style="margin-left:auto;display:flex;gap:6px"><button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desCorteCloud('${d.id}')">↩</button></span></div>`).join('');
     return `<h3>✂ AGUARDANDO CORTE — confirmados da FILA <span>${CCONF.length}</span></h3>${conf||'<div class="empty">nada confirmado — vá na FILA, marque e ✔ CONFIRME</div>'}
       <h3>📦 CORTADO NO PAINEL — aguardando envio <span>${cloudPend.length}</span></h3>${pendRows||'<div class="empty">nenhum</div>'}
       ${par.length?`<h3>📄 CORTADO NA PLANILHA (ROBERTO.xlsx) <span>${par.length}</span></h3>${par.map(lotRow).join('')}`:''}`; };
@@ -1040,8 +1042,14 @@ function custoMensal(){
       <div class="mph" style="padding:14px 46px 8px 14px"><div><h2 style="margin:0">🏭 ${esc(OFSEL)}</h2><div class="sm">${ls.length} lote(s) · ${fmt(ls.reduce((s,l)=>s+(l.qtd||0),0))} pçs</div></div></div>
       <div class="mpc" style="padding:0 14px 8px"><section>
         <div class="kv2" style="margin-bottom:8px"><b>Atrasados</b><span>${lt2.length?('⚠ '+lt2.length):'nenhum'}</span><b>Próx. saída</b><span>${next2?dtBR(next2):'—'}</span></div>
-        ${ls.slice().sort((x,y)=>(x.prev||'9')<(y.prev||'9')?-1:1).map(l=>{const r=A.rows.find(x=>x.lots.includes(l)); const m=r&&r.m; const dd=l.prev?daysBetween(l.prev,TODAY):null;
+        ${ls.slice().sort((x,y)=>(x.prev||'9')<(y.prev||'9')?-1:1).map(l=>{ const dd=l.prev?daysBetween(l.prev,TODAY):null;
+          if(l.cloud){ const d=l.cloud; const fora=daysBetween(TODAY,d.env.saida); const em15=!(dd>0)&&fora>=13;
+            return `<div class="frow" style="flex-wrap:wrap">${(x=>x&&x.foto?`<img src="${x.foto}" style="width:30px;height:30px;border-radius:5px;object-fit:cover">`:'')(DEB.models.find(x=>x.aba===d.aba))}<span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc||'')}</span>
+              <span class="sm">${fmt(l.qtd)} pçs · saiu ${dtBR(l.saida)} → ${dtBR(l.prev)}${(dd&&dd>0)?` · <b style="color:#C0392B">+${dd}d</b>`:''}${em15?' · <b style="color:#C0392B">⏳ '+fora+'/15d</b>':''} · <b style="color:#1D2A3F;cursor:pointer" onclick="editRsC('${d.id}')">${d.env.rs!=null?('R$ '+d.env.rs.toFixed(2).replace('.',','))+'/pç':'R$/pç?'}</b></span>
+              <span style="width:100%;display:flex;gap:6px;margin-top:3px"><button class="tg ${d.env.am?'on':''}" style="${d.env.am?'background:#2E7D32;border-color:#2E7D32':''}" onclick="togAmostraC('${d.id}')">${d.env.am?('amostra ✓ '+dtBR(d.env.am.at)):'⚠ sem amostra — toque'}</button><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="chegouC('${d.id}')">📥 CHEGOU</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desEnvio('${d.id}')">↩</button></span></div>`; }
+          const r=A.rows.find(x=>x.lots.includes(l)); const m=r&&r.m;
           return `<div class="frow" ${m?`onclick="openModel('${m.aba}')"`:''}><span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc||'')}</span><span class="sm">${l.qtd?fmt(l.qtd)+' pçs · ':''}saiu ${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${(dd&&dd>0)?` · <b style="color:#C0392B">+${dd}d</b>`:''}</span></div>`;}).join('')}
+        ${(cs=>cs.length?`<h4 style="margin:10px 0 4px">📥 CHEGARAM · ${cs.length} <small style="color:#8a6d00">💰 a pagar: R$ ${cs.reduce((s,d)=>s+(d.env.rs!=null?d.pcs*d.env.rs:0),0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</small></h4>${cs.map(d=>`<div class="frow" style="opacity:.8"><span class="mc">${esc(d.aba||d.nm)}</span><span class="nm">${esc(d.nm)}</span><span class="sm">✓ chegou ${dtBR(d.cheg.data)}${d.env.rs!=null?` · ${fmt(d.pcs)} × R$ ${d.env.rs.toFixed(2).replace('.',',')} = <b>R$ ${(d.pcs*d.env.rs).toLocaleString('pt-BR',{minimumFractionDigits:2})}</b>`:''}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desChegC('${d.id}')">↩</button></span></div>`).join('')}`:'')(cloudCheg.filter(d=>d.env.oficina===OFSEL))}
       </section></div>
       ${msgThread('of:'+OFSEL,'ofI',`ofMsgSend('${OFSEL}')`)}</aside>`; }
   return `<div class="bwrap tw ${aside?'has3':''}"><nav class="brail">${rail}</nav><div class="bmid robwide">${inner}</div>${aside}</div>`;
@@ -1481,6 +1489,64 @@ async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return
     b.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,pcs:null,man:null,who:d.who,by:d.by,at:now});
     await b.commit(); toast('↩ corte desfeito · estoque restaurado');
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+function lastRs(of){ const xs=CEVT.filter(d=>d.env&&d.env.oficina===of&&d.env.rs!=null).sort((a,b)=>String(b.env.at||'').localeCompare(a.env.at||'')); return xs.length?xs[0].env.rs:null; }
+function openEnviar(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
+  const ofs=[...new Set([...ROB.lots.map(l=>l.oficina).filter(Boolean),...CEVT.filter(x=>x.env).map(x=>x.env.oficina)])].sort();
+  openMod('📦 Enviar p/ oficina — '+(d.aba||d.nm),`
+    <div class="frm">
+      <label style="grid-column:1/-1">Oficina<input id="evO" list="evOl" placeholder="escolha ou escreva nova" value="${ofs[0]||''}"><datalist id="evOl">${ofs.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></label>
+      <label>Prazo (dias)<input id="evD" type="number" value="15"></label>
+      <label>R$/pç costura<input id="evR" type="number" step="0.10" placeholder="4,50"></label>
+    </div>
+    <div class="sm" style="margin-top:6px" id="evRh">ao escolher a oficina, o último preço dela preenche sozinho</div>`,
+    `<button class="tb ok" onclick="salvarEnvio('${id}')">ENVIAR — saída hoje</button>`);
+  const oEl=document.getElementById('evO'), rEl=document.getElementById('evR'), hEl=document.getElementById('evRh');
+  const fill=()=>{ const r=lastRs(oEl.value.trim().toUpperCase()); if(r!=null){ rEl.value=r; hEl.textContent='último preço desta oficina: R$ '+r; } };
+  oEl.addEventListener('change',fill); oEl.addEventListener('blur',fill); fill(); }
+async function salvarEnvio(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
+  const of=(document.getElementById('evO').value||'').trim().toUpperCase(); if(!of){ toast('Escolha a oficina'); return; }
+  const dd=+document.getElementById('evD').value||15; const rs=parseFloat(String(document.getElementById('evR').value).replace(',','.'))||null;
+  const now=new Date().toISOString(); const prev=new Date(Date.now()+dd*864e5).toISOString().slice(0,10);
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env:{oficina:of,saida:now.slice(0,10),prev,rs,by:whoName(),at:now},cheg:null});
+    closeMod(); toast('📦 enviado p/ '+of+' · prazo '+dtBR(prev)); RSEL='ofi'; OFSEL=of; render();
+  }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function desEnvio(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
+  if(!confirm('Voltar '+(d.aba||d.nm)+' para 📦 (desfazer envio)?')) return;
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env:null,cheg:null}); toast('↩ voltou p/ 📦'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function togAmostraC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
+  const env={...d.env,am:d.env.am?null:{at:new Date().toISOString().slice(0,10),by:whoName()}};
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function chegouC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,cheg:{data:new Date().toISOString().slice(0,10),by:whoName()}}); toast('📥 chegada registrada'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function desChegC(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,cheg:null}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function editRsC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
+  const v=prompt('R$/pç costura — '+(d.aba||d.nm), d.env.rs!=null?d.env.rs:''); if(v==null) return;
+  const rs=parseFloat(String(v).replace(',','.'))||null;
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env:{...d.env,rs}}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+function fichaCorte(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
+  const g=d.grade||[], cs=d.coresUse||[]; const nS=g.reduce((s,x)=>s+x.n,0);
+  const head=cs.map(c=>`<th>${esc(c.cor)}</th>`).join('');
+  const rows=g.map(gr=>`<tr><td><b>${esc(gr.tam)}</b></td>${cs.map(c=>`<td>${c.folhas*gr.n}</td>`).join('')}<td><b>${cs.reduce((s,c)=>s+c.folhas*gr.n,0)}</b></td></tr>`).join('');
+  const tot=`<tr><td><b>TOTAL</b></td>${cs.map(c=>`<td><b>${c.folhas*nS}</b></td>`).join('')}<td><b>${fmt(d.pcs)}</b></td></tr>`;
+  const rs=d.env&&d.env.rs;
+  const wo=window.open('','_blank','width=680,height=800'); if(!wo){ toast('Habilite pop-ups p/ imprimir'); return; }
+  wo.document.write(`<html><head><title>FICHA DE CORTE ${esc(d.aba||d.nm)}</title><style>
+   body{font:14px Arial;padding:26px;color:#1c1a17}h1{font-size:19px;margin:0}
+   .box{border:2px solid #1D2A3F;border-radius:10px;padding:14px 16px;margin-top:12px}
+   table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #999;padding:6px 9px;text-align:center;font-size:13px}
+   th{background:#EEF2F7}small{color:#6b6459}
+   .rod{margin-top:14px;display:flex;justify-content:space-between;font-size:13px}
+   .ass{margin-top:34px;display:flex;gap:30px}.ass div{flex:1;border-top:1px solid #333;padding-top:4px;text-align:center;font-size:12px}
+  </style></head><body>
+   <h1>📄 FICHA DE CORTE — EXPRIM MILLER 269</h1>
+   <small>${esc(d.aba||'')}${d.cod?' · '+esc(d.cod):''} — ${esc(d.nm)} · corte ${dtBR(d.corte)} · por ${esc(d.who)}</small>
+   <div class="box">${d.env?`<b>Oficina:</b> ${esc(d.env.oficina)} · <b>Saída:</b> ${dtBR(d.env.saida)} · <b>Prazo:</b> ${dtBR(d.env.prev)} · <b>Costura:</b> ${rs!=null?('R$ '+rs.toFixed(2).replace('.',',')+'/pç'):'—'}<br>`:''}
+   <b>Tecido:</b> ${esc(d.tec)} · risco ${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m = ${d.mt} m
+   <table><tr><th>TAM</th>${head}<th>Σ</th></tr>${rows}${tot}</table>
+   <div class="rod"><span><b>${fmt(d.pcs)} peças</b></span><span>${rs!=null?('valor combinado: <b>R$ '+(d.pcs*rs).toLocaleString('pt-BR',{minimumFractionDigits:2})+'</b>'):''}</span></div></div>
+   <div class="ass"><div>EXPRIM</div><div>OFICINA</div></div>
+   <script>window.print()<\/script></body></html>`); wo.document.close(); }
 function ofMsgSend(name){ msgSend('of:'+name,'ofI').then(()=>render()); }
 function ofClick(name){ if(window.innerWidth>=980){ OFSEL=(OFSEL===name?null:name); render(); } }
 function openAddFila(){ const est=TDOCS.filter(t=>t.status!=='esgotado'&&!t.sobras).sort((a,b)=>+String(a.code).replace(/\D/g,'')-+String(b.code).replace(/\D/g,''));
