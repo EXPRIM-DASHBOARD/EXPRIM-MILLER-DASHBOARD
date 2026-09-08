@@ -254,7 +254,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;padding:8px 10px}
 .mc2{position:relative;background:#fff;border:1px solid var(--line);border-radius:10px;padding:0 0 7px;cursor:pointer;overflow:hidden;text-align:center}
 .mc2:hover{background:#FBF7EE}.mc2.on{outline:2.5px solid #E8A33D;outline-offset:-2px}
-.mc2 .top{width:100%;height:84px;object-fit:cover;display:block}
+.mc2 .top{width:100%;height:96px;object-fit:cover;object-position:center 35%;display:block}
 .mc2>b{display:block;font:700 10.5px var(--mono);margin-top:5px}
 .mc2 .nm2{display:block;font-size:11px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mc2 .st2{display:block;font-size:10px;margin-top:2px;color:#6b6459}
@@ -263,7 +263,8 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .robwide .cgrid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:820px}
 .robwide .fgh{align-items:center}
 .robwide .fgh .fbt{display:flex;gap:6px;margin-left:auto;flex:none;align-items:center}
-.ftgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;max-width:1100px}
+.ftgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;max-width:1420px}
+@media(max-width:1250px){.ftgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .fgc{background:#fff;border:1.5px solid var(--line);border-radius:14px;cursor:pointer;overflow:hidden}
 .fgc:hover{border-color:#1D2A3F}.fgc.on{outline:3px solid #E8A33D;outline-offset:-2px}
 .fgch{display:flex;gap:9px;align-items:center;padding:10px 12px 8px}
@@ -274,16 +275,30 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .fgcn b{font-size:16px;color:#2E7D32}.fgcn small{font:700 8.5px var(--mono);color:#6b6459;display:block}
 .fmg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0 12px 10px}
 .fmm{text-align:center;position:relative}
-.fmm img,.fmm .fmp{width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;display:block;background:#EAE4D8}
+.fmm img,.fmm .fmp{width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;object-position:center 30%;display:block;background:#EAE4D8}
 .fmm i{position:absolute;right:3px;top:3px;font-style:normal;font-size:11px}
 .fmm b{display:block;font:700 9.5px var(--mono);margin-top:3px}
 .fmm small{display:block;font-size:9px;color:#6b6459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fgcf{border-top:1px dashed var(--line);padding:7px 12px;font-size:10.5px;color:#6b6459;display:flex;gap:10px}
-.robwide .ofgrid{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;max-width:1180px}
+.robwide .ofgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;max-width:1420px}
+@media(max-width:1250px){.robwide .ofgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .robwide .ofc{padding:11px 13px 8px;border-radius:14px}
 .robwide .ofh b{font-size:14px}
 .ofst{font:700 10.5px var(--mono);color:#1D2A3F;padding:5px 2px 2px}
 .mc2.dash2{border-style:dashed;border-color:#E8A33D;background:#FFFDF7}
+.cfg{background:#fff;border:1.5px solid var(--line);border-radius:14px;max-width:820px;margin:0 0 12px;overflow:hidden}
+.cfgh{display:flex;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)}
+.cfgh>img,.cfsw{width:42px;height:42px;border-radius:9px;flex:none;object-fit:cover;background:#B9A98F}
+.cfgh b{font-size:13.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cfgh span{font-size:11px;color:#6b6459;display:block;margin-top:1px}
+.cfgn{margin-left:auto;text-align:right;flex:none}
+.cfgn b{font-size:17px;color:#2E7D32}.cfgn small{font:700 8.5px var(--mono);color:#6b6459;display:block;letter-spacing:.06em}
+.cfg .cgrid{padding:8px 12px}
+.ccrow{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.ccrow label{display:flex;flex-direction:column;gap:3px;font:700 8.5px var(--mono);letter-spacing:.08em;color:#6b6459}
+.ccrow input{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;width:100%}
+.ccgo{background:#2E7D32;border-color:#2E7D32;margin-top:8px;padding:9px 16px;font-size:11.5px}
+.cfg [id^="ccOut"]{background:#fff;border:1px dashed #cfe0c4;border-radius:8px;padding:6px 10px}
 .cvcards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:900px;margin-bottom:12px}
 .cvc{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
 .cvc .tag2{font:700 9px var(--mono);letter-spacing:.09em;background:#1D2A3F;color:#fff;border-radius:4px;padding:2px 6px}
@@ -412,7 +427,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12e</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12e.3</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1037,14 +1052,14 @@ function custoMensal(){
         </select><button class="tg on" onclick="linkConfTec('${tc}')">VINCULAR</button></div>
         <div style="font-size:10.5px;color:#6b6459;margin-top:4px">sem vínculo não dá para descontar estoque nem cortar</div></div>`:'';
       const cores=t?((t.cores&&t.cores.length)?(t.cores||[]).map((c,i)=>`<div style="display:flex;gap:6px;align-items:center;margin:2px 0"><span style="flex:1;font-size:11.5px"><b>${esc(c.cor)}</b> <small style="color:#6b6459">saldo ${corAvail(t,c)} m</small></span><input id="ccK${i}_${tc}" type="number" placeholder="folhas" style="max-width:86px" oninput="ccCalc('${tc}')"><span id="ccKm${i}_${tc}" style="width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459">—</span></div>`).join(''):'<div class="empty" style="padding:6px">este tecido não tem cores registradas — o corte vai descontar só o total</div>'):'';
-      return `<div class="fg open"><div class="fgh"><i class="noth"></i><div><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>${its.length} confirmado(s) · cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m':''}</span></div></div>${rows}${linkSel}
+      return `<div class="cfg"><div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>${rows}${linkSel}
         ${t?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:8px 10px;margin:8px 10px">
-         <div style="font:800 10px var(--mono);letter-spacing:.1em;color:#2E7D32;margin-bottom:6px">✂ REGISTRAR CORTE — risco + cores</div>
-         <div style="display:flex;gap:6px;margin-bottom:5px"><input id="ccT_${tc}" placeholder="tamanhos (P M G · P:2 M:2 G · 38-46)" style="flex:2" oninput="ccCalc('${tc}')"><input id="ccF_${tc}" type="number" placeholder="folhas" oninput="ccCalc('${tc}')"><input id="ccC_${tc}" placeholder="risco (m)" oninput="ccCalc('${tc}')"></div>
+         <div style="font:800 10px var(--mono);letter-spacing:.1em;color:#2E7D32;margin-bottom:7px">✂ REGISTRAR CORTE — risco + cores</div>
+         <div class="ccrow"><label>TAMANHOS<input id="ccT_${tc}" placeholder="P M G · P:2 M:2 G · 38-46" oninput="ccCalc('${tc}')"></label><label>FOLHAS<input id="ccF_${tc}" type="number" placeholder="20" oninput="ccCalc('${tc}')"></label><label>RISCO (m)<input id="ccC_${tc}" placeholder="2,5" oninput="ccCalc('${tc}')"></label></div>
          <div id="ccOut_${tc}" style="font:700 11px var(--mono);color:#2E7D32;margin-bottom:5px">— tamanhos · folhas · comprimento —</div>
          ${t?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) ${(t.cores&&t.cores.length)?`<button class="tg" onclick="ccPct('${tc}')">repartir pelo saldo</button>`:''}</div>`:''}
          ${cores}
-         <button class="tg on" style="background:#2E7D32;border-color:#2E7D32;margin-top:6px" onclick="regCorteCloud('${tc}')">CORTADO ✓</button>
+         <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">✂ CORTADO — registrar e baixar estoque</button>
         </div>`:''}</div>`; }).join('');
     const pendRows=WIDE?`<div class="cgrid">${cloudPend.map(d=>{const m=DEB.models.find(x=>x.aba===d.aba)||{};
       return `<div class="mc2 ${RFICHA&&RFICHA.kind==='cort'&&RFICHA.key===d.id?'on':''}" onclick="robPick('cort','${d.id}')">${m.foto?`<img class="top" src="${m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${esc(d.aba||'—')}</b><span class="nm2">${esc(d.nm)}</span><span class="st2">${fmt(d.pcs)} pçs · <b class="okt">✂ ${dtBR(d.corte)}</b></span><button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F;margin:5px auto 0;display:block" onclick="event.stopPropagation();openEnviar('${d.id}')">📦 ENVIAR</button></div>`;}).join('')}</div>`
