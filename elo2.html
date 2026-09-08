@@ -225,7 +225,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 /* drop, toast */
 #drop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(29,42,63,.82);color:#fff;font:700 18px var(--sans);z-index:60;pointer-events:none}
 #drop.on{display:flex}
-#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#111928;color:#F3E7C8;padding:10px 16px;border-radius:9px;font:600 12.5px var(--sans);opacity:0;transition:.2s;z-index:70;max-width:90vw}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#111928;color:#F3E7C8;padding:10px 16px;border-radius:9px;font:600 12.5px var(--sans);opacity:0;transition:.2s;z-index:10050;max-width:90vw}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 .cvt{width:100%;border-collapse:collapse;font-size:13px}.cvt th,.cvt td{padding:6px 10px;text-align:right;border-bottom:1px solid var(--line,#e5e0d6)}.cvt th:first-child,.cvt td:first-child{text-align:left}.cvt tr.tot td{font-weight:700;background:rgba(0,0,0,.035)}
 
@@ -374,7 +374,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12a.2</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12a.3</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1802,7 +1802,12 @@ async function pgShow(msg){ let o=document.getElementById('pgov');
   document.body.appendChild(o); }
  o.style.display='flex'; document.getElementById('pgmsg').textContent=msg||'processando…'; }
 function pgHide(){ const o=document.getElementById('pgov'); if(o) o.style.display='none'; }
-async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.length){ cur._try=true; toast('Falta p/ confirmar: '+ent.join(', '),5000); return; }
+async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.length){ cur._try=true; drawPed();
+    toast('⚠ Falta p/ confirmar: '+ent.join(', '),6000);
+    setTimeout(()=>{ const b=document.getElementById('bConf');
+      if(b&&!document.getElementById('confPend')) b.insertAdjacentHTML('beforebegin','<span id="confPend" style="color:#C0392B;font:700 11px \'Courier New\',monospace;align-self:center;margin-right:10px">⚠ falta: '+ent.join(', ')+'</span>');
+      const miss=document.querySelector('#tmBody .miss'); if(miss){ miss.scrollIntoView({block:'center',behavior:'smooth'}); miss.focus&&miss.focus(); } },80);
+    return; }
   const e=cur.entrada; if(!e.t) e.t=nextT(); e.t=e.t.toUpperCase(); if(TDOCS.find(t=>t.code===e.t)){ toast(e.t+' já existe no estoque — informe outro código T'); return; }
   if(e.nf){ const dupT=TDOCS.find(t=>t.nf&&String(t.nf).trim()===String(e.nf).trim()); if(dupT&&!confirm('⚠ A NF '+e.nf+' já tem tecido no ESTOQUE ('+dupT.code+').\nConfirmar de novo cria OUTRO tecido e DUPLICA o estoque.\nContinuar mesmo assim?')) return; }
   const gram=tnum(cur.gram),larg=tnum(cur.larg),preco=tnum(cur.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(cur.unid==='kg'?(rend?preco/rend:null):preco);
