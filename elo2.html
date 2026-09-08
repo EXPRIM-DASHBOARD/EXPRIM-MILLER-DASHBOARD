@@ -357,7 +357,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.6</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.7</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -669,7 +669,7 @@ async function cloudSaveDeb(models,fname){
 }
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
-function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
+function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null,obs:t.obs||'',imposto:t.imposto??null,precoImp:t.precoImp??null,qtdPedida:t.qtdPedida??null,dataPedido:t.dataPedido||null,prevEntrega:t.prevEntrega||null,qtdRecebida:t.qtdRecebida??null,rolosRec:t.rolosRec??null,inspecao:t.inspecao||'',cortes:t.cortes||[],devol:t.devol||[],sobras:!!t.sobras,pecas:t.pecas||[],sobraOut:t.sobraOut||null,pedidoId:t.pedidoId||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
 let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
@@ -958,7 +958,8 @@ function renderTecidos(A){
   const prod=T.filter(t=>modelosDe(t).some(m=>!m.concl));
   const mTot=est.reduce((s,t)=>s+t.estoque,0), mProd=prod.reduce((s,t)=>s+t.estoque,0);
   const nMod=new Set(prod.flatMap(t=>modelosDe(t).filter(m=>!m.concl).map(m=>m.aba))).size;
-  let list=TF==='esgotado'?esg:TF==='prod'?prod:est;
+  const sob=T.filter(t=>t.sobras); const mSob=sob.reduce((s,t)=>s+t.estoque,0);
+  let list=TF==='esgotado'?esg:TF==='prod'?prod:TF==='sobras'?sob:est.filter(t=>!t.sobras);
   if(Q){ const q=Q.toUpperCase(); list=list.filter(t=>t.code.includes(q)||t.nome.toUpperCase().includes(q)||t.forn.toUpperCase().includes(q)||String(t.nf).includes(q)||modelosDe(t).some(m=>m.codigo.includes(q)||m.aba===q)); }
   const byCode=(a,b)=>+a.code.slice(1)-+b.code.slice(1);
   list=[...list].sort(TORD==='qtd'?(a,b)=>b.estoque-a.estoque||byCode(a,b):TORD==='ent'?(a,b)=>((!a.dataEntrada)-(!b.dataEntrada))||(a.dataEntrada<b.dataEntrada?1:a.dataEntrada>b.dataEntrada?-1:0)||byCode(a,b):TORD==='mod'?(a,b)=>modelosDe(b).filter(m=>!m.concl).length-modelosDe(a).filter(m=>!m.concl).length||byCode(a,b):byCode);
@@ -969,14 +970,14 @@ function renderTecidos(A){
   return `${tbar}${alertFoto}<div class="tkpis">
     ${kpi('estoque','EM ESTOQUE',fmt(Math.round(mTot))+'<small>m</small>',est.length+' tecidos')}
     ${kpi('prod','EM PRODUÇÃO',fmt(Math.round(mProd))+'<small>m</small>',prod.length+' tecidos · '+nMod+' modelos')}
-    ${kpi('esgotado','ESGOTADOS',esg.length,'histórico')}
+    ${kpi('esgotado','ESGOTADOS',esg.length,'histórico')}     ${kpi('sobras','🧺 SOBRAS',fmt(Math.round(mSob))+'<small>m</small>',sob.length+' grupo(s)')}
     <button class="tg" style="align-self:center" onclick="copyListaDebora()" title="Copia a tabela da aba TECIDOS da DEBORA (NF · T · tecido · composição · estoque · lista p/ E3)">📋 Lista p/ DEBORA</button>
     <label class="tsel">ordem <select onchange="TORD=this.value;render()"><option value="" ${!TORD?'selected':''}>código</option><option value="qtd" ${TORD==='qtd'?'selected':''}>quantidade ↓</option><option value="ent" ${TORD==='ent'?'selected':''}>entrada ↓</option><option value="mod" ${TORD==='mod'?'selected':''}>modelos ↓</option></select></label>
   </div>
   <div class="tgrid">${list.map(t=>{const n=modelosDe(t).filter(m=>!m.concl).length; return `<div class="tc" onclick="openTecido('${t.code}')">
     ${t.foto?`<img src="${t.foto}" alt="">`:`<div class="noph">${t.code}<br>SEM FOTO</div>`}
     <span class="badge ${t.status!=='estoque'?'out':''}">${t.status!=='estoque'?'ESGOTADO':fmt(Math.round(t.estoque))+' m'}</span>
-    ${n?`<span class="badge prod">👗 ${n}</span>`:''}
+    ${n?`<span class="badge prod">👗 ${n}</span>`:''}${t.sobras?`<span class="badge" style="left:8px;right:auto;background:#E8A33D;color:#1D2A3F">🧺</span>`:''}${msgsFor('tec:'+t.code).length?`<span class="badge" style="bottom:8px;top:auto;right:8px;background:#1D2A3F">💬 ${msgsFor('tec:'+t.code).length}</span>`:''}
     <div class="tm"><span class="mc">${t.code}</span><b>${esc(t.nome)}</b><small>${esc(t.forn)}${t.dataEntrada?` · ENT ${dtBR(t.dataEntrada)}`:''}</small></div></div>`;}).join('')||'<div class="empty">nenhum tecido</div>'}</div>`;
 }
 function copyListaDebora(){
@@ -990,7 +991,13 @@ function copyListaDebora(){
 }
 function fallbackCopy(txt,cb){ const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); cb();}catch(e){toast('não consegui copiar — navegador bloqueou');} ta.remove(); }
 function openTecido(code){
-  const t=TEC.items.find(x=>x.code===code); if(!t) return;
+  const t=TEC.items.find(x=>x.code===code)||tecFromCloud(TDOCS.filter(x=>x.code===code))[0]; if(!t) return;
+  if(t.sobras){ const val=(t.pecas||[]).reduce((s,p)=>s+p.m*(p.preco||0),0);
+    $('#mpBody').innerHTML=`<div class="mph"><div><span class="mc big">${t.code}</span><h2>🧺 ${esc(t.nome||'SOBRAS')}</h2><div class="sm">grupo de sobras · ${(t.pecas||[]).length} peça(s)</div></div>
+      <div class="elo"><span class="badge" style="position:static">${fmt(Math.round(t.estoque))} m</span><b>R$ ${brl(val)} <small>c/ imposto</small></b><button class="btn" style="margin-top:6px" onclick="closeModel();openTecEdit('${t.code}')">✎ EDITAR</button></div></div>
+    <div class="mpc"><section><h4>PEÇAS</h4>${(t.pecas||[]).map((p,i)=>`<div class="prow" style="cursor:default;display:flex;align-items:center;gap:6px">${swBox({cor:p.cor})}<b>${esc(p.cor)}</b> · ${tfmt(p.m,1)} m <small>· ex-${esc(p.origem)} · R$ ${brl(p.preco)}/m · ${esc(p.at||'')}${p.by?' · '+esc(p.by):''}</small><button class="btn" style="margin-left:auto" onclick="devolverPeca('${t.code}',${i})">↩</button></div>`).join('')||'<div class="empty">grupo vazio — use 🧺 MOVER SOBRA num tecido</div>'}
+    ${msgThread('tec:'+t.code,'tcI',`tecMsgSend('${t.code}')`)}</section></div>`;
+    $('#mp').classList.add('on'); return; }
   const ms=modelosDe(t).map(m=>({m,...eloOf(m)})); const atv=ms.filter(r=>!r.m.concl), hist=ms.filter(r=>r.m.concl);
   const kv=[['NF',t.nf?`<span class="nflink" onclick="verNF('${esc(String(t.nf))}')">${esc(String(t.nf))}</span>`:'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['c/ imposto',t.precoImp!=null?'R$ '+t.precoImp.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/m'+(t.imposto?' ('+t.imposto+'%)':''):'—'],['Pedido',t.qtdPedida?fmt(t.qtdPedida)+' m'+(t.dataPedido?' · '+dtBR(t.dataPedido):''):'—'],['Rolos · Insp.',(t.rolosRec!=null?fmt(t.rolosRec)+' rolos':'—')+(t.inspecao?' · '+esc(t.inspecao):'')],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
   const mR=t.mediaRolo;
@@ -998,10 +1005,10 @@ function openTecido(code){
   const row=r=>`<div class="prow" onclick="openModel('${r.m.aba}')">${r.m.foto?`<img src="${r.m.foto}" alt="">`:'<i class="noth"></i>'}<span class="mc">${r.m.aba} · ${r.m.codigo||'—'}${isRep(r.m.codigo)?'<small>REP</small>':''}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}${r.m.qt?` <i>· ${fmt(r.m.qt)} pçs</i>`:''}</span><span class="st">${rail(r.elo)}${r.m.concl?'OK '+(dtBR(r.m.term)||''):(r.m.fase||'?').toUpperCase()+(r.m.prog!=null?' '+r.m.prog+'%':'')}</span>${badge(r)}</div>`;
   $('#mpBody').innerHTML=`
     <div class="mph"><div><span class="mc big">${t.code} · NF ${esc(t.nf||'—')}</span><h2>${esc(t.nome)}</h2><div class="sm">${esc(t.forn)}${t.comp?` · ${esc(t.comp)}`:''}</div></div>
-      <div class="elo"><span class="badge ${t.status!=='estoque'?'out':''}" style="position:static">${t.status!=='estoque'?'ESGOTADO':fmt(Math.round(t.estoque))+' m'}</span><b>${atv.length} modelo(s) em produção</b><button class="btn" style="margin-top:6px" onclick="closeModel();openTecEdit('${t.code}')">✎ EDITAR</button></div></div>
+      <div class="elo"><span class="badge ${t.status!=='estoque'?'out':''}" style="position:static">${t.status!=='estoque'?'ESGOTADO':fmt(Math.round(t.estoque))+' m'}</span><b>${atv.length} modelo(s) em produção</b><button class="btn" style="margin-top:6px" onclick="closeModel();openTecEdit('${t.code}')">✎ EDITAR</button><button class="btn" style="margin-top:6px" onclick="openMoverSobra('${t.code}')">🧺 MOVER SOBRA</button></div></div>
     <div class="mpc"><section>${t.foto?`<img class="tfoto" src="${t.foto}" alt="" onclick="fotoFull(this.src)">`:'<div class="noph tfoto">sem foto</div>'}<div class="kv">${kv.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join('')}</div>${cores}${(d=>d?`<div class="pend">⇄ pedido ${fmt(d.ped)} → recebido ${fmt(d.rec)} m (${d.pct>0?'+':''}${d.pct}%)</div>`:'')(tecDiv(t))}${t.devol&&t.devol.length?`<div class="pend">⚠ devolução: ${t.devol.map(x=>`${dtBR(x.data)||''} ${fmt(x.qtd)} m · R$ ${brl(x.valor)}${/s|ok/i.test(String(x.resolvido||''))?' ✓':' · pendente'}`).join('  ·  ')}</div>`:''}${t.cortes&&t.cortes.length?`<h4 style="margin-top:10px">CONSUMO · ${t.cortes.length}</h4><div class="chist">${t.cortes.map(x=>`<div>${dtBR(x.data)||'—'} · <b>${esc(x.modelo||'')}</b>${x.cor?' · '+esc(x.cor):''}${x.m!=null?' · '+fmt(x.m)+' m':(x.rolos!=null?' · '+fmt(x.rolos)+' rolos':'')}</div>`).join('')}</div>`:''}</section>
       <section><h4>EM PRODUÇÃO · ${atv.length}${t.obs?` <span class="tobs">· OBS: ${esc(t.obs)}</span>`:''}</h4>${atv.map(row).join('')||`<div class="empty">${!DEB.models.length?'arraste a DEBORA':(t.nf?'nenhum modelo da DEBORA com esta NF':'tecido sem NF')}</div>`}
-      ${hist.length?`<h4>histórico · ${hist.length}</h4>${hist.map(row).join('')}`:''}</section></div>`;
+      ${hist.length?`<h4>histórico · ${hist.length}</h4>${hist.map(row).join('')}`:''}${msgThread('tec:'+t.code,'tcI',`tecMsgSend('${t.code}')`)}</section></div>`;
   $('#mp').classList.add('on');
 }
 function renderLista(A){
@@ -1160,6 +1167,66 @@ function bolFicha(id){ const b=BOL.find(x=>x.id===id); if(!b) return '<div class
   <div class="bfb">${b.pago?'':`<button class="tb ok" onclick="bolPago('${b.id}')">✔ PAGO</button>`}<button class="tb" onclick="openBoleto('${b.id}')">✎ EDITAR</button></div></div>
   ${msgThread('bol:'+id,'bmI','bolMsgSend()')}`; }
 function bolRowClick(id){ if(window.innerWidth>=980){ BSEL=(BSEL===id?null:id); render(); } else openBoleto(id); }
+async function tecMsgSend(code){ await msgSend('tec:'+code,'tcI'); openTecido(code); }
+function corAvail(t,c){ const mR=t.mediaRolo; return Math.max(0,Math.round(((mR?(c.saldo||0)*mR:(c.saldo||0)))*10)/10); }
+function mvCorSel(sel){ const q=$('#mvQ'); if(q&&sel.selectedOptions[0]) q.value=sel.selectedOptions[0].dataset.s; }
+function mvGrpSel(sel){ const w=$('#mvNwrap'); if(w) w.hidden=(sel.value!=='__novo'); const n=$('#mvN'); if(n) n.hidden=(sel.value!=='__novo'); }
+function openMoverSobra(code){ const t=TDOCS.find(x=>x.code===code); if(!t){ toast('Tecido não está na nuvem'); return; }
+  const cs=(t.cores||[]).filter(c=>c.cor&&corAvail(t,c)>0);
+  if(!cs.length){ toast('Sem saldo por cor neste tecido'); return; }
+  const opts=cs.map((c,i)=>`<option value="${esc(c.cor)}" data-s="${corAvail(t,c)}"${i?'':' selected'}>${esc(c.cor)} — sobra ${tfmt(corAvail(t,c),1)} m</option>`).join('');
+  const grupos=TDOCS.filter(x=>x.sobras);
+  const gsel=grupos.map(g=>`<option value="${g.code}">${g.code} · ${esc(g.nome||'')}</option>`).join('')+`<option value="__novo"${grupos.length?'':' selected'}>＋ criar grupo novo…</option>`;
+  const preco=t.precoImp??t.preco??0;
+  openMod('🧺 Mover sobra · '+t.code,`
+    <div class="frm">
+      <label>Cor<select id="mvC" onchange="mvCorSel(this)">${opts}</select></label>
+      <label>Metros (pode ser parte)<input id="mvQ" type="number" step="0.1" value="${corAvail(t,cs[0])}"></label>
+      <label style="grid-column:1/-1">Para o grupo<select id="mvG" onchange="mvGrpSel(this)">${gsel}</select></label>
+      <label style="grid-column:1/-1" id="mvNwrap" ${grupos.length?'hidden':''}>Nome do grupo novo<input id="mvN" placeholder="ex.: SOBRAS VERÃO/26" ${grupos.length?'hidden':''}></label>
+    </div>
+    <div class="sm" style="margin-top:8px">A peça leva o preço c/ imposto da origem (R$ ${brl(preco)}/m). A saída fica registrada nos movimentos e o re-drop do Excel respeita o que saiu.</div>`,
+    `<button class="tb ok" onclick="moverSobra('${t.code}')">➡ MOVER</button>`); }
+async function moverSobra(code){ const src=TDOCS.find(x=>x.code===code); if(!src) return;
+  const cor=$('#mvC').value; let m=parseFloat($('#mvQ').value)||0;
+  const c0=(src.cores||[]).find(c=>c.cor===cor); if(!c0){ toast('Cor não encontrada'); return; }
+  const max=corAvail(src,c0); if(m<=0){ toast('Informe os metros'); return; } if(m>max) m=max;
+  const now=new Date().toISOString(); const mR=src.mediaRolo;
+  let gid=$('#mvG').value, novo=false, tgt;
+  if(gid==='__novo'){ novo=true; const nome=($('#mvN').value||'').trim()||'SOBRAS';
+    const nmax=Math.max(0,...TDOCS.map(t=>+String(t.code).replace(/\D/g,'')||0)); gid='T'+(nmax+1);
+    tgt={code:gid,nome,forn:'SOBRAS',sobras:true,estoque:0,usado:0,status:'estoque',comp:'',estacao:'',preco:null,largura:null,gramatura:null,mediaRolo:null,dataEntrada:now.slice(0,10),cores:[],pecas:[],foto:null,obs:'',createdAt:now}; }
+  else { const ex=TDOCS.find(x=>x.code===gid); if(!ex){ toast('Grupo não encontrado'); return; } tgt=JSON.parse(JSON.stringify(ex)); }
+  const srcD=JSON.parse(JSON.stringify(src));
+  srcD.cores=(srcD.cores||[]).map(c=>c.cor===cor?{...c,saldo:Math.max(0,Math.round((c.saldo-(mR?m/mR:m))*10)/10)}:c);
+  srcD.estoque=Math.max(0,Math.round((srcD.estoque-m)*10)/10); srcD.status=srcD.estoque>0?'estoque':'esgotado';
+  srcD.sobraOut=srcD.sobraOut||{total:0,cores:{}}; srcD.sobraOut.total=Math.round((srcD.sobraOut.total+m)*10)/10;
+  srcD.sobraOut.cores[cor]=Math.round(((srcD.sobraOut.cores[cor]||0)+m)*10)/10;
+  srcD.updatedAt=now; srcD.updatedBy=by();
+  tgt.pecas=[...(tgt.pecas||[]),{cor,m,origem:src.code,preco:src.precoImp??src.preco??0,at:now.slice(0,10),by:whoName()}];
+  tgt.estoque=Math.round(((tgt.estoque||0)+m)*10)/10; tgt.sobras=true; tgt.status='estoque'; tgt.updatedAt=now; tgt.updatedBy=by();
+  try{ const b=FB.writeBatch(FB.db);
+    b.set(FB.doc(FB.db,'tecidos',srcD.code),srcD); b.set(FB.doc(FB.db,'tecidos',tgt.code),tgt);
+    const mv1={id:'M'+Date.now().toString(36)+'a',code:srcD.code,delta:-m,antes:src.estoque,depois:srcD.estoque,motivo:`sobra ${cor} → ${tgt.code}`,at:now,by:by()};
+    const mv2={id:'M'+Date.now().toString(36)+'b',code:tgt.code,delta:m,antes:Math.round((tgt.estoque-m)*10)/10,depois:tgt.estoque,motivo:`recebe ${cor} de ${srcD.code}`,at:now,by:by()};
+    b.set(FB.doc(FB.db,'movs',mv1.id),mv1); b.set(FB.doc(FB.db,'movs',mv2.id),mv2);
+    await b.commit(); closeMod(); toast(`🧺 ${tfmt(m,1)} m de ${cor} → ${tgt.code}${novo?' (novo grupo)':''}`,6000);
+    setTimeout(()=>openTecido(tgt.code),700);
+  }catch(e){ toast('Erro: '+(e&&e.code),6000); } }
+async function devolverPeca(gcode,idx){ const g=TDOCS.find(x=>x.code===gcode); if(!g||!g.pecas||!g.pecas[idx]) return;
+  const p=g.pecas[idx]; if(!confirm(`Devolver ${tfmt(p.m,1)} m de ${p.cor} para ${p.origem}?`)) return;
+  const now=new Date().toISOString(); const gD=JSON.parse(JSON.stringify(g));
+  gD.pecas.splice(idx,1); gD.estoque=Math.max(0,Math.round((gD.estoque-p.m)*10)/10); gD.updatedAt=now; gD.updatedBy=by();
+  const src=TDOCS.find(x=>x.code===p.origem); const b=FB.writeBatch(FB.db);
+  b.set(FB.doc(FB.db,'tecidos',gD.code),gD);
+  if(src){ const sD=JSON.parse(JSON.stringify(src)); const mR2=sD.mediaRolo;
+    sD.cores=(sD.cores||[]).map(c=>c.cor===p.cor?{...c,saldo:Math.round((c.saldo+(mR2?p.m/mR2:p.m))*10)/10}:c);
+    sD.estoque=Math.round((sD.estoque+p.m)*10)/10; sD.status='estoque';
+    if(sD.sobraOut){ sD.sobraOut.total=Math.max(0,Math.round((sD.sobraOut.total-p.m)*10)/10); if(sD.sobraOut.cores&&sD.sobraOut.cores[p.cor]!=null){ sD.sobraOut.cores[p.cor]=Math.max(0,Math.round((sD.sobraOut.cores[p.cor]-p.m)*10)/10); } }
+    sD.updatedAt=now; sD.updatedBy=by(); b.set(FB.doc(FB.db,'tecidos',sD.code),sD); }
+  const mv={id:'M'+Date.now().toString(36)+'r',code:gcode,delta:-p.m,antes:g.estoque,depois:gD.estoque,motivo:`devolve ${p.cor} p/ ${p.origem}`,at:now,by:by()};
+  b.set(FB.doc(FB.db,'movs',mv.id),mv);
+  try{ await b.commit(); toast('↩ devolvido'); setTimeout(()=>openTecido(gcode),700); }catch(e){ toast('Erro: '+(e&&e.code),6000); } }
 function bolSets(){
   const pend=BOL.filter(b=>!b.pago), pag=BOL.filter(b=>b.pago);
   const venc=pend.filter(b=>b.venc&&b.venc<TODAY);
@@ -1484,7 +1551,11 @@ async function cloudImportEstoque(items,fname){
   for(const it of items){ const ex=TDOCS.find(t=>t.code===it.code);
     const d={code:it.code,nome:it.nome||'',forn:it.forn||'',nf:it.nf||'',estoque:it.estoque||0,usado:it.usado||0,status:it.status,comp:it.comp||'',estacao:it.estacao||'',preco:it.preco??null,largura:it.largura??null,gramatura:it.gramatura??null,mediaRolo:it.mediaRolo??null,dataEntrada:it.dataEntrada||'',imposto:it.imposto??null,precoImp:it.precoImp??null,qtdPedida:it.qtdPedida??null,dataPedido:it.dataPedido||null,prevEntrega:it.prevEntrega||null,valorTotal:it.valorTotal??null,qtdRecebida:it.qtdRecebida??null,rolosRec:it.rolosRec??null,kg:it.kg??null,inspecao:it.inspecao||'',cortes:it.cortes||[],devol:it.devol||[],cores:(it.cores||[]).map(c=>{ const old=ex&&(ex.cores||[]).find(o=>o.cor===c.cor); return {cor:c.cor,entrada:c.entrada,mt:c.mt??null,saldo:c.saldo,pct:c.pct,data:c.data||null,thumb:(old&&old.thumb)||null,hex:(old&&old.hex)||null}; }),foto:it.foto||null,obs:'',fonte:fname,updatedAt:now,updatedBy:by()};
     if(!ex){ d.createdAt=now; batch.set(FB.doc(FB.db,'tecidos',d.code),d); novos++; }
-    else if(!ex.updatedBy||ex.fonte){ if(!d.foto&&ex.foto) d.foto=ex.foto; d.createdAt=ex.createdAt||now; d.obs=ex.obs||''; batch.set(FB.doc(FB.db,'tecidos',d.code),d); atual++; }
+    else if(!ex.updatedBy||ex.fonte){ if(!d.foto&&ex.foto) d.foto=ex.foto; d.createdAt=ex.createdAt||now; d.obs=ex.obs||'';
+      if(ex.sobras){ ig++; continue; }
+      if(ex.sobraOut&&ex.sobraOut.total){ d.sobraOut=ex.sobraOut; d.estoque=Math.max(0,Math.round((d.estoque-ex.sobraOut.total)*10)/10); d.status=d.estoque>0?'estoque':'esgotado';
+        const mRx=d.mediaRolo; d.cores=d.cores.map(c=>{ const out=(ex.sobraOut.cores||{})[c.cor]; if(!out) return c; const red=mRx?out/mRx:out; return {...c,saldo:Math.max(0,Math.round((c.saldo-red)*10)/10)}; }); }
+      batch.set(FB.doc(FB.db,'tecidos',d.code),d); atual++; }
     else ig++;
     if(++n%40===0){ await batch.commit(); batch=FB.writeBatch(FB.db); } }
   await batch.commit(); return {novos,atual,ig};
