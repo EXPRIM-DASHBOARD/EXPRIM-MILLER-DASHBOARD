@@ -372,7 +372,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.11</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.11.1</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1077,7 +1077,7 @@ function copyListaDebora(){
 function fallbackCopy(txt,cb){ const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); cb();}catch(e){toast('não consegui copiar — navegador bloqueou');} ta.remove(); }
 function openTecido(code){ const html=tecFichaHTML(code); if(!html) return; $('#mpBody').innerHTML=html; $('#mp').classList.add('on'); }
 function refreshTec(code){ if(window.innerWidth>=980&&VIEW==='tecidos'&&!$('#mp').classList.contains('on')){ TSEL=code; render(); } else openTecido(code); }
-function tecCardClick(code){ if(window.innerWidth>=980){ TSEL=(TSEL===code?null:code); render(); } else openTecido(code); }
+function tecCardClick(code){ if(window.innerWidth>=980){ if(VIEW!=='tecidos'){ VIEW='tecidos'; TSEL=code; render(); return; } TSEL=(TSEL===code?null:code); render(); } else openTecido(code); }
 function tecFichaHTML(code){
   const t=TEC.items.find(x=>x.code===code)||tecFromCloud(TDOCS.filter(x=>x.code===code))[0]; if(!t) return;
   if(t.sobras){ const val=(t.pecas||[]).reduce((s,p)=>s+p.m*(p.preco||0),0);
