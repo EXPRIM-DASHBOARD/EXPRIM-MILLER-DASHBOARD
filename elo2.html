@@ -479,7 +479,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12j</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12j.1</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1328,6 +1328,7 @@ function exportSnapshot(){
   a.href=URL.createObjectURL(blob); a.download=`ELO_${pad(now.getDate())}-${pad(now.getMonth()+1)}-${String(now.getFullYear()).slice(2)}_${pad(now.getHours())}${pad(now.getMinutes())}${quem?'_'+quem.replace(/\s+/g,''):''}.html`;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
   toast(`📤 ${a.download} — ${(blob.size/1048576).toFixed(1)} MB · manda pelo WhatsApp como documento`,9000);
+  publishSnap(true);
 }
 
 /* ---------- prévia de foto: hover (PC) / toque longo (celular) ---------- */
@@ -2149,8 +2150,9 @@ function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCod
 async function publishSnap(force){
  try{ if(!FBUSER||!FB||!FB.setDoc) return;
   const j=JSON.stringify(eloSnapshot()); const hh=j.length+':'+djb2(j); /* geradoEm fica fora do hash */
-  if(!force&&hh===__pubH) return; __pubH=hh;
+  if(!force&&hh===__pubH) return;
   await FB.setDoc(FB.doc(FB.db,'public','elo'),{v:1,geradoEm:new Date().toISOString(),bytes:j.length,json:j});
+  __pubH=hh;
   if(force) toast('☁ snapshot público atualizado ('+Math.round(j.length/1024)+' KB)');
  }catch(e){ if(force) toast('snapshot: '+(e&&e.code),4000); } }
 function exportJson(){ publishSnap(true); const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),tecidos:TDOCS,pedidos:PED})],{type:'application/json'}); dl(blob,'tecidos_backup_'+todayISO()+'.json'); }
