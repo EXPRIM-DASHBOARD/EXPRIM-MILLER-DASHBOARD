@@ -479,7 +479,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12i</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12j</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1273,7 +1273,7 @@ function renderLista(A){
 }
 function semFichaRows(A){ const qq2=Q?Q.toUpperCase():''; if(!qq2) return ''; const sf=A.semFicha.filter(l=>String(l.modelo||'').toUpperCase().includes(qq2)||String(l.desc||'').toUpperCase().includes(qq2)||String(l.oficina||'').toUpperCase().includes(qq2)); if(!sf.length) return ''; return '<div class="empty" style="text-align:left;margin-top:10px"><b>⚠ '+sf.length+' lote(s) sem ficha na DEBORA</b></div><table class="tb"><tbody>'+sf.map(l=>'<tr><td class="mc">'+esc(l.modelo)+'</td><td>'+esc(l.desc||'')+'</td><td>'+fmt(l.qtd)+'</td><td>'+lotLine(l)+'</td></tr>').join('')+'</tbody></table>'; }
 
-function render(){
+function render(){ clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
   const A=computeAll();
   $('#chipAtu').textContent=A.atualizar.length; $('#chipVer').textContent=A.verificar.length; $('#chipFila').textContent=A.fila.length; $('#chipFicha').textContent=A.semFicha.length;
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
@@ -2129,7 +2129,31 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
   }catch(err){ pgHide(); toast('Erro: '+err.code,5000); } }
 
 /* ---------- import / export ---------- */
-function exportJson(){ const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),tecidos:TDOCS,pedidos:PED})],{type:'application/json'}); dl(blob,'tecidos_backup_'+todayISO()+'.json'); }
+let __pubT=null, __pubH='';
+function eloSnapshot(){
+ const strip=o=>{ const x={...o}; delete x.foto; delete x.fotoFull; delete x.items; return x; };
+ const tec=(TDOCS||[]).map(t=>{ const x={...t}; delete x.foto;
+   if(x.cores) x.cores=x.cores.map(c=>{ const y={...c}; delete y.thumb; return y; });
+   if(x.pecas) x.pecas=x.pecas.map(p=>{ const y={...p}; delete y.thumb; return y; });
+   return x; });
+ const ped=(PED||[]).map(p=>{ const x={...p}; delete x.fotos;
+   if(x.cores) x.cores=x.cores.map(c=>{ const y={...c}; delete y.thumb; return y; });
+   return x; });
+ return { v:1,
+  debora:{ file:DEB.file||null, at:DEB.at||null, models:(DEB.models||[]).map(strip) },
+  roberto:{ file:ROB.file||null, lots:ROB.lots||[], custo:ROB.custo||[], ofic:ROB.ofic||[] },
+  tecidos:tec, pedidos:ped,
+  pipeline:{ conf:CCONF||[], cortes:CEVT||[], manuais:FMAN||[] },
+  boletos:(BOL||[]).map(b=>({id:b.id,forn:b.forn,nf:b.nf,venc:b.venc,valor:b.valor,pago:b.pago||null})) }; }
+function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
+async function publishSnap(force){
+ try{ if(!FBUSER||!FB||!FB.setDoc) return;
+  const j=JSON.stringify(eloSnapshot()); const hh=j.length+':'+djb2(j); /* geradoEm fica fora do hash */
+  if(!force&&hh===__pubH) return; __pubH=hh;
+  await FB.setDoc(FB.doc(FB.db,'public','elo'),{v:1,geradoEm:new Date().toISOString(),bytes:j.length,json:j});
+  if(force) toast('☁ snapshot público atualizado ('+Math.round(j.length/1024)+' KB)');
+ }catch(e){ if(force) toast('snapshot: '+(e&&e.code),4000); } }
+function exportJson(){ publishSnap(true); const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),tecidos:TDOCS,pedidos:PED})],{type:'application/json'}); dl(blob,'tecidos_backup_'+todayISO()+'.json'); }
 async function exportXlsx(){ toast('Gerando…'); const X=await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mjs').catch(()=>null); if(!X){ toast('Sem internet p/ baixar o gerador de xlsx'); return; }
   const H=['T','NOME','FORNECEDOR','NF','ESTOQUE m','USADO m','STATUS','COMPOSIÇÃO','ESTAÇÃO','PREÇO/m','LARGURA','GRAMATURA','ENTRADA','CORES','ATUALIZADO','POR'];
   const rows=TDOCS.slice().sort((a,b)=>codeNum(a.code)-codeNum(b.code)).map(t=>[t.code,t.nome,t.forn,t.nf,t.estoque,t.usado||0,t.status,t.comp,t.estacao,t.preco,t.largura,t.gramatura,dtBR(t.dataEntrada),(t.cores||[]).map(c=>c.cor+(c.saldo!=null?' '+c.saldo+'m':'')).join(' / '),dtBR(t.updatedAt),t.updatedBy||'']);
