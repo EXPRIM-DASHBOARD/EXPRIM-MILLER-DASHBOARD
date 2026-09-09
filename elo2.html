@@ -339,12 +339,17 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .ovac{display:flex;gap:6px;margin-top:7px}
 .ovac .tg{flex:1}
 /* painel 3º cartão — regras decisivas */
-.tficha .ovwrap{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important}
+.tficha .mpc{display:block !important;padding:0 14px 10px !important}
+.tficha .ovwrap{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;width:100%}
 .tficha .ovview{width:auto}
 .tficha .ovbig{width:100%}
 .tficha .ovdt{white-space:normal}
 .tficha .cgrid{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;max-width:none !important;gap:9px;padding:8px 12px}
 .tficha .mc2 .top{aspect-ratio:3/4;object-fit:contain;background:#EFE9DD}
+.cutwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;padding:10px 12px}
+.cutL{display:grid;grid-template-columns:1fr;gap:9px;align-content:start}
+.cutR{min-width:0}
+.mc2 .who2{position:absolute;top:6px;left:6px;z-index:2;font:800 8.5px var(--mono);background:#EAF4EA;border:1px solid #cfe0c4;border-radius:5px;padding:1px 6px;color:#2E7D32}
 .tmod.mini{align-items:flex-start;justify-content:center;padding:9vh 12px}
 .tmod.mini.on{display:flex}
 .tmod.mini .box{max-width:440px;width:100%;min-height:0;border-radius:16px;overflow:hidden;padding:0;box-shadow:0 18px 50px rgba(28,26,23,.35)}
@@ -474,7 +479,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12h.1</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12i</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -787,7 +792,7 @@ async function cloudSaveDeb(models,fname){
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null,obs:t.obs||'',imposto:t.imposto??null,precoImp:t.precoImp??null,qtdPedida:t.qtdPedida??null,dataPedido:t.dataPedido||null,prevEntrega:t.prevEntrega||null,qtdRecebida:t.qtdRecebida??null,rolosRec:t.rolosRec??null,inspecao:t.inspecao||'',cortes:t.cortes||[],devol:t.devol||[],sobras:!!t.sobras,pecas:t.pecas||[],sobraOut:t.sobraOut||null,corteOut:t.corteOut||null,pedidoId:t.pedidoId||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, ROBG=[], ROBXP=[], OFV=0, FMAN=[], CCONF=[], CEVT=[]; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
+let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[]; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
   FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
@@ -1622,29 +1627,35 @@ function matrizHTML(grade,coresUse,pcs){ if(!grade||!grade.length||!(coresUse||[
  const rows=grade.map(g=>`<tr><td style="border:1px solid #ccc;padding:4px 7px;font-weight:700">${esc(g.tam)}</td>${coresUse.map(c=>`<td style="border:1px solid #ccc;padding:4px 7px;text-align:center">${c.folhas*g.n}</td>`).join('')}<td style="border:1px solid #ccc;padding:4px 7px;text-align:center;color:#6b6459"><b>${coresUse.reduce((s,c)=>s+c.folhas*g.n,0)}</b></td></tr>`).join('');
  const tot=`<tr><td style="border:1px solid #ccc;padding:4px 7px"><b>Σ</b></td>${coresUse.map(c=>`<td style="border:1px solid #ccc;padding:4px 7px;text-align:center"><b>${c.folhas*nS}</b></td>`).join('')}<td style="border:1px solid #ccc;padding:4px 7px;text-align:center"><b>${fmt(pcs)}</b></td></tr>`;
  return `<h4>GRADE — tam × cor</h4><table style="border-collapse:collapse;width:100%;font-size:12px"><tr><th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">TAM</th>${head}<th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">Σ</th></tr>${rows}${tot}</table>`; }
-function cutGroupFull(tc){ const its=CCONF.filter(c=>(c.tec||'?')===tc); if(!its.length) return ''; const WIDE=window.innerWidth>=980;
+function cutGroupFull(tc){ const its=CCONF.filter(c=>(c.tec||'?')===tc); if(!its.length) return '';
+ const WIDE=window.innerWidth>=980;
  const t=TDOCS.find(x=>x.code===tc);
-      const rows=WIDE?`<div class="cgrid">${its.map(c=>{const m=DEB.models.find(x=>x.aba===c.aba)||{};
-        return `<div class="mc2 ${RFICHA&&RFICHA.kind==='conf'&&RFICHA.key===c.id?'on':''}" onclick="robPick('conf','${c.id}')">${m.foto?`<img class="top" src="${m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${esc(c.aba||'—')}</b><span class="nm2">${esc(c.nm)}</span><span class="st2"><b class="okt">✔ ${esc(c.who)}</b>${c.man?' · 🖐':''}</span></div>`;}).join('')}</div>`
-      :its.map(c=>`<div class="frow"><span class="mc">${esc(c.aba||'—')}${c.cod?' · '+esc(c.cod):''}</span><span class="nm">${esc(c.nm)}</span><span class="sm"><b class="okt">✔ ${esc(c.who)}</b>${c.man?' · manual':''}</span><button class="tg" style="margin-left:auto" onclick="desConfC('${c.id}')">↩ fila</button></div>`).join('');
-      const linkSel=!t?`<div style="border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:8px 10px">
-        <div style="font:800 10px var(--mono);color:#C0392B;margin-bottom:5px">🧵 ESTE GRUPO NÃO ESTÁ LIGADO A UM TECIDO DA NUVEM</div>
-        <div style="display:flex;gap:6px"><select id="lk_${cssIdA(tc)}" style="flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit">
-          <option value="">— escolha o tecido —</option>
-          ${TDOCS.filter(x=>x.status!=='esgotado'&&!x.sobras).map(x=>`<option value="${x.code}">${x.code} · ${esc(x.nome)} (${fmt(Math.round(x.estoque))} m)</option>`).join('')}
-        </select><button class="tg on" onclick="linkConfTec('${tc}')">VINCULAR</button></div>
-        <div style="font-size:10.5px;color:#6b6459;margin-top:4px">sem vínculo não dá para descontar estoque nem cortar</div></div>`:'';
-      const cores=t?((t.cores&&t.cores.length)?(t.cores||[]).map((c,i)=>`<div style="display:flex;gap:6px;align-items:center;margin:2px 0"><span style="flex:1;font-size:11.5px"><b>${esc(c.cor)}</b> <small style="color:#6b6459">saldo ${corAvail(t,c)} m</small></span><input id="ccK${i}_${tc}" type="number" placeholder="folhas" style="max-width:86px" oninput="ccCalc('${tc}')"><span id="ccKm${i}_${tc}" style="width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459">—</span></div>`).join(''):'<div class="empty" style="padding:6px">este tecido não tem cores registradas — o corte vai descontar só o total</div>'):'';
-      return `<div class="cfg"><div class="cfgh">${t&&t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>${rows}${linkSel}
-        ${t?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:8px 10px;margin:8px 10px">
-         <div style="font:800 10px var(--mono);letter-spacing:.1em;color:#2E7D32;margin-bottom:7px">✂ REGISTRAR CORTE — risco + cores</div>
-         <div class="ccrow"><label>TAMANHOS<input id="ccT_${tc}" placeholder="P M G · P:2 M:2 G · 38-46" oninput="ccCalc('${tc}')"></label><label>FOLHAS<input id="ccF_${tc}" type="number" placeholder="20" oninput="ccCalc('${tc}')"></label><label>RISCO (m)<input id="ccC_${tc}" placeholder="2,5" oninput="ccCalc('${tc}')"></label></div>
-         <div id="ccOut_${tc}" style="font:700 11px var(--mono);color:#2E7D32;margin-bottom:5px">— tamanhos · folhas · comprimento —</div>
-         ${t?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) ${(t.cores&&t.cores.length)?`<button class="tg" onclick="ccPct('${tc}')">repartir pelo saldo</button>`:''}</div>`:''}
-         ${cores}
-         <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">✂ CORTADO — registrar e baixar estoque</button>
-        </div>`:''}</div>`; }
-function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&window.innerWidth<980) return; if(window.innerWidth>=980){ RFICHA=(RFICHA&&RFICHA.kind===kind&&RFICHA.key===key)?null:{kind,key}; OFSEL=null; render(); }
+ const linkSel=!t?`<div style="border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:0 0 8px">
+    <div style="font:800 10px var(--mono);color:#C0392B;margin-bottom:5px">🧵 ESTE GRUPO NÃO ESTÁ LIGADO A UM TECIDO DA NUVEM</div>
+    <div style="display:flex;gap:6px"><select id="lk_${cssIdA(tc)}" style="flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit">
+      <option value="">— escolha o tecido —</option>
+      ${TDOCS.filter(x=>x.status!=='esgotado'&&!x.sobras).map(x=>`<option value="${x.code}">${x.code} · ${esc(x.nome)} (${fmt(Math.round(x.estoque))} m)</option>`).join('')}
+    </select><button class="tg on" onclick="linkConfTec('${tc}')">VINCULAR</button></div>
+    <div style="font-size:10.5px;color:#6b6459;margin-top:4px">sem vínculo não dá para descontar estoque nem cortar</div></div>`:'';
+ const cores=t?((t.cores&&t.cores.length)?(t.cores||[]).map((c,i)=>`<div style="display:flex;gap:6px;align-items:center;margin:2px 0"><span style="flex:1;font-size:11.5px"><b>${esc(c.cor)}</b> <small style="color:#6b6459">saldo ${corAvail(t,c)} m</small></span><input id="ccK${i}_${tc}" type="number" placeholder="folhas" style="max-width:86px" oninput="ccCalc('${tc}')"><span id="ccKm${i}_${tc}" style="width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459">—</span></div>`).join(''):'<div class="empty" style="padding:6px">este tecido não tem cores registradas — o corte vai descontar só o total</div>'):'';
+ const calc=t?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:10px 12px">
+   <div style="font:800 10px var(--mono);letter-spacing:.1em;color:#2E7D32;margin-bottom:7px">✂ REGISTRAR CORTE — risco + cores</div>
+   <div class="ccrow"><label>TAMANHOS<input id="ccT_${tc}" placeholder="P M G · P:2 M:2 G · 38-46" oninput="ccCalc('${tc}')"></label><label>FOLHAS<input id="ccF_${tc}" type="number" placeholder="20" oninput="ccCalc('${tc}')"></label><label>RISCO (m)<input id="ccC_${tc}" placeholder="2,5" oninput="ccCalc('${tc}')"></label></div>
+   <div id="ccOut_${tc}" style="font:700 11px var(--mono);color:#2E7D32;margin-bottom:5px">— tamanhos · folhas · comprimento —</div>
+   ${(t.cores&&t.cores.length)?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) <button class="tg" onclick="ccPct('${tc}')">repartir pelo saldo</button></div>`:''}
+   ${cores}
+   <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">✂ CORTADO — registrar e baixar estoque</button>
+  </div>`:'';
+ const header=`<div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>`;
+ const cardOf=c=>{ const m=DEB.models.find(x=>x.aba===c.aba)||{};
+   return `<div class="mc2" style="cursor:default"><span class="who2">✔ ${esc(c.who)}</span>${m.foto?`<img class="top" loading="lazy" decoding="async" src="${m.foto}">`:'<div class="top"></div>'}<b>${esc(c.aba||'—')}</b><span class="nm2">${esc(c.nm)}</span><button class="tg" style="margin:4px auto 6px;display:block" onclick="desConfC('${c.id}')">↩ fila</button></div>`; };
+ if(WIDE){
+   return `<div class="cfg"><div class="cutwrap"><div class="cutL">${its.map(cardOf).join('')}</div><div class="cutR">${linkSel}${calc}</div></div></div>`.replace('<div class="cutwrap">',header+'<div class="cutwrap">');
+ }
+ const rowsN=its.map(c=>`<div class="frow"><span class="mc">${esc(c.aba||'—')}${c.cod?' · '+esc(c.cod):''}</span><span class="nm">${esc(c.nm)}</span><span class="sm"><b class="okt">✔ ${esc(c.who)}</b>${c.man?' · manual':''}</span><button class="tg" style="margin-left:auto" onclick="desConfC('${c.id}')">↩ fila</button></div>`).join('');
+ return `<div class="cfg">${header}${rowsN}<div style="padding:8px 12px">${linkSel}${calc}</div></div>`;
+}
+function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&window.innerWidth<980) return; if(kind==='grp') GV=0; if(window.innerWidth>=980){ RFICHA=(RFICHA&&RFICHA.kind===kind&&RFICHA.key===key)?null:{kind,key}; OFSEL=null; render(); }
  else { if(kind==='fila'||kind==='conf'){ const aba=(kind==='conf'?(CCONF.find(c=>c.id===key)||{}).aba:key); if(aba) openModel(aba); }
         else { const html=robFichaHTML(kind,key); if(html) openMod('FICHA',html,''); } } }
 async function rfMsgSend(aba){ await msgSend('mod:'+aba,'rfI'); render(); }
@@ -1661,19 +1672,25 @@ function robFichaHTML(kind,key){
  if(kind==='grp'){ const g=ROBG.find(x=>x.key===key); if(!g) return '';
   const gk=g.key.replace(/'/g,'');
   const up=(g.rows.length?mesmoTecido(g.rows[0].m).filter(x=>PRE_CORTE.includes(x.fase)):[]);
-  const rows=g.rows.map(r=>`<div class="frow" style="cursor:pointer" onclick="RFICHA={kind:'fila',key:'${r.m.aba}',back:'${gk}'};render()">
+  if(GV>=g.rows.length) GV=0;
+  const rows=g.rows.map((r,i)=>`<div class="ovr ${i===GV?'on':''}" onclick="GV=${i};render()">
      <input type="checkbox" class="cfk" ${r.elo==='preparando'?'checked':''} data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">
-     ${r.m.foto?`<img loading="lazy" decoding="async" src="${r.m.foto}" style="width:38px;height:38px;border-radius:7px;object-fit:cover;flex:none">`:'<div style="width:38px;height:38px;border-radius:7px;background:#EAE4D8;flex:none"></div>'}
-     <div style="min-width:0"><b style="font:700 11px var(--mono)">${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</div></div>
-     <span style="margin-left:auto;font-size:10.5px;white-space:nowrap">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00;font-weight:700">risco pend.</span>'}</span></div>`).join('');
+     <div style="min-width:0"><b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><div class="ovnm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</div>
+      <div class="ovdt">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00;font-weight:700">risco pend.</span>'}</div></div></div>`).join('');
+  const s=g.rows[GV]; let vw='';
+  if(s){ const m=s.m;
+    vw=`<div class="ovbig" onclick="openModel('${m.aba}')" style="cursor:pointer" title="ficha completa">${m.foto?`<img loading="lazy" decoding="async" src="${m.foto}">`:''}</div>
+     <b>${m.aba}${m.codigo?' · '+m.codigo:''}</b><div class="ovnm2">${esc(m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</div>
+     <div class="ovdt2">${m.qt?fmt(m.qt)+' pçs':''}${m.prazo?' · prazo '+dtBR(m.prazo):''} · ${s.elo==='preparando'?'RISCO ✓':'risco pendente'}</div>
+     <button class="tg on" style="width:100%;margin-top:7px;background:#2E7D32;border-color:#2E7D32" onclick="confOne('${m.aba}')">✔ CONFIRMAR ESTE</button>
+     <button class="tg" style="width:100%;margin-top:5px" onclick="openModel('${m.aba}')">ficha completa</button>`; }
   return `<div class="mph" style="padding:14px 46px 8px 14px"><div style="display:flex;gap:12px">
-    ${g.tec&&g.tec.foto?`<img loading="lazy" decoding="async" src="${g.tec.foto}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;flex:none">`:'<div style="width:64px;height:64px;border-radius:10px;background:#EAE4D8;flex:none"></div>'}
+    ${g.tec&&g.tec.foto?`<img src="${g.tec.foto}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none">`:'<div style="width:56px;height:56px;border-radius:10px;background:#EAE4D8;flex:none"></div>'}
     <div><h2 style="margin:0">${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</h2>
-     <div class="sm">${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) na fila</div>
-     <div style="margin-top:4px"><span class="dchip" style="cursor:default">✂ cortar junto — mesmo enfesto</span>${up.length?`<span class="dchip" style="cursor:default">⏳ vai juntar: ${up.map(x=>x.aba).join(', ')}</span>`:''}</div></div></div></div>
+     <div class="sm">${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) na fila${up.length?' · ⏳ vai juntar: '+up.map(x=>x.aba).join(', '):''}</div></div></div></div>
    <div class="mpc" style="padding:0 14px 8px"><section>
-    <div class="sm" style="margin-bottom:4px">marque quem vai cortar · toque no modelo p/ ver a ficha</div>
-    ${rows||'<div class="empty">nada na fila deste tecido</div>'}
+    <div class="sm" style="margin-bottom:4px">marque quem vai cortar · toque na linha p/ ver a foto</div>
+    <div class="ovwrap"><div class="ovrows">${rows}</div><div class="ovview">${vw}</div></div>
     <div style="display:flex;gap:8px;margin-top:10px">
       <button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="confSel('${gk}')">✔ CONFIRMAR MARCADOS</button>
       <button class="tg" onclick="PLANO.key='${gk}';VIEW='plano';render()">✂ plano</button></div>
