@@ -338,6 +338,13 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .ovdt2{font:600 10px var(--mono);color:#6b6459;margin-top:2px}
 .ovac{display:flex;gap:6px;margin-top:7px}
 .ovac .tg{flex:1}
+/* painel 3º cartão — regras decisivas */
+.tficha .ovwrap{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important}
+.tficha .ovview{width:auto}
+.tficha .ovbig{width:100%}
+.tficha .ovdt{white-space:normal}
+.tficha .cgrid{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;max-width:none !important;gap:9px;padding:8px 12px}
+.tficha .mc2 .top{aspect-ratio:3/4;object-fit:contain;background:#EFE9DD}
 .tmod.mini{align-items:flex-start;justify-content:center;padding:9vh 12px}
 .tmod.mini.on{display:flex}
 .tmod.mini .box{max-width:440px;width:100%;min-height:0;border-radius:16px;overflow:hidden;padding:0;box-shadow:0 18px 50px rgba(28,26,23,.35)}
@@ -467,7 +474,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12h</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12h.1</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
