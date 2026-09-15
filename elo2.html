@@ -349,6 +349,14 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .cutwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;padding:10px 12px}
 .cutL{display:grid;grid-template-columns:1fr;gap:9px;align-content:start}
 .cutR{min-width:0}
+.cd{font:800 10px var(--mono);border-radius:6px;padding:1px 7px;margin-left:6px}
+.cd.ok{background:#EAF4EA;color:#2E7D32}
+.cd.wait{background:#FDF4E3;color:#8a6d00}
+.cd.bad{background:#FBEDEB;color:#C0392B}
+.stD{font:800 8.5px var(--mono);background:#FBEDEB;color:#C0392B;border:1px solid #ecc8c2;border-radius:5px;padding:1px 6px}
+.chr{font:600 10.5px var(--mono);padding:3px 0;border-bottom:1px dashed var(--line)}
+.ml{display:block;font:800 9px var(--mono);color:#6b6459;margin:7px 0 2px}
+.ml input,.ml select{display:block;width:100%;margin-top:3px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:400 13px system-ui}
 .mc2 .who2{position:absolute;top:6px;left:6px;z-index:2;font:800 8.5px var(--mono);background:#EAF4EA;border:1px solid #cfe0c4;border-radius:5px;padding:1px 6px;color:#2E7D32}
 .tmod.mini{align-items:flex-start;justify-content:center;padding:9vh 12px}
 .tmod.mini.on{display:flex}
@@ -479,7 +487,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13a</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.14a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -507,9 +515,27 @@ import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager
 if(!(typeof META!=='undefined'&&META&&META.snapshot)){
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
+  window.window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
+  FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
+  (function(){ if(!window.__FBraw) return;
+    window.__pw=0; window.__pwErr=null;
+    window.cldot=function(){ const el=document.getElementById('cldot'); if(!el) return;
+      const off=(typeof navigator!=='undefined')&&navigator.onLine===false;
+      if(window.__pwErr){ el.textContent='● erro ao salvar'; el.className='cd bad'; el.title=String(window.__pwErr); }
+      else if(off||window.__pw>0){ el.textContent='● '+(off?'sem internet':'salvando…')+(window.__pw>0?' '+window.__pw:''); el.className='cd wait'; el.title='alterações aguardando o servidor'; }
+      else { el.textContent='● salvo'; el.className='cd ok'; el.title='tudo sincronizado'; } };
+    const track=p=>{ window.__pw++; cldot();
+      p.then(()=>{ window.__pwErr=null; }).catch(e=>{ window.__pwErr=(e&&(e.code||e.message))||'erro'; })
+       .finally(()=>{ window.__pw=Math.max(0,window.__pw-1); cldot(); });
+      return p; };
+    FB.setDoc=(...a)=>track(window.__FBraw.setDoc(...a));
+    FB.deleteDoc=(...a)=>track(window.__FBraw.deleteDoc(...a));
+    FB.runTransaction=(db,fn)=>track(window.__FBraw.runTransaction(db,fn));
+    FB.writeBatch=db=>{ const b=window.__FBraw.writeBatch(db); const oc=b.commit.bind(b); b.commit=()=>track(oc()); return b; };
+    window.addEventListener('online',cldot); window.addEventListener('offline',cldot);
+  })();
   onAuthStateChanged(auth,u=>window.onFBAuth&&window.onFBAuth(u));
 }
 </script>
@@ -719,8 +745,13 @@ const PRE_CORTE=['Design','Amostra','Materiais'];
 
 /* ---------- ELO: ligação e estados ---------- */
 function lotState(l){ return l.real?'entregue':(l.saida?'oficina':(l.corte?'parado':'?')); }
+let __codDup=null;
+function codigoDup(){ if(__codDup) return __codDup;
+  const cnt={}; (DEB.models||[]).forEach(m=>{ if(!m.concl&&m.codigo){ const k=String(m.codigo); cnt[k]=(cnt[k]||0)+1; } });
+  __codDup=new Set(Object.keys(cnt).filter(k=>cnt[k]>1)); return __codDup; }
 function lotsOf(m){
   if(!m.codigo) return {lots:[],how:'semcodigo'};
+  if(codigoDup().has(String(m.codigo))){ return {lots:[],how:'duplicado'}; }
   const ex=ROB.lots.filter(l=>l.tokens.includes(m.codigo));
   if(ex.length) return {lots:ex,how:'exato'};
   const b=baseOf(m.codigo);
@@ -731,10 +762,13 @@ function lotsOf(m){
 /* estado composto (6 elos) + alertas */
 function eloOf(m){
   const {lots,how}=lotsOf(m);
-  const st=lots.length?(lots.some(l=>lotState(l)==='oficina')?'oficina':(lots.every(l=>lotState(l)==='entregue')?'entregue':'parado')):'';
+  if(how==='duplicado'&&!m.__dupWarned){ m.__dupWarned=1; }
+  const st=how==='duplicado'?'dup':(lots.length?(lots.some(l=>lotState(l)==='oficina')?'oficina':(lots.every(l=>lotState(l)==='entregue')?'entregue':'parado')):'');
   const fi=FASES.indexOf(m.fase);
   let elo, alert=null;
   if(st==='entregue'){ elo='entregue'; if(fi>=0&&fi<FASES.indexOf('Qualidade')&&!m.concl) alert={k:'atualizar',t:'oficina já entregou — avançar p/ Qualidade'}; }
+  else if((m.conflicts&&m.conflicts.length)||m.pendPlan){ elo='fila'; alert={k:'verificar',t:(m.pendPlan?'📄 planilha retida (modelo editado no painel)':'⚠ planilha × painel divergem')+' — abrir ✎ EDITAR p/ resolver'}; }
+  else if(st==='dup'){ elo='fila'; alert={k:'verificar',t:'⚠ código repetido em modelos ativos — o painel não vincula lotes; diferencie o código'}; }
   else if(st==='oficina'){ elo='oficina'; if(fi<FASES.indexOf('Costura')) alert={k:'atualizar',t:'lote já na oficina — avançar p/ Costura'}; }
   else if(st==='parado'){ elo='parado'; if(m.fase==='Corte'||m.faseVazia) alert={k:'atualizar',t:'Roberto já cortou — avançar p/ Costura'}; else if(fi<FASES.indexOf('Corte')) alert={k:'verificar',t:`cortado pelo Roberto mas DEBORA em ${m.fase}`}; }
   else if(m.fase==='Corte'){ if(how==='semcodigo'){ elo='semcodigo'; alert={k:'verificar',t:'em Corte sem código de modelo'}; } else elo=m.risco?'preparando':'fila'; }
@@ -786,9 +820,45 @@ async function cloudSaveDeb(models,fname){
   const old=await getDocs(collection(db,'elo_deb')); const keep=new Set(models.map(m=>m.aba));
   let b=writeBatch(db),n=0; const flush=async()=>{ await b.commit(); b=writeBatch(db); n=0; };
   for(const d of old.docs){ if(!keep.has(d.id)){ b.delete(d.ref); if(++n>=400) await flush(); } }
-  for(const m of models){ b.set(doc(db,'elo_deb',m.aba),m); if(++n>=400) await flush(); }
+  for(const m of models){ const prev=(DEB.models||[]).find(x=>x.aba===m.aba);
+    let out;
+    if(prev&&prev.edited){
+      if(!prev.imp){ out={...prev,pendPlan:{file:fname,at,diffs:debDiff(prev,m).slice(0,40)}}; }
+      else { out=debThreeWay(prev,m); }
+    } else { out={...m, items:(m.items||[]).map((it,i)=>({...it,rid:'p'+i})), imp:debImpOf(m)}; }
+    b.set(doc(db,'elo_deb',m.aba),out); if(++n>=400) await flush(); }
   b.set(doc(db,'elo','deb_meta'),{at,file:fname,count:models.length,by:FBUSER?FBUSER.email:''}); await b.commit();
 }
+const DED_H=['qt','prazo','ini','nf'], DED_C=['item','resp','data','status','obs'];
+function debImpOf(m){ return { qt:m.qt??null, prazo:m.prazo||null, ini:m.ini||null, nf:m.nf||'',
+  items:(m.items||[]).map(i=>({etapa:i.etapa||'',item:i.item||'',resp:i.resp||'',data:i.data||'',status:i.status||'',obs:i.obs||''})) }; }
+function debDiff(prev,m){ const out=[];
+ DED_H.forEach(f=>{ const a=prev[f]??'', b=m[f]??''; if(String(a)!==String(b)) out.push({campo:f,painel:a,planilha:b}); });
+ const A=prev.items||[], B=m.items||[];
+ for(let i=0;i<Math.max(A.length,B.length);i++){ const a=A[i]||{}, b=B[i]||{};
+  DED_C.forEach(c=>{ if(String(a[c]??'')!==String(b[c]??'')) out.push({campo:'L'+(i+1)+'.'+c,painel:a[c]??'',planilha:b[c]??''}); }); }
+ return out; }
+function debThreeWay(prev,m){ const base=prev.imp, r=JSON.parse(JSON.stringify(prev)); r.conflicts=r.conflicts||[];
+ DED_H.forEach(f=>{ const b0=String(base[f]??''), pv=String(prev[f]??''), nv=String(m[f]??'');
+   if(nv!==b0){ if(pv===b0){ r[f]=m[f]; } else if(pv!==nv){ if(!r.conflicts.some(c=>c.campo===f)) r.conflicts.push({campo:f,painel:prev[f]??'',planilha:m[f]??''}); } } });
+ const bi=base.items||[], ni=m.items||[];
+ for(let i=0;i<Math.max(bi.length,ni.length);i++){
+   const b0=bi[i]||{}, nv=ni[i]||null;
+   let tgt=(r.items||[]).find(x=>x.rid==='p'+i);
+   if(!tgt&&nv){ tgt={...nv,rid:'p'+i}; r.items=r.items||[]; r.items.push(tgt); continue; }
+   if(!tgt) continue;
+   DED_C.forEach(c=>{ const B=String(b0[c]??''), P=String(tgt[c]??''), N=String(nv?nv[c]??'':'');
+     if(nv&&N!==B){ if(P===B){ tgt[c]=nv[c]??''; } else if(P!==N){ const id='p'+i+'.'+c;
+       if(!r.conflicts.some(x=>x.campo===id)) r.conflicts.push({campo:id,rid:'p'+i,col:c,painel:tgt[c]??'',planilha:nv[c]??''}); } } }); }
+ r.imp=debImpOf(m); r.edited=true; return r; }
+function tecState(m){ if(m.tecSel&&m.tecSel.tec) return 'ok';
+ if(!nfKeys(m.nf).length) return 'semnf';
+ const c=tecidoOf(m); return c.length===0?'semcand':(c.length>1?'multi':'naoconf'); }
+function tecStateChip(m){ const s=tecState(m);
+ const L={ok:['✓ tecido confirmado','#EAF4EA;color:#2E7D32'],semnf:['sem NF','#EFE9DD;color:#6b6459'],
+   semcand:['NF sem tecido na nuvem','#FBEDEB;color:#C0392B'],multi:['⚠ vários candidatos','#FDF4E3;color:#8a6d00'],
+   naoconf:['candidato não confirmado','#FDF4E3;color:#8a6d00']}[s];
+ return `<span style="font:800 8.5px var(--mono);border-radius:5px;padding:1px 6px;background:${L[1]}">${L[0]}</span>`; }
 function upStamp(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) return '';
   const p=n=>String(n).padStart(2,'0'); return `↑ ${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`; }
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
@@ -1061,9 +1131,11 @@ function custoMensal(){
   const rowHit=r=>!qq||r.m.aba.includes(qq)||String(r.m.codigo||'').includes(qq)||r.m.nome.toUpperCase().includes(qq)||r.lots.some(lotHit);
   const open=ROB.lots.filter(l=>!l.real);
   const VMAP=Object.fromEntries(velRows().map(r=>[r.name,r]));
-  const cloudOf=CEVT.filter(d=>d.env&&!d.cheg).map(d=>({modelo:d.aba||d.nm,desc:d.nm,qtd:d.pcs,saida:d.env.saida,prev:d.env.prev,oficina:d.env.oficina,real:null,cloud:d}));
-  const cloudCheg=CEVT.filter(d=>d.env&&d.cheg);
-  const ofi=open.filter(l=>l.saida&&lotHit(l)).concat(cloudOf.filter(lotHit)), par=open.filter(l=>!l.saida&&l.corte&&lotHit(l));
+  const cloudOf=CEVT.filter(d=>d.env&&chegPend(d)>0).map(d=>({modelo:d.aba||d.nm,desc:d.nm,qtd:d.pcs,saida:d.env.saida,prev:d.env.prev,oficina:d.env.oficina,real:null,cloud:d}));
+  const cloudCheg=CEVT.filter(d=>d.env&&chegList(d).length&&chegPend(d)<=0);
+  const trazS=new Set(CEVT.filter(d=>d.origem==='planilha'&&d.xref).map(d=>trazKey(d.xref.modelo,d.xref.corte,d.xref.saida)));
+  const naoTraz=l=>!trazS.has(trazKey(l.modelo,l.corte,l.saida));
+  const ofi=open.filter(l=>l.saida&&lotHit(l)&&(l.cloud||naoTraz(l))).concat(cloudOf.filter(lotHit)), par=open.filter(l=>!l.saida&&l.corte&&lotHit(l)&&naoTraz(l));
   const late=ofi.filter(l=>l.prev&&l.prev<TODAY);
   const confSet=new Set(CCONF.map(c=>c.aba).filter(Boolean));
   const prep=A.fila.filter(r=>r.elo==='preparando'&&rowHit(r)&&!confSet.has(r.m.aba)), wait=A.fila.filter(r=>r.elo==='fila'&&rowHit(r)&&!confSet.has(r.m.aba));
@@ -1167,7 +1239,7 @@ function custoMensal(){
           return `<div class="ovr ${i===OFV?'on':''}" onclick="OFV=${i};render()">
             ${m&&m.foto?`<img loading="lazy" decoding="async" src="${m.foto}" class="ovth">`:'<div class="ovth"></div>'}
             <div style="min-width:0"><b>${esc(l.modelo)}</b><div class="ovnm">${esc(l.desc||'')}</div>
-             <div class="ovdt">${l.qtd?fmt(l.qtd)+' pçs · ':''}saiu ${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${(dd&&dd>0)?` · <b style="color:#C0392B">+${dd}d</b>`:''}${l.cloud&&l.cloud.env.am?' · <b class="okt">amostra ✓</b>':''}</div></div></div>`; }).join('');
+             <div class="ovdt">${l.qtd?fmt(l.qtd)+' pçs · ':''}saiu ${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${(dd&&dd>0)?` · <b style="color:#C0392B">+${dd}d</b>`:''}${l.cloud&&l.cloud.env.am?' · <b class="okt">amostra ✓</b>':''}${l.cloud&&chegRec(l.cloud)>0?` · <b style="color:#2E7D32">📥 ${fmt(chegRec(l.cloud))}/${fmt(l.cloud.pcs)}</b>`:''}</div></div></div>`; }).join('');
         const l=arr[OFV]; let vw='';
         if(l){ const dd=l.prev?daysBetween(l.prev,TODAY):null;
           const r=A.rows.find(x=>x.lots.includes(l)); const m=(r&&r.m)||(l.cloud?DEB.models.find(x=>x.aba===l.cloud.aba):null);
@@ -1176,10 +1248,12 @@ function custoMensal(){
            <b>${esc(l.modelo)}</b><div class="ovnm2">${esc(l.desc||'')}</div>
            <div class="ovdt2">${l.qtd?fmt(l.qtd)+' pçs · ':''}${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${d&&d.env.rs!=null?` · <b style="cursor:pointer" onclick="editRsC('${d.id}')">R$ ${d.env.rs.toFixed(2).replace('.',',')}/pç</b>`:(d?` · <b style="cursor:pointer" onclick="editRsC('${d.id}')">R$/pç?</b>`:'')}</div>
            ${d?`<button class="tg ${d.env.am?'on':''}" style="width:100%;margin-top:7px;${d.env.am?'background:#2E7D32;border-color:#2E7D32;color:#fff':''}" onclick="togAmostraC('${d.id}')">${d.env.am?('amostra ✓ '+dtBR(d.env.am.at)):'⚠ sem amostra — toque'}</button>
-            <div class="ovac"><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="chegouC('${d.id}')">📥 CHEGOU</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desEnvio('${d.id}')">↩</button></div>`
+            ${chegList(d).length?`<div style="margin-top:6px;text-align:left">${chegList(d).map(e=>`<div class="chr">${e.retrab?'🔁':'📥'} ${dtBR(e.data)} · ${fmt(e.qtd)} pçs${e.def?` · <b style="color:#C0392B">def ${e.def}</b>`:''}${e.retrab?' · retrabalho (não paga)':''}${e.legado?' · <small>antigo</small>':''}<button class="tg" style="float:right;padding:0 6px" onclick="desChg('${d.id}','${e.id}')">↩</button></div>`).join('')}<div class="chr" style="border-top:1px solid var(--line)"><b>${fmt(chegRec(d))}/${fmt(d.pcs)} recebidas · restam ${fmt(chegPend(d))}</b></div></div>`:''}
+            <div class="ovac"><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="openCheg('${d.id}')">📥 RECEBER${chegRec(d)>0?' +':''}</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desEnvio('${d.id}')">↩</button></div>`
            :(m?`<button class="tg" style="width:100%;margin-top:7px" onclick="openModel('${m.aba}')">ficha completa do modelo</button>`:'')}`; }
         return `<div class="ovwrap"><div class="ovrows">${rows}</div><div class="ovview">${vw}</div></div>`; })()}
-        ${(cs=>cs.length?`<h4 style="margin:10px 12px 4px">📥 CHEGARAM · ${cs.length} <small style="color:#8a6d00">💰 a pagar: R$ ${cs.reduce((s,d)=>s+(d.env.rs!=null?d.pcs*d.env.rs:0),0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</small></h4>${cs.map(d=>`<div class="frow" style="opacity:.85;padding:6px 12px"><span class="mc">${esc(d.aba||d.nm)}</span><span class="nm">${esc(d.nm)}</span><span class="sm">✓ ${dtBR(d.cheg.data)}${d.env.rs!=null?` · ${fmt(d.pcs)} × R$ ${d.env.rs.toFixed(2).replace('.',',')} = <b>R$ ${(d.pcs*d.env.rs).toLocaleString('pt-BR',{minimumFractionDigits:2})}</b>`:''}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desChegC('${d.id}')">↩</button></span></div>`).join('')}`:'')(cloudCheg.filter(d=>d.env.oficina===OFSEL))}
+        ${(cs=>cs.length?`<h4 style="margin:10px 12px 4px">📥 CHEGARAM · ${cs.length} <small style="color:#8a6d00">💰 a pagar: R$ ${cs.reduce((s,d)=>s+(chegPagar(d)||0),0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</small></h4>${cs.map(d=>{ const pg=chegPagar(d), dfT=chegDef(d), rs=d.env.rs;
+      return `<div class="frow" style="opacity:.9;padding:6px 12px"><span class="mc">${esc(d.aba||d.nm)}</span><span class="nm">${esc(d.nm)}</span><span class="sm">✓ ${chegList(d).map(e=>dtBR(e.data)).join(', ')} · ${fmt(chegRec(d))} pçs${rs!=null?` × R$ ${rs.toFixed(2).replace('.',',')} = <b>R$ ${pg.toLocaleString('pt-BR',{minimumFractionDigits:2})}</b>`:''}${dfT?` · <b style="color:#C0392B">def ${dfT} — não descontado</b>`:''}${chegList(d).some(e=>e.legado)?' · <small style="color:#8a6d00">registro antigo · qtd presumida</small>':''}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desChg('${d.id}','${chegList(d).slice(-1)[0].id}')">↩</button></span></div>`; }).join('')}`:'')(cloudCheg.filter(d=>d.env.oficina===OFSEL))}
       </section></div>
       ${msgThread('of:'+OFSEL,'ofI',`ofMsgSend('${OFSEL}')`)}</aside>`; }
   return `<div class="bwrap tw ${aside?'has3':''}"><nav class="brail">${rail}</nav><div class="bmid robwide">${inner}</div>${aside}</div>`;
@@ -1275,7 +1349,7 @@ function renderLista(A){
 }
 function semFichaRows(A){ const qq2=Q?Q.toUpperCase():''; if(!qq2) return ''; const sf=A.semFicha.filter(l=>String(l.modelo||'').toUpperCase().includes(qq2)||String(l.desc||'').toUpperCase().includes(qq2)||String(l.oficina||'').toUpperCase().includes(qq2)); if(!sf.length) return ''; return '<div class="empty" style="text-align:left;margin-top:10px"><b>⚠ '+sf.length+' lote(s) sem ficha na DEBORA</b></div><table class="tb"><tbody>'+sf.map(l=>'<tr><td class="mc">'+esc(l.modelo)+'</td><td>'+esc(l.desc||'')+'</td><td>'+fmt(l.qtd)+'</td><td>'+lotLine(l)+'</td></tr>').join('')+'</tbody></table>'; }
 
-function render(){ clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
+function render(){ __codDup=null; clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
   const A=computeAll();
   $('#chipAtu').textContent=A.atualizar.length; $('#chipVer').textContent=A.verificar.length; $('#chipFila').textContent=A.fila.length; $('#chipFicha').textContent=A.semFicha.length;
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
@@ -1290,7 +1364,78 @@ function render(){ clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false
 }
 
 /* ---------- página do modelo ---------- */
-function openModel(aba){ const html=modFichaHTML(aba); if(!html) return; $('#mpBody').innerHTML=html; $('#mp').classList.add('on'); }
+function openModel(aba){ const html=modFichaHTML(aba); if(!html) return; $('#mpBody').innerHTML=html;
+ if(window.innerWidth>=980){ const bar=document.createElement('div'); bar.style.cssText='padding:0 22px 10px';
+   bar.innerHTML=`<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="debEdit('${aba}')">✎ EDITAR (PC) — grade da planilha</button> ${(()=>{const m=DEB.models.find(x=>x.aba===aba);return m?tecStateChip(m):''})()}`;
+   $('#mpBody').prepend(bar); }
+ $('#mp').classList.add('on'); }
+let __DED=null;
+function debEdit(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
+ const rows=(m.items||[]).map((it,i)=>({rid:it.rid||('p'+i),etapa:it.etapa||'',item:it.item||'',resp:it.resp||'',data:it.data||'',status:it.status||'',obs:it.obs||''}));
+ __DED={aba, snap:JSON.parse(JSON.stringify({qt:m.qt??null,prazo:m.prazo||null,ini:m.ini||null,nf:m.nf||'',items:rows})), 
+        hdr:{qt:m.qt??null,prazo:m.prazo||null,ini:m.ini||null,nf:m.nf||''}, rows:JSON.parse(JSON.stringify(rows)),
+        tecSel:m.tecSel||null, conflicts:(m.conflicts||[]).slice(), pendPlan:m.pendPlan||null};
+ dedDraw(); }
+function dedDraw(){ const D=__DED; const m=DEB.models.find(x=>x.aba===D.aba)||{};
+ const grp={}; D.rows.forEach(r=>{ (grp[r.etapa||'—']=grp[r.etapa||'—']||[]).push(r); });
+ const stSel=r=>`<select onchange="dedSt('${r.rid}',this.value)" style="font:800 10px var(--mono);border:1px solid var(--line);border-radius:6px;padding:3px;width:100%;${r.status==='Concluído'?'background:#EAF4EA;color:#2E7D32':(r.status==='Em andamento'?'background:#FDF4E3;color:#8a6d00':'')}">
+   <option value="" ${!r.status?'selected':''}>Pendente</option><option ${r.status==='Em andamento'?'selected':''}>Em andamento</option><option ${r.status==='Concluído'?'selected':''}>Concluído</option></select>`;
+ const cell=(r,k)=>`<td contenteditable style="background:#FFFDF7" oninput="dedC('${r.rid}','${k}',this.textContent)">${esc(String(r[k]||''))}</td>`;
+ let body=''; Object.entries(grp).forEach(([g,rs])=>{ rs.forEach((r,i)=>{
+   body+=`<tr>${i===0?`<td rowspan="${rs.length}" style="background:#EFE9DD;font:800 9px var(--mono);color:#6b6459;width:96px">${esc(g)}</td>`:''}${cell(r,'item')}${cell(r,'resp')}${cell(r,'data')}<td>${stSel(r)}</td>${cell(r,'obs')}</tr>`; }); });
+ const confBlk=D.conflicts.length?`<div style="border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:8px 0">
+   <b style="font:800 10px var(--mono);color:#C0392B">⚠ CONFLITOS planilha × painel (${D.conflicts.length})</b>
+   ${D.conflicts.map((c,i)=>`<div style="font:600 10.5px var(--mono);margin-top:4px">${esc(c.campo)}: painel «${esc(String(c.painel))}» · planilha «${esc(String(c.planilha))}»
+     <button class="tg" onclick="dedRes(${i},'plan')">usar planilha</button><button class="tg" onclick="dedRes(${i},'pai')">manter painel</button></div>`).join('')}</div>`:'';
+ const pendBlk=D.pendPlan?`<div style="border:1.5px dashed #8a6d00;border-radius:10px;background:#FDF4E3;padding:8px 10px;margin:8px 0;font:600 10.5px var(--mono)">📄 planilha ${esc(D.pendPlan.file||'')} não aplicada (modelo protegido) — ${D.pendPlan.diffs.length} diferença(s); resolva salvando ou re-dropando após revisar</div>`:'';
+ $('#mpBody').innerHTML=`<div style="padding:14px 22px">
+  <b style="font:800 13px var(--mono)">✎ ${esc(D.aba)} — ${esc(m.nome||'')}</b> ${tecStateChip({...m,tecSel:D.tecSel})}
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:9px 0">
+   ${['qt','ini','prazo'].map(f=>`<label style="font:800 8px var(--mono);color:#6b6459">${f.toUpperCase()}<input value="${esc(String(D.hdr[f]??''))}" oninput="__DED.hdr['${f}']=this.value" style="display:block;width:100%;border:1px solid var(--line);border-radius:7px;padding:5px 7px;font:700 11px var(--mono)"></label>`).join('')}
+   <label style="font:800 8px var(--mono);color:#6b6459">NF (da planilha)<input value="${esc(D.hdr.nf)}" disabled style="display:block;width:100%;border:1px dashed var(--line);border-radius:7px;padding:5px 7px;font:700 11px var(--mono);background:#EFE9DD"></label>
+   <label style="font:800 8px var(--mono);color:#6b6459">TECIDO<button class="tg" style="display:block;width:100%" onclick="tecPickOpen(s=>{__DED.tecSel={...s,por:whoName(),at:new Date().toISOString()};dedDraw();})">${D.tecSel?esc(D.tecSel.tec):'🧵 escolher'}</button></label>
+  </div>
+  ${pendBlk}${confBlk}
+  <table style="border-collapse:collapse;width:100%;font:600 11px var(--mono)">
+   <tr>${['ETAPA','ITEM','RESPONSÁVEL','DATA','STATUS','OBS.'].map(x=>`<th style="background:#1D2A3F;color:#fff;font:800 9px var(--mono);padding:5px 7px;text-align:left">${x}</th>`).join('')}</tr>${body}</table>
+  <div style="display:flex;gap:8px;margin-top:10px">
+   <button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="debSaveTx()">✔ SALVAR NA NUVEM</button>
+   <button class="tg" onclick="__DED.rows.push({rid:'n'+Date.now().toString(36),etapa:__DED.rows.length?__DED.rows[__DED.rows.length-1].etapa:'',item:'(novo item)',resp:'',data:'',status:'',obs:''});dedDraw()">＋ linha</button>
+   <button class="tg" onclick="openModel('${D.aba}')">← ficha</button>
+  </div></div>`; }
+function dedC(rid,k,v){ const r=__DED.rows.find(x=>x.rid===rid); if(r) r[k]=v; }
+function dedSt(rid,v){ const r=__DED.rows.find(x=>x.rid===rid); if(r){ r.status=v; dedDraw(); } }
+async function dedRes(i,which){ const D=__DED; const c=D.conflicts[i]; if(!c) return;
+ if(which==='plan'){ if(c.rid){ const r=D.rows.find(x=>x.rid===c.rid); if(r) r[c.col]=c.planilha; } else { D.hdr[c.campo]=c.planilha; } }
+ D.conflicts.splice(i,1); D.resolved=true; dedDraw(); }
+async function debSaveTx(){ const D=__DED; if(!D) return;
+ if(window.__dedBusy) return; window.__dedBusy=true; pgShow('✔ salvando modelo…');
+ try{ const now=new Date().toISOString(); let confs=[];
+  await FB.runTransaction(FB.db, async tx=>{
+   const ref=FB.doc(FB.db,'elo_deb',D.aba);
+   const s=await tx.get(ref); const srv=s.exists()?s.data():null;
+   const base=D.snap; const out=srv?JSON.parse(JSON.stringify(srv)):{aba:D.aba,items:[]};
+   confs=[];
+   DED_H.forEach(f=>{ if(f==='nf') return; const b0=String(base[f]??''), mv=String(D.hdr[f]??''), sv=String((srv?srv[f]:base[f])??'');
+     if(mv!==b0){ if(sv!==b0&&sv!==mv){ confs.push({campo:f,painel:sv,planilha:mv}); } else out[f]=(f==='qt'? (D.hdr[f]===''?null:+D.hdr[f]||D.hdr[f]) : D.hdr[f]); } });
+   const sIt=(out.items||[]).slice();
+   D.rows.forEach((r,idx)=>{ let t=sIt.find(x=>x.rid===r.rid);
+     if(!t){ t={rid:r.rid,etapa:r.etapa}; sIt.push(t); DED_C.forEach(c=>t[c]=r[c]); return; }
+     const b=(base.items||[]).find(x=>x.rid===r.rid)||{};
+     DED_C.forEach(c=>{ const b0=String(b[c]??''), mv=String(r[c]??''), sv=String(t[c]??'');
+       if(mv!==b0){ if(sv!==b0&&sv!==mv){ confs.push({campo:r.rid+'.'+c,rid:r.rid,col:c,painel:sv,planilha:mv}); } else t[c]=r[c]; } }); });
+   out.items=sIt;
+   out.edited=true; out.editedAt=now; out.editedBy=(FBUSER&&FBUSER.email)||'';
+   if(D.tecSel) out.tecSel=D.tecSel;
+   out.conflicts=(D.resolved?[]:(out.conflicts||[])).concat([]);
+   if(D.resolved&&!D.conflicts.length) delete out.pendPlan;
+   if(confs.length) out.conflicts=(out.conflicts||[]).concat(confs.filter(c=>!(out.conflicts||[]).some(x=>x.campo===c.campo)));
+   tx.set(ref,out); });
+  if(confs.length){ toast('⚠ '+confs.length+' campo(s) mudaram no servidor — marcados como conflito, nada foi sobrescrito às cegas',6000); }
+  else toast('✔ modelo salvo na nuvem');
+  window.__dedBusy=false; pgHide();
+ }catch(e){ pgHide(); window.__dedBusy=false; toast('⚠ '+(e&&(e.message||e.code)),6000); } }
+
 function dCardClick(aba){ if(window.innerWidth>=980&&VIEW==='debora'){ DMSEL=(DMSEL===aba?null:aba); render(); } else openModel(aba); }
 async function modMsgSend(aba){ await msgSend('mod:'+aba,'mdI'); if($('#mp').classList.contains('on')) openModel(aba); else render(); }
 function modFichaHTML(aba){
@@ -1487,22 +1632,36 @@ async function moverSobra(code){ const src=TDOCS.find(x=>x.code===code); if(!src
     const nmax=Math.max(0,...TDOCS.map(t=>+String(t.code).replace(/\D/g,'')||0)); gid='T'+(nmax+1);
     tgt={code:gid,nome,forn:'SOBRAS',sobras:true,estoque:0,usado:0,status:'estoque',comp:'',estacao:'',preco:null,largura:null,gramatura:null,mediaRolo:null,dataEntrada:now.slice(0,10),cores:[],pecas:[],foto:null,obs:'',createdAt:now}; }
   else { const ex=TDOCS.find(x=>x.code===gid); if(!ex){ toast('Grupo não encontrado'); return; } tgt=JSON.parse(JSON.stringify(ex)); }
-  const srcD=JSON.parse(JSON.stringify(src));
-  srcD.cores=(srcD.cores||[]).map(c=>c.cor===cor?{...c,saldo:Math.max(0,Math.round((c.saldo-(mR?m/mR:m))*10)/10)}:c);
-  srcD.estoque=Math.max(0,Math.round((srcD.estoque-m)*10)/10); srcD.status=srcD.estoque>0?'estoque':'esgotado';
-  srcD.sobraOut=srcD.sobraOut||{total:0,cores:{}}; srcD.sobraOut.total=Math.round((srcD.sobraOut.total+m)*10)/10;
-  srcD.sobraOut.cores[cor]=Math.round(((srcD.sobraOut.cores[cor]||0)+m)*10)/10;
-  srcD.updatedAt=now; srcD.updatedBy=by();
-  tgt.pecas=[...(tgt.pecas||[]),{cor,m,origem:src.code,preco:src.precoImp??src.preco??0,at:now.slice(0,10),by:whoName()}];
-  tgt.estoque=Math.round(((tgt.estoque||0)+m)*10)/10; tgt.sobras=true; tgt.status='estoque'; tgt.updatedAt=now; tgt.updatedBy=by();
-  try{ const b=FB.writeBatch(FB.db);
-    b.set(FB.doc(FB.db,'tecidos',srcD.code),srcD); b.set(FB.doc(FB.db,'tecidos',tgt.code),tgt);
-    const mv1={id:'M'+Date.now().toString(36)+'a',code:srcD.code,delta:-m,antes:src.estoque,depois:srcD.estoque,motivo:`sobra ${cor} → ${tgt.code}`,at:now,by:by()};
-    const mv2={id:'M'+Date.now().toString(36)+'b',code:tgt.code,delta:m,antes:Math.round((tgt.estoque-m)*10)/10,depois:tgt.estoque,motivo:`recebe ${cor} de ${srcD.code}`,at:now,by:by()};
-    b.set(FB.doc(FB.db,'movs',mv1.id),mv1); b.set(FB.doc(FB.db,'movs',mv2.id),mv2);
-    await b.commit(); closeMod(); toast(`🧺 ${tfmt(m,1)} m de ${cor} → ${tgt.code}${novo?' (novo grupo)':''}`,6000);
+  /* mutações movidas para dentro da transação (v9.13b) */
+  try{ if(window.__cutBusy) return; window.__cutBusy=true; pgShow('🧺 movendo sobra…');
+    await FB.runTransaction(FB.db, async tx=>{
+      const sref=FB.doc(FB.db,'tecidos',src.code);
+      const ss=await tx.get(sref); if(!ss.exists()) throw new Error('tecido de origem sumiu');
+      const sFresh=ss.data(); const cF=(sFresh.cores||[]).find(c=>c.cor===cor);
+      if(!cF) throw new Error('cor não existe mais no servidor');
+      const maxF=corAvail(sFresh,cF); if(m>maxF+0.05) throw new Error('saldo AGORA de '+cor+' é '+maxF+' m');
+      let tFresh=null, tref=null;
+      if(!novo){ tref=FB.doc(FB.db,'tecidos',tgt.code); const ts=await tx.get(tref);
+        if(!ts.exists()) throw new Error('grupo de destino sumiu'); tFresh=ts.data(); }
+      const mRF=sFresh.mediaRolo;
+      const sD=JSON.parse(JSON.stringify(sFresh));
+      sD.cores=(sD.cores||[]).map(c=>c.cor===cor?{...c,saldo:Math.max(0,Math.round((c.saldo-(mRF?m/mRF:m))*10)/10)}:c);
+      sD.estoque=Math.max(0,Math.round((sD.estoque-m)*10)/10); sD.status=sD.estoque>0?'estoque':'esgotado';
+      sD.sobraOut=sD.sobraOut||{total:0,cores:{}}; sD.sobraOut.total=Math.round((sD.sobraOut.total+m)*10)/10;
+      sD.sobraOut.cores[cor]=Math.round(((sD.sobraOut.cores[cor]||0)+m)*10)/10;
+      sD.updatedAt=now; sD.updatedBy=by();
+      const tD=novo?JSON.parse(JSON.stringify(tgt)):JSON.parse(JSON.stringify(tFresh));
+      tD.pecas=[...(tD.pecas||[]),{cor,m,origem:src.code,preco:src.precoImp??src.preco??0,at:now.slice(0,10),by:whoName()}];
+      tD.estoque=Math.round(((tD.estoque||0)+m)*10)/10; tD.sobras=true; tD.status='estoque'; tD.updatedAt=now; tD.updatedBy=by();
+      tx.set(sref,sD); tx.set(FB.doc(FB.db,'tecidos',tD.code),tD);
+      const mv1={id:'M'+Date.now().toString(36)+'a',code:sD.code,delta:-m,antes:sFresh.estoque,depois:sD.estoque,motivo:`sobra ${cor} → ${tD.code}`,at:now,by:by()};
+      const mv2={id:'M'+Date.now().toString(36)+'b',code:tD.code,delta:m,antes:Math.round((tD.estoque-m)*10)/10,depois:tD.estoque,motivo:`recebe ${cor} de ${sD.code}`,at:now,by:by()};
+      tx.set(FB.doc(FB.db,'movs',mv1.id),mv1); tx.set(FB.doc(FB.db,'movs',mv2.id),mv2);
+    });
+    closeMod(); toast(`🧺 ${tfmt(m,1)} m de ${cor} movidos`,6000);
     setTimeout(()=>refreshTec(tgt.code),700);
-  }catch(e){ toast('Erro: '+(e&&e.code),6000); } }
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  finally{ pgHide(); window.__cutBusy=false; } }
 async function excluirGrupo(gcode){ const g=TDOCS.find(x=>x.code===gcode); if(!g||!g.sobras) return;
   const pcs=g.pecas||[];
   const semSrc=pcs.filter(p=>!TDOCS.find(x=>x.code===p.origem));
@@ -1543,19 +1702,42 @@ function sizeCount(t){ return sizeParse(t).reduce((s,x)=>s+x.n,0); }
 async function confSel(gk){
   const boxes=[...document.querySelectorAll('input.cfk[data-g="'+gk+'"]:checked')];
   if(!boxes.length){ toast('Marque pelo menos um modelo'); return; }
+  const pend=boxes.map(x=>DEB.models.find(m=>m.aba===x.dataset.aba)).filter(m=>m&&!(m.tecSel&&m.tecSel.tec));
+  const first=pend.find(m=>tecState(m)!=='ok');
+  if(first){ toast('confirme o tecido de '+first.aba+' primeiro ('+(pend.length)+' pendentes)'); confOne(first.aba); return; }
   const now=new Date().toISOString();
   try{
     const b=FB.writeBatch(FB.db);
-    boxes.forEach(x=>{ const d={id:'C'+(x.dataset.aba||x.dataset.man),aba:x.dataset.aba||'',cod:x.dataset.cod||'',nm:x.dataset.nm||'',tec:x.dataset.tec||'',pcs:tnum(x.dataset.q)||null,man:x.dataset.man||null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
+    boxes.forEach(x=>{ const __m=DEB.models.find(mm=>mm.aba===x.dataset.aba); const d={id:'C'+(x.dataset.aba||x.dataset.man),tecAt:(__m&&__m.tecSel&&__m.tecSel.tecAt)||null,aba:x.dataset.aba||'',cod:x.dataset.cod||'',nm:x.dataset.nm||'',tec:x.dataset.tec||'',pcs:tnum(x.dataset.q)||null,man:x.dataset.man||null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
       b.set(FB.doc(FB.db,'corte_conf',d.id),d);
       if(x.dataset.man) b.delete(FB.doc(FB.db,'fila_manual',x.dataset.man)); });
     await b.commit(); toast('✔ confirmado p/ corte ('+boxes.length+')');
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+let __tpCb=null;
+function tecPickOpen(cb,pre){ __tpCb=cb;
+ openMod('🧵 Escolher tecido',`
+  <input id="tpQ" placeholder="busque: T-código · nome · fornecedor · NF" value="${esc(pre||'')}" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit" oninput="tecPickList()">
+  <div id="tpL" style="max-height:52vh;overflow:auto;margin-top:8px"></div>`,'',true);
+ tecPickList(); }
+function tecPickList(){ const q=(document.getElementById('tpQ').value||'').trim().toLowerCase();
+ const ks=nfKeys(q); 
+ const hits=TDOCS.filter(t=>!q || t.code.toLowerCase().includes(q) || (t.nome||'').toLowerCase().includes(q)
+   || (t.forn||'').toLowerCase().includes(q) || (ks.length&&nfMatch(q,t.nf)));
+ document.getElementById('tpL').innerHTML=hits.slice(0,40).map(t=>`
+  <div onclick="tecPickGo('${t.code}')" style="display:flex;gap:9px;align-items:center;padding:7px 6px;border-bottom:1px dashed var(--line);cursor:pointer">
+   ${t.foto?`<img src="${t.foto}" style="width:38px;height:48px;object-fit:cover;border-radius:6px;flex:none">`:'<div style="width:38px;height:48px;border-radius:6px;background:#EAE4D8;flex:none"></div>'}
+   <div style="min-width:0;flex:1"><b style="font:800 11px var(--mono)">${esc(t.code)} · ${esc(t.nome||'')}</b>
+    <div style="font:600 10px var(--mono);color:#6b6459">${esc(t.forn||'—')} · NF ${esc(t.nf||'—')} · ${fmt(Math.round(t.estoque))} m ${t.status==='esgotado'?'<b style="color:#C0392B">esgotado</b>':''}</div></div></div>`).join('')
+  ||'<div class="empty">nada encontrado — confira em TECIDOS se o rolo foi dado entrada</div>'; }
+function tecPickGo(code){ const t=TDOCS.find(x=>x.code===code); if(!t) return;
+ closeMod(); const cb=__tpCb; __tpCb=null;
+ cb&&cb({tec:t.code,tecAt:t.createdAt||null,nome:t.nome||'',forn:t.forn||'',nf:t.nf||''}); }
 async function linkConfTec(oldTc){
   const sel=document.getElementById('lk_'+cssIdA(oldTc)); const tc=sel&&sel.value; if(!tc){ toast('Escolha o tecido'); return; }
   const its=CCONF.filter(c=>(c.tec||'?')===oldTc||((c.tec||'')===''&&oldTc==='?'));
   try{ const b=FB.writeBatch(FB.db);
-    its.forEach(c=>b.set(FB.doc(FB.db,'corte_conf',c.id),{...c,tec:tc}));
+    const __t=TDOCS.find(x=>x.code===tc);
+    its.forEach(c=>b.set(FB.doc(FB.db,'corte_conf',c.id),{...c,tec:tc,tecAt:(__t&&__t.createdAt)||null}));
     await b.commit(); toast('🧵 vinculado a '+tc);
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 function cssIdA(s){ return String(s).replace(/[^A-Za-z0-9]/g,'_'); }
@@ -1598,6 +1780,8 @@ async function regCorteCloud(tec){
       const snap=await tx.get(ref);
       if(!snap.exists()) throw new Error('tecido sumiu da nuvem');
       const t=snap.data(); const mR=t.mediaRolo;
+      const badAt=its.find(it=>it.tecAt&&t.createdAt&&it.tecAt!==t.createdAt);
+      if(badAt) throw new Error('o tecido '+tec+' foi recriado depois da confirmação — reconfirme o vínculo');
       const colUsed=temCores?(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kf[i]||0,m:Math.round(cp*(kf[i]||0)*10)/10})).filter(c=>c.folhas>0):[];
       for(const cu of colUsed){ const c=(t.cores||[]).find(x=>x.cor===cu.cor); const av=c?corAvail(t,c):0;
         if(cu.m>av+0.05) throw new Error(cu.cor+': precisa '+cu.m+' m, saldo AGORA é '+av+' m'); }
@@ -1683,8 +1867,25 @@ function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&win
         else { const html=robFichaHTML(kind,key); if(html) openMod('FICHA',html,''); } } }
 async function rfMsgSend(aba){ await msgSend('mod:'+aba,'rfI'); render(); }
 async function confOne(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
- const ts=tecidoOf(m); const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:ts.length?ts[0].code:'',pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
- try{ await FB.setDoc(FB.doc(FB.db,'corte_conf',d.id),d); toast('✔ '+aba+' confirmado'); RFICHA=null; }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+ const go=async(sel)=>{ const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:sel?sel.tec:'',tecAt:sel?sel.tecAt:null,pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
+   try{ await FB.setDoc(FB.doc(FB.db,'corte_conf',d.id),d); toast('✔ '+aba+' confirmado p/ corte'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } };
+ if(m.tecSel&&m.tecSel.tec){ return go(m.tecSel); }
+ tecConfirmGate(m, async sel=>{ if(sel){ try{ await FB.setDoc(FB.doc(FB.db,'elo_deb',m.aba),{...m,tecSel:{...sel,por:whoName(),at:new Date().toISOString()},edited:m.edited||false}); }catch(e){} }
+   go(sel); }); }
+function tecConfirmGate(m,cb){ const cands=tecidoOf(m).map(x=>TDOCS.find(t=>t.code===x.code)||x);
+ const card=t=>`<div onclick="__tgGo('${t.code}')" style="display:flex;gap:9px;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;margin-bottom:7px">
+   ${t.foto?`<img src="${t.foto}" style="width:44px;height:56px;object-fit:cover;border-radius:7px;flex:none">`:'<div style="width:44px;height:56px;border-radius:7px;background:#EAE4D8;flex:none"></div>'}
+   <div style="min-width:0"><b style="font:800 11.5px var(--mono)">${esc(t.code)} · ${esc(t.nome||'')}</b>
+    <div style="font:600 10px var(--mono);color:#6b6459">${esc(t.forn||'—')} · NF ${esc(t.nf||'—')} · ${fmt(Math.round(t.estoque||0))} m</div>
+    <b style="font:800 9px var(--mono);color:#2E7D32">ESTE TECIDO →</b></div></div>`;
+ window.__tgGo=code=>{ const t=TDOCS.find(x=>x.code===code); closeMod(); cb(t?{tec:t.code,tecAt:t.createdAt||null}:null); };
+ window.__tgOutro=()=>{ closeMod(); tecPickOpen(sel=>cb(sel)); };
+ window.__tgSem=()=>{ closeMod(); cb(null); toast('confirmado SEM tecido — vincule depois no ✂'); };
+ openMod('🧵 Confirmar o tecido — '+m.aba,`
+  <div class="sm" style="margin-bottom:7px">NF na DEBORA: <b>${esc(m.nf||'—')}</b> — confira pela FOTO e NOME, não só pelo número:</div>
+  ${cands.length?cands.map(card).join(''):'<div class="empty" style="padding:8px">nenhum tecido com essa NF na nuvem</div>'}
+  <div style="display:flex;gap:7px;margin-top:4px"><button class="tg" style="flex:1" onclick="__tgOutro()">🔍 procurar outro</button><button class="tg" style="flex:1" onclick="__tgSem()">sem tecido agora</button></div>`,'',true); }
+
 function robFichaHTML(kind,key){
  const box=(m,titulo,sub,chips,body,btns)=>{ const foto=m&&m.foto;
   return `<div class="mph" style="padding:14px 46px 8px 14px"><div style="display:flex;gap:12px">
@@ -1740,7 +1941,7 @@ function robFichaHTML(kind,key){
     chip('✂ cortado '+dtBR(l.corte),'g')+((dd>3)?chip('+'+dd+'d sem sair','r'):'')+chip('📄 planilha'),
     `<div class="kv2"><b>Peças</b><span>${l.qtd?fmt(l.qtd):'—'}</span><b>Saída</b><span>ainda não saiu</span>${l.tecido?`<b>Tecido</b><span>${esc(l.tecido)}</span>`:''}</div>
      <div class="sm" style="margin-top:8px;color:#8a6d00">registrado no ROBERTO.xlsx — envio/chegada seguem pela planilha</div>`,
-    `${m?`<button class="tg" onclick="openModel('${m.aba}')">ficha completa do modelo</button>`:''}`)
+    `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="trazerLot(${key})">☁ TRAZER P/ O PAINEL</button> ${m?`<button class="tg" onclick="openModel('${m.aba}')">ficha completa do modelo</button>`:''}`)
    +(m?msgThread('mod:'+m.aba,'rfI',`rfMsgSend('${m.aba}')`):''); }
  if(kind==='cort'){ const d=CEVT.find(x=>x.id===key); if(!d) return '';
   const m=DEB.models.find(x=>x.aba===d.aba)||{};
@@ -1778,10 +1979,89 @@ async function desEnvio(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) ret
 async function togAmostraC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
   const env={...d.env,am:d.env.am?null:{at:new Date().toISOString().slice(0,10),by:whoName()}};
   try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
-async function chegouC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
-  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,cheg:{data:new Date().toISOString().slice(0,10),by:whoName()}}); toast('📥 chegada registrada'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
-async function desChegC(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
-  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,cheg:null}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+function trazKey(mo,co,sa){ return String(mo||'')+'|'+String(co||'')+'|'+String(sa||''); }
+async function trazerLot(i){ const l=ROBXP[i]; if(!l){ toast('lote não encontrado'); return; }
+  if(window.__chgBusy) return;
+  const now=new Date().toISOString();
+  const xid='XP'+djb2(trazKey(l.modelo,l.corte,l.saida));
+  const r=(typeof A!=='undefined'&&A.rows)?A.rows.find(x=>x.lots&&x.lots.includes(l)):null; const m=r&&r.m;
+  window.__chgBusy=true; pgShow('☁ trazendo p/ o painel…');
+  try{
+    await FB.runTransaction(FB.db, async tx=>{
+      const ref=FB.doc(FB.db,'cortes',xid);
+      const s=await tx.get(ref); if(s.exists()) throw new Error('este lote já está no painel');
+      tx.set(ref,{id:xid,corteId:xid,origem:'planilha',tec:null,aba:(m&&m.aba)||'',cod:String(l.modelo||''),nm:l.desc||String(l.modelo||''),
+        pcs:l.qtd||0,tam:null,grade:null,folhas:null,comp:null,mt:null,coresUse:[],junto:1,corte:l.corte||null,
+        who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,
+        env:l.saida?{oficina:l.oficina||'',saida:l.saida,prev:l.prev||null,rs:null,by:(FBUSER&&FBUSER.email)||'',at:now}:null,
+        chegadas:[],cheg:null,xref:{modelo:String(l.modelo||''),corte:l.corte||null,saida:l.saida||null}});
+    });
+    RFICHA=null; toast('☁ lote agora vive no painel — a cópia da planilha foi ocultada');
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  finally{ pgHide(); window.__chgBusy=false; } }
+function chegList(d){ if(d.chegadas&&d.chegadas.length) return d.chegadas;
+  if(d.cheg) return [{id:'LEG',data:d.cheg.data,qtd:d.pcs||0,def:0,retrab:false,legado:true,by:(d.cheg.by||'')}];
+  return []; }
+function chegRec(d){ return chegList(d).filter(e=>!e.retrab).reduce((s,e)=>s+(+e.qtd||0),0); }
+function chegDef(d){ return chegList(d).reduce((s,e)=>s+(+e.def||0),0); }
+function chegPend(d){ return (d.pcs||0)-chegRec(d); }
+function defRest(d,gid){ const e=chegList(d).find(x=>x.id===gid); if(!e) return 0;
+  const used=chegList(d).filter(x=>x.retrab&&x.retrabDe===gid).reduce((s,x)=>s+(+x.qtd||0),0);
+  return Math.max(0,(+e.def||0)-used); }
+function chegPagar(d){ const rs=(d.env&&d.env.rs!=null)?d.env.rs:null; if(rs==null) return null;
+  return chegRec(d)*rs; }
+function openCheg(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
+  const pend=chegPend(d);
+  const defs=chegList(d).map(e=>({e,rest:defRest(d,e.id)})).filter(x=>x.rest>0&&!x.e.retrab);
+  openMod('📥 Receber — '+(d.aba||d.nm),`
+   <div class="sm" style="margin-bottom:6px">plano ${fmt(d.pcs)} pçs · recebidas ${fmt(chegRec(d))} · <b>restam ${fmt(pend)}</b>${chegDef(d)?` · def ${chegDef(d)}`:''}</div>
+   <label class="ml">QUANTAS PEÇAS CHEGARAM AGORA<input id="chQ" type="number" value="${Math.max(pend,0)||''}" min="1"></label>
+   <label class="ml">DEFEITOS DENTRO DESTA ENTREGA<input id="chD" type="number" value="0" min="0"></label>
+   ${defs.length?`<label class="ml">É RETRABALHO? (peças com defeito que voltaram)
+     <select id="chR"><option value="">não — entrega normal</option>
+     ${defs.map(x=>`<option value="${x.e.id}">sim — conserta entrega de ${dtBR(x.e.data)} (def restante ${x.rest})</option>`).join('')}</select></label>`
+    :'<input id="chR" type="hidden" value="">'}
+   <label class="ml">OBS (obrigatória se passar do plano)<input id="chO" placeholder=""></label>`,
+   `<button class="tb ok" onclick="salvarCheg('${id}')">📥 REGISTRAR ENTRADA</button>`,true); }
+async function salvarCheg(id){ if(window.__chgBusy) return;
+  const q=+document.getElementById('chQ').value||0, df=+document.getElementById('chD').value||0;
+  const rDe=(document.getElementById('chR')||{}).value||'', obs=(document.getElementById('chO').value||'').trim();
+  if(q<=0){ toast('Informe a quantidade'); return; }
+  if(!rDe && df>q){ toast('Defeitos ('+df+') não podem passar da quantidade ('+q+')'); return; }
+  const now=new Date().toISOString();
+  const gid='G'+djb2(id+'|'+q+'|'+df+'|'+rDe+'|'+now.slice(0,16));
+  window.__chgBusy=true; pgShow('📥 registrando…');
+  try{
+    await FB.runTransaction(FB.db, async tx=>{
+      const ref=FB.doc(FB.db,'cortes',id);
+      const s=await tx.get(ref); if(!s.exists()) throw new Error('lote não existe mais');
+      const d2=s.data();
+      const list=chegList(d2).slice();
+      if(list.some(e=>e.id===gid)) return; /* toque duplo no mesmo minuto → já registrado */
+      if(rDe){ const rest=defRest(d2,rDe); if(q>rest) throw new Error('retrabalho ('+q+') maior que defeito em aberto ('+rest+')'); }
+      else { const pend=(d2.pcs||0)-list.filter(e=>!e.retrab).reduce((s2,e)=>s2+(+e.qtd||0),0);
+        if(q>pend && !obs) throw new Error('entrada passa do plano (restam '+pend+') — escreva a OBS explicando'); }
+      list.push({id:gid,data:now.slice(0,10),qtd:q,def:rDe?0:df,retrab:!!rDe,retrabDe:rDe||null,obs:obs||null,by:whoName(),at:now});
+      tx.set(ref,{...d2,chegadas:list});
+    });
+    closeMod(); toast('📥 entrada registrada');
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  finally{ pgHide(); window.__chgBusy=false; } }
+async function desChg(id,gid){ if(window.__chgBusy) return;
+  if(!confirm('Remover esta entrada?')) return;
+  window.__chgBusy=true; pgShow('↩ removendo…');
+  try{
+    await FB.runTransaction(FB.db, async tx=>{
+      const ref=FB.doc(FB.db,'cortes',id);
+      const s=await tx.get(ref); if(!s.exists()) throw new Error('lote não existe');
+      const d2=s.data(); const list=chegList(d2).slice();
+      const tgt=list.find(e=>e.id===gid); if(!tgt) throw new Error('entrada já removida');
+      if(!tgt.retrab && list.some(e=>e.retrab&&e.retrabDe===gid)) throw new Error('remova primeiro o retrabalho ligado a esta entrada');
+      tx.set(ref,{...d2,chegadas:list.filter(e=>e.id!==gid),cheg:tgt.id==='LEG'?null:(d2.cheg||null)});
+    });
+    toast('↩ entrada removida');
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  finally{ pgHide(); window.__chgBusy=false; } }
 async function editRsC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
   const v=prompt('R$/pç costura — '+(d.aba||d.nm), d.env.rs!=null?d.env.rs:''); if(v==null) return;
   const rs=parseFloat(String(v).replace(',','.'))||null;
@@ -2153,22 +2433,14 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
 
 /* ---------- import / export ---------- */
 let __pubT=null, __pubH='';
-function eloSnapshot(){
- const strip=o=>{ const x={...o}; delete x.foto; delete x.fotoFull; delete x.items; return x; };
- const tec=(TDOCS||[]).map(t=>{ const x={...t}; delete x.foto;
-   if(x.cores) x.cores=x.cores.map(c=>{ const y={...c}; delete y.thumb; return y; });
-   if(x.pecas) x.pecas=x.pecas.map(p=>{ const y={...p}; delete y.thumb; return y; });
-   return x; });
- const ped=(PED||[]).map(p=>{ const x={...p}; delete x.fotos;
-   if(x.cores) x.cores=x.cores.map(c=>{ const y={...c}; delete y.thumb; return y; });
-   return x; });
- return { v:1,
-  debora:{ file:DEB.file||null, at:DEB.at||null, models:(DEB.models||[]).map(strip) },
-  roberto:{ file:ROB.file||null, at:ROB.at||null, by:ROB.by||null, lots:ROB.lots||[], custo:ROB.custo||[], ofic:ROB.ofic||[] },
-  tecidos:tec, tecidosAt:(TDOCS||[]).reduce((m,t)=>t.updatedAt>m?t.updatedAt:m,'')||null,
-  pedidos:ped, pedidosAt:(PED||[]).reduce((m,p)=>((p.atualizado||'')>m?p.atualizado:m),'')||null,
-  pipeline:{ conf:CCONF||[], cortes:CEVT||[], manuais:FMAN||[] },
-  boletos:(BOL||[]).map(b=>({id:b.id,forn:b.forn,nf:b.nf,venc:b.venc,valor:b.valor,pago:b.pago||null})) }; }
+function eloSnapshot(){ /* P0: whitelist — SÓ progresso de produção no doc público */
+ const mods=(DEB.models||[]).map(m=>({aba:m.aba,codigo:m.codigo||'',nome:m.nome||'',fase:m.fase||'',prog:m.prog??null,
+   qt:m.qt??null,ini:m.ini||null,prazo:m.prazo||null,concl:!!m.concl,risco:!!m.risco}));
+ const lots=(ROB.lots||[]).map(l=>({modelo:l.modelo,desc:l.desc||'',qtd:l.qtd??null,corte:l.corte||null,
+   saida:l.saida||null,prev:l.prev||null,real:l.real||null,oficina:l.oficina||''}));
+ return { v:2, escopo:'whitelist-p0',
+  debora:{ file:DEB.file||null, at:DEB.at||null, models:mods },
+  roberto:{ file:ROB.file||null, at:ROB.at||null, by:ROB.by||null, lots:lots } }; }
 function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
 async function publishSnap(force){
  try{ if(!FBUSER||!FB||!FB.setDoc) return;
