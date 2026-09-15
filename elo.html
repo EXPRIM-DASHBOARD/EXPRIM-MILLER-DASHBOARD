@@ -487,7 +487,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13g</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13h</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -534,14 +534,6 @@ if(!(typeof META!=='undefined'&&META&&META.snapshot)){ try{
     loginR:async()=>{ try{ await signInWithRedirect(auth,new GoogleAuthProvider()); }catch(e){ const g=document.getElementById('gMsg'); if(g) g.textContent=(e&&(e.code+' · '+e.message))||String(e); } },
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
-  }catch(__e){ window.__initErr={name:(__e&&__e.name)||'Erro',msg:String((__e&&(__e.message||__e.code))||__e).slice(0,140)};
-    try{
-      const gm=document.getElementById('gMsg');
-      if(gm){ gm.innerHTML='⚠ O app não conseguiu iniciar.<br><b>Recarregue a página (F5).</b> Se repetir, mande um print desta tela.'
-        +'<div style="font:600 9.5px var(--mono);color:#6b6459;margin-top:6px">diag: '+window.__initErr.name+' — '+window.__initErr.msg.replace(/</g,'&lt;')+' · v9.13e</div>'; }
-      const gi=document.getElementById('gIn');
-      if(gi){ gi.textContent='LOGIN INDISPONÍVEL — app não iniciou'; gi.style.opacity='.45'; gi.style.pointerEvents='none'; }
-    }catch(_){} }
   (function(){ if(!window.__FBraw) return;
     window.__pw=0; window.__pwErr=null;
     window.cldot=function(){ const el=document.getElementById('cldot'); if(!el) return;
@@ -560,6 +552,14 @@ if(!(typeof META!=='undefined'&&META&&META.snapshot)){ try{
     window.addEventListener('online',cldot); window.addEventListener('offline',cldot);
   })();
   onAuthStateChanged(auth,u=>window.onFBAuth&&window.onFBAuth(u));
+  }catch(__e){ window.__initErr={name:(__e&&__e.name)||'Erro',msg:String((__e&&(__e.message||__e.code))||__e).slice(0,140)};
+    try{
+      const gm=document.getElementById('gMsg');
+      if(gm){ gm.innerHTML='⚠ O app não conseguiu iniciar.<br><b>Recarregue a página (F5).</b> Se repetir, mande um print desta tela.'
+        +'<div style="font:600 9.5px var(--mono);color:#6b6459;margin-top:6px">diag: '+window.__initErr.name+' — '+window.__initErr.msg.replace(/</g,'&lt;')+' · v9.13e</div>'; }
+      const gi=document.getElementById('gIn');
+      if(gi){ gi.textContent='LOGIN INDISPONÍVEL — app não iniciou'; gi.style.opacity='.45'; gi.style.pointerEvents='none'; }
+    }catch(_){} }
 }
 </script>
 <script>/* JSZip 3.10.1 (MIT) — embutido p/ importação de .xlsx */
