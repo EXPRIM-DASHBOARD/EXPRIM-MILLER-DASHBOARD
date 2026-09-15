@@ -487,7 +487,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13e</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -512,13 +512,21 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, runTransaction, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-if(!(typeof META!=='undefined'&&META&&META.snapshot)){
+if(!(typeof META!=='undefined'&&META&&META.snapshot)){ try{
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
-  FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
+  window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
+  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
+  }catch(__e){ window.__initErr={name:(__e&&__e.name)||'Erro',msg:String((__e&&(__e.message||__e.code))||__e).slice(0,140)};
+    try{
+      const gm=document.getElementById('gMsg');
+      if(gm){ gm.innerHTML='⚠ O app não conseguiu iniciar.<br><b>Recarregue a página (F5).</b> Se repetir, mande um print desta tela.'
+        +'<div style="font:600 9.5px var(--mono);color:#6b6459;margin-top:6px">diag: '+window.__initErr.name+' — '+window.__initErr.msg.replace(/</g,'&lt;')+' · v9.13e</div>'; }
+      const gi=document.getElementById('gIn');
+      if(gi){ gi.textContent='LOGIN INDISPONÍVEL — app não iniciou'; gi.style.opacity='.45'; gi.style.pointerEvents='none'; }
+    }catch(_){} }
   (function(){ if(!window.__FBraw) return;
     window.__pw=0; window.__pwErr=null;
     window.cldot=function(){ const el=document.getElementById('cldot'); if(!el) return;
@@ -2283,22 +2291,14 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
 
 /* ---------- import / export ---------- */
 let __pubT=null, __pubH='';
-function eloSnapshot(){
- const strip=o=>{ const x={...o}; delete x.foto; delete x.fotoFull; delete x.items; return x; };
- const tec=(TDOCS||[]).map(t=>{ const x={...t}; delete x.foto;
-   if(x.cores) x.cores=x.cores.map(c=>{ const y={...c}; delete y.thumb; return y; });
-   if(x.pecas) x.pecas=x.pecas.map(p=>{ const y={...p}; delete y.thumb; return y; });
-   return x; });
- const ped=(PED||[]).map(p=>{ const x={...p}; delete x.fotos;
-   if(x.cores) x.cores=x.cores.map(c=>{ const y={...c}; delete y.thumb; return y; });
-   return x; });
- return { v:1,
-  debora:{ file:DEB.file||null, at:DEB.at||null, models:(DEB.models||[]).map(strip) },
-  roberto:{ file:ROB.file||null, at:ROB.at||null, by:ROB.by||null, lots:ROB.lots||[], custo:ROB.custo||[], ofic:ROB.ofic||[] },
-  tecidos:tec, tecidosAt:(TDOCS||[]).reduce((m,t)=>t.updatedAt>m?t.updatedAt:m,'')||null,
-  pedidos:ped, pedidosAt:(PED||[]).reduce((m,p)=>((p.atualizado||'')>m?p.atualizado:m),'')||null,
-  pipeline:{ conf:CCONF||[], cortes:CEVT||[], manuais:FMAN||[] },
-  boletos:(BOL||[]).map(b=>({id:b.id,forn:b.forn,nf:b.nf,venc:b.venc,valor:b.valor,pago:b.pago||null})) }; }
+function eloSnapshot(){ /* P0: whitelist — SÓ progresso de produção no doc público */
+ const mods=(DEB.models||[]).map(m=>({aba:m.aba,codigo:m.codigo||'',nome:m.nome||'',fase:m.fase||'',prog:m.prog??null,
+   qt:m.qt??null,ini:m.ini||null,prazo:m.prazo||null,concl:!!m.concl,risco:!!m.risco}));
+ const lots=(ROB.lots||[]).map(l=>({modelo:l.modelo,desc:l.desc||'',qtd:l.qtd??null,corte:l.corte||null,
+   saida:l.saida||null,prev:l.prev||null,real:l.real||null,oficina:l.oficina||''}));
+ return { v:2, escopo:'whitelist-p0',
+  debora:{ file:DEB.file||null, at:DEB.at||null, models:mods },
+  roberto:{ file:ROB.file||null, at:ROB.at||null, by:ROB.by||null, lots:lots } }; }
 function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
 async function publishSnap(force){
  try{ if(!FBUSER||!FB||!FB.setDoc) return;
@@ -2398,7 +2398,7 @@ async function boot(){
     DEB=SEED_DEB; ROB=SEED_ROB; TEC=SEED_TEC; if(typeof SEED_TODO!=='undefined') TODO=Object.assign({done:{},extra:[]},SEED_TODO); if(typeof SEED_BOL!=='undefined') BOL=SEED_BOL; $('#gate').hidden=true;
   } else {
     const ui=await dbGet('ui'); if(ui) UI=Object.assign({rob:{},deb:{},fg:{},fgAll:false,kanban:false},ui);
-    $('#gIn').onclick=()=>window.FB?window.FB.login():toast('Sem conexão com o Firebase — verifique a internet'); $('#outBtn').onclick=()=>window.FB.signOut();
+    $('#gIn').onclick=()=>window.FB?window.FB.login():toast(window.__initErr?('⚠ app não iniciou: '+window.__initErr.msg):'Sem conexão com o Firebase — verifique a internet',8000); $('#outBtn').onclick=()=>window.FB.signOut();
   }
   $('#expBtn').onclick=exportSnapshot;
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{VIEW=t.dataset.v; render();});
