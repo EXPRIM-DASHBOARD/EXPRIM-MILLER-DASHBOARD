@@ -479,7 +479,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.12j.1</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13a</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -503,11 +503,11 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, runTransaction, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 if(!(typeof META!=='undefined'&&META&&META.snapshot)){
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,query,orderBy,limit,signOut:()=>signOut(auth),
+  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
   onAuthStateChanged(auth,u=>window.onFBAuth&&window.onFBAuth(u));
@@ -789,6 +789,8 @@ async function cloudSaveDeb(models,fname){
   for(const m of models){ b.set(doc(db,'elo_deb',m.aba),m); if(++n>=400) await flush(); }
   b.set(doc(db,'elo','deb_meta'),{at,file:fname,count:models.length,by:FBUSER?FBUSER.email:''}); await b.commit();
 }
+function upStamp(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) return '';
+  const p=n=>String(n).padStart(2,'0'); return `↑ ${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`; }
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:t.status||(t.estoque>0?'estoque':'esgotado'),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null,obs:t.obs||'',imposto:t.imposto??null,precoImp:t.precoImp??null,qtdPedida:t.qtdPedida??null,dataPedido:t.dataPedido||null,prevEntrega:t.prevEntrega||null,qtdRecebida:t.qtdRecebida??null,rolosRec:t.rolosRec??null,inspecao:t.inspecao||'',cortes:t.cortes||[],devol:t.devol||[],sobras:!!t.sobras,pecas:t.pecas||[],sobraOut:t.sobraOut||null,corteOut:t.corteOut||null,pedidoId:t.pedidoId||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
@@ -1279,7 +1281,7 @@ function render(){ clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===VIEW));
   $('#snap').innerHTML=META&&META.snapshot?`📤 snapshot de <b>${esc(META.by)}</b> · ${esc(META.at)}`:'';
-  $('#ref').innerHTML=`${TEC.items.length?`TECIDOS ${esc(TEC.file||'embutido')} · ${TEC.items.length}${PED.filter(p=>p.status!=='RECEBIDO').length?` · ${PED.filter(p=>p.status!=='RECEBIDO').length} pedido(s) aberto(s)`:''} &nbsp;·&nbsp; `:''}${DEB.models.length?`DEBORA ${esc(DEB.file||'embutida')} · ${DEB.models.filter(m=>!m.concl).length} em andamento`:'<b>DEBORA: arraste o .xlsx</b>'} &nbsp;·&nbsp; ${ROB.lots.length?`ROBERTO ${esc(ROB.file||'embutido')} · ${ROB.lots.filter(l=>!l.real).length} lotes abertos`:'<b>ROBERTO: arraste o .xlsx</b>'}`;
+  $('#ref').innerHTML=`${TEC.items.length?`TECIDOS ${esc(TEC.file||'embutido')} · ${TEC.items.length}${PED.filter(p=>p.status!=='RECEBIDO').length?` · ${PED.filter(p=>p.status!=='RECEBIDO').length} pedido(s) aberto(s)`:''} &nbsp;·&nbsp; `:''}${DEB.models.length?`DEBORA ${esc(DEB.file||'embutida')} <b style="color:var(--gold)">${upStamp(DEB.at)}</b> · ${DEB.models.filter(m=>!m.concl).length} em andamento`:'<b>DEBORA: arraste o .xlsx</b>'} &nbsp;·&nbsp; ${ROB.lots.length?`ROBERTO ${esc(ROB.file||'embutido')} <b style="color:var(--gold)">${upStamp(ROB.at)}</b> · ${ROB.lots.filter(l=>!l.real).length} lotes abertos`:'<b>ROBERTO: arraste o .xlsx</b>'}`;
   const main=$('#main');
   if(VIEW==='tecidos'){ main.innerHTML=renderTecidos(A); return; }
   if(VIEW==='pedidos'){ main.innerHTML=renderPedidos(); bindPed(); return; }   if(VIEW==='boletos'){ main.innerHTML=renderBoletos(); return; }
@@ -1576,52 +1578,72 @@ function ccPct(tec){ const t=TDOCS.find(x=>x.code===tec); if(!t) return;
   let rest=f; (t.cores||[]).forEach((c,i)=>{ const v=(i===t.cores.length-1)?rest:Math.round(f*av[i]/tot); T('ccK'+i).value=v; rest-=v; });
   ccCalc(tec); }
 async function regCorteCloud(tec){
-  const t=TDOCS.find(x=>x.code===tec); if(!t){ toast('Tecido não está na nuvem'); return; }
-  const its=CCONF.filter(c=>(c.tec||'')===tec); if(!its.length){ toast('Nada confirmado deste tecido'); return; }
+  if(window.__cutBusy) return;
+  const its=CCONF.filter(c=>(c.tec||'?')===tec); if(!its.length){ toast('Nada confirmado deste tecido'); return; }
   const T=v=>document.getElementById(v+'_'+tec);
   const tam=T('ccT').value.trim(), grade=sizeParse(tam), nt=sizeCount(tam), f=+T('ccF').value||0, cp=parseFloat(String(T('ccC').value).replace(',','.'))||0;
   if(!nt||!f||!cp){ toast('Preencha tamanhos, folhas e comprimento'); return; }
-  const temCores=!!(t.cores&&t.cores.length);
-  const kf=temCores?(t.cores||[]).map((c,i)=>+((T('ccK'+i)||{}).value)||0):[], sk=kf.reduce((s,x)=>s+x,0);
+  const tLoc=TDOCS.find(x=>x.code===tec); if(!tLoc){ toast('Tecido não está na nuvem'); return; }
+  const temCores=!!(tLoc.cores&&tLoc.cores.length);
+  const kf=temCores?(tLoc.cores||[]).map((c,i)=>+((T('ccK'+i)||{}).value)||0):[], sk=kf.reduce((s,x)=>s+x,0);
   if(temCores&&sk!==f){ toast('Folhas por cor ('+sk+') ≠ total ('+f+')'); return; }
-  const colUsed=(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kf[i],m:Math.round(cp*kf[i]*10)/10})).filter(c=>c.folhas>0);
-  for(const cu of colUsed){ const c=(t.cores||[]).find(x=>x.cor===cu.cor); const av=corAvail(t,c);
-    if(cu.m>av+0.05){ toast(cu.cor+': precisa '+cu.m+' m, saldo '+av+' m',5000); return; } }
-  const mt=Math.round(cp*f*10)/10, pcs=nt*f, now=new Date().toISOString(), mR=t.mediaRolo, kid='K'+Date.now().toString(36);
-  const tD=JSON.parse(JSON.stringify(t));
-  tD.cores=(tD.cores||[]).map(c=>{ const cu=colUsed.find(x=>x.cor===c.cor); if(!cu) return c;
-    return {...c,saldo:Math.max(0,Math.round((c.saldo-(mR?cu.m/mR:cu.m))*100)/100)}; });
-  tD.estoque=Math.max(0,Math.round((tD.estoque-mt)*10)/10); tD.status=tD.estoque>0?'estoque':'esgotado';
-  tD.cortes=[...(tD.cortes||[]),{data:now.slice(0,10),modelo:its.map(x=>x.aba||x.nm).join('+'),cor:colUsed.map(c=>c.cor).join('/'),m:mt,por:whoName()}];
-  tD.corteOut=tD.corteOut||{total:0,cores:{}}; tD.corteOut.total=Math.round((tD.corteOut.total+mt)*10)/10;
-  colUsed.forEach(cu=>{ tD.corteOut.cores[cu.cor]=Math.round(((tD.corteOut.cores[cu.cor]||0)+cu.m)*100)/100; });
-  tD.updatedAt=now; tD.updatedBy=(FBUSER&&FBUSER.email)||'';
+  const mt=Math.round(cp*f*10)/10, pcs=nt*f, now=new Date().toISOString();
+  const kid='K'+tec+'_'+now.slice(2,16).replace(/[-T:]/g,'');
+  window.__cutBusy=true; pgShow('✂ registrando corte…');
   try{
-    const b=FB.writeBatch(FB.db);
-    b.set(FB.doc(FB.db,'tecidos',tec),tD);
-    its.forEach(it=>{ const d={id:kid+'_'+(it.aba||it.id),corteId:kid,tec,aba:it.aba||'',cod:it.cod||'',nm:it.nm||'',pcs,tam,grade,folhas:f,comp:cp,mt:Math.round(mt/its.length*10)/10,coresUse:colUsed.map(c=>({...c,m:Math.round(c.m/its.length*100)/100})),junto:its.length,corte:now.slice(0,10),who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,env:null};
-      b.set(FB.doc(FB.db,'cortes',d.id),d); b.delete(FB.doc(FB.db,'corte_conf',it.id)); });
-    b.commit ? await b.commit() : null;
-    toast('✂ corte registrado · '+mt+' m baixados de '+tec);
-  }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
-async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
-  if(!confirm('Desfazer o corte de '+(d.aba||d.nm)+'? O estoque volta.')) return;
-  const t=TDOCS.find(x=>x.code===d.tec); const now=new Date().toISOString();
-  try{
-    const b=FB.writeBatch(FB.db);
-    if(t){ const mR=t.mediaRolo; const tD=JSON.parse(JSON.stringify(t));
-      tD.cores=(tD.cores||[]).map(c=>{ const cu=(d.coresUse||[]).find(x=>x.cor===c.cor); if(!cu) return c;
-        return {...c,saldo:Math.round((c.saldo+(mR?cu.m/mR:cu.m))*100)/100}; });
-      tD.estoque=Math.round((tD.estoque+(d.mt||0))*10)/10; tD.status='estoque';
-      if(tD.corteOut){ tD.corteOut.total=Math.max(0,Math.round((tD.corteOut.total-(d.mt||0))*10)/10);
-        (d.coresUse||[]).forEach(cu=>{ if(tD.corteOut.cores[cu.cor]!=null) tD.corteOut.cores[cu.cor]=Math.max(0,Math.round((tD.corteOut.cores[cu.cor]-cu.m)*100)/100); }); }
-      tD.cortes=[...(tD.cortes||[]),{data:now.slice(0,10),modelo:(d.aba||d.nm)+' ↩ desfeito',cor:'',m:-(d.mt||0),por:whoName()}];
+    await FB.runTransaction(FB.db, async tx=>{
+      for(const it of its){ const cs=await tx.get(FB.doc(FB.db,'corte_conf',it.id));
+        if(!cs.exists()) throw new Error((it.aba||it.nm)+': já foi cortado por outro usuário'); }
+      const ref=FB.doc(FB.db,'tecidos',tec);
+      const snap=await tx.get(ref);
+      if(!snap.exists()) throw new Error('tecido sumiu da nuvem');
+      const t=snap.data(); const mR=t.mediaRolo;
+      const colUsed=temCores?(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kf[i]||0,m:Math.round(cp*(kf[i]||0)*10)/10})).filter(c=>c.folhas>0):[];
+      for(const cu of colUsed){ const c=(t.cores||[]).find(x=>x.cor===cu.cor); const av=c?corAvail(t,c):0;
+        if(cu.m>av+0.05) throw new Error(cu.cor+': precisa '+cu.m+' m, saldo AGORA é '+av+' m'); }
+      if(!temCores && mt>(t.estoque||0)+0.05) throw new Error('precisa '+mt+' m, estoque AGORA é '+Math.round(t.estoque)+' m');
+      const tD=JSON.parse(JSON.stringify(t));
+      tD.cores=(tD.cores||[]).map(c=>{ const cu=colUsed.find(x=>x.cor===c.cor); if(!cu) return c;
+        return {...c,saldo:Math.max(0,Math.round((c.saldo-(mR?cu.m/mR:cu.m))*100)/100)}; });
+      tD.estoque=Math.max(0,Math.round((tD.estoque-mt)*10)/10); tD.status=tD.estoque>0?'estoque':'esgotado';
+      tD.cortes=[...(tD.cortes||[]),{data:now.slice(0,10),modelo:its.map(x=>x.aba||x.nm).join('+'),cor:colUsed.map(c=>c.cor).join('/'),m:mt,por:whoName()}];
+      tD.corteOut=tD.corteOut||{total:0,cores:{}}; tD.corteOut.total=Math.round((tD.corteOut.total+mt)*10)/10;
+      colUsed.forEach(cu=>{ tD.corteOut.cores[cu.cor]=Math.round(((tD.corteOut.cores[cu.cor]||0)+cu.m)*100)/100; });
       tD.updatedAt=now; tD.updatedBy=(FBUSER&&FBUSER.email)||'';
-      b.set(FB.doc(FB.db,'tecidos',d.tec),tD); }
-    b.delete(FB.doc(FB.db,'cortes',id));
-    b.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,pcs:null,man:null,who:d.who,by:d.by,at:now});
-    await b.commit(); toast('↩ corte desfeito · estoque restaurado');
-  }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+      tx.set(ref,tD);
+      its.forEach(it=>{ const d={id:kid+'_'+(it.aba||it.id),corteId:kid,tec,aba:it.aba||'',cod:it.cod||'',nm:it.nm||'',pcs,tam,grade,folhas:f,comp:cp,mt:Math.round(mt/its.length*10)/10,coresUse:colUsed.map(c=>({...c,m:Math.round(c.m/its.length*100)/100})),junto:its.length,corte:now.slice(0,10),who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,env:null,cheg:null};
+        tx.set(FB.doc(FB.db,'cortes',d.id),d); tx.delete(FB.doc(FB.db,'corte_conf',it.id)); });
+    });
+    toast('✂ corte registrado · '+mt+' m baixados de '+tec);
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  finally{ pgHide(); window.__cutBusy=false; } }
+async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
+  if(window.__cutBusy) return;
+  if(!confirm('Desfazer o corte de '+(d.aba||d.nm)+'? O estoque volta.')) return;
+  const now=new Date().toISOString();
+  window.__cutBusy=true; pgShow('↩ desfazendo…');
+  try{
+    await FB.runTransaction(FB.db, async tx=>{
+      const cref=FB.doc(FB.db,'cortes',id);
+      const cs=await tx.get(cref);
+      if(!cs.exists()) throw new Error('este corte já foi desfeito');
+      const ref=FB.doc(FB.db,'tecidos',d.tec);
+      const snap=await tx.get(ref);
+      if(snap.exists()){ const t=snap.data(); const mR=t.mediaRolo; const tD=JSON.parse(JSON.stringify(t));
+        tD.cores=(tD.cores||[]).map(c=>{ const cu=(d.coresUse||[]).find(x=>x.cor===c.cor); if(!cu) return c;
+          return {...c,saldo:Math.round((c.saldo+(mR?cu.m/mR:cu.m))*100)/100}; });
+        tD.estoque=Math.round((tD.estoque+(d.mt||0))*10)/10; tD.status='estoque';
+        if(tD.corteOut){ tD.corteOut.total=Math.max(0,Math.round((tD.corteOut.total-(d.mt||0))*10)/10);
+          (d.coresUse||[]).forEach(cu=>{ if(tD.corteOut.cores[cu.cor]!=null) tD.corteOut.cores[cu.cor]=Math.max(0,Math.round((tD.corteOut.cores[cu.cor]-cu.m)*100)/100); }); }
+        tD.cortes=[...(tD.cortes||[]),{data:now.slice(0,10),modelo:(d.aba||d.nm)+' ↩ desfeito',cor:'',m:-(d.mt||0),por:whoName()}];
+        tD.updatedAt=now; tD.updatedBy=(FBUSER&&FBUSER.email)||'';
+        tx.set(ref,tD); }
+      tx.delete(cref);
+      tx.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,pcs:null,man:null,who:d.who,by:d.by,at:now});
+    });
+    toast('↩ corte desfeito · estoque restaurado');
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  finally{ pgHide(); window.__cutBusy=false; } }
 function matrizHTML(grade,coresUse,pcs){ if(!grade||!grade.length||!(coresUse||[]).length) return '';
  const nS=grade.reduce((s,x)=>s+x.n,0);
  const head=coresUse.map(c=>`<th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">${esc(c.cor)}</th>`).join('');
@@ -2142,8 +2164,9 @@ function eloSnapshot(){
    return x; });
  return { v:1,
   debora:{ file:DEB.file||null, at:DEB.at||null, models:(DEB.models||[]).map(strip) },
-  roberto:{ file:ROB.file||null, lots:ROB.lots||[], custo:ROB.custo||[], ofic:ROB.ofic||[] },
-  tecidos:tec, pedidos:ped,
+  roberto:{ file:ROB.file||null, at:ROB.at||null, by:ROB.by||null, lots:ROB.lots||[], custo:ROB.custo||[], ofic:ROB.ofic||[] },
+  tecidos:tec, tecidosAt:(TDOCS||[]).reduce((m,t)=>t.updatedAt>m?t.updatedAt:m,'')||null,
+  pedidos:ped, pedidosAt:(PED||[]).reduce((m,p)=>((p.atualizado||'')>m?p.atualizado:m),'')||null,
   pipeline:{ conf:CCONF||[], cortes:CEVT||[], manuais:FMAN||[] },
   boletos:(BOL||[]).map(b=>({id:b.id,forn:b.forn,nf:b.nf,venc:b.venc,valor:b.valor,pago:b.pago||null})) }; }
 function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
