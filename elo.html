@@ -349,6 +349,11 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .cutwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;padding:10px 12px}
 .cutL{display:grid;grid-template-columns:1fr;gap:9px;align-content:start}
 .cutR{min-width:0}
+.cd{font:800 10px var(--mono);border-radius:6px;padding:1px 7px;margin-left:6px}
+.cd.ok{background:#EAF4EA;color:#2E7D32}
+.cd.wait{background:#FDF4E3;color:#8a6d00}
+.cd.bad{background:#FBEDEB;color:#C0392B}
+.stD{font:800 8.5px var(--mono);background:#FBEDEB;color:#C0392B;border:1px solid #ecc8c2;border-radius:5px;padding:1px 6px}
 .chr{font:600 10.5px var(--mono);padding:3px 0;border-bottom:1px dashed var(--line)}
 .ml{display:block;font:800 9px var(--mono);color:#6b6459;margin:7px 0 2px}
 .ml input,.ml select{display:block;width:100%;margin-top:3px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:400 13px system-ui}
@@ -482,7 +487,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13b</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.13c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -510,9 +515,27 @@ import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager
 if(!(typeof META!=='undefined'&&META&&META.snapshot)){
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
+  window.window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
+  FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
+  (function(){ if(!window.__FBraw) return;
+    window.__pw=0; window.__pwErr=null;
+    window.cldot=function(){ const el=document.getElementById('cldot'); if(!el) return;
+      const off=(typeof navigator!=='undefined')&&navigator.onLine===false;
+      if(window.__pwErr){ el.textContent='● erro ao salvar'; el.className='cd bad'; el.title=String(window.__pwErr); }
+      else if(off||window.__pw>0){ el.textContent='● '+(off?'sem internet':'salvando…')+(window.__pw>0?' '+window.__pw:''); el.className='cd wait'; el.title='alterações aguardando o servidor'; }
+      else { el.textContent='● salvo'; el.className='cd ok'; el.title='tudo sincronizado'; } };
+    const track=p=>{ window.__pw++; cldot();
+      p.then(()=>{ window.__pwErr=null; }).catch(e=>{ window.__pwErr=(e&&(e.code||e.message))||'erro'; })
+       .finally(()=>{ window.__pw=Math.max(0,window.__pw-1); cldot(); });
+      return p; };
+    FB.setDoc=(...a)=>track(window.__FBraw.setDoc(...a));
+    FB.deleteDoc=(...a)=>track(window.__FBraw.deleteDoc(...a));
+    FB.runTransaction=(db,fn)=>track(window.__FBraw.runTransaction(db,fn));
+    FB.writeBatch=db=>{ const b=window.__FBraw.writeBatch(db); const oc=b.commit.bind(b); b.commit=()=>track(oc()); return b; };
+    window.addEventListener('online',cldot); window.addEventListener('offline',cldot);
+  })();
   onAuthStateChanged(auth,u=>window.onFBAuth&&window.onFBAuth(u));
 }
 </script>
@@ -722,8 +745,13 @@ const PRE_CORTE=['Design','Amostra','Materiais'];
 
 /* ---------- ELO: ligação e estados ---------- */
 function lotState(l){ return l.real?'entregue':(l.saida?'oficina':(l.corte?'parado':'?')); }
+let __codDup=null;
+function codigoDup(){ if(__codDup) return __codDup;
+  const cnt={}; (DEB.models||[]).forEach(m=>{ if(!m.concl&&m.codigo){ const k=String(m.codigo); cnt[k]=(cnt[k]||0)+1; } });
+  __codDup=new Set(Object.keys(cnt).filter(k=>cnt[k]>1)); return __codDup; }
 function lotsOf(m){
   if(!m.codigo) return {lots:[],how:'semcodigo'};
+  if(codigoDup().has(String(m.codigo))){ return {lots:[],how:'duplicado'}; }
   const ex=ROB.lots.filter(l=>l.tokens.includes(m.codigo));
   if(ex.length) return {lots:ex,how:'exato'};
   const b=baseOf(m.codigo);
@@ -734,10 +762,12 @@ function lotsOf(m){
 /* estado composto (6 elos) + alertas */
 function eloOf(m){
   const {lots,how}=lotsOf(m);
-  const st=lots.length?(lots.some(l=>lotState(l)==='oficina')?'oficina':(lots.every(l=>lotState(l)==='entregue')?'entregue':'parado')):'';
+  if(how==='duplicado'&&!m.__dupWarned){ m.__dupWarned=1; }
+  const st=how==='duplicado'?'dup':(lots.length?(lots.some(l=>lotState(l)==='oficina')?'oficina':(lots.every(l=>lotState(l)==='entregue')?'entregue':'parado')):'');
   const fi=FASES.indexOf(m.fase);
   let elo, alert=null;
   if(st==='entregue'){ elo='entregue'; if(fi>=0&&fi<FASES.indexOf('Qualidade')&&!m.concl) alert={k:'atualizar',t:'oficina já entregou — avançar p/ Qualidade'}; }
+  else if(st==='dup'){ elo='fila'; alert={k:'verificar',t:'⚠ código repetido em modelos ativos — o painel não vincula lotes; diferencie o código'}; }
   else if(st==='oficina'){ elo='oficina'; if(fi<FASES.indexOf('Costura')) alert={k:'atualizar',t:'lote já na oficina — avançar p/ Costura'}; }
   else if(st==='parado'){ elo='parado'; if(m.fase==='Corte'||m.faseVazia) alert={k:'atualizar',t:'Roberto já cortou — avançar p/ Costura'}; else if(fi<FASES.indexOf('Corte')) alert={k:'verificar',t:`cortado pelo Roberto mas DEBORA em ${m.fase}`}; }
   else if(m.fase==='Corte'){ if(how==='semcodigo'){ elo='semcodigo'; alert={k:'verificar',t:'em Corte sem código de modelo'}; } else elo=m.risco?'preparando':'fila'; }
@@ -1282,7 +1312,7 @@ function renderLista(A){
 }
 function semFichaRows(A){ const qq2=Q?Q.toUpperCase():''; if(!qq2) return ''; const sf=A.semFicha.filter(l=>String(l.modelo||'').toUpperCase().includes(qq2)||String(l.desc||'').toUpperCase().includes(qq2)||String(l.oficina||'').toUpperCase().includes(qq2)); if(!sf.length) return ''; return '<div class="empty" style="text-align:left;margin-top:10px"><b>⚠ '+sf.length+' lote(s) sem ficha na DEBORA</b></div><table class="tb"><tbody>'+sf.map(l=>'<tr><td class="mc">'+esc(l.modelo)+'</td><td>'+esc(l.desc||'')+'</td><td>'+fmt(l.qtd)+'</td><td>'+lotLine(l)+'</td></tr>').join('')+'</tbody></table>'; }
 
-function render(){ clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
+function render(){ __codDup=null; clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
   const A=computeAll();
   $('#chipAtu').textContent=A.atualizar.length; $('#chipVer').textContent=A.verificar.length; $('#chipFila').textContent=A.fila.length; $('#chipFicha').textContent=A.semFicha.length;
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
