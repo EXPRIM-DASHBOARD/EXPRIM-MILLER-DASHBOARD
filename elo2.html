@@ -487,7 +487,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.14b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.14c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -507,7 +507,9 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 <div id="drop">Solte DEBORA, ROBERTO, ESTOQUE_TECIDOS ou BOLETOS (.xlsx)</div>
 <div id="toast"></div> <div class="docwait" id="docwait" hidden><div class="bx"><span class="ic">📄</span><b id="dwT">Lendo documento…</b><small id="dwS">preparando imagem</small></div></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
 <div class="tmod" id="tmod"><div class="box tapp"><div class="mh"><h2 id="tmTitle"></h2><button id="tmClose">FECHAR</button></div><div class="mb" id="tmBody"></div></div></div>
-<div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><button id="gIn" class="btn">ENTRAR COM GOOGLE</button><p id="gMsg" class="sm"></p></div></div>
+<div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><button id="gIn" class="btn">ENTRAR COM GOOGLE</button>
+ <button id="gInR" class="btn" style="margin-top:8px;background:#fff;color:#1D2A3F;border:1.5px solid #1D2A3F">ENTRAR — MODO COMPATÍVEL<br><small style="font-weight:600">(se a janelinha do Google ficar branca)</small></button>
+ <p id="gMsg" class="sm"></p></div></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -517,6 +519,7 @@ if(!(typeof META!=='undefined'&&META&&META.snapshot)){ try{
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
   window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
   window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
+    loginR:async()=>{ try{ await signInWithRedirect(auth,new GoogleAuthProvider()); }catch(e){ const g=document.getElementById('gMsg'); if(g) g.textContent=(e&&(e.code+' · '+e.message))||String(e); } },
     login:async()=>{ const p=new GoogleAuthProvider(); try{ await signInWithPopup(auth,p); }catch(e){ if(/popup|blocked|cancel/i.test(e.code||'')){ try{ await signInWithRedirect(auth,p); }catch(e2){ document.getElementById('gMsg').textContent=e2.message; } } else document.getElementById('gMsg').textContent=e.code+' · '+e.message; } }};
   getRedirectResult(auth).catch(()=>{});
   }catch(__e){ window.__initErr={name:(__e&&__e.name)||'Erro',msg:String((__e&&(__e.message||__e.code))||__e).slice(0,140)};
@@ -2548,6 +2551,7 @@ async function boot(){
     DEB=SEED_DEB; ROB=SEED_ROB; TEC=SEED_TEC; if(typeof SEED_TODO!=='undefined') TODO=Object.assign({done:{},extra:[]},SEED_TODO); if(typeof SEED_BOL!=='undefined') BOL=SEED_BOL; $('#gate').hidden=true;
   } else {
     const ui=await dbGet('ui'); if(ui) UI=Object.assign({rob:{},deb:{},fg:{},fgAll:false,kanban:false},ui);
+    $('#gInR').onclick=()=>window.FB?window.FB.loginR():toast(window.__initErr?('⚠ app não iniciou: '+window.__initErr.msg):'Sem conexão com o Firebase',8000);
     $('#gIn').onclick=()=>window.FB?window.FB.login():toast(window.__initErr?('⚠ app não iniciou: '+window.__initErr.msg):'Sem conexão com o Firebase — verifique a internet',8000); $('#outBtn').onclick=()=>window.FB.signOut();
   }
   $('#expBtn').onclick=exportSnapshot;
