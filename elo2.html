@@ -500,7 +500,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.15a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.15b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1160,12 +1160,21 @@ function custoMensal(){
   return `<div class="cvm"><div class="lg"><i style="background:#1D2A3F"></i>tecido <i style="background:#7C8DA6"></i>costura <i style="background:#C9BFA9"></i>aviam.+embal. <span>R$/pç · ponderado por qtd do lote · mês do corte</span></div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W*1.4}px;display:block"><line x1="12" x2="${W-12}" y1="${H-bot}" y2="${H-bot}" stroke="#DDD5C6"/>${bars}</svg></div>`;
 }function relData(){
-  const ds=CEVT.filter(d=>d.env&&d.env.saida); const of={};
+  /* fonte 1: lotes do pipeline (cortes na nuvem) — têm chegadas/defeitos detalhados */
+  const ds=CEVT.filter(d=>d.env&&d.env.saida).slice();
+  /* fonte 2: lotes da planilha ROBERTO ainda não trazidos p/ o pipeline — só datas (sem defeito) */
+  const nuvKey=new Set(CEVT.map(d=>d.xref?trazKey(d.xref.modelo,d.xref.corte,d.xref.saida):null).filter(Boolean));
+  (ROB.lots||[]).forEach(l=>{ if(!l.saida||!l.oficina) return;
+    if(nuvKey.has(trazKey(l.modelo,l.corte,l.saida))) return;
+    ds.push({id:'PL'+l.modelo+l.saida, nm:l.desc||l.modelo, aba:l.modelo, pcs:l.qtd||0, planilha:true,
+      env:{oficina:l.oficina,saida:l.saida,prev:l.prev,rs:null},
+      chegadas: l.real?[{id:'x',data:l.real,qtd:l.qtd||0,def:0,presumido:true}]:[] }); });
+  const of={};
   ds.forEach(d=>{ const o=d.env.oficina||'SEM OFICINA'; const r=of[o]=of[o]||{nome:o,fim:[],aberto:[],exc:[],erro:[],defIni:0,recIni:0,pcsAb:0,exced:0,retido:[],qdias:[]};
     if(d.encerrado){ r.exc.push(d); return; }
     if(chegList(d).some(e=>e.data&&e.data<d.env.saida)){ r.erro.push(d); return; }
     r.defIni+=chegDefIni(d); r.recIni+=chegList(d).filter(e=>!e.retrab).reduce((s,e)=>s+(+e.qtd||0),0);
-    r.exced+=excesso(d);
+    r.exced+=excesso(d); if(d.planilha) r.pl=(r.pl||0)+1;
     const f=entregaFull(d);
     if(f){ r.fim.push({d,dias:ldias(d.env.saida,f),fim:f});
       const q=qualFull(d); if(q) r.qdias.push(ldias(d.env.saida,q)); else r.retido.push(d); }
@@ -1199,21 +1208,21 @@ function renderRel(){ const R=relData();
    <div class="rlkpi">
     ${kpi('Entrega completa (mediana)',md(tot.dias),tot.n+' lote(s) concluído(s)')}
     ${kpi('Em aberto — maior espera',(maxAb||'—')+(maxAb?'d':''),tot.ab+' lote(s) · '+tot.late+' acima de 15d',maxAb>15?'color:#C0392B':'')}
-    ${kpi('Defeito na 1ª entrega',tot.rec?((tot.def/tot.rec*100).toFixed(1).replace('.',',')+'%'):'—',tot.def+' pç de '+fmt(tot.rec)+' recebidas')}
+    ${kpi('Defeito na 1ª entrega',tot.rec?((tot.def/tot.rec*100).toFixed(1).replace('.',',')+'%'):'—',tot.def+' pç de '+fmt(tot.rec)+' recebidas (só lotes do painel)')}
     ${kpi('RETIDO (conserto pendente)',tot.ret.length+' lote',fmt(retPcs)+' pçs no lote · '+retDef+' pç com defeito aberto'+(retVal?' · R$ '+brl(retVal):''),tot.ret.length?'color:#8a6d00':'')}
    </div>
    ${tot.err||tot.exc||tot.exced?`<div class="sm" style="margin:6px 0;color:#8a6d00">${tot.err?`⚠ ${tot.err} lote(s) com chegada anterior à saída — fora do cálculo, corrija. `:''}${tot.exc?`📁 ${tot.exc} encerrado(s) por exceção — fora das médias. `:''}${tot.exced?`＋${tot.exced} pç acima do lote — conferir antes de pagar.`:''}</div>`:''}
    <div class="rltw"><table class="rlt">
     <tr><th>Oficina</th><th>Concl.</th><th>Mediana</th><th>Média</th><th>Conserto</th><th>Abertos</th><th>Falta pçs</th><th>&gt;15d pçs</th><th>Defeito</th></tr>
     ${R.of.map(r=>`<tr>
-      <td><b>${esc(r.nome)}</b>${r.n&&r.n<3?' <small class="okt" style="color:#8a6d00">amostra pequena</small>':''}</td>
+      <td><b>${esc(r.nome)}</b>${r.n&&r.n<3?' <small class="okt" style="color:#8a6d00">amostra pequena</small>':''}${r.pl?` <small class="okt" style="color:#6b6459">${r.pl} da planilha</small>`:''}</td>
       <td>${r.n||'—'}</td><td><b>${r.mediana!=null?r.mediana+'d':'—'}</b></td><td>${r.media!=null?r.media+'d':'—'}</td>
       <td>${r.qmed!=null?r.qmed+'d':'—'}</td>
       <td>${r.aberto.length||'—'}</td><td>${r.pcsAb?fmt(r.pcsAb):'—'}</td>
       <td${r.latePcs?' style="color:#C0392B;font-weight:800"':''}>${r.latePcs?fmt(r.latePcs):'—'}</td>
       <td>${r.taxa!=null?r.taxa.toFixed(1).replace('.',',')+'%':'—'}</td></tr>`).join('')||'<tr><td colspan="9" class="sm">sem lotes enviados ainda</td></tr>'}
    </table></div>
-   <div class="sm" style="margin-top:6px;color:#6b6459">ordenado por peças faltando — não é ranking: modelos e tamanhos de lote são diferentes.</div>
+   <div class="sm" style="margin-top:6px;color:#6b6459">ordenado por peças faltando — não é ranking: modelos e tamanhos de lote são diferentes. Lotes "da planilha" (ainda não trazidos p/ o painel) entram só com datas: sem defeito nem valor.</div>
    ${R.mes.length?`<h4 style="margin:12px 0 4px">📅 Por mês <small class="sm" style="font-weight:600">(mês da entrega completa)</small></h4>
    <div class="rlmes">${R.mes.map(m=>`<div class="rlm"><i style="height:${Math.round((m.mediana/mesMax)*46)+4}px"></i><b>${m.mediana}d</b><span>${m.k.slice(5)}/${m.k.slice(2,4)}</span><small>${m.n}L · ${fmt(m.pcs)}pç</small></div>`).join('')}</div>`:''}
   </section>`; }
