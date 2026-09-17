@@ -234,6 +234,25 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
 .kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.bwrap{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start}.bwrap.has3{grid-template-columns:200px 1fr 330px}.brail{display:flex;flex-direction:column;gap:9px;position:sticky;top:10px}
+table.xl{border-collapse:collapse;table-layout:fixed;font:11px Calibri,'Segoe UI',system-ui;background:#fff}
+table.xl td{border:1px solid #D0CEC8;padding:2px 5px;height:22px;vertical-align:middle;overflow:hidden;white-space:nowrap}
+.xl .xt1{background:#1F3864;color:#fff;font:700 14px Calibri}
+.xl .xh{background:#1F3864;color:#fff;font-weight:700}
+.xl .xlb{background:#F2F2F2;font-weight:700;font-size:10px}
+.xl .xapv{background:#FCE4D6;font-weight:700}
+.xl .xapvc{background:#FCE4D6}
+.xl .xam{background:#FFEB9C}
+.xl .xcal{color:#1F3864;font-weight:700;background:#FBFBFD}
+.xl .xgap{width:16px;border:0!important;background:var(--paper)}
+.xl .xed{background:#FFFEF7}
+.xl .xbad input{background:#FDE7E3}
+.xl .xok{background:#E2EFDA;color:#2E6E5E;font-weight:700}
+.xl .xand{background:#FFF2CC;color:#7f6000;font-weight:700}
+.xl .xfoto{background:#FAFAFA;text-align:center;color:#9a958c;font-size:9px;white-space:pre-line;cursor:pointer}
+.xl input.xin,.xl select.xin,.xl .xst{width:100%;border:0;background:transparent;font:inherit;outline:0;padding:0}
+.xl input.xin:focus,.xl select:focus{background:#FFF6D5;box-shadow:inset 0 0 0 2px #1F3864}
+.xl td[contenteditable]:focus{outline:2px solid #1F3864;outline-offset:-2px;background:#FFF6D5}
+
 .rl .rlkpi{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:8px 0}
 .rl .rlk{border:1.5px solid var(--line);border-radius:11px;padding:9px 11px;background:#FFFDF7}
 .rl .rlk b{display:block;font:800 19px var(--mono);line-height:1.1}
@@ -500,7 +519,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.16c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.17a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -983,60 +1002,82 @@ function card(r){
 
 let NF_=null, NBUSY=false;
 function nvAbrir(){ if(NF_&&NF_.dirty && !confirm('Há campos não salvos. Sair assim mesmo?')) return;
- NF_={aba:nAba(),cod:'',nome:'',forn:'',cls:['normal','','','verao','novo'],ped:TODAY,pedRaw:null,ptipo:'Normal',qt:'',tec:null,dirty:0,sv:'idle',err:''};
- openMod('✎ NOVO MODELO', nvHTML(), '', true); }
+ NF_={aba:nAba(),cod:'',nome:'',forn:'',cls:['normal','','','verao','novo'],ped:TODAY,pedRaw:null,ptipo:'Normal',qt:'',tec:null,
+   rows:NTPL.map(([etapa,item],i)=>({rid:'t'+i,etapa,item,resp:'',data:'',status:'',obs:''})),fotoF:false,fotoC:false,dirty:0,sv:'idle',err:''};
+ DFASE='__novo'; DMSEL=null; render(); }
 function nvSet(k,v,redraw){ NF_[k]=v; NF_.dirty++; NF_.sv='dirty'; if(redraw!==false) nvRedraw(); else nvBadge(); }
 function nvCls(i,v){ NF_.cls[i]=v; NF_.dirty++; NF_.sv='dirty'; nvBadge(); }
 function nvBadge(){ const b=document.getElementById('nvSv'); if(b) b.outerHTML=nvSvHTML(); }
-function nvRedraw(){ const box=document.getElementById('nvBox'); if(!box) return;
- const a=document.activeElement&&document.activeElement.id; box.innerHTML=nvHTML();
+function nvRedraw(){ const a=document.activeElement&&document.activeElement.id; render();
  const el=a&&document.getElementById(a); if(el){ try{ el.focus(); if(el.setSelectionRange) el.setSelectionRange(el.value.length,el.value.length); }catch(e){} } }
 function nvSvHTML(){ const F=NF_, M={idle:['#EFE9DD;color:#6b6459','em branco'],dirty:['#FDF4E3;color:#8a6d00','⬤ '+F.dirty+' campo(s) — não salvo'],
  saving:['#E7EDF6;color:#1D2A3F','⟳ salvando…'],ok:['#EAF4EA;color:#2E7D32','✓ criado'],err:['#FBEDEB;color:#C0392B','✕ NÃO salvo']}[F.sv];
  return `<span id="nvSv" style="font:800 9.5px var(--mono);border-radius:7px;padding:4px 9px;background:${M[0]}">${M[1]}</span>`; }
-function nvSel(id,arr,val,fn){ return `<select id="${id}" onchange="${fn}" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:3px 5px;font:700 10.5px var(--mono);background:#FFFDF7">${['',...arr].map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`; }
-function nvHTML(){ const F=NF_, dup=nDup(F.cod), pf=nPrazoFim(F.ped,F.ptipo);
- const cellS='border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:5px 8px;min-height:32px;display:flex;align-items:center';
- const lblS=cellS+';background:#EFE9DD;font:800 8.5px var(--mono);color:#4a443c';
- const calcS=cellS+';background:#F6F2EA;font:700 11.5px var(--mono);color:#6b6459';
- const inpS='width:100%;border:0;background:transparent;font:700 12px var(--mono);outline:0;padding:2px 0';
- return `<div id="nvBox">
- <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap">
-  <b style="font:800 12px var(--mono)">${F.aba}</b>${nvSvHTML()}<span class="sm" style="font:600 9px var(--mono);color:#8a857c">M automático — editável só agora</span></div>
- <div style="border:1.5px solid var(--line);border-radius:12px;overflow:hidden">
-  <div style="background:#1D2A3F;color:#fff;font:800 9.5px var(--mono);letter-spacing:.09em;padding:6px 10px">CONTROLE DE PRODUÇÃO · design → entrega</div>
-  <div style="display:grid;grid-template-columns:116px 1fr 96px 1fr">
-   <div style="${lblS}">■ Pedido</div><div style="${cellS}"><input id="nvAba" value="${esc(F.aba)}" oninput="nvSet('aba',this.value,false)" style="${inpS};font-weight:800"></div>
-    <div style="${lblS}">NF</div><div style="${calcS}">${F.tec?esc(String((TDOCS.find(t=>t.code===F.tec.tec)||{}).nf||'—')):'—'}</div>
-   <div style="${lblS}">Cód. do modelo</div><div style="${cellS}${dup?';background:#FDF3F1':''}"><input id="nvCod" value="${esc(F.cod)}" placeholder="12206 Regata" oninput="nvSet('cod',this.value)" style="${inpS}"></div>
-    <div style="${lblS}">Fornecedor</div><div style="${cellS}"><input id="nvForn" value="${esc(F.forn)}" oninput="nvSet('forn',this.value,false)" style="${inpS}"></div>
-   <div style="${lblS}">Classificação</div><div style="${cellS};grid-column:2/5;gap:5px;flex-wrap:wrap">
-     <input id="nvNome" value="${esc(F.nome)}" placeholder="nome do modelo" oninput="nvSet('nome',this.value,false)" style="flex:1.3;min-width:120px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font:700 10.5px var(--mono);background:#FFFDF7">
-     <span style="flex:1;min-width:76px">${nvSel('nvCat',NLST.cat,F.cls[0],"nvCls(0,this.value)")}</span>
-     <span style="flex:1;min-width:76px">${nvSel('nvTipo',NLST.tipo,F.cls[1],"nvCls(1,this.value)")}</span>
-     <span style="flex:1;min-width:84px">${nvSel('nvTecC',NLST.tecido,F.cls[2],"nvCls(2,this.value)")}</span>
-     <span style="flex:1;min-width:84px">${nvSel('nvEst',NLST.estacao,F.cls[3],"nvCls(3,this.value)")}</span>
-     <span style="flex:1;min-width:80px">${nvSel('nvNovo',NLST.novorep,F.cls[4],"nvCls(4,this.value)")}</span></div>
-   <div style="${lblS}">Data do pedido</div><div style="${cellS}"><input id="nvPed" value="${esc(F.pedRaw!=null?F.pedRaw:dtBR(F.ped))}" oninput="nvPed(this.value)" style="${inpS}${(F.pedRaw!=null&&!F.ped)?';background:#FDF3F1':''}"></div>
-    <div style="${lblS}">Prazo final</div><div style="${calcS}">${pf?esc(dtBR(pf)):'—'} <span style="font:600 9px var(--mono);color:#8a857c;margin-left:6px">auto</span></div>
-   <div style="${lblS}">Prazo tipo</div><div style="${cellS}">${nvSel('nvPT',NLST.ptipo,F.ptipo,"nvSet('ptipo',this.value)")}</div>
-    <div style="${lblS}">Qtde (pçs)</div><div style="${cellS}"><input id="nvQt" value="${esc(F.qt)}" placeholder="150" oninput="nvSet('qt',this.value,false)" style="${inpS}"></div>
-   <div style="${lblS}">Progresso geral</div><div style="${calcS}">0% <span style="font:600 9px var(--mono);color:#8a857c">auto</span></div>
-    <div style="${lblS}">Aprovados</div><div style="${calcS}">0 / 6 <span style="font:600 9px var(--mono);color:#8a857c">auto</span></div>
-   <div style="${lblS}">Início</div><div style="${calcS}">${F.ped?esc(dtBR(F.ped)):'<span style="color:#C0392B">data inválida</span>'} <span style="font:600 9px var(--mono);color:#8a857c">auto</span></div>
-    <div style="${lblS}">Tecido</div><div style="${cellS};border-right:0"><button class="tg" style="width:100%" onclick="nvPick()">${F.tec?'🧵 '+esc(F.tec.tec):'🧵 escolher'}</button></div>
-  </div></div>
- ${dup?`<div style="border:1.5px dashed #8a6d00;background:#FDF4E3;border-radius:10px;padding:8px 10px;margin:8px 0;font:600 10.5px var(--mono);color:#6b5b21">⚠ o código <b>${esc(nCodBase(F.cod))}</b> já está em <b>${esc(dup.aba)}</b> (${esc(dup.nome||'')}). Pode salvar — mas o <b>corte ficará bloqueado</b> até resolver.</div>`:''}
- ${F.err?`<div style="border:1.5px dashed #C0392B;background:#FBF0EE;border-radius:10px;padding:8px 10px;margin:8px 0;font:600 10.5px var(--mono);color:#7d2a1e">${F.err}</div>`:''}
- <div style="display:flex;gap:8px;margin-top:9px">
-  <button class="tg on" style="background:#2E7D32;border-color:#2E7D32;color:#fff" ${NBUSY?'disabled':''} onclick="nvSalvar()">${NBUSY?'⟳ salvando…':'✔ CRIAR MODELO'}</button>
-  <button class="tg" onclick="nvAbrir()">limpar</button></div>
- <div style="font:600 9px var(--mono);color:#8a857c;margin-top:6px">as 21 linhas (7 etapas · 6 aprovações) são criadas em branco, iguais à aba M###</div></div>`; }
+function nvSel(id,arr,val,fn){ return `<select class="xin" id="${id}" onchange="${fn}">${['',...arr].map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`; }
+const NET=[['1. Design',3],['2. Amostra',3],['3. Corte',3],['4. Materiais ∥',3],['5. Costura',4],['6. Controle de qualidade',4],['7. Embalagem e entrega',1]];
+const NCRN=['1. Design','2. Amostra','3. Corte','4. Materiais ∥ Costura','5. Costura','6. Controle de qualidade','7. Embalagem e entrega'];
+const NPD={Urgente:[4,4,5,5,11,4,1],Normal:[5,5,7,7,15,5,2]};
+function nvAddD(iso,n){ return iso?new Date(new Date(iso+'T00:00:00Z').getTime()+n*864e5).toISOString().slice(0,10):null; }
+function nvTermino(){ const F=NF_; if(F.rows.filter(r=>r.status==='Concluído').length<21) return null;
+ const ds=F.rows.map(r=>nBR2ISO(r.data)).filter(Boolean).sort(); return ds.length?ds[ds.length-1]:null; }
+function nvCrono(){ const F=NF_, d=NPD[F.ptipo]||null, out=[]; let acc=F.ped, idx=0;
+ NET.forEach(function(et,e){ const qtd=et[1], dias=d?d[e]:0;
+  const meta=(F.ped&&d)?((e===3)?nvAddD(out[2]?out[2].meta:acc,dias):nvAddD(acc,dias)):null;
+  if(e!==3&&meta) acc=meta;
+  const rs=F.rows.slice(idx,idx+qtd); idx+=qtd;
+  const done=rs.length&&rs.every(r=>r.status==='Concluído');
+  const ds=rs.map(r=>nBR2ISO(r.data)).filter(Boolean).sort();
+  const concl=done&&ds.length?ds[ds.length-1]:null;
+  let sit=''; if(meta){ sit=concl?(concl<=meta?'✅ no prazo':'🔴 atrasado '+Math.round((new Date(concl)-new Date(meta))/864e5)+'d')
+    :(TODAY>meta?'🔴 atrasado':'⏳ aguardando'); }
+  out.push({nome:NCRN[e],meta:meta,concl:concl,sit:sit}); });
+ return out; }
+function nvRow(i,k,v){ NF_.rows[i][k]=v; NF_.dirty++; NF_.sv='dirty'; if(k==='status') render(); else nvBadge(); }
+function nvSheet(){ const F=NF_, dup=nDup(F.cod), pf=nPrazoFim(F.ped,F.ptipo), cr=nvCrono();
+ const prog=Math.round(F.rows.filter(r=>r.status==='Concluído').length/21*100);
+ const apv=F.rows.filter(r=>r.item.indexOf('✅')===0&&r.status==='Concluído').length;
+ const term=nvTermino(), tt=F.tec?TDOCS.find(t=>t.code===F.tec.tec):null;
+ const R=[]; const p=function(s){R.push(s);};
+ p('<colgroup><col style="width:132px"><col style="width:300px"><col style="width:92px"><col style="width:104px"><col style="width:122px"><col style="width:150px"><col style="width:16px"><col style="width:190px"><col style="width:96px"><col style="width:96px"><col style="width:132px"></colgroup>');
+ p('<tr style="height:26px"><td class="xt1" colspan="6">CONTROLE DE PRODUÇÃO  ·  design → entrega</td><td class="xgap"></td><td class="xh" style="font-size:10px">▶  PAINEL</td><td class="xh" style="background:#2E6E5E;font-size:10px" colspan="3">▶  RESUMO</td></tr>');
+ p('<tr><td colspan="6" style="border:0"></td><td class="xgap"></td><td colspan="4" style="border:0"></td></tr>');
+ p('<tr><td style="font-weight:700">■ Pedido</td><td class="xcal">'+esc(F.aba)+'</td><td></td><td class="xlb">NF</td><td class="xcal" colspan="2">'+(tt?esc(String(tt.nf||'—')):'—')+'</td><td class="xgap"></td><td style="font-weight:700;font-size:10px;text-align:center">FOTO — FRENTE</td><td style="font-weight:700;font-size:10px;text-align:center" colspan="3">FOTO — COSTAS</td></tr>');
+ p('<tr><td class="xlb">Cód. do modelo</td><td class="xed '+(dup?'xbad':'')+'" colspan="2"><input class="xin" id="nvCod" value="'+esc(F.cod)+'" placeholder="12206 Regata" oninput="nvSet(\'cod\',this.value)"></td><td class="xlb">Fornecedor</td><td class="xed" colspan="2"><input class="xin" id="nvForn" value="'+esc(F.forn)+'" oninput="nvSet(\'forn\',this.value,false)"></td><td class="xgap"></td><td class="xfoto" rowspan="7" onclick="nvSet(\'fotoF\',!NF_.fotoF)">'+(F.fotoF?'🖼️ (foto anexada)':'📷\nInserir foto aqui\n(5 × 6 cm)')+'</td><td class="xfoto" rowspan="7" colspan="3" onclick="nvSet(\'fotoC\',!NF_.fotoC)">'+(F.fotoC?'🖼️ (foto anexada)':'📷\nInserir foto aqui\n(5 × 6 cm)')+'</td></tr>');
+ p('<tr><td class="xlb xed" colspan="2"><input class="xin" id="nvNome" value="'+esc(F.nome)+'" placeholder="nome do modelo" oninput="nvSet(\'nome\',this.value,false)" style="font-weight:700"></td><td class="xed">'+nvSel('nvCat',NLST.cat,F.cls[0],"nvCls(0,this.value)")+'</td><td class="xed">'+nvSel('nvTipo',NLST.tipo,F.cls[1],"nvCls(1,this.value)")+'</td><td class="xed">'+nvSel('nvTecC',NLST.tecido,F.cls[2],"nvCls(2,this.value)")+'</td><td class="xed">'+nvSel('nvEst',NLST.estacao,F.cls[3],"nvCls(3,this.value)")+'</td><td class="xgap"></td></tr>');
+ p('<tr><td class="xlb">Data do pedido</td><td class="xed" colspan="2"><input class="xin" id="nvPed" value="'+esc(F.pedRaw!=null?F.pedRaw:dtBR(F.ped))+'" oninput="nvPed(this.value)" style="'+(F.ped?'':'background:#FDE7E3')+'"></td><td class="xlb">Prazo final</td><td class="xcal" colspan="2">'+(pf?esc(dtBR(pf)):'—')+'</td><td class="xgap"></td></tr>');
+ p('<tr><td style="font-weight:700">Prazo tipo</td><td class="xam" colspan="2">'+nvSel('nvPT',NLST.ptipo,F.ptipo,"nvSet('ptipo',this.value)")+'</td><td class="xlb">Qtde (pçs)</td><td class="xed" colspan="2"><input class="xin" id="nvQt" value="'+esc(F.qt)+'" placeholder="150" oninput="nvSet(\'qt\',this.value,false)"></td><td class="xgap"></td></tr>');
+ p('<tr><td style="font-weight:700">Progresso geral</td><td class="xcal" colspan="2">'+prog+'%</td><td style="font-weight:700">Aprovados</td><td class="xcal">'+apv+'</td><td>/ 6</td><td class="xgap"></td></tr>');
+ p('<tr><td class="xlb">Início</td><td class="xcal" colspan="2">'+(F.ped?esc(dtBR(F.ped)):'<span style="color:#C0392B">data inválida</span>')+'</td><td class="xlb">Término</td><td class="xcal">'+(term?esc(dtBR(term)):'')+'</td><td class="xcal">'+((term&&F.ped)?Math.round((new Date(term)-new Date(F.ped))/864e5)+'d':'')+'</td><td class="xgap"></td></tr>');
+ p('<tr><td class="xlb">Tecido (nuvem)</td><td colspan="2" class="xed"><button class="tg" style="width:100%;padding:2px 6px;font-size:10px" onclick="nvPick()">'+(F.tec?'🧵 '+esc(F.tec.tec)+(tt?' · '+esc(tt.nome||''):''):'🧵 escolher rolo')+'</button></td><td class="xlb">Estoque</td><td class="xcal" colspan="2">'+(tt?fmt(Math.round(tt.estoque))+' m':'—')+'</td><td class="xgap"></td></tr>');
+ p('<tr><td class="xh">Etapa</td><td class="xh">Item</td><td class="xh">Responsável</td><td class="xh">Data</td><td class="xh">Status</td><td class="xh">Obs.</td><td class="xgap"></td><td class="xh" colspan="4" style="font-size:9px">⏱ CRONOGRAMA · urgente 29d / normal 39d · Materiais ∥ Costura</td></tr>');
+ p('<tr><td colspan="6" style="border:0;height:3px"></td><td class="xgap"></td><td class="xh" style="font-size:9px">Etapa</td><td class="xh" style="font-size:9px">Meta</td><td class="xh" style="font-size:9px">Concluído</td><td class="xh" style="font-size:9px">Situação</td></tr>');
+ let idx=0, ci=0;
+ NET.forEach(function(et){ const nome=et[0], qtd=et[1];
+  for(let k=0;k<qtd;k++){ const r=F.rows[idx], ap=r.item.indexOf('✅')===0, c=cr[ci];
+   const side=(k===0&&c)?('<td style="font-size:10px">'+esc(c.nome)+'</td><td class="xcal" style="font-size:10px">'+(c.meta?esc(dtBR(c.meta)):'')+'</td><td class="xcal" style="font-size:10px">'+(c.concl?esc(dtBR(c.concl)):'')+'</td><td style="font-size:10px;'+(/🔴/.test(c.sit)?'color:#C0392B;font-weight:700':(/✅/.test(c.sit)?'color:#2E6E5E;font-weight:700':'color:#7f6000'))+'">'+c.sit+'</td>')
+     :'<td></td><td></td><td></td><td></td>';
+   if(k===0) ci++;
+   p('<tr>'+(k===0?'<td rowspan="'+qtd+'" style="font-weight:700;vertical-align:top">'+esc(nome)+'</td>':'')
+     +'<td class="'+(ap?'xapv':'')+'" contenteditable oninput="nvRow('+idx+',\'item\',this.textContent)">'+esc(r.item)+'</td>'
+     +'<td class="'+(ap?'xapvc':'')+' xed" contenteditable oninput="nvRow('+idx+',\'resp\',this.textContent)">'+esc(r.resp)+'</td>'
+     +'<td class="'+(ap?'xapvc':'')+' xed" contenteditable oninput="nvRow('+idx+',\'data\',this.textContent)">'+esc(r.data)+'</td>'
+     +'<td class="'+(r.status==='Concluído'?'xok':(r.status==='Em andamento'?'xand':'xed'))+'"><select class="xst" onchange="nvRow('+idx+',\'status\',this.value)"><option value="" '+(!r.status?'selected':'')+'></option><option '+(r.status==='Em andamento'?'selected':'')+'>Em andamento</option><option '+(r.status==='Concluído'?'selected':'')+'>Concluído</option></select></td>'
+     +'<td class="'+(ap?'xapvc':'')+' xed" contenteditable oninput="nvRow('+idx+',\'obs\',this.textContent)">'+esc(r.obs)+'</td>'
+     +'<td class="xgap"></td>'+side+'</tr>');
+   idx++; } });
+ p('<tr><td colspan="6" style="border:0;height:6px"></td><td class="xgap"></td><td class="xlb" colspan="2">🎯 Meta final</td><td class="xcal" colspan="2">'+(pf?esc(dtBR(pf)):'')+'</td></tr>');
+ return '<div style="overflow:auto;background:#fff;border:1px solid #9aa0a6"><table class="xl">'+R.join('')+'</table></div>'
+  +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">'
+  +'<button class="tg" style="background:#217346;border-color:#1a5c37;color:#fff" '+(NBUSY?'disabled':'')+' onclick="nvSalvar()">'+(NBUSY?'⟳ salvando…':'✔ CRIAR MODELO')+'</button>'
+  +'<button class="tg" onclick="nvAbrir()">limpar</button><button class="tg" onclick="NF_=null;DFASE=\'Design\';render()">← voltar</button>'
+  +nvSvHTML()+'<span class="sm" style="font:600 10px var(--mono);color:#6b6459">'+esc(F.aba)+' · células azuis = fórmula</span></div>'
+  +(dup?'<div style="border:1px solid #D4B106;background:#FFF4CE;border-radius:5px;padding:7px 11px;margin-top:8px;font:600 11px var(--mono)">⚠ o código <b>'+esc(nCodBase(F.cod))+'</b> já existe em <b>'+esc(dup.aba)+'</b> ('+esc(dup.nome||'')+'). Pode salvar — mas o corte fica bloqueado até resolver.</div>':'')
+  +(F.err?'<div style="border:1px solid #C0392B;background:#FDE7E3;border-radius:5px;padding:7px 11px;margin-top:8px;font:600 11px var(--mono)">'+F.err+'</div>':''); }
 function nvPed(v){ NF_.pedRaw=v; const iso=nBR2ISO(v); NF_.ped=iso||null; NF_.dirty++; NF_.sv='dirty'; nvRedraw(); }
 function nvPick(){ tecPickOpen(sel=>{ const ant=NF_.tec, antForn=ant?String((TDOCS.find(t=>t.code===ant.tec)||{}).forn||''):'';
   NF_.tec=sel;
   if(!String(NF_.forn||'').trim()||String(NF_.forn).trim()===antForn) NF_.forn=sel.forn||''; NF_.dirty++; NF_.sv='dirty';
-  openMod('✎ NOVO MODELO', nvHTML(), '', true); toast('tecido: '+sel.tec+(sel.forn?' ('+sel.forn+')':'')+' — guardado pelo código do rolo'); }); }
+  render(); toast('tecido: '+sel.tec+(sel.forn?' ('+sel.forn+')':'')+' — NF preenchida automaticamente'); }); }
 async function nvSalvar(){ if(NBUSY) return; const F=NF_;
  const falta=[]; if(!String(F.cod).trim()) falta.push('Cód. do modelo'); if(!String(F.nome).trim()) falta.push('nome'); if(!String(F.qt).trim()) falta.push('Qtde');
  if(falta.length){ F.sv='err'; F.err='✕ preencha: <b>'+falta.join(' · ')+'</b>'; nvRedraw(); return; }
@@ -1055,7 +1096,8 @@ async function nvSalvar(){ if(NBUSY) return; const F=NF_;
    cls:{cat:F.cls[0],tipo:F.cls[1],tecido:F.cls[2],estacao:F.cls[3]}, novorep:F.cls[4],
    nf:F.tec?String((TDOCS.find(t=>t.code===F.tec.tec)||{}).nf||''):'', tecSel:F.tec?{...F.tec,por:whoName(),at:new Date().toISOString()}:null,
    prog:0, status:'Em andamento', concl:false, fase:'Design', faseVazia:false, origem:'elo', criadoEm:new Date().toISOString(), criadoPor:(FBUSER&&FBUSER.email)||'',
-   edited:true, editedAt:new Date().toISOString(), items:NTPL.map(([etapa,item],i)=>({rid:'t'+i,etapa,item,resp:'',data:'',status:'',obs:''})) };
+   edited:true, editedAt:new Date().toISOString(),
+   items:(F.rows||[]).map((r,i)=>({rid:r.rid||('t'+i),etapa:r.etapa,item:r.item,resp:r.resp||'',data:r.data||'',status:r.status||'',obs:r.obs||''})) };
   await FB.runTransaction(FB.db, async tx=>{ const ref=FB.doc(FB.db,'elo_deb',aba);
     const s=await tx.get(ref);
     if(s.exists()){ const ex=s.data()||{};
@@ -1063,10 +1105,10 @@ async function nvSalvar(){ if(NBUSY) return; const F=NF_;
         throw new Error('__JA_CRIADO__');
       throw new Error('já existe um modelo '+aba+' na nuvem'); }
     tx.set(ref,doc); });
-  NBUSY=false; F.sv='ok'; F.dirty=0; closeMod(); DFASE='Design'; render();
+  NBUSY=false; F.sv='ok'; F.dirty=0; NF_=null; DFASE='Design'; render();
   toast('✓ '+aba+' criado — card novo em DESIGN'+(doc.prazo?' · prazo '+dtBR(doc.prazo):''),4200);
  }catch(e){ NBUSY=false; F.sv='err';
-  if(String(e&&e.message)==='__JA_CRIADO__'){ F.sv='ok'; F.dirty=0; closeMod(); DFASE='Design'; render();
+  if(String(e&&e.message)==='__JA_CRIADO__'){ F.sv='ok'; F.dirty=0; NF_=null; DFASE='Design'; render();
     toast('✓ '+aba+' já tinha sido criado por você — a tentativa anterior deu certo',4600); return; }
   F.err='✕ <b>Não salvo — sem confirmação do servidor.</b> '+esc(String(e&&(e.message||e.code)||e)).slice(0,90)+'. Tudo continua na tela; tente de novo.';
   nvRedraw(); }
@@ -1092,6 +1134,7 @@ function renderDebora(A){
     const railK=lanes.map(fz=>{ const r2=of(fz); const pcs=r2.reduce((s,r)=>s+(r.m.qt||0),0);
       const atu=r2.filter(r=>r.alert&&r.alert.k==='atualizar').length, ver=r2.filter(r=>r.alert&&r.alert.k==='verificar').length;
       return `<button class="brc ${fz==='Corte'?'gold':''}" aria-selected="${DFASE===fz}" onclick="DFASE='${fz}';DMSEL=null;render()"><span class="ph">${fz.toUpperCase()}</span><div class="big">${r2.length}</div><div class="pcs">${fmt(pcs)} p\u00e7s${atu?` \u00b7 \ud83d\udd04${atu}`:''}${ver?` \u00b7 \u26a0${ver}`:''}</div></button>`; }).join('');
+    if(DFASE==='__novo'&&NF_) return bar+`<div class="bwrap tw"><nav class="brail">${`<button class="brc" style="border-color:#1D2A3F;background:#1D2A3F;color:#fff" aria-selected="true" onclick="nvAbrir()"><span class="ph" style="background:#fff;color:#1D2A3F">\u270e EDITOR</span><div style="font:800 15px var(--mono);margin-top:6px">abrir</div><div class="pcs" style="color:#C9C2B4">criar modelo novo</div></button>`}${railK}</nav><div class="bmid" style="max-width:none">${nvSheet()}</div></div>`;
     return bar+`<div class="bwrap tw ${DMSEL?'has3':''}">
       <nav class="brail">${`<button class="brc" style="border-color:#1D2A3F;background:#1D2A3F;color:#fff" aria-selected="${DFASE==='__novo'}" onclick="nvAbrir()"><span class="ph" style="background:#fff;color:#1D2A3F">✎ EDITOR</span><div style="font:800 15px var(--mono);margin-top:6px">abrir</div><div class="pcs" style="color:#C9C2B4">criar modelo novo</div></button>`}${railK}</nav>
       <div class="bmid"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${chips.map(c=>`<button class="dchip ${c[0]===curk?'on':''}" onclick="DCHIP['${f}']='${c[0]}';DMSEL=null;render()">${c[1]} ${c[3]}</button>`).join('')}</div>
