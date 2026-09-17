@@ -500,7 +500,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.15b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.16c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -771,6 +771,30 @@ async function parseEstoque(book){
   }
   return items;
 }
+const NLST={cat:['normal','plus'],tipo:['blusa','regata','alca','calca','vestido','saia','macacao','conjunto','short','cropped','body','top','camisa'],
+ tecido:['viscolinho','viscose','malha','crepe','chiffon','linho','tricoline','moletom','jeans','alfaiataria','suplex','laise','cotton'],
+ estacao:['verao','inverno','meioestacao'],novorep:['novo','repetição'],ptipo:['Urgente','Normal','Descartado']};
+const NPRAZO={Urgente:29,Normal:39};  /* PRAZOS!I2:I3 da planilha DEBORA (Total) — VLOOKUP col 9 */
+const NTPL=[['1. Design','DEFINIR TECIDO / DESIGN / COR / AVIAMENTO'],['1. Design','MODELAGEM'],['1. Design','✅ APROVADO: design'],
+ ['2. Amostra','AMOSTRA / PROVAS'],['2. Amostra','FICHA TECNICA'],['2. Amostra','✅ APROVADO: amostra confirmada'],
+ ['3. Corte','RISCO E ENCAIXE'],['3. Corte','ENFESTO / ENTRETELA'],['3. Corte','✅ APROVADO: corte OK'],
+ ['4. Materiais ∥','PEDIDO tecido / aviamentos'],['4. Materiais ∥','RECEBIMENTO + inspeção (qtde · cor · defeito)'],['4. Materiais ∥','✅ APROVADO: tecido sem defeitos'],
+ ['5. Costura','SAIDA OFICINA'],['5. Costura','AMOSTRA / PROVAS'],['5. Costura','RECEBIMENTO'],['5. Costura','✅ APROVADO: inspeção intermediária'],
+ ['6. Controle de qualidade','CONFERENCIA / CONTAGEM'],['6. Controle de qualidade','BOTAO / CASEADO'],['6. Controle de qualidade','PASSADORIA'],['6. Controle de qualidade','✅ APROVADO: qualidade OK'],
+ ['7. Embalagem e entrega','FINALIZAÇÃO']];
+function nAba(){ const ns=(DEB.models||[]).map(m=>parseInt(String(m.aba).replace(/\D/g,''))||0); return 'M'+(Math.max(0,...ns)+1); }
+function nCodBase(c){ return String(c||'').trim().split(/\s+/)[0]; }
+function nDup(cod,selfAba){ const c=nCodBase(cod); if(!c) return null;
+ return (DEB.models||[]).find(m=>m.aba!==selfAba && !m.concl && nCodBase(m.codigo||m.nome)===c) || null; }
+function nPrazoFim(pedISO,tipo){ if(!pedISO||tipo==='Descartado'||!NPRAZO[tipo]) return null;
+ const d=new Date(pedISO+'T00:00:00Z'); if(isNaN(d)) return null;   /* UTC em toda a conta */
+ return new Date(d.getTime()+NPRAZO[tipo]*864e5).toISOString().slice(0,10); }
+function nBR2ISO(s){ const m=/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/.exec(String(s||'').trim()); if(!m) return null;
+ const y=m[3].length===2?2000+ +m[3]:+m[3], mo=+m[2], d=+m[1];
+ if(mo<1||mo>12||d<1||d>31) return null;
+ const dt=new Date(Date.UTC(y,mo-1,d));                    /* UTC: mesmo resultado na Coreia e no Brasil */
+ if(dt.getUTCFullYear()!==y||dt.getUTCMonth()!==mo-1||dt.getUTCDate()!==d) return null;  /* 31/02 etc */
+ return dt.toISOString().slice(0,10); }
 function nfKeys(nf){ return String(nf==null?'':nf).split(/[^0-9]+/).map(x=>x.replace(/^0+/,'')).filter(x=>x.length>=3); }
 function nfMatch(a,b){ const A=nfKeys(a); if(!A.length) return false; const B=new Set(nfKeys(b)); return A.some(k=>B.has(k)); }
 function tecidoOf(m){ if(!m.nf) return []; return TEC.items.filter(t=>nfMatch(m.nf,t.nf)); }
@@ -855,12 +879,21 @@ async function cloudSaveDeb(models,fname){
   const {db,collection,doc,getDocs,writeBatch}=FB; const at=new Date().toISOString();
   const old=await getDocs(collection(db,'elo_deb')); const keep=new Set(models.map(m=>m.aba));
   let b=writeBatch(db),n=0; const flush=async()=>{ await b.commit(); b=writeBatch(db); n=0; };
-  for(const d of old.docs){ if(!keep.has(d.id)){ b.delete(d.ref); if(++n>=400) await flush(); } }
+  /* P0: NUNCA apagar por ausência na planilha. Modelos criados/editados no painel são preservados;
+     os que sumiram da planilha ficam marcados p/ conferência (decisão manual em outro lugar). */
+  for(const d of old.docs){ if(keep.has(d.id)) continue;
+    const cur=d.data()||{};
+    if(cur.origem==='elo'||cur.edited||cur.tecSel||(cur.items||[]).some(it=>it.resp||it.data||it.status)){
+      if(!cur.foraPlan){ b.set(d.ref,{...cur,foraPlan:{file:fname,at}}); if(++n>=400) await flush(); }
+      continue; }
+    if(!cur.foraPlan){ b.set(d.ref,{...cur,foraPlan:{file:fname,at}}); if(++n>=400) await flush(); } }
   for(const m of models){ const prev=(DEB.models||[]).find(x=>x.aba===m.aba);
     let out;
     if(prev&&prev.edited){
       if(!prev.imp){ out={...prev,pendPlan:{file:fname,at,diffs:debDiff(prev,m).slice(0,40)}}; }
       else { out=debThreeWay(prev,m); }
+    } else if(prev&&prev.origem==='elo'){ /* criado no painel: planilha não sobrescreve, só sinaliza */
+      out={...prev, pendPlan:{file:fname,at,diffs:debDiff(prev,m).slice(0,40)}};
     } else { out={...m, items:(m.items||[]).map((it,i)=>({...it,rid:'p'+i})), imp:debImpOf(m)}; }
     b.set(doc(db,'elo_deb',m.aba),out); if(++n>=400) await flush(); }
   b.set(doc(db,'elo','deb_meta'),{at,file:fname,count:models.length,by:FBUSER?FBUSER.email:''}); await b.commit();
@@ -948,6 +981,96 @@ function card(r){
   </div>`;
 }
 
+let NF_=null, NBUSY=false;
+function nvAbrir(){ if(NF_&&NF_.dirty && !confirm('Há campos não salvos. Sair assim mesmo?')) return;
+ NF_={aba:nAba(),cod:'',nome:'',forn:'',cls:['normal','','','verao','novo'],ped:TODAY,pedRaw:null,ptipo:'Normal',qt:'',tec:null,dirty:0,sv:'idle',err:''};
+ openMod('✎ NOVO MODELO', nvHTML(), '', true); }
+function nvSet(k,v,redraw){ NF_[k]=v; NF_.dirty++; NF_.sv='dirty'; if(redraw!==false) nvRedraw(); else nvBadge(); }
+function nvCls(i,v){ NF_.cls[i]=v; NF_.dirty++; NF_.sv='dirty'; nvBadge(); }
+function nvBadge(){ const b=document.getElementById('nvSv'); if(b) b.outerHTML=nvSvHTML(); }
+function nvRedraw(){ const box=document.getElementById('nvBox'); if(!box) return;
+ const a=document.activeElement&&document.activeElement.id; box.innerHTML=nvHTML();
+ const el=a&&document.getElementById(a); if(el){ try{ el.focus(); if(el.setSelectionRange) el.setSelectionRange(el.value.length,el.value.length); }catch(e){} } }
+function nvSvHTML(){ const F=NF_, M={idle:['#EFE9DD;color:#6b6459','em branco'],dirty:['#FDF4E3;color:#8a6d00','⬤ '+F.dirty+' campo(s) — não salvo'],
+ saving:['#E7EDF6;color:#1D2A3F','⟳ salvando…'],ok:['#EAF4EA;color:#2E7D32','✓ criado'],err:['#FBEDEB;color:#C0392B','✕ NÃO salvo']}[F.sv];
+ return `<span id="nvSv" style="font:800 9.5px var(--mono);border-radius:7px;padding:4px 9px;background:${M[0]}">${M[1]}</span>`; }
+function nvSel(id,arr,val,fn){ return `<select id="${id}" onchange="${fn}" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:3px 5px;font:700 10.5px var(--mono);background:#FFFDF7">${['',...arr].map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`; }
+function nvHTML(){ const F=NF_, dup=nDup(F.cod), pf=nPrazoFim(F.ped,F.ptipo);
+ const cellS='border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:5px 8px;min-height:32px;display:flex;align-items:center';
+ const lblS=cellS+';background:#EFE9DD;font:800 8.5px var(--mono);color:#4a443c';
+ const calcS=cellS+';background:#F6F2EA;font:700 11.5px var(--mono);color:#6b6459';
+ const inpS='width:100%;border:0;background:transparent;font:700 12px var(--mono);outline:0;padding:2px 0';
+ return `<div id="nvBox">
+ <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap">
+  <b style="font:800 12px var(--mono)">${F.aba}</b>${nvSvHTML()}<span class="sm" style="font:600 9px var(--mono);color:#8a857c">M automático — editável só agora</span></div>
+ <div style="border:1.5px solid var(--line);border-radius:12px;overflow:hidden">
+  <div style="background:#1D2A3F;color:#fff;font:800 9.5px var(--mono);letter-spacing:.09em;padding:6px 10px">CONTROLE DE PRODUÇÃO · design → entrega</div>
+  <div style="display:grid;grid-template-columns:116px 1fr 96px 1fr">
+   <div style="${lblS}">■ Pedido</div><div style="${cellS}"><input id="nvAba" value="${esc(F.aba)}" oninput="nvSet('aba',this.value,false)" style="${inpS};font-weight:800"></div>
+    <div style="${lblS}">NF</div><div style="${calcS}">${F.tec?esc(String((TDOCS.find(t=>t.code===F.tec.tec)||{}).nf||'—')):'—'}</div>
+   <div style="${lblS}">Cód. do modelo</div><div style="${cellS}${dup?';background:#FDF3F1':''}"><input id="nvCod" value="${esc(F.cod)}" placeholder="12206 Regata" oninput="nvSet('cod',this.value)" style="${inpS}"></div>
+    <div style="${lblS}">Fornecedor</div><div style="${cellS}"><input id="nvForn" value="${esc(F.forn)}" oninput="nvSet('forn',this.value,false)" style="${inpS}"></div>
+   <div style="${lblS}">Classificação</div><div style="${cellS};grid-column:2/5;gap:5px;flex-wrap:wrap">
+     <input id="nvNome" value="${esc(F.nome)}" placeholder="nome do modelo" oninput="nvSet('nome',this.value,false)" style="flex:1.3;min-width:120px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font:700 10.5px var(--mono);background:#FFFDF7">
+     <span style="flex:1;min-width:76px">${nvSel('nvCat',NLST.cat,F.cls[0],"nvCls(0,this.value)")}</span>
+     <span style="flex:1;min-width:76px">${nvSel('nvTipo',NLST.tipo,F.cls[1],"nvCls(1,this.value)")}</span>
+     <span style="flex:1;min-width:84px">${nvSel('nvTecC',NLST.tecido,F.cls[2],"nvCls(2,this.value)")}</span>
+     <span style="flex:1;min-width:84px">${nvSel('nvEst',NLST.estacao,F.cls[3],"nvCls(3,this.value)")}</span>
+     <span style="flex:1;min-width:80px">${nvSel('nvNovo',NLST.novorep,F.cls[4],"nvCls(4,this.value)")}</span></div>
+   <div style="${lblS}">Data do pedido</div><div style="${cellS}"><input id="nvPed" value="${esc(F.pedRaw!=null?F.pedRaw:dtBR(F.ped))}" oninput="nvPed(this.value)" style="${inpS}${(F.pedRaw!=null&&!F.ped)?';background:#FDF3F1':''}"></div>
+    <div style="${lblS}">Prazo final</div><div style="${calcS}">${pf?esc(dtBR(pf)):'—'} <span style="font:600 9px var(--mono);color:#8a857c;margin-left:6px">auto</span></div>
+   <div style="${lblS}">Prazo tipo</div><div style="${cellS}">${nvSel('nvPT',NLST.ptipo,F.ptipo,"nvSet('ptipo',this.value)")}</div>
+    <div style="${lblS}">Qtde (pçs)</div><div style="${cellS}"><input id="nvQt" value="${esc(F.qt)}" placeholder="150" oninput="nvSet('qt',this.value,false)" style="${inpS}"></div>
+   <div style="${lblS}">Progresso geral</div><div style="${calcS}">0% <span style="font:600 9px var(--mono);color:#8a857c">auto</span></div>
+    <div style="${lblS}">Aprovados</div><div style="${calcS}">0 / 6 <span style="font:600 9px var(--mono);color:#8a857c">auto</span></div>
+   <div style="${lblS}">Início</div><div style="${calcS}">${F.ped?esc(dtBR(F.ped)):'<span style="color:#C0392B">data inválida</span>'} <span style="font:600 9px var(--mono);color:#8a857c">auto</span></div>
+    <div style="${lblS}">Tecido</div><div style="${cellS};border-right:0"><button class="tg" style="width:100%" onclick="nvPick()">${F.tec?'🧵 '+esc(F.tec.tec):'🧵 escolher'}</button></div>
+  </div></div>
+ ${dup?`<div style="border:1.5px dashed #8a6d00;background:#FDF4E3;border-radius:10px;padding:8px 10px;margin:8px 0;font:600 10.5px var(--mono);color:#6b5b21">⚠ o código <b>${esc(nCodBase(F.cod))}</b> já está em <b>${esc(dup.aba)}</b> (${esc(dup.nome||'')}). Pode salvar — mas o <b>corte ficará bloqueado</b> até resolver.</div>`:''}
+ ${F.err?`<div style="border:1.5px dashed #C0392B;background:#FBF0EE;border-radius:10px;padding:8px 10px;margin:8px 0;font:600 10.5px var(--mono);color:#7d2a1e">${F.err}</div>`:''}
+ <div style="display:flex;gap:8px;margin-top:9px">
+  <button class="tg on" style="background:#2E7D32;border-color:#2E7D32;color:#fff" ${NBUSY?'disabled':''} onclick="nvSalvar()">${NBUSY?'⟳ salvando…':'✔ CRIAR MODELO'}</button>
+  <button class="tg" onclick="nvAbrir()">limpar</button></div>
+ <div style="font:600 9px var(--mono);color:#8a857c;margin-top:6px">as 21 linhas (7 etapas · 6 aprovações) são criadas em branco, iguais à aba M###</div></div>`; }
+function nvPed(v){ NF_.pedRaw=v; const iso=nBR2ISO(v); NF_.ped=iso||null; NF_.dirty++; NF_.sv='dirty'; nvRedraw(); }
+function nvPick(){ tecPickOpen(sel=>{ const ant=NF_.tec, antForn=ant?String((TDOCS.find(t=>t.code===ant.tec)||{}).forn||''):'';
+  NF_.tec=sel;
+  if(!String(NF_.forn||'').trim()||String(NF_.forn).trim()===antForn) NF_.forn=sel.forn||''; NF_.dirty++; NF_.sv='dirty';
+  openMod('✎ NOVO MODELO', nvHTML(), '', true); toast('tecido: '+sel.tec+(sel.forn?' ('+sel.forn+')':'')+' — guardado pelo código do rolo'); }); }
+async function nvSalvar(){ if(NBUSY) return; const F=NF_;
+ const falta=[]; if(!String(F.cod).trim()) falta.push('Cód. do modelo'); if(!String(F.nome).trim()) falta.push('nome'); if(!String(F.qt).trim()) falta.push('Qtde');
+ if(falta.length){ F.sv='err'; F.err='✕ preencha: <b>'+falta.join(' · ')+'</b>'; nvRedraw(); return; }
+ const qs=String(F.qt).trim();
+ if(!/^\d+$/.test(qs)){ F.sv='err'; F.err='✕ <b>Qtde</b>: só número inteiro de peças (sem letras, vírgula ou sinal). Você digitou «'+esc(qs)+'».'; nvRedraw(); return; }
+ const qn=parseInt(qs,10);
+ if(qn<1||qn>100000){ F.sv='err'; F.err='✕ <b>Qtde</b> fora do intervalo (1 a 100.000 peças).'; nvRedraw(); return; }
+ const aba=String(F.aba).trim().toUpperCase();
+ if(!/^M\d{1,5}$/.test(aba)){ F.sv='err'; F.err='✕ <b>M</b> inválido: use M + número (ex.: M119). Você digitou «'+esc(aba)+'».'; nvRedraw(); return; }
+ if(!F.ped){ F.sv='err'; F.err='✕ <b>Data do pedido</b> inválida — use DD/MM/AA (ex.: '+dtBR(TODAY)+').'; nvRedraw(); return; }
+ if((DEB.models||[]).some(m=>m.aba===aba)){ F.sv='err'; F.err='✕ já existe um modelo <b>'+esc(aba)+'</b>. Troque o número.'; nvRedraw(); return; }
+ NBUSY=true; F.sv='saving'; F.err=''; nvRedraw();
+ try{
+  const doc={aba, nome:String(F.nome).trim(), codigo:nCodBase(F.cod), codfull:String(F.cod).trim(), forn:String(F.forn).trim(),
+   qt:qn, ini:F.ped, ped:F.ped, ptipo:F.ptipo, prazo:nPrazoFim(F.ped,F.ptipo), term:null,
+   cls:{cat:F.cls[0],tipo:F.cls[1],tecido:F.cls[2],estacao:F.cls[3]}, novorep:F.cls[4],
+   nf:F.tec?String((TDOCS.find(t=>t.code===F.tec.tec)||{}).nf||''):'', tecSel:F.tec?{...F.tec,por:whoName(),at:new Date().toISOString()}:null,
+   prog:0, status:'Em andamento', concl:false, fase:'Design', faseVazia:false, origem:'elo', criadoEm:new Date().toISOString(), criadoPor:(FBUSER&&FBUSER.email)||'',
+   edited:true, editedAt:new Date().toISOString(), items:NTPL.map(([etapa,item],i)=>({rid:'t'+i,etapa,item,resp:'',data:'',status:'',obs:''})) };
+  await FB.runTransaction(FB.db, async tx=>{ const ref=FB.doc(FB.db,'elo_deb',aba);
+    const s=await tx.get(ref);
+    if(s.exists()){ const ex=s.data()||{};
+      if(ex.criadoPor===((FBUSER&&FBUSER.email)||'') && ex.origem==='elo' && String(ex.codigo||'')===nCodBase(F.cod))
+        throw new Error('__JA_CRIADO__');
+      throw new Error('já existe um modelo '+aba+' na nuvem'); }
+    tx.set(ref,doc); });
+  NBUSY=false; F.sv='ok'; F.dirty=0; closeMod(); DFASE='Design'; render();
+  toast('✓ '+aba+' criado — card novo em DESIGN'+(doc.prazo?' · prazo '+dtBR(doc.prazo):''),4200);
+ }catch(e){ NBUSY=false; F.sv='err';
+  if(String(e&&e.message)==='__JA_CRIADO__'){ F.sv='ok'; F.dirty=0; closeMod(); DFASE='Design'; render();
+    toast('✓ '+aba+' já tinha sido criado por você — a tentativa anterior deu certo',4600); return; }
+  F.err='✕ <b>Não salvo — sem confirmação do servidor.</b> '+esc(String(e&&(e.message||e.code)||e)).slice(0,90)+'. Tudo continua na tela; tente de novo.';
+  nvRedraw(); }
+}
 function renderDebora(A){
   const lanes=FASES.filter(f=>f!=='Embalagem');
   const rows=A.rows.filter(r=>passFilter(r));
@@ -970,7 +1093,7 @@ function renderDebora(A){
       const atu=r2.filter(r=>r.alert&&r.alert.k==='atualizar').length, ver=r2.filter(r=>r.alert&&r.alert.k==='verificar').length;
       return `<button class="brc ${fz==='Corte'?'gold':''}" aria-selected="${DFASE===fz}" onclick="DFASE='${fz}';DMSEL=null;render()"><span class="ph">${fz.toUpperCase()}</span><div class="big">${r2.length}</div><div class="pcs">${fmt(pcs)} p\u00e7s${atu?` \u00b7 \ud83d\udd04${atu}`:''}${ver?` \u00b7 \u26a0${ver}`:''}</div></button>`; }).join('');
     return bar+`<div class="bwrap tw ${DMSEL?'has3':''}">
-      <nav class="brail">${railK}</nav>
+      <nav class="brail">${`<button class="brc" style="border-color:#1D2A3F;background:#1D2A3F;color:#fff" aria-selected="${DFASE==='__novo'}" onclick="nvAbrir()"><span class="ph" style="background:#fff;color:#1D2A3F">✎ EDITOR</span><div style="font:800 15px var(--mono);margin-top:6px">abrir</div><div class="pcs" style="color:#C9C2B4">criar modelo novo</div></button>`}${railK}</nav>
       <div class="bmid"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${chips.map(c=>`<button class="dchip ${c[0]===curk?'on':''}" onclick="DCHIP['${f}']='${c[0]}';DMSEL=null;render()">${c[1]} ${c[3]}</button>`).join('')}</div>
         <div class="kgrid">${rs.map(card).join('')||'<div class="empty">nenhum modelo neste filtro</div>'}</div></div>
       ${DMSEL?`<aside class="bficha tficha"><button class="x tfx" onclick="DMSEL=null;render()">\u2715</button>${modFichaHTML(DMSEL)||'<div class="empty">modelo n\u00e3o encontrado</div>'}</aside>`:''}
@@ -1481,7 +1604,8 @@ function debEdit(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
  const rows=(m.items||[]).map((it,i)=>({rid:it.rid||('p'+i),etapa:it.etapa||'',item:it.item||'',resp:it.resp||'',data:it.data||'',status:it.status||'',obs:it.obs||''}));
  __DED={aba, snap:JSON.parse(JSON.stringify({qt:m.qt??null,prazo:m.prazo||null,ini:m.ini||null,nf:m.nf||'',items:rows})), 
         hdr:{qt:m.qt??null,prazo:m.prazo||null,ini:m.ini||null,nf:m.nf||''}, rows:JSON.parse(JSON.stringify(rows)),
-        tecSel:m.tecSel||null, conflicts:(m.conflicts||[]).slice(), pendPlan:m.pendPlan||null};
+        tecSel:m.tecSel||null, snapTec:m.tecSel?{tec:m.tecSel.tec,tecAt:m.tecSel.tecAt}:null,
+        conflicts:(m.conflicts||[]).slice(), pendPlan:m.pendPlan||null};
  dedDraw(); }
 function dedDraw(){ const D=__DED; const m=DEB.models.find(x=>x.aba===D.aba)||{};
  const grp={}; D.rows.forEach(r=>{ (grp[r.etapa||'—']=grp[r.etapa||'—']||[]).push(r); });
@@ -1533,7 +1657,11 @@ async function debSaveTx(){ const D=__DED; if(!D) return;
        if(mv!==b0){ if(sv!==b0&&sv!==mv){ confs.push({campo:r.rid+'.'+c,rid:r.rid,col:c,painel:sv,planilha:mv}); } else t[c]=r[c]; } }); });
    out.items=sIt;
    out.edited=true; out.editedAt=now; out.editedBy=(FBUSER&&FBUSER.email)||'';
-   if(D.tecSel) out.tecSel=D.tecSel;
+   /* tecSel com 3 vias: só grava se o usuário mudou; se o servidor também mudou → conflito */
+   { const b0=D.snapTec||null, mv=D.tecSel||null, sv=(srv&&srv.tecSel)||null;
+     const k=x=>x?(String(x.tec||'')+'|'+String(x.tecAt||'')):'';
+     if(k(mv)!==k(b0)){ if(k(sv)!==k(b0)&&k(sv)!==k(mv)){ confs.push({campo:'tecido',painel:(sv&&sv.tec)||'—',planilha:(mv&&mv.tec)||'—'}); }
+       else out.tecSel=mv; } }
    out.conflicts=(D.resolved?[]:(out.conflicts||[])).concat([]);
    if(D.resolved&&!D.conflicts.length) delete out.pendPlan;
    if(confs.length) out.conflicts=(out.conflicts||[]).concat(confs.filter(c=>!(out.conflicts||[]).some(x=>x.campo===c.campo)));
@@ -1974,6 +2102,8 @@ function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&win
         else { const html=robFichaHTML(kind,key); if(html) openMod('FICHA',html,''); } } }
 async function rfMsgSend(aba){ await msgSend('mod:'+aba,'rfI'); render(); }
 async function confOne(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
+ const __d=nDup(m.codigo||m.nome,m.aba);
+ if(__d){ toast('⛔ código '+nCodBase(m.codigo||m.nome)+' repetido com '+__d.aba+' — resolva antes de cortar (custo e lote são ligados pelo código)',6000); return; }
  const go=async(sel)=>{ const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:sel?sel.tec:'',tecAt:sel?sel.tecAt:null,pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
    try{ await FB.setDoc(FB.doc(FB.db,'corte_conf',d.id),d); toast('✔ '+aba+' confirmado p/ corte'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } };
  if(m.tecSel&&m.tecSel.tec){ return go(m.tecSel); }
