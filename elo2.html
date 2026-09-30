@@ -234,6 +234,13 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
 .kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.bwrap{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start}.bwrap.has3{grid-template-columns:200px 1fr 330px}.brail{display:flex;flex-direction:column;gap:9px;position:sticky;top:10px}
+
+.cut th{cursor:pointer;user-select:none}.cut th:hover{background:#2a3b57}.cut th.cus{background:#2E6E5E}.cut th.cuh-y{background:#8a6d00}.cut th.cuh-g{background:#2E7D32}
+.cut td.cuconf{background:#FBEDEB!important;border:2px solid #C0392B}
+.cucf{display:flex;flex-direction:column;gap:2px;font:700 9px var(--mono)}.cucf span{color:#C0392B}
+.cucf button{border:1px solid #C0392B;background:#fff;color:#C0392B;border-radius:4px;font:800 8.5px var(--mono);padding:1px 5px;cursor:pointer}.cucf button:hover{background:#C0392B;color:#fff}
+.tg.curd{border-color:#C0392B;color:#C0392B}.tg.curd.on{background:#C0392B;color:#fff}
+.cut td.elo input{width:64px}
 .cu .cukpi{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0 10px}
 .cu .cuk{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:#FFFDF7}
 .cu .cuk b{display:block;font:800 18px var(--mono);line-height:1.1}.cu .cuk span{display:block;font:800 8.5px var(--mono);color:#6b6459;letter-spacing:.05em;margin-top:2px}
@@ -515,11 +522,45 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 #cropBox .cbw{position:relative;user-select:none;touch-action:none;cursor:crosshair;line-height:0}#cropBox .cbw img{width:100%;display:block;pointer-events:none}
 #cropSel{position:absolute;display:none;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.35);pointer-events:none}
 #cropBox .cbp{display:flex;gap:12px;align-items:center;padding:10px 12px}#cropBox .cbp canvas{width:80px;height:75px;border-radius:6px;border:1px solid var(--line);background:#fff}
+/* ===== v9.20 CROQUIS → NOVO MODELO ===== */
+.kgrid.cro{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.cro .card{padding:6px;display:flex;flex-direction:column;gap:5px}
+.cro .card img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;background:#EFE9DD;border:1px solid var(--line)}
+.cro .card.used img{opacity:.55}
+.cro .card .st{font:700 9.5px var(--mono);letter-spacing:.06em;color:var(--ink2)}
+.cro .card.used .st{color:var(--green)}
+.cro .card .memo{font:12px var(--sans);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cro .card.dsel{outline:2px solid #E8A33D}
+.addbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.addbar .lk{font:700 10px var(--mono);color:var(--ink2);letter-spacing:.06em}
+.fp{padding:14px 14px 12px}
+.fp h3{font:800 12px var(--mono);letter-spacing:.14em;color:var(--ink2);margin:0 0 8px}
+.fp img.big{width:100%;max-height:46vh;object-fit:contain;background:#EFE9DD;border:1px solid var(--line);border-radius:10px}
+.fp label{display:block;font:800 9.5px var(--mono);letter-spacing:.12em;color:var(--ink2);margin:10px 0 3px}
+.fp input[type=text],.fp input[type=number],.fp textarea{width:100%;box-sizing:border-box;border:1.5px solid rgba(28,26,23,.22);border-radius:8px;padding:8px 10px;font:14px var(--sans);background:#fff}
+.fp textarea{min-height:56px;resize:vertical}
+.fp .chk{display:flex;gap:8px;margin-top:4px}
+.fp .chk span{flex:1;border:1.5px solid rgba(28,26,23,.22);border-radius:8px;padding:8px 10px;font:700 11px var(--mono);letter-spacing:.06em;cursor:pointer;display:flex;gap:7px;align-items:center;background:#fff;color:var(--ink);user-select:none}
+.fp .chk span.on{background:#1D2A3F;border-color:#1D2A3F;color:#fff}
+.fp .hint{font:11px var(--sans);color:var(--ink2);margin-top:3px}
+.fp .hint.bad{color:var(--red);font-weight:700}
+.fp .hint.ok{color:var(--green);font-weight:700}
+.fp .mauto{display:inline-block;background:#E7F1EB;border:1px solid #BFD8C9;color:var(--green);border-radius:6px;padding:3px 8px;font:800 12px var(--mono)}
+.fp .acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.fp .btn[disabled]{opacity:.4;cursor:not-allowed}
+.fp .tecbtn{width:100%;text-align:left;padding:8px 10px;font:600 12px var(--sans);border:1.5px solid rgba(28,26,23,.22);border-radius:8px;background:#fff;cursor:pointer}
+.btn.sec{background:#fff;color:#1D2A3F;border-color:#1D2A3F}
+.btn.danger{background:#fff;color:var(--red);border-color:var(--red)}
+.card .nb{display:inline-block;font:800 9px var(--mono);letter-spacing:.06em;background:#FFF1D6;border:1px solid #E8A33D;color:#7A4E00;border-radius:5px;padding:2px 5px;margin-top:5px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:4px 10px;font:12.5px var(--sans);margin-top:8px}
+.kv b{font:800 9.5px var(--mono);letter-spacing:.1em;color:var(--ink2);padding-top:2px}
+.pvnote{background:#FFF7E6;border:1px dashed #E8A33D;border-radius:8px;padding:6px 10px;font:11.5px var(--sans);color:#7A4E00;margin:0 0 10px}
+.kc.crok .ktab{background:#E8A33D;color:#1D2A3F}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.18b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.20a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -880,6 +921,7 @@ async function cloudSaveDeb(models,fname){
   let b=writeBatch(db),n=0; const flush=async()=>{ await b.commit(); b=writeBatch(db); n=0; };
   /* P0: nunca apagar por ausência na planilha — só marcar p/ conferência */
   for(const d of old.docs){ if(keep.has(d.id)) continue; const cur=d.data()||{};
+    if(cur.origem==='elo') continue; /* v9.20: criado no painel — é normal não estar na planilha */
     if(!cur.foraPlan){ b.set(d.ref,{...cur,foraPlan:{file:fname,at}}); if(++n>=400) await flush(); } }
   for(const m of models){ const prev=(DEB.models||[]).find(x=>x.aba===m.aba);
     let out;
@@ -926,71 +968,105 @@ function upStamp(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) r
 async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); try{ await custoSeed(r.custo||[]); }catch(e){ console.warn('custo seed',e&&e.code); } }
 const cuKey=c=>String(c.modelo||'').trim()+'|'+(c.corte||'');
 const cuId=k=>k.replace(/[^\w.-]+/g,'_');
-async function custoSeed(rows){ /* 1ª vez: absorve P.VENDA e MARKUP da planilha. Depois o ELO manda e a planilha não sobrescreve. */
-  const b=FB.writeBatch(FB.db); let n=0;
-  for(const c of rows){ const k=cuKey(c); if(CPV[k]) continue; if(c.pvXl==null&&c.mk==null) continue;
-    b.set(FB.doc(FB.db,'custo_elo',cuId(k)),{key:k,modelo:c.modelo,corte:c.corte||null,pv:c.pvXl??null,mk:c.mk??null,por:'planilha (semente)',at:new Date().toISOString()}); n++; }
-  if(n){ await b.commit(); toast('💰 '+n+' preço(s)/markup absorvido(s) da planilha (só na 1ª vez)'); } }
+async function custoSeed(rows){ /* 1ª vez: semente (P.VENDA/MARKUP). Sempre: 3 vias em COSTURA/AVIAM/EMBAL contra a base (valor da planilha no último drop). */
+  const b=FB.writeBatch(FB.db); let n=0, seeds=0, entrou=0, confl=0;
+  for(const c of rows){ const k=cuKey(c); const cur=CPV[k]; const now=new Date().toISOString();
+    const nb={cost:c.cost??null,avi:c.avi??null,emb:c.emb??null};
+    if(!cur){ if(c.pvXl==null&&c.mk==null){ /* sem preço na planilha: só guarda base */
+        b.set(FB.doc(FB.db,'custo_elo',cuId(k)),{key:k,modelo:c.modelo,corte:c.corte||null,pv:null,mk:null,base:nb,conf:{},at:now}); n++; continue; }
+      b.set(FB.doc(FB.db,'custo_elo',cuId(k)),{key:k,modelo:c.modelo,corte:c.corte||null,pv:c.pvXl??null,mk:c.mk??null,por:'planilha (semente)',base:nb,conf:{},at:now}); n++; seeds++; continue; }
+    const base=cur.base||{}; const conf={...(cur.conf||{})}; const doc={...cur}; let ch=false;
+    CU_EDIT.forEach(f=>{ const B=base[f]??null, N=nb[f], E=cur[f]??null;
+      if(N!==B){ ch=true;
+        if(E==null){ entrou++; }                                  /* ELO não mexeu → planilha entra (nada a gravar: efetivo lê c[f]) */
+        else if(E===N){ doc[f]=null; }                             /* convergiu → planilha manda */
+        else { conf[f]={xl:N,elo:E}; confl++; } } });               /* ambos diferentes → conflito */
+    if(ch||JSON.stringify(base)!==JSON.stringify(nb)){ doc.base=nb; doc.conf=conf; doc.at=now; b.set(FB.doc(FB.db,'custo_elo',cuId(k)),doc); n++; } }
+  if(n){ await b.commit(); }
+  const msg=[]; if(seeds) msg.push(seeds+' preço(s) absorvido(s) da planilha'); if(entrou) msg.push(entrou+' célula(s) entraram da planilha'); if(confl) msg.push('⚠ '+confl+' conflito(s) planilha × ELO');
+  if(msg.length) toast('💰 CUSTO: '+msg.join(' · '),6000); }
 async function custoSet(k,field,val){ const c=(ROB.custo||[]).find(x=>cuKey(x)===k); if(!c) return;
   const cur=CPV[k]||{key:k,modelo:c.modelo,corte:c.corte||null,pv:null,mk:null};
   const n=parseFloat(String(val).replace(/\./g,'').replace(',','.')); const v=(val===''||isNaN(n))?null:n;
   if(field==='mk'&&v!=null&&(v<0.5||v>20)){ toast('markup fora do razoável (0,5 a 20)'); render(); return; }
   if(field==='pv'&&v!=null&&(v<0||v>9999)){ toast('preço fora do razoável'); render(); return; }
-  const doc={...cur,[field]:v,por:whoName(),at:new Date().toISOString(),by:(FBUSER&&FBUSER.email)||''};
+  if(CU_EDIT.includes(field)&&v!=null&&(v<0||v>999)){ toast('valor fora do razoável (0 a 999)'); render(); return; }
+  const conf={...(cur.conf||{})}; delete conf[field];
+  const doc={...cur,[field]:v,conf,por:whoName(),at:new Date().toISOString(),by:(FBUSER&&FBUSER.email)||''};
   try{ await FB.setDoc(FB.doc(FB.db,'custo_elo',cuId(k)),doc); }catch(e){ toast('⚠ não salvou: '+(e&&e.code),5000); render(); } }
-function cuComp(c){ const miss=[]; if(c.rsm==null||c.cons==null) miss.push('tecido'); if(c.cost==null) miss.push('costura'); if(c.avi==null) miss.push('aviam'); if(c.emb==null) miss.push('embal'); return miss; }
-function cuCalc(c){ const e=CPV[cuKey(c)]||{}; const total=c.total!=null?c.total:([c.ct,c.cost,c.avi,c.emb].some(x=>x!=null)?[c.ct,c.cost,c.avi,c.emb].reduce((s,x)=>s+(x||0),0):null);
+const CU_EDIT=['cost','avi','emb'];
+/* valor efetivo: ELO se digitado, senão planilha. Conflito pendente → vale o ELO até resolver */
+function cuEff(c,f){ const e=CPV[cuKey(c)]||{}; return e[f]!=null?e[f]:(c[f]??null); }
+function cuSrc(c,f){ const e=CPV[cuKey(c)]||{}; return e[f]!=null?'elo':(c[f]!=null?'xl':null); }
+function cuComp(c){ const miss=[]; if(c.rsm==null||c.cons==null) miss.push('tecido'); if(cuEff(c,'cost')==null) miss.push('costura'); if(cuEff(c,'avi')==null) miss.push('aviam'); if(cuEff(c,'emb')==null) miss.push('embal'); return miss; }
+function cuCalc(c){ const e=CPV[cuKey(c)]||{}; const parts=[c.ct,cuEff(c,'cost'),cuEff(c,'avi'),cuEff(c,'emb')];
+  const total=parts.some(x=>x!=null)?parts.reduce((s,x)=>s+(x||0),0):null;
   const mk=e.mk??c.mk??2.2; const psug=total!=null?total*mk:null; const pv=e.pv??null;
   const lucro=(pv!=null&&total!=null)?pv-total:null; const mg=(lucro!=null&&pv)?lucro/pv:null;
-  return {total,mk,psug,pv,lucro,mg,miss:cuComp(c),por:e.por,at:e.at}; }
+  return {total,mk,psug,pv,lucro,mg,miss:cuComp(c),por:e.por,at:e.at,conf:e.conf||{},nconf:Object.keys(e.conf||{}).length}; }
+async function custoResolve(k,f,which){ const cur=CPV[k]; if(!cur||!cur.conf||!cur.conf[f]) return;
+  const c=(ROB.custo||[]).find(x=>cuKey(x)===k); const conf={...cur.conf}; const cx=conf[f]; delete conf[f];
+  const doc={...cur,conf,base:{...(cur.base||{}),[f]:cx.xl},at:new Date().toISOString(),by:(FBUSER&&FBUSER.email)||''};
+  if(which==='xl') doc[f]=null; /* volta a valer a planilha */
+  try{ await FB.setDoc(FB.doc(FB.db,'custo_elo',cuId(k)),doc); toast(which==='xl'?'ficou o valor da planilha':'ficou o seu valor (ELO)'); }catch(e){ toast('⚠ não salvou: '+(e&&e.code),5000); } }
 function renderCustoTab(){ const all=(ROB.custo||[]).slice(); if(!all.length) return '<div class="empty big">Arraste o ROBERTO (.xlsx) com a aba CUSTO</div>';
   const brl2=v=>v==null?'—':v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const q=CUQ.toLowerCase();
   let rows=all.filter(c=>!q||String(c.modelo).toLowerCase().includes(q)||String(c.desc||'').toLowerCase().includes(q)||String(c.tecido||'').toLowerCase().includes(q)||String(c.nf||'').includes(q));
   if(CUF==='inc') rows=rows.filter(c=>cuComp(c).length);
   if(CUF==='semp') rows=rows.filter(c=>cuCalc(c).pv==null);
-  rows.sort((a,b)=>String(b.corte||'').localeCompare(String(a.corte||'')));
-  const t=all.length, comp=all.filter(c=>!cuComp(c).length).length, sp=all.filter(c=>cuCalc(c).pv==null).length;
+  if(CUF==='conf') rows=rows.filter(c=>cuCalc(c).nconf);
+  const gv=(c,k)=>{ const C=cuCalc(c); return ({modelo:String(c.modelo||''),corte:c.corte||'',tecido:c.tecido||'',rsm:c.rsm,cons:c.cons,ct:c.ct,cost:cuEff(c,'cost'),avi:cuEff(c,'avi'),emb:cuEff(c,'emb'),total:C.total,mk:C.mk,psug:C.psug,pv:C.pv,lucro:C.lucro,mg:C.mg,qtd:c.qtd})[k]; };
+  rows.sort((a,b)=>{ const x=gv(a,CUS.k), y=gv(b,CUS.k); if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;
+    return (typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y)))*CUS.d; });
+  const t=all.length, comp=all.filter(c=>!cuComp(c).length).length, sp=all.filter(c=>cuCalc(c).pv==null).length, nc=all.reduce((s,c)=>s+cuCalc(c).nconf,0);
   const mgs=all.map(c=>cuCalc(c).mg).filter(x=>x!=null).sort((a,b)=>a-b); const mgMed=mgs.length?(mgs[mgs.length>>1]*100).toFixed(0)+'%':'—';
   const ds=all.map(c=>c.corte).filter(Boolean).sort();
+  const th=(k,l,cls)=>{ const on=CUS.k===k; return `<th class="${cls||''} ${on?'cus':''}" onclick="CUS={k:'${k}',d:${on?-CUS.d:1}};render()">${l}${on?(CUS.d>0?' ▲':' ▼'):''}</th>`; };
+  const cell=(c,f)=>{ const k=cuKey(c), kq=k.replace(/'/g,''), C=cuCalc(c), cx=C.conf[f];
+    if(cx) return `<td class="elo cuconf"><div class="cucf"><span>planilha ${brl2(cx.xl)}</span><span>ELO ${brl2(cx.elo)}</span><div><button onclick="custoResolve('${kq}','${f}','xl')">planilha</button> <button onclick="custoResolve('${kq}','${f}','elo')">ELO</button></div></div></td>`;
+    const v=cuEff(c,f), s=cuSrc(c,f);
+    return `<td class="elo"><input class="${s==='elo'?'set':''}" value="${v!=null?String(v).replace('.',','):''}" placeholder="—" onchange="custoSet('${kq}','${f}',this.value)" title="${s==='elo'?('digitado no ELO'+(C.por?' · '+esc(C.por):'')):(s==='xl'?'da planilha (Roberto)':'vazio')}"></td>`; };
   const tr=rows.map(c=>{ const k=cuKey(c), C=cuCalc(c); const par=C.miss.length; const kq=k.replace(/'/g,'');
    return `<tr>
     <td class="xl"><b>${esc(String(c.modelo))}</b></td><td class="xl cu-el" title="${esc(c.desc||'')}">${esc(c.desc||'')}</td>
     <td class="xl cu-x">${esc(c.nf||'')}</td><td class="xl">${c.corte?dtBR(c.corte):'—'}</td><td class="xl cu-x">${esc(c.forn||'')}</td><td class="xl cu-el" title="${esc(c.tecido||'')}">${esc(c.tecido||'')}</td>
-    <td class="xl">${brl2(c.rsm)}</td><td class="xl">${c.cons??'—'}</td><td class="xl">${brl2(c.ct)}</td>
-    <td class="xl">${c.cost==null?'<span class="cub no">vazio</span>':brl2(c.cost)}</td><td class="xl">${c.avi==null?'<span class="cub no">vazio</span>':brl2(c.avi)}</td><td class="xl">${c.emb==null?'<span class="cub no">vazio</span>':brl2(c.emb)}</td>
+    <td class="xl">${brl2(c.rsm)}</td><td class="xl">${brl2(c.cons)}</td><td class="xl">${brl2(c.ct)}</td>
+    ${cell(c,'cost')}${cell(c,'avi')}${cell(c,'emb')}
     <td class="calc">${brl2(C.total)} ${par?`<span class="cub pa" title="faltam: ${C.miss.join(', ')}">PARCIAL</span>`:'<span class="cub ok">OK</span>'}</td>
     <td class="elo"><input value="${String(C.mk).replace('.',',')}" onchange="custoSet('${kq}','mk',this.value)" title="markup — editável só no ELO"></td>
     <td class="calc">${brl2(C.psug)}${par?' <span class="cuprov">provisório</span>':''}</td>
-    <td class="elo"><input class="${C.pv!=null?'set':''}" value="${C.pv!=null?String(C.pv).replace('.',','):''}" placeholder="—" onchange="custoSet('${kq}','pv',this.value)" title="${C.por?('por '+esc(C.por)+(C.at?' · '+dtBR(C.at.slice(0,10)):'')):'ainda sem preço'}"></td>
+    <td class="elo"><input class="${C.pv!=null?'set':''}" value="${C.pv!=null?String(C.pv).replace('.',','):''}" placeholder="—" onchange="custoSet('${kq}','pv',this.value)" title="${C.por?('por '+esc(C.por)+(C.at?' · '+dtBR(String(C.at).slice(0,10)):'')):'ainda sem preço'}"></td>
     <td class="calc">${brl2(C.lucro)}</td><td class="calc">${C.mg!=null?(C.mg*100).toFixed(0)+'%':'—'}</td>
     <td class="xl">${c.qtd??'—'}</td><td class="xl cu-x">${c.mlote??'—'}</td></tr>`; }).join('');
   return `<section class="card cu">
    <h3 style="margin:0 0 2px">💰 CUSTO <small class="sm" style="font-weight:600">planilha CUSTO · ${ds.length?dtBR(ds[0])+' → '+dtBR(ds[ds.length-1]):''} · ${ROB.file?esc(ROB.file):''}${ROB.at?' ↑ '+dtBR(String(ROB.at).slice(0,10)):''}</small></h3>
-   <div class="cukpi">
+   <div class="cukpi" style="grid-template-columns:repeat(6,1fr)">
     <div class="cuk"><b>${t}</b><span>LINHAS (lotes)</span></div><div class="cuk"><b>${comp}</b><span>CUSTO COMPLETO</span></div>
-    <div class="cuk"><b style="color:#8a6d00">${t-comp}</b><span>PARCIAL (falta costura/aviam/embal)</span></div>
+    <div class="cuk"><b style="color:#8a6d00">${t-comp}</b><span>PARCIAL</span></div>
     <div class="cuk"><b style="color:${sp?'#C0392B':'#2E7D32'}">${sp}</b><span>SEM PREÇO DE VENDA</span></div>
-    <div class="cuk"><b>${mgMed}</b><span>MARGEM mediana (com preço)</span></div></div>
+    <div class="cuk"><b style="color:${nc?'#C0392B':'#2E7D32'}">${nc}</b><span>CONFLITOS planilha × ELO</span></div>
+    <div class="cuk"><b>${mgMed}</b><span>MARGEM mediana</span></div></div>
    <div class="cubar">
     <input class="cusrch" placeholder="modelo · descrição · tecido · NF" value="${esc(CUQ)}" oninput="CUQ=this.value;render()">
     <button class="tg ${CUF==='todos'?'on':''}" onclick="CUF='todos';render()">todos</button>
     <button class="tg ${CUF==='inc'?'on':''}" onclick="CUF='inc';render()">só incompletos</button>
     <button class="tg ${CUF==='semp'?'on':''}" onclick="CUF='semp';render()">sem preço</button>
+    <button class="tg curd ${CUF==='conf'?'on':''}" onclick="CUF='conf';render()">⚠ só conflitos${nc?' ('+nc+')':''}</button>
     <button class="tg" onclick="CUX=!CUX;render()">${CUX?'⤡ recolher':'⤢ expandir'} colunas</button>
-    <span class="sm" style="margin-left:auto;font:600 9.5px var(--mono)">${rows.length} linha(s)</span></div>
+    <span class="sm" style="margin-left:auto;font:600 9.5px var(--mono)">${rows.length} linha(s) · por ${CUS.k} ${CUS.d>0?'▲':'▼'}</span></div>
    <div class="cutw ${CUX?'exp':''}"><table class="cut">
-    <tr><th>MODELO</th><th>DESCRIÇÃO</th><th class="cu-x">NF</th><th>CORTE</th><th class="cu-x">FORNEC.</th><th>TECIDO</th><th>R$/m c/imp</th><th>CONS.</th><th>C.TECIDO</th><th>COSTURA</th><th>AVIAM.</th><th>EMBAL.</th><th>C.TOTAL</th><th style="background:#8a6d00">MARKUP ✎</th><th>P.SUGERIDO</th><th style="background:#2E7D32">P.VENDA ✎</th><th>LUCRO</th><th>MARGEM</th><th>QTD</th><th class="cu-x">METROS</th></tr>
+    <tr>${th('modelo','MODELO')}<th>DESCRIÇÃO</th><th class="cu-x">NF</th>${th('corte','CORTE')}<th class="cu-x">FORNEC.</th>${th('tecido','TECIDO')}${th('rsm','R$/m c/imp')}${th('cons','CONS.')}${th('ct','C.TECIDO')}${th('cost','COSTURA ✎')}${th('avi','AVIAM. ✎')}${th('emb','EMBAL. ✎')}${th('total','C.TOTAL')}${th('mk','MARKUP ✎','cuh-y')}${th('psug','P.SUGERIDO')}${th('pv','P.VENDA ✎','cuh-g')}${th('lucro','LUCRO')}${th('mg','MARGEM')}${th('qtd','QTD')}<th class="cu-x">METROS</th></tr>
     ${tr||'<tr><td colspan="20" style="padding:14px;color:#6b6459">nada com esse filtro</td></tr>'}</table></div>
-   <div class="culeg"><i style="background:#FBFAF6"></i>vem da planilha (o drop reescreve) <i style="background:#FFFDF0"></i>vive no ELO — o drop NÃO mexe (P.VENDA, MARKUP) <i style="background:#F3F5F9"></i>calculado no ELO · PARCIAL = costura/aviam/embal em branco → preço sugerido provisório · linha = modelo + data de corte</div>
+   <div class="culeg"><i style="background:#FBFAF6"></i>planilha (drop reescreve) <i style="background:#FFFDF0"></i>editável no ELO — verde = digitado por você <i style="background:#FBEDEB;border-color:#C0392B"></i>conflito: planilha e ELO mudaram diferente — escolha <i style="background:#F3F5F9"></i>calculado · clique no cabeçalho p/ ordenar · linha = modelo + data de corte</div>
   </section>`; }
-async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:(t.status==='esgotado'&&!(t.usado>0)&&!((t.cortes||[]).length)&&!t.sobras)?'estoque':(t.status||(t.estoque>0?'estoque':(((t.usado||0)>0||((t.cortes||[]).length))?'esgotado':'estoque'))),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null,obs:t.obs||'',imposto:t.imposto??null,precoImp:t.precoImp??null,qtdPedida:t.qtdPedida??null,dataPedido:t.dataPedido||null,prevEntrega:t.prevEntrega||null,qtdRecebida:t.qtdRecebida??null,rolosRec:t.rolosRec??null,inspecao:t.inspecao||'',cortes:t.cortes||[],devol:t.devol||[],sobras:!!t.sobras,pecas:t.pecas||[],sobraOut:t.sobraOut||null,corteOut:t.corteOut||null,pedidoId:t.pedidoId||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[], CPV={}, CUF='todos', CUQ='', CUX=false; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
+let FBUSER=null, FBUNSUB=[]; let CRO=[], CSEL=null, CMODE='view', NMF=null; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[], CPV={}, CUF='todos', CUQ='', CUX=false, CUS={k:'corte',d:-1}; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
   FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
   FBUNSUB.push(onSnapshot(collection(db,'boletos'),s=>{ BOL=s.docs.map(d=>d.data()); render(); },e=>toast('Erro boletos: '+e.code)));   FBUNSUB.push(onSnapshot(collection(db,'corte_conf'),s=>{ CCONF=s.docs.map(d=>d.data()); render(); },e=>console.warn('corte_conf',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'cortes'),s=>{ CEVT=s.docs.map(d=>d.data()); render(); },e=>console.warn('cortes',e&&e.code)));
+  FBUNSUB.push(onSnapshot(collection(db,'cro_elo'),s=>{ CRO=s.docs.map(d=>d.data()).filter(x=>x&&x.id).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||''))); if(CSEL&&!CRO.some(c=>c.id===CSEL)){ CSEL=null; CMODE='view'; } render(); },e=>console.warn('cro_elo',e&&e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'custo_elo'),s=>{ const m={}; s.docs.forEach(d=>{ const x=d.data(); if(x&&x.key) m[x.key]=x; }); CPV=m; render(); },e=>console.warn('custo_elo',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'fila_manual'),s=>{ FMAN=s.docs.map(d=>d.data()); render(); },e=>console.warn('fila_manual',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'msgs'),s=>{ MSG=s.docs.map(d=>d.data()).sort((a,b)=>String(a.at).localeCompare(String(b.at))); render(); },e=>console.warn('msgs',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'tecidos'),s=>{ TDOCS=s.docs.map(d=>d.data()); TEC={items:tecFromCloud(TDOCS),at:new Date().toISOString(),file:'app TECIDOS (nuvem)'}; render(); },e=>toast('Erro tecidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'elo_deb'),s=>{ const models=s.docs.map(d=>d.data()).sort((a,b)=>+a.aba.replace(/\D/g,'')-+b.aba.replace(/\D/g,'')); DEB={models,at:DEB.at,file:DEB.file}; render(); },e=>toast('Erro DEBORA: '+e.code)));
@@ -1032,6 +1108,7 @@ function card(r){
     ${m.fase==='Corte'&&!r.lots.length?`<div class="sub ${m.risco?'on':''}">${m.risco?'RISCO ✓ · pronto p/ cortar':'risco pendente'}</div>`:''}
     ${m.fase==='Corte'&&!r.lots.length?(()=>{const c=mesmoTecido(m).filter(x=>x.fase==='Corte'&&!lotsOf(x).lots.length); if(!c.length) return ''; const t=tecidoOf(m)[0]; return `<div class="same" onclick="event.stopPropagation();${t?`openTecido('${t.code}')`:`openModel('${c[0].aba}')`}" title="${c.map(x=>x.aba+' '+x.codigo).join(', ')}">🧵 +${c.length} mesmo tecido · ${c.map(x=>x.aba).join(' ')}</div>`;})():''}
     ${r.lots.length?`<div class="lots">${r.lots.map(lotLine).join('')}</div>`:''}
+    ${m.origem==='elo'?`<div class="nb">☁ CRIADO NO ELO · ainda não está na DEBORA.xlsx</div>`:''}
   </div>`;
 }
 
@@ -1050,6 +1127,7 @@ function renderDebora(A){
     const uni=[['atu','\ud83d\udd04 atualizar',r=>r.alert&&r.alert.k==='atualizar'],['ver','\u26a0 verificar',r=>r.alert&&r.alert.k==='verificar']].map(([k,l,fn])=>[k,l,fn,has(fn)]).filter(c=>c[3]>0);
     return [['todos','todos',()=>true,rs.length],...base,...uni]; };
   if(window.innerWidth>=980){
+    if(DFASE==='cro') return bar+croWideHTML(lanes,of);
     const f=DFASE, rsAll=of(f);
     const chips=chipsOf(f,rsAll); const curk=DCHIP[f]||'todos';
     const cdef=chips.find(c=>c[0]===curk)||chips[0]; const rs=rsAll.filter(cdef[2]);
@@ -1057,7 +1135,7 @@ function renderDebora(A){
       const atu=r2.filter(r=>r.alert&&r.alert.k==='atualizar').length, ver=r2.filter(r=>r.alert&&r.alert.k==='verificar').length;
       return `<button class="brc ${fz==='Corte'?'gold':''}" aria-selected="${DFASE===fz}" onclick="DFASE='${fz}';DMSEL=null;render()"><span class="ph">${fz.toUpperCase()}</span><div class="big">${r2.length}</div><div class="pcs">${fmt(pcs)} p\u00e7s${atu?` \u00b7 \ud83d\udd04${atu}`:''}${ver?` \u00b7 \u26a0${ver}`:''}</div></button>`; }).join('');
     return bar+`<div class="bwrap tw ${DMSEL?'has3':''}">
-      <nav class="brail">${railK}</nav>
+      <nav class="brail">${croRailBtn()}${railK}</nav>
       <div class="bmid"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${chips.map(c=>`<button class="dchip ${c[0]===curk?'on':''}" onclick="DCHIP['${f}']='${c[0]}';DMSEL=null;render()">${c[1]} ${c[3]}</button>`).join('')}</div>
         <div class="kgrid">${rs.map(card).join('')||'<div class="empty">nenhum modelo neste filtro</div>'}</div></div>
       ${DMSEL?`<aside class="bficha tficha"><button class="x tfx" onclick="DMSEL=null;render()">\u2715</button>${modFichaHTML(DMSEL)||'<div class="empty">modelo n\u00e3o encontrado</div>'}</aside>`:''}
@@ -1065,7 +1143,7 @@ function renderDebora(A){
   }
   if(UI.kanban) return bar+`<div class="lanes">${lanes.map(f=>{ const rs=of(f); const pcs=rs.reduce((s,r)=>s+(r.m.qt||0),0);
     return `<section class="lane"><header><b>${f.toUpperCase()}</b><span>${rs.length} · ${fmt(pcs)} pçs</span></header>${rs.map(card).join('')||'<div class="empty">—</div>'}</section>`; }).join('')}</div>`;
-  return bar+`<div class="kacc">${lanes.map(f=>{
+  return bar+`<div class="kacc">${croAccHTML()}${lanes.map(f=>{
     const rs=of(f); const pcs=rs.reduce((s,r)=>s+(r.m.qt||0),0); const open=!!UI.deb[f];
     const atu=rs.filter(r=>r.alert&&r.alert.k==='atualizar').length, ver=rs.filter(r=>r.alert&&r.alert.k==='verificar').length, lt=rs.filter(r=>r.m.prazo&&r.m.prazo<TODAY).length;
     const ctx=f==='Corte'?`${rs.filter(r=>r.m.risco).length} risco ✓ · ${rs.filter(r=>!r.m.risco).length} pendente`:f==='Costura'?`${rs.filter(r=>r.lots.some(l=>lotState(l)==='oficina')).length} na oficina`:f==='Design'?`${rs.filter(r=>r.m.faseVazia).length} sem etapa no RESUMO`:'';
@@ -1200,7 +1278,8 @@ function renderVelocidade(){ const N=6; const months=[]; { const d0=new Date(TOD
 const VERAO_INI='2026-06-01';
 function custoVerao(){
   if(!ROB.custo||!ROB.custo.length) return null;
-  let rows=ROB.custo.filter(c=>c.corte&&c.corte>=VERAO_INI&&c.ct!=null).map(c=>({...c,avi:c.avi||0,emb:c.emb||0}));
+  /* v9.19: usa o valor efetivo (digitado no ELO > planilha) p/ costura/aviam/embal */
+  let rows=ROB.custo.filter(c=>c.corte&&c.corte>=VERAO_INI&&c.ct!=null).map(c=>({...c,cost:cuEff(c,'cost'),avi:cuEff(c,'avi')||0,emb:cuEff(c,'emb')||0}));
   if(!rows.length) return null;
   /* fundir "X A" com "X" (mesmo corte): tecido soma, costura/aviam/embal do que tiver */
   for(const a of rows.filter(r=>/ A\s*$/.test(r.modelo))){
@@ -1635,6 +1714,84 @@ async function debSaveTx(){ const D=__DED; if(!D) return;
   window.__dedBusy=false; pgHide();
  }catch(e){ pgHide(); window.__dedBusy=false; toast('⚠ '+(e&&(e.message||e.code)),6000); } }
 
+/* ===== v9.20 · CROQUIS (banco de fotos) → NOVO MODELO no ELO ===== */
+function isLucas(){ return !!(FBUSER&&FBUSER.email&&FBUSER.email.startsWith('exprim.adm')); }
+function croLivres(){ return CRO.filter(c=>!c.usedBy); }
+function croRailBtn(){ const l=croLivres().length; return `<button class="brc ${DFASE==='cro'?'gold':''}" aria-selected="${DFASE==='cro'}" onclick="DFASE='cro';DMSEL=null;render()"><span class="ph">📷 CROQUIS</span><div class="big">${l}</div><div class="pcs">livres · ${CRO.length-l} usado(s)</div></button>`; }
+function croAddBar(){ if(!isLucas()) return `<div class="pvnote">📷 Só o Lucas adiciona fotos e cria modelos aqui.</div>`;
+  return `<div class="addbar"><button class="btn" onclick="croPick(true)">📷 TIRAR FOTO</button><button class="btn sec" onclick="croPick(false)">🖼 DA GALERIA</button><span class="lk">croqui ou foto real · reduzida p/ 1024px</span></div>`; }
+function croCard(c){ return `<div class="card ${c.usedBy?'used':''} ${CSEL===c.id?'dsel':''}" onclick="croShow('${c.id}')"><img loading="lazy" decoding="async" src="${c.img}" alt=""><div class="st">${c.usedBy?`✓ USADO → ${esc(c.usedBy)}`:'LIVRE'} · ${dtBR(c.at)}</div><div class="memo">${esc(c.memo)||'<i style="color:var(--ink2)">sem memo</i>'}</div></div>`; }
+function croGridHTML(){ return `<div class="kgrid cro">${CRO.map(croCard).join('')||'<div class="empty">nenhum croqui — tire a primeira foto</div>'}</div>`; }
+function croWideHTML(lanes,of){
+  const railK=lanes.map(fz=>{ const r2=of(fz); const pcs=r2.reduce((s,r)=>s+(r.m.qt||0),0); return `<button class="brc ${fz==='Corte'?'gold':''}" aria-selected="false" onclick="DFASE='${fz}';DMSEL=null;render()"><span class="ph">${fz.toUpperCase()}</span><div class="big">${r2.length}</div><div class="pcs">${fmt(pcs)} pçs</div></button>`; }).join('');
+  const c=CRO.find(x=>x.id===CSEL);
+  return `<div class="bwrap tw ${c?'has3':''}"><nav class="brail">${croRailBtn()}${railK}</nav><div class="bmid">${croAddBar()}${croGridHTML()}</div>${c?`<aside class="bficha tficha"><button class="x tfx" onclick="CSEL=null;CMODE='view';render()">✕</button>${croPanelHTML(c)}</aside>`:''}</div>`; }
+function croAccHTML(){ const open=!!UI.deb.cro; const l=croLivres().length;
+  return `<div class="kc crok ${open?'open':''}" data-k="cro"><span class="ktab">📷 CROQUIS</span><div class="khead" onclick="togK('deb','cro')"><div class="kbadges"></div><em>${l}</em><div class="l1">livres</div><div class="l2">${CRO.length-l} usado(s)</div></div>
+   ${open?`<div class="kbody">${croAddBar()}${croGridHTML()}</div><div class="kclose" onclick="togK('deb','cro')">CLIQUE P/ FECHAR</div>`:''}</div>`; }
+function croShow(id){ CSEL=id; CMODE='view'; croRefresh(); }
+function croRefresh(){ const c=CRO.find(x=>x.id===CSEL); if(!c){ CSEL=null; render(); return; }
+  if(window.innerWidth>=980&&VIEW==='debora'){ DFASE='cro'; render(); }
+  else { openMod(`📷 CROQUI · ${dtBR(c.at)}`,croPanelHTML(c),'',false); } }
+function croPanelHTML(c){ return CMODE==='form'?croFormHTML(c):CMODE==='memo'?croMemoHTML(c):croViewHTML(c); }
+function croViewHTML(c){ const me=isLucas();
+  return `<div class="fp"><h3>CROQUI · ${dtBR(c.at)}${c.by?` · ${esc(c.by)}`:''}</h3><img class="big" src="${c.img}" alt="">
+  <div class="kv"><b>MEMO</b><span>${esc(c.memo)||'—'}</span><b>SITUAÇÃO</b><span>${c.usedBy?`✓ usado → <a href="#" onclick="closeMod();openModel('${esc(c.usedBy)}');return false">${esc(c.usedBy)}</a>`:'livre'}</span>${c.kb?`<b>TAMANHO</b><span>${c.kb} KB</span>`:''}</div>
+  ${me?`<div class="acts">${c.usedBy?'':`<button class="btn" onclick="croStartForm('${c.id}')">＋ CRIAR MODELO</button>`}<button class="btn sec" onclick="CMODE='memo';croRefresh()">✏ MEMO</button>${c.usedBy?'':`<button class="btn danger" onclick="croDel('${c.id}')">🗑 APAGAR</button>`}</div>`:''}</div>`; }
+function croMemoHTML(c){ return `<div class="fp"><h3>MEMO DO CROQUI</h3><img class="big" src="${c.img}" alt="" style="max-height:30vh">
+  <label>MEMO (o que é, ideia de tecido, obs.)</label><textarea id="cMemo">${esc(c.memo)}</textarea>
+  <div class="acts"><button class="btn" onclick="croSaveMemo('${c.id}')">SALVAR</button><button class="btn sec" onclick="CMODE='view';croRefresh()">CANCELAR</button></div></div>`; }
+async function croSaveMemo(id){ const c=CRO.find(x=>x.id===id); if(!c) return; const memo=(document.getElementById('cMemo').value||'').trim();
+  try{ await FB.setDoc(FB.doc(FB.db,'cro_elo',id),{...c,memo}); c.memo=memo; CMODE='view'; croRefresh(); toast('✓ memo salvo'); }catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
+async function croDel(id){ if(!confirm('Apagar este croqui?')) return;
+  try{ await FB.deleteDoc(FB.doc(FB.db,'cro_elo',id)); CSEL=null; CMODE='view'; if(window.innerWidth<980) closeMod(); render(); toast('🗑 croqui apagado'); }catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
+function croPick(camera){ if(!isLucas()) return; const i=document.createElement('input'); i.type='file'; i.accept='image/*'; if(camera) i.setAttribute('capture','environment');
+  i.onchange=async()=>{ const f=i.files[0]; if(!f) return; toast('⏳ comprimindo foto…',15000);
+    let d=await resizeBlob(f,1024); if(!d){ toast('⚠ não consegui ler a imagem'); return; }
+    if(d.length>900000){ d=await resizeBlob(f,720); } if(!d||d.length>900000){ toast('⚠ foto muito grande mesmo reduzida — tente outra'); return; }
+    const id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); const kb=Math.round(d.length*3/4/1024);
+    const c={id,img:d,memo:'',at:new Date().toISOString(),by:whoName(),usedBy:null,kb};
+    try{ await FB.setDoc(FB.doc(FB.db,'cro_elo',id),c); if(!CRO.some(x=>x.id===id)) CRO.unshift(c); CSEL=id; CMODE='memo'; if(window.innerWidth>=980) DFASE='cro'; croRefresh(); toast(`📷 foto guardada · ${kb} KB`); }
+    catch(e){ toast('⚠ '+(e&&(e.code||e.message)),6000); } };
+  i.click(); }
+function croNextM(){ const n=Math.max(0,...DEB.models.map(m=>+String(m.aba||'').replace(/\D/g,'')||0)); return 'M'+(n+1); }
+function croCodeExists(c){ c=String(c||'').trim().toUpperCase().replace(/\s+/g,''); if(!c) return null; return DEB.models.find(m=>String(m.codigo||'').toUpperCase()===c)||null; }
+function croStartForm(id){ const c=CRO.find(x=>x.id===id); if(!c||!isLucas()) return; NMF={cod:'',tec:null,qt:'',normal:true,plus:false,memo:c.memo||''}; CSEL=id; CMODE='form'; croRefresh(); }
+function croCanGo(){ return !!(NMF&&NMF.cod.trim()&&!croCodeExists(NMF.cod)&&NMF.tec&&NMF.tec.tec&&(NMF.normal||NMF.plus)); }
+function croWhy(){ const w=[]; if(!NMF.cod.trim()) w.push('código'); else if(croCodeExists(NMF.cod)) w.push('código duplicado'); if(!(NMF.tec&&NMF.tec.tec)) w.push('tecido'); if(!NMF.normal&&!NMF.plus) w.push('tamanho'); return w.length?'falta: '+w.join(' · '):'pronto p/ confirmar'; }
+function croFormHTML(c){ const ex=croCodeExists(NMF.cod); const nm=croNextM();
+  return `<div class="fp"><h3>NOVO MODELO · a partir do croqui</h3>
+  <div style="display:flex;gap:10px;align-items:center"><img src="${c.img}" alt="" style="width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><div><div class="sm">número automático</div><span class="mauto">${nm}</span><div class="hint">próximo depois do maior M na nuvem</div></div></div>
+  <label>CÓDIGO (como na planilha, ex.: 12201) *</label><input type="text" id="fCod" value="${esc(NMF.cod)}" placeholder="código do modelo" oninput="NMF.cod=this.value;croFormRefresh()" autocapitalize="characters" autocomplete="off">
+  <div class="hint ${ex?'bad':NMF.cod.trim()?'ok':''}" id="fCodH">${ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'obrigatório · duplicado bloqueia'}</div>
+  <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`:'🧵 escolher tecido…'}</button>
+  <label>QUANTIDADE (provisória)</label><input type="number" id="fQt" value="${esc(NMF.qt)}" placeholder="pçs" oninput="NMF.qt=this.value">
+  <label>TAMANHO * (pode marcar os dois)</label><div class="chk"><span class="${NMF.normal?'on':''}" onclick="NMF.normal=!NMF.normal;croRefresh()">${NMF.normal?'☑':'☐'} NORMAL</span><span class="${NMF.plus?'on':''}" onclick="NMF.plus=!NMF.plus;croRefresh()">${NMF.plus?'☑':'☐'} PLUS SIZE</span></div>
+  <label>MEMO</label><textarea id="fMemo" oninput="NMF.memo=this.value">${esc(NMF.memo)}</textarea>
+  <div class="acts"><button class="btn" id="fGo" ${croCanGo()?'':'disabled'} onclick="croConfirm('${c.id}')">CONFIRMAR → ${nm}</button><button class="btn sec" onclick="CMODE='view';croRefresh()">CANCELAR</button></div>
+  <div class="hint" id="fWhy">${croWhy()}</div></div>`; }
+function croFormRefresh(){ const ex=croCodeExists(NMF.cod); const h=document.getElementById('fCodH'); if(h){ h.className='hint '+(ex?'bad':NMF.cod.trim()?'ok':''); h.textContent=ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'obrigatório · duplicado bloqueia'; } const g=document.getElementById('fGo'); if(g) g.disabled=!croCanGo(); const w=document.getElementById('fWhy'); if(w) w.textContent=croWhy(); }
+async function croConfirm(cid){ if(!croCanGo()||!isLucas()) return; const c=CRO.find(x=>x.id===cid); if(!c) return;
+  if(window.__croBusy) return; window.__croBusy=true; pgShow('✔ criando modelo…');
+  const cod=NMF.cod.trim().toUpperCase().replace(/\s+/g,''); const now=new Date().toISOString(); const desc=(NMF.memo||'').split(/[,·\n]/)[0].trim().toUpperCase();
+  const sizes=[NMF.normal?'NORMAL':null,NMF.plus?'PLUS':null].filter(Boolean);
+  try{ let aba='';
+    await FB.runTransaction(FB.db, async tx=>{
+      aba=croNextM(); let ref=FB.doc(FB.db,'elo_deb',aba); let s=await tx.get(ref);
+      if(s.exists()){ aba='M'+(+aba.slice(1)+1); ref=FB.doc(FB.db,'elo_deb',aba); s=await tx.get(ref); if(s.exists()) throw new Error('número M em uso — recarregue e tente de novo'); }
+      const cref=FB.doc(FB.db,'cro_elo',cid); const cs=await tx.get(cref); if(cs.exists()&&cs.data().usedBy) throw new Error('este croqui já virou o modelo '+cs.data().usedBy);
+      const m={aba,nome:`${cod} - ${desc||'NOVO MODELO'}`,codigo:cod,forn:'',qt:+NMF.qt||null,qtProv:true,ini:TODAY,prazo:null,term:null,prog:0,status:'Em andamento',concl:false,fase:'Design',faseVazia:false,novorep:'',nf:(NMF.tec&&NMF.tec.nf)||'',items:[],foto:c.img,
+        origem:'elo',criadoEm:now,criadoPor:whoName(),criadoBy:(FBUSER&&FBUSER.email)||'',tecSel:{...NMF.tec,por:whoName(),at:now},sizes,memo:NMF.memo||'',cro:cid,edited:false};
+      tx.set(ref,m); tx.set(cref,{...(cs.exists()?cs.data():c),usedBy:aba,usedAt:now}); });
+    c.usedBy=aba; NMF=null; CMODE='view'; CSEL=null; if(window.innerWidth<980) closeMod(); DFASE='Design'; DMSEL=aba; render();
+    toast(`✅ ${aba} · ${cod} criado no ELO · croqui marcado como usado`,5000);
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
+  pgHide(); window.__croBusy=false; }
+async function croAdvance(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||m.origem!=='elo'||!isLucas()) return; const i=FASES.indexOf(m.fase); if(i<0||i>=FASES.length-1) return;
+  const fase=FASES[i+1]; const prog=Math.round((i+1)/(FASES.length-1)*100);
+  try{ await FB.setDoc(FB.doc(FB.db,'elo_deb',aba),{...m,fase,prog,concl:fase==='Embalagem'}); m.fase=fase; m.prog=prog; if($('#mp').classList.contains('on')) openModel(aba); if(window.innerWidth>=980&&VIEW==='debora'&&fase!=='Embalagem') DFASE=fase; render(); toast(`${aba} → ${fase}`); }
+  catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
+function croGoto(id){ closeModel(); CSEL=id; CMODE='view'; if(window.innerWidth>=980){ VIEW='debora'; DFASE='cro'; DMSEL=null; render(); } else croRefresh(); }
 function dCardClick(aba){ if(window.innerWidth>=980&&VIEW==='debora'){ DMSEL=(DMSEL===aba?null:aba); render(); } else openModel(aba); }
 async function modMsgSend(aba){ await msgSend('mod:'+aba,'mdI'); if($('#mp').classList.contains('on')) openModel(aba); else render(); }
 function modFichaHTML(aba){
@@ -1654,7 +1811,8 @@ function modFichaHTML(aba){
   const fotos=`<div class="fotos"><figure>${phModel}<figcaption>modelo${m.codigo?` · ${m.codigo}`:''}</figcaption></figure><figure ${tecs.length?`class="lnkf" onclick="openTecido('${tecs[0].code}')"`:''}>${phTec}<figcaption>${capTec}</figcaption></figure></div>`;
   return `
     <div class="mph"><div><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span><h2>${esc(m.nome)}</h2>
-      <div class="sm">${esc(m.forn)}${m.qt?` · ${fmt(m.qt)} pçs`:''}${m.nf?` · NF ${esc(m.nf)}`:''} · início ${dtBR(m.ini)||'—'} · prazo ${dtBR(m.prazo)||'—'}</div></div>
+      <div class="sm">${esc(m.forn)}${m.qt?` · ${fmt(m.qt)} pçs${m.qtProv?' (provisória)':''}`:''}${m.nf?` · NF ${esc(m.nf)}`:''} · início ${dtBR(m.ini)||'—'} · prazo ${dtBR(m.prazo)||'—'}</div>
+      ${m.origem==='elo'?`<div class="sm" style="margin-top:4px">☁ criado no ELO em ${dtBR(m.criadoEm)} por ${esc(m.criadoPor||'')}${m.sizes&&m.sizes.length?` · tamanho ${m.sizes.join(' + ')}`:''}${m.tecSel&&m.tecSel.tec?` · tecido ${esc(m.tecSel.tec)}`:''}${m.memo?` · ${esc(m.memo)}`:''} · <b>não existe na DEBORA.xlsx</b> (o drop da planilha não apaga)${FASES.indexOf(m.fase)<FASES.length-1?` <button class="tg" onclick="event.stopPropagation();croAdvance('${m.aba}')">→ AVANÇAR ETAPA</button>`:''}${m.cro?` <button class="tg" onclick="event.stopPropagation();croGoto('${m.cro}')">📷 croqui</button>`:''}</div>`:''}</div>
       <div class="elo">${rail(r.elo)}<b>${ELO_LBL[r.elo]||r.elo}</b>${r.alert?`<span class="bd ${r.alert.k}">${esc(r.alert.t)}</span>`:''}</div></div>
     <div class="mpc"><section><h4>DEBORA · ${m.fase||'?'} · ${m.prog!=null?m.prog+'%':''}</h4>${left}</section>
       <section>${fotos}<h4>ROBERTO · CONTROLE</h4>${right}${fam.length?`<h4>outras produções do base ${baseOf(m.codigo)}</h4>${fam.map(x=>`<button class="lnk" onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo} · ${x.concl?'concluído':x.fase}</button>`).join('')}`:''}${msgThread('mod:'+m.aba,'mdI',`modMsgSend('${m.aba}')`)}</section></div>`; }
