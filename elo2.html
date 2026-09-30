@@ -560,7 +560,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.20a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.20b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1757,20 +1757,20 @@ function croPick(camera){ if(!isLucas()) return; const i=document.createElement(
 function croNextM(){ const n=Math.max(0,...DEB.models.map(m=>+String(m.aba||'').replace(/\D/g,'')||0)); return 'M'+(n+1); }
 function croCodeExists(c){ c=String(c||'').trim().toUpperCase().replace(/\s+/g,''); if(!c) return null; return DEB.models.find(m=>String(m.codigo||'').toUpperCase()===c)||null; }
 function croStartForm(id){ const c=CRO.find(x=>x.id===id); if(!c||!isLucas()) return; NMF={cod:'',tec:null,qt:'',normal:true,plus:false,memo:c.memo||''}; CSEL=id; CMODE='form'; croRefresh(); }
-function croCanGo(){ return !!(NMF&&NMF.cod.trim()&&!croCodeExists(NMF.cod)&&NMF.tec&&NMF.tec.tec&&(NMF.normal||NMF.plus)); }
-function croWhy(){ const w=[]; if(!NMF.cod.trim()) w.push('código'); else if(croCodeExists(NMF.cod)) w.push('código duplicado'); if(!(NMF.tec&&NMF.tec.tec)) w.push('tecido'); if(!NMF.normal&&!NMF.plus) w.push('tamanho'); return w.length?'falta: '+w.join(' · '):'pronto p/ confirmar'; }
+function croCanGo(){ return !!(NMF&&!croCodeExists(NMF.cod)&&NMF.tec&&NMF.tec.tec&&(NMF.normal||NMF.plus)); }
+function croWhy(){ const w=[]; if(croCodeExists(NMF.cod)) w.push('código duplicado'); if(!(NMF.tec&&NMF.tec.tec)) w.push('tecido'); if(!NMF.normal&&!NMF.plus) w.push('tamanho'); return w.length?'falta: '+w.join(' · '):'pronto p/ confirmar'; }
 function croFormHTML(c){ const ex=croCodeExists(NMF.cod); const nm=croNextM();
   return `<div class="fp"><h3>NOVO MODELO · a partir do croqui</h3>
   <div style="display:flex;gap:10px;align-items:center"><img src="${c.img}" alt="" style="width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><div><div class="sm">número automático</div><span class="mauto">${nm}</span><div class="hint">próximo depois do maior M na nuvem</div></div></div>
-  <label>CÓDIGO (como na planilha, ex.: 12201) *</label><input type="text" id="fCod" value="${esc(NMF.cod)}" placeholder="código do modelo" oninput="NMF.cod=this.value;croFormRefresh()" autocapitalize="characters" autocomplete="off">
-  <div class="hint ${ex?'bad':NMF.cod.trim()?'ok':''}" id="fCodH">${ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'obrigatório · duplicado bloqueia'}</div>
+  <label>CÓDIGO (opcional — pode entrar depois, na etapa Design)</label><input type="text" id="fCod" value="${esc(NMF.cod)}" placeholder="código do modelo" oninput="NMF.cod=this.value;croFormRefresh()" autocapitalize="characters" autocomplete="off">
+  <div class="hint ${ex?'bad':NMF.cod.trim()?'ok':''}" id="fCodH">${ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'sem código por enquanto · duplicado bloqueia'}</div>
   <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`:'🧵 escolher tecido…'}</button>
   <label>QUANTIDADE (provisória)</label><input type="number" id="fQt" value="${esc(NMF.qt)}" placeholder="pçs" oninput="NMF.qt=this.value">
   <label>TAMANHO * (pode marcar os dois)</label><div class="chk"><span class="${NMF.normal?'on':''}" onclick="NMF.normal=!NMF.normal;croRefresh()">${NMF.normal?'☑':'☐'} NORMAL</span><span class="${NMF.plus?'on':''}" onclick="NMF.plus=!NMF.plus;croRefresh()">${NMF.plus?'☑':'☐'} PLUS SIZE</span></div>
   <label>MEMO</label><textarea id="fMemo" oninput="NMF.memo=this.value">${esc(NMF.memo)}</textarea>
   <div class="acts"><button class="btn" id="fGo" ${croCanGo()?'':'disabled'} onclick="croConfirm('${c.id}')">CONFIRMAR → ${nm}</button><button class="btn sec" onclick="CMODE='view';croRefresh()">CANCELAR</button></div>
   <div class="hint" id="fWhy">${croWhy()}</div></div>`; }
-function croFormRefresh(){ const ex=croCodeExists(NMF.cod); const h=document.getElementById('fCodH'); if(h){ h.className='hint '+(ex?'bad':NMF.cod.trim()?'ok':''); h.textContent=ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'obrigatório · duplicado bloqueia'; } const g=document.getElementById('fGo'); if(g) g.disabled=!croCanGo(); const w=document.getElementById('fWhy'); if(w) w.textContent=croWhy(); }
+function croFormRefresh(){ const ex=croCodeExists(NMF.cod); const h=document.getElementById('fCodH'); if(h){ h.className='hint '+(ex?'bad':NMF.cod.trim()?'ok':''); h.textContent=ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'sem código por enquanto · duplicado bloqueia'; } const g=document.getElementById('fGo'); if(g) g.disabled=!croCanGo(); const w=document.getElementById('fWhy'); if(w) w.textContent=croWhy(); }
 async function croConfirm(cid){ if(!croCanGo()||!isLucas()) return; const c=CRO.find(x=>x.id===cid); if(!c) return;
   if(window.__croBusy) return; window.__croBusy=true; pgShow('✔ criando modelo…');
   const cod=NMF.cod.trim().toUpperCase().replace(/\s+/g,''); const now=new Date().toISOString(); const desc=(NMF.memo||'').split(/[,·\n]/)[0].trim().toUpperCase();
@@ -1780,16 +1780,27 @@ async function croConfirm(cid){ if(!croCanGo()||!isLucas()) return; const c=CRO.
       aba=croNextM(); let ref=FB.doc(FB.db,'elo_deb',aba); let s=await tx.get(ref);
       if(s.exists()){ aba='M'+(+aba.slice(1)+1); ref=FB.doc(FB.db,'elo_deb',aba); s=await tx.get(ref); if(s.exists()) throw new Error('número M em uso — recarregue e tente de novo'); }
       const cref=FB.doc(FB.db,'cro_elo',cid); const cs=await tx.get(cref); if(cs.exists()&&cs.data().usedBy) throw new Error('este croqui já virou o modelo '+cs.data().usedBy);
-      const m={aba,nome:`${cod} - ${desc||'NOVO MODELO'}`,codigo:cod,forn:'',qt:+NMF.qt||null,qtProv:true,ini:TODAY,prazo:null,term:null,prog:0,status:'Em andamento',concl:false,fase:'Design',faseVazia:false,novorep:'',nf:(NMF.tec&&NMF.tec.nf)||'',items:[],foto:c.img,
+      const m={aba,nome:cod?`${cod} - ${desc||'NOVO MODELO'}`:(desc||'NOVO MODELO'),codigo:cod,forn:'',qt:+NMF.qt||null,qtProv:true,ini:TODAY,prazo:null,term:null,prog:0,status:'Em andamento',concl:false,fase:'Design',faseVazia:false,novorep:'',nf:(NMF.tec&&NMF.tec.nf)||'',items:[],foto:c.img,
         origem:'elo',criadoEm:now,criadoPor:whoName(),criadoBy:(FBUSER&&FBUSER.email)||'',tecSel:{...NMF.tec,por:whoName(),at:now},sizes,memo:NMF.memo||'',cro:cid,edited:false};
       tx.set(ref,m); tx.set(cref,{...(cs.exists()?cs.data():c),usedBy:aba,usedAt:now}); });
     c.usedBy=aba; NMF=null; CMODE='view'; CSEL=null; if(window.innerWidth<980) closeMod(); DFASE='Design'; DMSEL=aba; render();
-    toast(`✅ ${aba} · ${cod} criado no ELO · croqui marcado como usado`,5000);
+    toast(`✅ ${aba}${cod?' · '+cod:''} criado no ELO · croqui marcado como usado`,5000);
   }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
   pgHide(); window.__croBusy=false; }
 async function croAdvance(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||m.origem!=='elo'||!isLucas()) return; const i=FASES.indexOf(m.fase); if(i<0||i>=FASES.length-1) return;
   const fase=FASES[i+1]; const prog=Math.round((i+1)/(FASES.length-1)*100);
   try{ await FB.setDoc(FB.doc(FB.db,'elo_deb',aba),{...m,fase,prog,concl:fase==='Embalagem'}); m.fase=fase; m.prog=prog; if($('#mp').classList.contains('on')) openModel(aba); if(window.innerWidth>=980&&VIEW==='debora'&&fase!=='Embalagem') DFASE=fase; render(); toast(`${aba} → ${fase}`); }
+  catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
+function croCodeOpen(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||m.origem!=='elo'||!isLucas()) return;
+  openMod(`✎ CÓDIGO · ${aba}`,`<div class="fp" style="padding:4px 0 0"><label>CÓDIGO (como na planilha, ex.: 12201)</label><input type="text" id="ccCod" value="${esc(m.codigo||'')}" autocapitalize="characters" autocomplete="off" oninput="croCodeCheck('${aba}')"><div class="hint" id="ccH"></div>
+   <div class="acts"><button class="btn" id="ccGo" onclick="croCodeSave('${aba}')">SALVAR</button><button class="btn sec" onclick="closeMod()">CANCELAR</button></div></div>`,'',true);
+  croCodeCheck(aba); setTimeout(()=>{ const i=document.getElementById('ccCod'); if(i) i.focus(); },50); }
+function croCodeCheck(aba){ const v=(document.getElementById('ccCod').value||'').trim().toUpperCase().replace(/\s+/g,''); const ex=v?DEB.models.find(x=>x.aba!==aba&&String(x.codigo||'').toUpperCase()===v):null;
+  const h=document.getElementById('ccH'), g=document.getElementById('ccGo'); h.className='hint '+(ex?'bad':v?'ok':''); h.textContent=ex?`✖ código já existe em ${ex.aba}`:v?'✓ código livre':'vazio = fica sem código'; g.disabled=!!ex; }
+async function croCodeSave(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return; const v=(document.getElementById('ccCod').value||'').trim().toUpperCase().replace(/\s+/g,'');
+  if(v&&DEB.models.find(x=>x.aba!==aba&&String(x.codigo||'').toUpperCase()===v)) return;
+  const rest=String(m.nome||'').replace(/^\S+\s*-\s*/,''); const nome=v?`${v} - ${rest||'NOVO MODELO'}`:(rest||m.nome||'');
+  try{ await FB.setDoc(FB.doc(FB.db,'elo_deb',aba),{...m,codigo:v,nome}); m.codigo=v; m.nome=nome; closeMod(); if($('#mp').classList.contains('on')) openModel(aba); render(); toast(v?`✓ ${aba} · código ${v}`:`✓ ${aba} sem código`); }
   catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
 function croGoto(id){ closeModel(); CSEL=id; CMODE='view'; if(window.innerWidth>=980){ VIEW='debora'; DFASE='cro'; DMSEL=null; render(); } else croRefresh(); }
 function dCardClick(aba){ if(window.innerWidth>=980&&VIEW==='debora'){ DMSEL=(DMSEL===aba?null:aba); render(); } else openModel(aba); }
@@ -1812,7 +1823,7 @@ function modFichaHTML(aba){
   return `
     <div class="mph"><div><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span><h2>${esc(m.nome)}</h2>
       <div class="sm">${esc(m.forn)}${m.qt?` · ${fmt(m.qt)} pçs${m.qtProv?' (provisória)':''}`:''}${m.nf?` · NF ${esc(m.nf)}`:''} · início ${dtBR(m.ini)||'—'} · prazo ${dtBR(m.prazo)||'—'}</div>
-      ${m.origem==='elo'?`<div class="sm" style="margin-top:4px">☁ criado no ELO em ${dtBR(m.criadoEm)} por ${esc(m.criadoPor||'')}${m.sizes&&m.sizes.length?` · tamanho ${m.sizes.join(' + ')}`:''}${m.tecSel&&m.tecSel.tec?` · tecido ${esc(m.tecSel.tec)}`:''}${m.memo?` · ${esc(m.memo)}`:''} · <b>não existe na DEBORA.xlsx</b> (o drop da planilha não apaga)${FASES.indexOf(m.fase)<FASES.length-1?` <button class="tg" onclick="event.stopPropagation();croAdvance('${m.aba}')">→ AVANÇAR ETAPA</button>`:''}${m.cro?` <button class="tg" onclick="event.stopPropagation();croGoto('${m.cro}')">📷 croqui</button>`:''}</div>`:''}</div>
+      ${m.origem==='elo'?`<div class="sm" style="margin-top:4px">☁ criado no ELO em ${dtBR(m.criadoEm)} por ${esc(m.criadoPor||'')}${m.sizes&&m.sizes.length?` · tamanho ${m.sizes.join(' + ')}`:''}${m.tecSel&&m.tecSel.tec?` · tecido ${esc(m.tecSel.tec)}`:''}${m.memo?` · ${esc(m.memo)}`:''} · <b>não existe na DEBORA.xlsx</b> (o drop da planilha não apaga)<button class="tg" onclick="event.stopPropagation();croCodeOpen('${m.aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button>${FASES.indexOf(m.fase)<FASES.length-1?` <button class="tg" onclick="event.stopPropagation();croAdvance('${m.aba}')">→ AVANÇAR ETAPA</button>`:''}${m.cro?` <button class="tg" onclick="event.stopPropagation();croGoto('${m.cro}')">📷 croqui</button>`:''}</div>`:''}</div>
       <div class="elo">${rail(r.elo)}<b>${ELO_LBL[r.elo]||r.elo}</b>${r.alert?`<span class="bd ${r.alert.k}">${esc(r.alert.t)}</span>`:''}</div></div>
     <div class="mpc"><section><h4>DEBORA · ${m.fase||'?'} · ${m.prog!=null?m.prog+'%':''}</h4>${left}</section>
       <section>${fotos}<h4>ROBERTO · CONTROLE</h4>${right}${fam.length?`<h4>outras produções do base ${baseOf(m.codigo)}</h4>${fam.map(x=>`<button class="lnk" onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo} · ${x.concl?'concluído':x.fase}</button>`).join('')}`:''}${msgThread('mod:'+m.aba,'mdI',`modMsgSend('${m.aba}')`)}</section></div>`; }
@@ -2074,12 +2085,16 @@ let __tpCb=null;
 function tecPickOpen(cb,pre){ __tpCb=cb;
  openMod('🧵 Escolher tecido',`
   <input id="tpQ" placeholder="busque: T-código · nome · fornecedor · NF" value="${esc(pre||'')}" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit" oninput="tecPickList()">
+  <label style="display:flex;gap:6px;align-items:center;margin-top:6px;font:700 10px var(--mono);color:#6b6459;cursor:pointer"><input type="checkbox" id="tpE" onchange="tecPickList()"> incluir esgotados <span id="tpEn"></span></label>
   <div id="tpL" style="max-height:52vh;overflow:auto;margin-top:8px"></div>`,'',true);
  tecPickList(); }
 function tecPickList(){ const q=(document.getElementById('tpQ').value||'').trim().toLowerCase();
- const ks=nfKeys(q); 
- const hits=TDOCS.filter(t=>!q || t.code.toLowerCase().includes(q) || (t.nome||'').toLowerCase().includes(q)
+ const ks=nfKeys(q); const incE=!!(document.getElementById('tpE')&&document.getElementById('tpE').checked);
+ const isEsg=t=>{ const ti=TEC.items.find(x=>x.code===t.code); return ti?ti.status==='esgotado':(t.status==='esgotado'||!(t.estoque>0)); };
+ const all=TDOCS.filter(t=>!q || t.code.toLowerCase().includes(q) || (t.nome||'').toLowerCase().includes(q)
    || (t.forn||'').toLowerCase().includes(q) || (ks.length&&nfMatch(q,t.nf)));
+ const hits=incE?all:all.filter(t=>!isEsg(t)); const nE=all.length-all.filter(t=>!isEsg(t)).length;
+ { const e=document.getElementById('tpEn'); if(e) e.textContent=nE?`(${nE} oculto${nE>1?'s':''})`:''; }
  document.getElementById('tpL').innerHTML=hits.slice(0,40).map(t=>`
   <div onclick="tecPickGo('${t.code}')" style="display:flex;gap:9px;align-items:center;padding:7px 6px;border-bottom:1px dashed var(--line);cursor:pointer">
    ${t.foto?`<img src="${t.foto}" style="width:38px;height:48px;object-fit:cover;border-radius:6px;flex:none">`:'<div style="width:38px;height:48px;border-radius:6px;background:#EAE4D8;flex:none"></div>'}
