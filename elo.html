@@ -234,6 +234,25 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 @media(max-width:900px){.kacc{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.kacc{grid-template-columns:1fr 1fr}}
 .kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 14px 12px;position:relative;min-height:112px}.kc.dim{opacity:.35}.bwrap{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start}.bwrap.has3{grid-template-columns:200px 1fr 330px}.brail{display:flex;flex-direction:column;gap:9px;position:sticky;top:10px}
+.cu .cukpi{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0 10px}
+.cu .cuk{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:#FFFDF7}
+.cu .cuk b{display:block;font:800 18px var(--mono);line-height:1.1}.cu .cuk span{display:block;font:800 8.5px var(--mono);color:#6b6459;letter-spacing:.05em;margin-top:2px}
+.cubar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.cusrch{border:1.5px solid var(--line);border-radius:8px;padding:6px 9px;font:inherit;width:220px}
+.cutw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;max-height:70vh;overflow-y:auto}
+.cut{border-collapse:collapse;font:600 10.5px var(--mono);white-space:nowrap}
+.cut th{background:#1D2A3F;color:#fff;font:800 8.5px var(--mono);padding:5px 7px;text-align:left;position:sticky;top:0;z-index:1}
+.cut td{border-bottom:1px solid var(--line);padding:4px 7px;vertical-align:middle}
+.cut td.xl{color:#5a544a;background:#FBFAF6}.cut td.elo{background:#FFFDF0}.cut td.calc{color:#1D2A3F;font-weight:800;background:#F3F5F9}
+.cut td.cu-el{max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.cut td.elo input{width:74px;border:1px solid var(--line);border-radius:5px;padding:3px 5px;font:800 11px var(--mono);background:#fff;text-align:right}
+.cut td.elo input:focus{outline:2px solid var(--gold)}.cut td.elo input.set{border-color:#2E7D32;background:#EAF4EA}
+.cub{display:inline-block;font:800 8px var(--mono);border-radius:4px;padding:1px 5px}
+.cub.ok{background:#EAF4EA;color:#2E7D32}.cub.pa{background:#FDF4E3;color:#8a6d00}.cub.no{background:#FBEDEB;color:#C0392B}
+.cuprov{font:700 8px var(--mono);color:#8a6d00}
+.cu-x{display:none}.cutw.exp .cu-x{display:table-cell}
+.culeg{font:600 9.5px var(--mono);color:#6b6459;margin-top:6px}.culeg i{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin:0 3px 0 8px;border:1px solid var(--line)}
+
 .rl .rlkpi{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:8px 0}
 .rl .rlk{border:1.5px solid var(--line);border-radius:11px;padding:9px 11px;background:#FFFDF7}
 .rl .rlk b{display:block;font:800 19px var(--mono);line-height:1.1}
@@ -500,7 +519,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.15b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.18a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -724,10 +743,14 @@ async function parseRoberto(book){
     let hr=0, hc={}; for(let r=1;r<=10&&!hr;r++){ for(const a in cc){ const m=new RegExp('^([A-Z]+)'+r+'$').exec(a); if(m&&/^MODELO/i.test(h.txt(a))) hr=r; } }
     if(hr){ for(const a in cc){ const m=new RegExp('^([A-Z]+)'+hr+'$').exec(a); if(m) hc[h.txt(a).toUpperCase().replace(/\s+/g,' ')]=m[1]; }
       const col=n=>{ for(const k in hc) if(k.startsWith(n)) return hc[k]; return null; };
-      const C={modelo:col('MODELO'),nf:col('NF'),corte:col('DATA CORTE'),tecido:col('TECIDO'),cons:col('CONSUMO'),qtd:col('QTD LOTE'),ct:col('CUSTO TECIDO'),cost:col('COSTURA'),avi:col('AVIAM'),emb:col('EMBAL')};
-      if(C.modelo&&C.cons) for(let r=hr+1;r<=2000;r++){ const modelo=h.txt(C.modelo+r); if(!modelo) continue; const cons=h.num(C.cons+r); if(!(cons>0)) continue;
-        custo.push({modelo,tokens:tokensOf(modelo),nf:C.nf?h.txt(C.nf+r).replace(/\.0$/,''):'',corte:C.corte?anyISO(h,C.corte+r):null,tecido:C.tecido?h.txt(C.tecido+r):'',cons,qtd:C.qtd?h.num(C.qtd+r):null,
-        ct:C.ct?h.num(C.ct+r):null,cost:C.cost?h.num(C.cost+r):null,avi:C.avi?h.num(C.avi+r):null,emb:C.emb?h.num(C.emb+r):null}); }
+      const C={modelo:col('MODELO'),desc:col('DESCRI'),nf:col('NF'),corte:col('DATA CORTE'),forn:col('FORNECEDOR'),tecido:col('TECIDO'),rsm:col('R$/M'),cons:col('CONSUMO'),qtd:col('QTD LOTE'),ct:col('CUSTO TECIDO'),cost:col('COSTURA'),avi:col('AVIAM'),emb:col('EMBAL'),
+        total:col('CUSTO TOTAL'),mk:col('MARKUP'),psug:col('PREÇO SUGERIDO'),pv:col('PREÇO VENDA'),mlote:col('METROS LOTE')};
+      const nn=a=>{ const v=h.num(a); return (v==null||v===''||isNaN(v))?null:v; };
+      if(C.modelo&&C.cons) for(let r=hr+1;r<=2000;r++){ const modelo=h.txt(C.modelo+r); if(!modelo) continue; const cons=h.num(C.cons+r); const nfv=C.nf?h.txt(C.nf+r).replace(/\.0$/,''):''; if(!(cons>0)&&!nfv) continue;
+        custo.push({modelo,tokens:tokensOf(modelo),desc:C.desc?h.txt(C.desc+r):'',nf:nfv,corte:C.corte?anyISO(h,C.corte+r):null,forn:C.forn?h.txt(C.forn+r):'',tecido:C.tecido?h.txt(C.tecido+r):'',
+        rsm:C.rsm?nn(C.rsm+r):null,cons:cons>0?cons:null,qtd:C.qtd?nn(C.qtd+r):null,
+        ct:C.ct?nn(C.ct+r):null,cost:C.cost?nn(C.cost+r):null,avi:C.avi?nn(C.avi+r):null,emb:C.emb?nn(C.emb+r):null,
+        total:C.total?nn(C.total+r):null,mk:C.mk?nn(C.mk+r):null,psug:C.psug?nn(C.psug+r):null,pvXl:C.pv?nn(C.pv+r):null,mlote:C.mlote?nn(C.mlote+r):null}); }
     }
   }
   /* OFICINA: R$/peça e defeitos por lote */
@@ -897,14 +920,75 @@ function tecStateChip(m){ const s=tecState(m);
  return `<span style="font:800 8.5px var(--mono);border-radius:5px;padding:1px 6px;background:${L[1]}">${L[0]}</span>`; }
 function upStamp(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) return '';
   const p=n=>String(n).padStart(2,'0'); return `↑ ${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`; }
-async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); }
+async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); try{ await custoSeed(r.custo||[]); }catch(e){ console.warn('custo seed',e&&e.code); } }
+const cuKey=c=>String(c.modelo||'').trim()+'|'+(c.corte||'');
+const cuId=k=>k.replace(/[^\w.-]+/g,'_');
+async function custoSeed(rows){ /* 1ª vez: absorve P.VENDA e MARKUP da planilha. Depois o ELO manda e a planilha não sobrescreve. */
+  const b=FB.writeBatch(FB.db); let n=0;
+  for(const c of rows){ const k=cuKey(c); if(CPV[k]) continue; if(c.pvXl==null&&c.mk==null) continue;
+    b.set(FB.doc(FB.db,'custo_elo',cuId(k)),{key:k,modelo:c.modelo,corte:c.corte||null,pv:c.pvXl??null,mk:c.mk??null,por:'planilha (semente)',at:new Date().toISOString()}); n++; }
+  if(n){ await b.commit(); toast('💰 '+n+' preço(s)/markup absorvido(s) da planilha (só na 1ª vez)'); } }
+async function custoSet(k,field,val){ const c=(ROB.custo||[]).find(x=>cuKey(x)===k); if(!c) return;
+  const cur=CPV[k]||{key:k,modelo:c.modelo,corte:c.corte||null,pv:null,mk:null};
+  const n=parseFloat(String(val).replace(/\./g,'').replace(',','.')); const v=(val===''||isNaN(n))?null:n;
+  if(field==='mk'&&v!=null&&(v<0.5||v>20)){ toast('markup fora do razoável (0,5 a 20)'); render(); return; }
+  if(field==='pv'&&v!=null&&(v<0||v>9999)){ toast('preço fora do razoável'); render(); return; }
+  const doc={...cur,[field]:v,por:whoName(),at:new Date().toISOString(),by:(FBUSER&&FBUSER.email)||''};
+  try{ await FB.setDoc(FB.doc(FB.db,'custo_elo',cuId(k)),doc); }catch(e){ toast('⚠ não salvou: '+(e&&e.code),5000); render(); } }
+function cuComp(c){ const miss=[]; if(c.rsm==null||c.cons==null) miss.push('tecido'); if(c.cost==null) miss.push('costura'); if(c.avi==null) miss.push('aviam'); if(c.emb==null) miss.push('embal'); return miss; }
+function cuCalc(c){ const e=CPV[cuKey(c)]||{}; const total=c.total!=null?c.total:([c.ct,c.cost,c.avi,c.emb].some(x=>x!=null)?[c.ct,c.cost,c.avi,c.emb].reduce((s,x)=>s+(x||0),0):null);
+  const mk=e.mk??c.mk??2.2; const psug=total!=null?total*mk:null; const pv=e.pv??null;
+  const lucro=(pv!=null&&total!=null)?pv-total:null; const mg=(lucro!=null&&pv)?lucro/pv:null;
+  return {total,mk,psug,pv,lucro,mg,miss:cuComp(c),por:e.por,at:e.at}; }
+function renderCustoTab(){ const all=(ROB.custo||[]).slice(); if(!all.length) return '<div class="empty big">Arraste o ROBERTO (.xlsx) com a aba CUSTO</div>';
+  const brl2=v=>v==null?'—':v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const q=CUQ.toLowerCase();
+  let rows=all.filter(c=>!q||String(c.modelo).toLowerCase().includes(q)||String(c.desc||'').toLowerCase().includes(q)||String(c.tecido||'').toLowerCase().includes(q)||String(c.nf||'').includes(q));
+  if(CUF==='inc') rows=rows.filter(c=>cuComp(c).length);
+  if(CUF==='semp') rows=rows.filter(c=>cuCalc(c).pv==null);
+  rows.sort((a,b)=>String(b.corte||'').localeCompare(String(a.corte||'')));
+  const t=all.length, comp=all.filter(c=>!cuComp(c).length).length, sp=all.filter(c=>cuCalc(c).pv==null).length;
+  const mgs=all.map(c=>cuCalc(c).mg).filter(x=>x!=null).sort((a,b)=>a-b); const mgMed=mgs.length?(mgs[mgs.length>>1]*100).toFixed(0)+'%':'—';
+  const ds=all.map(c=>c.corte).filter(Boolean).sort();
+  const tr=rows.map(c=>{ const k=cuKey(c), C=cuCalc(c); const par=C.miss.length; const kq=k.replace(/'/g,'');
+   return `<tr>
+    <td class="xl"><b>${esc(String(c.modelo))}</b></td><td class="xl cu-el" title="${esc(c.desc||'')}">${esc(c.desc||'')}</td>
+    <td class="xl cu-x">${esc(c.nf||'')}</td><td class="xl">${c.corte?dtBR(c.corte):'—'}</td><td class="xl cu-x">${esc(c.forn||'')}</td><td class="xl cu-el" title="${esc(c.tecido||'')}">${esc(c.tecido||'')}</td>
+    <td class="xl">${brl2(c.rsm)}</td><td class="xl">${c.cons??'—'}</td><td class="xl">${brl2(c.ct)}</td>
+    <td class="xl">${c.cost==null?'<span class="cub no">vazio</span>':brl2(c.cost)}</td><td class="xl">${c.avi==null?'<span class="cub no">vazio</span>':brl2(c.avi)}</td><td class="xl">${c.emb==null?'<span class="cub no">vazio</span>':brl2(c.emb)}</td>
+    <td class="calc">${brl2(C.total)} ${par?`<span class="cub pa" title="faltam: ${C.miss.join(', ')}">PARCIAL</span>`:'<span class="cub ok">OK</span>'}</td>
+    <td class="elo"><input value="${String(C.mk).replace('.',',')}" onchange="custoSet('${kq}','mk',this.value)" title="markup — editável só no ELO"></td>
+    <td class="calc">${brl2(C.psug)}${par?' <span class="cuprov">provisório</span>':''}</td>
+    <td class="elo"><input class="${C.pv!=null?'set':''}" value="${C.pv!=null?String(C.pv).replace('.',','):''}" placeholder="—" onchange="custoSet('${kq}','pv',this.value)" title="${C.por?('por '+esc(C.por)+(C.at?' · '+dtBR(C.at.slice(0,10)):'')):'ainda sem preço'}"></td>
+    <td class="calc">${brl2(C.lucro)}</td><td class="calc">${C.mg!=null?(C.mg*100).toFixed(0)+'%':'—'}</td>
+    <td class="xl">${c.qtd??'—'}</td><td class="xl cu-x">${c.mlote??'—'}</td></tr>`; }).join('');
+  return `<section class="card cu">
+   <h3 style="margin:0 0 2px">💰 CUSTO <small class="sm" style="font-weight:600">planilha CUSTO · ${ds.length?dtBR(ds[0])+' → '+dtBR(ds[ds.length-1]):''} · ${ROB.file?esc(ROB.file):''}${ROB.at?' ↑ '+dtBR(String(ROB.at).slice(0,10)):''}</small></h3>
+   <div class="cukpi">
+    <div class="cuk"><b>${t}</b><span>LINHAS (lotes)</span></div><div class="cuk"><b>${comp}</b><span>CUSTO COMPLETO</span></div>
+    <div class="cuk"><b style="color:#8a6d00">${t-comp}</b><span>PARCIAL (falta costura/aviam/embal)</span></div>
+    <div class="cuk"><b style="color:${sp?'#C0392B':'#2E7D32'}">${sp}</b><span>SEM PREÇO DE VENDA</span></div>
+    <div class="cuk"><b>${mgMed}</b><span>MARGEM mediana (com preço)</span></div></div>
+   <div class="cubar">
+    <input class="cusrch" placeholder="modelo · descrição · tecido · NF" value="${esc(CUQ)}" oninput="CUQ=this.value;render()">
+    <button class="tg ${CUF==='todos'?'on':''}" onclick="CUF='todos';render()">todos</button>
+    <button class="tg ${CUF==='inc'?'on':''}" onclick="CUF='inc';render()">só incompletos</button>
+    <button class="tg ${CUF==='semp'?'on':''}" onclick="CUF='semp';render()">sem preço</button>
+    <button class="tg" onclick="CUX=!CUX;render()">${CUX?'⤡ recolher':'⤢ expandir'} colunas</button>
+    <span class="sm" style="margin-left:auto;font:600 9.5px var(--mono)">${rows.length} linha(s)</span></div>
+   <div class="cutw ${CUX?'exp':''}"><table class="cut">
+    <tr><th>MODELO</th><th>DESCRIÇÃO</th><th class="cu-x">NF</th><th>CORTE</th><th class="cu-x">FORNEC.</th><th>TECIDO</th><th>R$/m c/imp</th><th>CONS.</th><th>C.TECIDO</th><th>COSTURA</th><th>AVIAM.</th><th>EMBAL.</th><th>C.TOTAL</th><th style="background:#8a6d00">MARKUP ✎</th><th>P.SUGERIDO</th><th style="background:#2E7D32">P.VENDA ✎</th><th>LUCRO</th><th>MARGEM</th><th>QTD</th><th class="cu-x">METROS</th></tr>
+    ${tr||'<tr><td colspan="20" style="padding:14px;color:#6b6459">nada com esse filtro</td></tr>'}</table></div>
+   <div class="culeg"><i style="background:#FBFAF6"></i>vem da planilha (o drop reescreve) <i style="background:#FFFDF0"></i>vive no ELO — o drop NÃO mexe (P.VENDA, MARKUP) <i style="background:#F3F5F9"></i>calculado no ELO · PARCIAL = costura/aviam/embal em branco → preço sugerido provisório · linha = modelo + data de corte</div>
+  </section>`; }
 async function cloudSaveTodo(){ const {db,doc,setDoc}=FB; await setDoc(doc(db,'elo','todo'),TODO); }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',estoque:t.estoque||0,usado:t.usado||0,status:(t.status==='esgotado'&&!(t.usado>0)&&!((t.cortes||[]).length)&&!t.sobras)?'estoque':(t.status||(t.estoque>0?'estoque':(((t.usado||0)>0||((t.cortes||[]).length))?'esgotado':'estoque'))),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null,obs:t.obs||'',imposto:t.imposto??null,precoImp:t.precoImp??null,qtdPedida:t.qtdPedida??null,dataPedido:t.dataPedido||null,prevEntrega:t.prevEntrega||null,qtdRecebida:t.qtdRecebida??null,rolosRec:t.rolosRec??null,inspecao:t.inspecao||'',cortes:t.cortes||[],devol:t.devol||[],sobras:!!t.sobras,pecas:t.pecas||[],sobraOut:t.sobraOut||null,corteOut:t.corteOut||null,pedidoId:t.pedidoId||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[]; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
+let FBUSER=null, FBUNSUB=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[], CPV={}, CUF='todos', CUQ='', CUX=false; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
   FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
-  FBUNSUB.push(onSnapshot(collection(db,'boletos'),s=>{ BOL=s.docs.map(d=>d.data()); render(); },e=>toast('Erro boletos: '+e.code)));   FBUNSUB.push(onSnapshot(collection(db,'corte_conf'),s=>{ CCONF=s.docs.map(d=>d.data()); render(); },e=>console.warn('corte_conf',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'cortes'),s=>{ CEVT=s.docs.map(d=>d.data()); render(); },e=>console.warn('cortes',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'fila_manual'),s=>{ FMAN=s.docs.map(d=>d.data()); render(); },e=>console.warn('fila_manual',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'msgs'),s=>{ MSG=s.docs.map(d=>d.data()).sort((a,b)=>String(a.at).localeCompare(String(b.at))); render(); },e=>console.warn('msgs',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
+  FBUNSUB.push(onSnapshot(collection(db,'boletos'),s=>{ BOL=s.docs.map(d=>d.data()); render(); },e=>toast('Erro boletos: '+e.code)));   FBUNSUB.push(onSnapshot(collection(db,'corte_conf'),s=>{ CCONF=s.docs.map(d=>d.data()); render(); },e=>console.warn('corte_conf',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'cortes'),s=>{ CEVT=s.docs.map(d=>d.data()); render(); },e=>console.warn('cortes',e&&e.code)));
+  FBUNSUB.push(onSnapshot(collection(db,'custo_elo'),s=>{ const m={}; s.docs.forEach(d=>{ const x=d.data(); if(x&&x.key) m[x.key]=x; }); CPV=m; render(); },e=>console.warn('custo_elo',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'fila_manual'),s=>{ FMAN=s.docs.map(d=>d.data()); render(); },e=>console.warn('fila_manual',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'msgs'),s=>{ MSG=s.docs.map(d=>d.data()).sort((a,b)=>String(a.at).localeCompare(String(b.at))); render(); },e=>console.warn('msgs',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'tecidos'),s=>{ TDOCS=s.docs.map(d=>d.data()); TEC={items:tecFromCloud(TDOCS),at:new Date().toISOString(),file:'app TECIDOS (nuvem)'}; render(); },e=>toast('Erro tecidos: '+e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'elo_deb'),s=>{ const models=s.docs.map(d=>d.data()).sort((a,b)=>+a.aba.replace(/\D/g,'')-+b.aba.replace(/\D/g,'')); DEB={models,at:DEB.at,file:DEB.file}; render(); },e=>toast('Erro DEBORA: '+e.code)));
   FBUNSUB.push(onSnapshot(doc(db,'elo','deb_meta'),s=>{ if(s.exists()){ const m=s.data(); DEB.at=m.at; DEB.file=m.file; render(); } }));
@@ -1319,7 +1403,7 @@ function renderRoberto(A){
         return `<div class="ofl" ${m?`onclick="openModel('${m.aba}')"`:''}>${m&&m.foto?`<img loading="lazy" decoding="async" src="${m.foto}">`:'<i class="noth"></i>'}<span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc||(m?m.nome:''))}</span><span class="dt ${d>0?'late':''}">${l.qtd?fmt(l.qtd)+' pçs · ':''}saiu ${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${d>0?` · <b>+${d}d</b>`:''}</span></div>`;}).join('')}
     </div>`;}).join('')||'<div class="empty">nenhum lote na oficina</div>'}</div>${WIDE?'':renderVelocidade()}`,'ordenado por atraso')}
     ${K('chk','CHECK LIST',A.semFicha.length?'r':'',`${todoPend}<small>/${todoAll.length}</small>`,'pendentes hoje',A.semFicha.length?`${A.semFicha.length} lote(s) sem ficha DEBORA`:'todos os lotes com ficha',A.semFicha.length?'late':'',()=>renderTodo(A,{prep,par,late,ofi}))}
-    ${cv?K('cv','💰 CUSTO VERÃO','g',`R$ ${brl(cv.total.media)}`,`média/pç · ${cv.n} modelos`,'corte desde '+dtBR(VERAO_INI),'',()=>((window.innerWidth>=980&&cv)?`<div class="cvcards">${[['🧵 TECIDO',cv.tec],['🪡 COSTURA',cv.cost],['🔘 AVIAM.+EMB.',cv.extra],['💰 TOTAL',cv.total]].map(([l,v])=>v&&v.media!=null?`<div class="cvc"><span class="tag2">${l}</span><b>R$ ${brl(v.media)}</b><small>mediana R$ ${brl(v.mediana)}${v.pond!=null?' · pond. R$ '+brl(v.pond):''}</small></div>`:'').join('')}</div>`:'')+renderCustoVerao(cv)):`<div class="kc"><span class="ktab g">💰 CUSTO VERÃO</span><div class="khead"><div><em>—</em><div class="l1">re-arraste o ROBERTO (.xlsx)</div><div class="l2">&nbsp;</div></div></div></div>`}
+    ${cv?K('cv','💰 MÉDIA/PÇ','g',`R$ ${brl(cv.total.media)}`,`média/pç · ${cv.n} modelos`,'corte desde '+dtBR(VERAO_INI),'',()=>((window.innerWidth>=980&&cv)?`<div class="cvcards">${[['🧵 TECIDO',cv.tec],['🪡 COSTURA',cv.cost],['🔘 AVIAM.+EMB.',cv.extra],['💰 TOTAL',cv.total]].map(([l,v])=>v&&v.media!=null?`<div class="cvc"><span class="tag2">${l}</span><b>R$ ${brl(v.media)}</b><small>mediana R$ ${brl(v.mediana)}${v.pond!=null?' · pond. R$ '+brl(v.pond):''}</small></div>`:'').join('')}</div>`:'')+renderCustoVerao(cv)):`<div class="kc"><span class="ktab g">💰 MÉDIA/PÇ</span><div class="khead"><div><em>—</em><div class="l1">re-arraste o ROBERTO (.xlsx)</div><div class="l2">&nbsp;</div></div></div></div>`}
   </div>`;
   if(!WIDE) return inner;
   const railR=(k,lbl,val,sub,cls)=>`<button class="brc ${cls||''}" aria-selected="${RSEL===k}" onclick="RSEL='${k}';OFSEL=null;RFICHA=null;render()"><span class="ph">${lbl}</span><div class="big">${val}</div><div class="pcs">${sub}</div></button>`;
@@ -1329,7 +1413,8 @@ function renderRoberto(A){
     +railR('fila','✂ FILA',filaR.length+FMAN.length,`${prep.length} risco ✓ · ${wait.length} aguardando`,'gold')
     +railR('agua','⏳ AGUARDANDO',CCONF.length+cloudPend.length,`✂ ${CCONF.length} conf. · 📦 ${cloudPend.length+par.length} aguard. oficina`)
     +railR('ofi','🏭 NA OFICINA',ofi.length,`${Object.keys(byOf).length} oficina(s)${late.length?' · ⚠'+late.length:''}`,late.length?'red':'')
-    +(cv?railR('cv','💰 MÉDIA/PÇ','R$ '+brl(cv.total.media),cv.n+' modelos','green mini')+railR('cv','💰 CUSTO VERÃO','','corte desde '+dtBR(VERAO_INI),'green mini'):'');
+    +(cv?railR('cv','💰 MÉDIA/PÇ','R$ '+brl(cv.total.media),cv.n+' modelos · médias + gráfico','green mini'):'')
+    +((ROB.custo||[]).length?railR('cu','💰 CUSTO',(ROB.custo||[]).length,`${(ROB.custo||[]).filter(c=>!cuComp(c).length).length} completos · ${(ROB.custo||[]).filter(c=>cuCalc(c).pv==null).length} sem preço`,'green mini'):'');
   let aside='';
   if(RFICHA){ const fh=robFichaHTML(RFICHA.kind,RFICHA.key); if(fh) aside=`<aside class="bficha tficha"><button class="x tfx" onclick="RFICHA=null;render()">✕</button>${fh}</aside>`; }
   if(!aside&&RSEL==='ofi'&&OFSEL&&byOf[OFSEL]){ const ls=byOf[OFSEL]; const lt2=ls.filter(l=>l.prev&&l.prev<TODAY);
@@ -1363,6 +1448,7 @@ function renderRoberto(A){
       </section></div>
       ${msgThread('of:'+OFSEL,'ofI',`ofMsgSend('${OFSEL}')`)}</aside>`; }
   if(RSEL==='rel') return `<div class="bwrap tw"><nav class="brail">${rail}</nav><div class="bmid robwide">${renderRel()}</div></div>`;
+  if(RSEL==='cu') return `<div class="bwrap tw"><nav class="brail">${rail}</nav><div class="bmid robwide">${renderCustoTab()}</div></div>`;
   return `<div class="bwrap tw ${aside?'has3':''}"><nav class="brail">${rail}</nav><div class="bmid robwide">${inner}</div>${aside}</div>`;
 }
 
