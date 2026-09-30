@@ -519,7 +519,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.18a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.18b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -878,13 +878,16 @@ async function cloudSaveDeb(models,fname){
   const {db,collection,doc,getDocs,writeBatch}=FB; const at=new Date().toISOString();
   const old=await getDocs(collection(db,'elo_deb')); const keep=new Set(models.map(m=>m.aba));
   let b=writeBatch(db),n=0; const flush=async()=>{ await b.commit(); b=writeBatch(db); n=0; };
-  for(const d of old.docs){ if(!keep.has(d.id)){ b.delete(d.ref); if(++n>=400) await flush(); } }
+  /* P0: nunca apagar por ausência na planilha — só marcar p/ conferência */
+  for(const d of old.docs){ if(keep.has(d.id)) continue; const cur=d.data()||{};
+    if(!cur.foraPlan){ b.set(d.ref,{...cur,foraPlan:{file:fname,at}}); if(++n>=400) await flush(); } }
   for(const m of models){ const prev=(DEB.models||[]).find(x=>x.aba===m.aba);
     let out;
     if(prev&&prev.edited){
       if(!prev.imp){ out={...prev,pendPlan:{file:fname,at,diffs:debDiff(prev,m).slice(0,40)}}; }
       else { out=debThreeWay(prev,m); }
-    } else { out={...m, items:(m.items||[]).map((it,i)=>({...it,rid:'p'+i})), imp:debImpOf(m)}; }
+    } else if(prev&&prev.origem==='elo'){ out={...prev, pendPlan:{file:fname,at,diffs:debDiff(prev,m).slice(0,40)}}; }
+    else { out={...m, items:(m.items||[]).map((it,i)=>({...it,rid:'p'+i})), imp:debImpOf(m)}; }
     b.set(doc(db,'elo_deb',m.aba),out); if(++n>=400) await flush(); }
   b.set(doc(db,'elo','deb_meta'),{at,file:fname,count:models.length,by:FBUSER?FBUSER.email:''}); await b.commit();
 }
@@ -1567,7 +1570,8 @@ function debEdit(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
  const rows=(m.items||[]).map((it,i)=>({rid:it.rid||('p'+i),etapa:it.etapa||'',item:it.item||'',resp:it.resp||'',data:it.data||'',status:it.status||'',obs:it.obs||''}));
  __DED={aba, snap:JSON.parse(JSON.stringify({qt:m.qt??null,prazo:m.prazo||null,ini:m.ini||null,nf:m.nf||'',items:rows})), 
         hdr:{qt:m.qt??null,prazo:m.prazo||null,ini:m.ini||null,nf:m.nf||''}, rows:JSON.parse(JSON.stringify(rows)),
-        tecSel:m.tecSel||null, conflicts:(m.conflicts||[]).slice(), pendPlan:m.pendPlan||null};
+        tecSel:m.tecSel||null, snapTec:m.tecSel?{tec:m.tecSel.tec,tecAt:m.tecSel.tecAt}:null,
+        conflicts:(m.conflicts||[]).slice(), pendPlan:m.pendPlan||null};
  dedDraw(); }
 function dedDraw(){ const D=__DED; const m=DEB.models.find(x=>x.aba===D.aba)||{};
  const grp={}; D.rows.forEach(r=>{ (grp[r.etapa||'—']=grp[r.etapa||'—']||[]).push(r); });
@@ -1619,7 +1623,9 @@ async function debSaveTx(){ const D=__DED; if(!D) return;
        if(mv!==b0){ if(sv!==b0&&sv!==mv){ confs.push({campo:r.rid+'.'+c,rid:r.rid,col:c,painel:sv,planilha:mv}); } else t[c]=r[c]; } }); });
    out.items=sIt;
    out.edited=true; out.editedAt=now; out.editedBy=(FBUSER&&FBUSER.email)||'';
-   if(D.tecSel) out.tecSel=D.tecSel;
+   { const b0=D.snapTec||null, mv=D.tecSel||null, sv=(srv&&srv.tecSel)||null;
+     const k=x=>x?(String(x.tec||'')+'|'+String(x.tecAt||'')):'';
+     if(k(mv)!==k(b0)){ if(k(sv)!==k(b0)&&k(sv)!==k(mv)){ confs.push({campo:'tecido',painel:(sv&&sv.tec)||'—',planilha:(mv&&mv.tec)||'—'}); } else out.tecSel=mv; } }
    out.conflicts=(D.resolved?[]:(out.conflicts||[])).concat([]);
    if(D.resolved&&!D.conflicts.length) delete out.pendPlan;
    if(confs.length) out.conflicts=(out.conflicts||[]).concat(confs.filter(c=>!(out.conflicts||[]).some(x=>x.campo===c.campo)));
