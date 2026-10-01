@@ -1,6 +1,9 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EXPRIM</title>
+<link rel="manifest" href="exprim.webmanifest">
+<meta name="theme-color" content="#0E1B2E">
+<link rel="apple-touch-icon" href="exprim-icon-192.png">
 <style>
 :root{--bg:#0E1B2E;--card:#152540;--line:#24344E;--gold:#D4AF37;--ink:#E8EDF5;--ink2:#8FA1BC;--verde:#82C45A;--cream:#1D2E4A}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -38,4 +41,5 @@ function mark(u){try{localStorage.setItem('exprim_portal',u);}catch(e){}}
   return;}
  if(last==='painel.html'||last==='elo.html')location.replace(last);
 })();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});
 </script></body></html>
