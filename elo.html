@@ -615,7 +615,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.21a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.21b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -772,6 +772,7 @@ async function openBook(zip){
   };
   return {SST, sheets, order, cellsOf:async name=>{const x=await readT(sheets[name]); return x?parseCells(x):null;}, rawOf:async name=>readT(sheets[name]), photoOf};
 }
+async function shrinkDataUrl(dataUrl,max){ try{ const b=await (await fetch(dataUrl)).blob(); return await resizeBlob(b,max); }catch(e){ return null; } }
 async function resizeBlob(blob,max=440){
   if(typeof createImageBitmap==='undefined') return null;
   try{ const bm=await createImageBitmap(blob); const k=Math.min(1,max/Math.max(bm.width,bm.height)); const c=document.createElement('canvas'); c.width=Math.round(bm.width*k); c.height=Math.round(bm.height*k); c.getContext('2d').drawImage(bm,0,0,c.width,c.height); return c.toDataURL('image/jpeg',.78); }catch(e){ return null; }
@@ -814,6 +815,7 @@ async function parseDebora(book){
     const it=k=>m.items.find(x=>x.item.toUpperCase().startsWith(k));
     m.risco=!!(it('RISCO')&&/conclu/i.test(it('RISCO').status));
     m.foto=await book.photoOf(m.aba,7,8,12);
+    if(m.concl&&m.foto) m.foto=(await shrinkDataUrl(m.foto,160))||m.foto;
     m.enfesto=!!(it('ENFESTO')&&/conclu/i.test(it('ENFESTO').status));
   }
   return models.filter(m=>m.nome);
@@ -1021,7 +1023,11 @@ function tecStateChip(m){ const s=tecState(m);
  return `<span style="font:800 8.5px var(--mono);border-radius:5px;padding:1px 6px;background:${L[1]}">${L[0]}</span>`; }
 function upStamp(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) return '';
   const p=n=>String(n).padStart(2,'0'); return `↑ ${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`; }
-async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; await setDoc(doc(db,'elo','rob'),r); try{ await custoSeed(r.custo||[]); }catch(e){ console.warn('custo seed',e&&e.code); } }
+const ROB_LIMIT=1048576;
+async function cloudSaveRob(r){ const {db,doc,setDoc}=FB; r.by=FBUSER?FBUSER.email:''; const kb=Math.round(JSON.stringify(r).length/1024); const pct=Math.round(kb*1024/ROB_LIMIT*100); window.__robKB=kb;
+  if(pct>=100){ toast(`❌ ROBERTO não salvo: documento ${kb} KB passa do limite de 1.024 KB — me avise p/ dividir por lote`,10000); throw new Error('doc elo/rob acima de 1 MB'); }
+  await setDoc(doc(db,'elo','rob'),r);
+  setTimeout(()=>toast(pct>=70?`⚠ documento ROBERTO em ${kb} KB (${pct}% do limite de 1 MB) — hora de dividir por lote`:`☁ ROBERTO salvo · ${kb} KB (${pct}% do limite)`,pct>=70?9000:5000),1200); try{ await custoSeed(r.custo||[]); }catch(e){ console.warn('custo seed',e&&e.code); } }
 const cuKey=c=>String(c.modelo||'').trim()+'|'+(c.corte||'');
 const cuId=k=>k.replace(/[^\w.-]+/g,'_');
 async function custoSeed(rows){ /* 1ª vez: semente (P.VENDA/MARKUP). Sempre: 3 vias em COSTURA/AVIAM/EMBAL contra a base (valor da planilha no último drop). */
@@ -1771,8 +1777,24 @@ function isLucas(){ return !!(FBUSER&&FBUSER.email&&FBUSER.email.startsWith('exp
 function croLivres(){ return CRO.filter(c=>!c.usedBy); }
 function croRailBtn(){ const l=croLivres().length; return `<button class="brc ${DFASE==='cro'?'gold':''}" aria-selected="${DFASE==='cro'}" onclick="DFASE='cro';DMSEL=null;render()"><span class="ph">📷 CROQUIS</span><div class="big">${l}</div><div class="pcs">livres · ${CRO.length-l} usado(s)</div></button>`; }
 function croAddBar(){ if(!isLucas()) return `<div class="pvnote">📷 Só o Lucas adiciona fotos e cria modelos aqui.</div>`;
-  return `<div class="addbar"><button class="btn" onclick="croPick(true)">📷 TIRAR FOTO</button><button class="btn sec" onclick="croPick(false)">🖼 DA GALERIA</button><span class="lk">croqui ou foto real · reduzida p/ 1024px</span></div>`; }
-function croCard(c){ return `<div class="card ${c.usedBy?'used':''} ${CSEL===c.id?'dsel':''}" onclick="croShow('${c.id}')"><img loading="lazy" decoding="async" src="${c.img}" alt=""><div class="st">${c.usedBy?`✓ USADO → ${esc(c.usedBy)}`:'LIVRE'} · ${dtBR(c.at)}</div><div class="memo">${esc(c.memo)||'<i style="color:var(--ink2)">sem memo</i>'}</div></div>`; }
+  return `<div class="addbar"><button class="btn" onclick="croPick(true)">📷 TIRAR FOTO</button><button class="btn sec" onclick="croPick(false)">🖼 DA GALERIA</button><span class="lk">croqui ou foto real · 1024px guardada à parte, miniatura 300px aqui</span><button class="tg" style="margin-left:auto" onclick="fotoCompact()" title="Reduz fotos de modelos concluídos p/ 160px e separa originais dos croquis antigos">🗜 compactar fotos</button></div>`; }
+async function fotoCompact(){ if(!isLucas()) return; if(window.__fcBusy) return; window.__fcBusy=true;
+  const cand=DEB.models.filter(m=>m.concl&&m.foto&&m.foto.length>40000); const old=CRO.filter(c=>c.img&&!c.thumb);
+  if(!cand.length&&!old.length){ toast('✓ nada p/ compactar'); window.__fcBusy=false; return; }
+  if(!confirm(`Compactar ${cand.length} foto(s) de modelos concluídos (→160px) e ${old.length} croqui(s) antigo(s) (miniatura + original à parte)?`)){ window.__fcBusy=false; return; }
+  let n=0, antes=0, depois=0; pgShow('🗜 compactando…');
+  try{
+    for(const m of cand){ const s=await shrinkDataUrl(m.foto,160); if(!s||s.length>=m.foto.length) continue; antes+=m.foto.length; depois+=s.length; await FB.setDoc(FB.doc(FB.db,'elo_deb',m.aba),{foto:s},{merge:true}); m.foto=s; n++; }
+    for(const c of old){ const th=await shrinkDataUrl(c.img,300); if(!th) continue; antes+=c.img.length; depois+=th.length; const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'cro_img',c.id),{id:c.id,img:c.img,at:c.at||null}); const nc={...c,thumb:th}; delete nc.img; b.set(FB.doc(FB.db,'cro_elo',c.id),nc); await b.commit(); CROIMG[c.id]=c.img; c.thumb=th; delete c.img; n++; }
+    pgHide(); render(); toast(`🗜 ${n} foto(s) compactada(s): ${Math.round(antes*3/4/1024)} KB → ${Math.round(depois*3/4/1024)} KB`,8000);
+  }catch(e){ pgHide(); toast('⚠ '+(e&&(e.code||e.message)),6000); }
+  window.__fcBusy=false; }
+const CROIMG={};
+function croThumb(c){ return c.thumb||c.img||''; }
+async function croFull(id){ if(CROIMG[id]) return CROIMG[id]; const c=CRO.find(x=>x.id===id); if(c&&c.img&&!c.thumb){ CROIMG[id]=c.img; return c.img; }
+  try{ const s=await FB.getDoc(FB.doc(FB.db,'cro_img',id)); const d=s&&s.exists&&s.exists()?s.data():null; if(d&&d.img){ CROIMG[id]=d.img; return d.img; } }catch(e){} return c?croThumb(c):''; }
+function croLoadBig(id){ croFull(id).then(src=>{ const el=document.getElementById('croBig_'+id); if(el&&src) el.src=src; }); }
+function croCard(c){ return `<div class="card ${c.usedBy?'used':''} ${CSEL===c.id?'dsel':''}" onclick="croShow('${c.id}')"><img loading="lazy" decoding="async" src="${croThumb(c)}" alt=""><div class="st">${c.usedBy?`✓ USADO → ${esc(c.usedBy)}`:'LIVRE'} · ${dtBR(c.at)}</div><div class="memo">${esc(c.memo)||'<i style="color:var(--ink2)">sem memo</i>'}</div></div>`; }
 function croGridHTML(){ return `<div class="kgrid cro">${CRO.map(croCard).join('')||'<div class="empty">nenhum croqui — tire a primeira foto</div>'}</div>`; }
 function croWideHTML(lanes,of){
   const railK=lanes.map(fz=>{ const r2=of(fz); const pcs=r2.reduce((s,r)=>s+(r.m.qt||0),0); return `<button class="brc ${fz==='Corte'?'gold':''}" aria-selected="false" onclick="DFASE='${fz}';DMSEL=null;render()"><span class="ph">${fz.toUpperCase()}</span><div class="big">${r2.length}</div><div class="pcs">${fmt(pcs)} pçs</div></button>`; }).join('');
@@ -1787,23 +1809,25 @@ function croRefresh(){ const c=CRO.find(x=>x.id===CSEL); if(!c){ CSEL=null; rend
   else { openMod(`📷 CROQUI · ${dtBR(c.at)}`,croPanelHTML(c),'',false); } }
 function croPanelHTML(c){ return CMODE==='form'?croFormHTML(c):CMODE==='memo'?croMemoHTML(c):croViewHTML(c); }
 function croViewHTML(c){ const me=isLucas();
-  return `<div class="fp"><h3>CROQUI · ${dtBR(c.at)}${c.by?` · ${esc(c.by)}`:''}</h3><img class="big" src="${c.img}" alt="">
+  setTimeout(()=>croLoadBig(c.id),0);
+  return `<div class="fp"><h3>CROQUI · ${dtBR(c.at)}${c.by?` · ${esc(c.by)}`:''}</h3><img class="big" id="croBig_${c.id}" src="${CROIMG[c.id]||croThumb(c)}" alt="">
   <div class="kv"><b>MEMO</b><span>${esc(c.memo)||'—'}</span><b>SITUAÇÃO</b><span>${c.usedBy?`✓ usado → <a href="#" onclick="closeMod();openModel('${esc(c.usedBy)}');return false">${esc(c.usedBy)}</a>`:'livre'}</span>${c.kb?`<b>TAMANHO</b><span>${c.kb} KB</span>`:''}</div>
   ${me?`<div class="acts">${c.usedBy?'':`<button class="btn" onclick="croStartForm('${c.id}')">＋ CRIAR MODELO</button>`}<button class="btn sec" onclick="CMODE='memo';croRefresh()">✏ MEMO</button>${c.usedBy?'':`<button class="btn danger" onclick="croDel('${c.id}')">🗑 APAGAR</button>`}</div>`:''}</div>`; }
-function croMemoHTML(c){ return `<div class="fp"><h3>MEMO DO CROQUI</h3><img class="big" src="${c.img}" alt="" style="max-height:30vh">
+function croMemoHTML(c){ return `<div class="fp"><h3>MEMO DO CROQUI</h3><img class="big" src="${croThumb(c)}" alt="" style="max-height:30vh">
   <label>MEMO (o que é, ideia de tecido, obs.)</label><textarea id="cMemo">${esc(c.memo)}</textarea>
   <div class="acts"><button class="btn" onclick="croSaveMemo('${c.id}')">SALVAR</button><button class="btn sec" onclick="CMODE='view';croRefresh()">CANCELAR</button></div></div>`; }
 async function croSaveMemo(id){ const c=CRO.find(x=>x.id===id); if(!c) return; const memo=(document.getElementById('cMemo').value||'').trim();
   try{ await FB.setDoc(FB.doc(FB.db,'cro_elo',id),{...c,memo}); c.memo=memo; CMODE='view'; croRefresh(); toast('✓ memo salvo'); }catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
 async function croDel(id){ if(!confirm('Apagar este croqui?')) return;
-  try{ await FB.deleteDoc(FB.doc(FB.db,'cro_elo',id)); CSEL=null; CMODE='view'; if(window.innerWidth<980) closeMod(); render(); toast('🗑 croqui apagado'); }catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
+  try{ await FB.deleteDoc(FB.doc(FB.db,'cro_elo',id)); try{ await FB.deleteDoc(FB.doc(FB.db,'cro_img',id)); }catch(e){} delete CROIMG[id]; CSEL=null; CMODE='view'; if(window.innerWidth<980) closeMod(); render(); toast('🗑 croqui apagado'); }catch(e){ toast('⚠ '+(e&&(e.code||e.message)),5000); } }
 function croPick(camera){ if(!isLucas()) return; const i=document.createElement('input'); i.type='file'; i.accept='image/*'; if(camera) i.setAttribute('capture','environment');
   i.onchange=async()=>{ const f=i.files[0]; if(!f) return; toast('⏳ comprimindo foto…',15000);
     let d=await resizeBlob(f,1024); if(!d){ toast('⚠ não consegui ler a imagem'); return; }
     if(d.length>900000){ d=await resizeBlob(f,720); } if(!d||d.length>900000){ toast('⚠ foto muito grande mesmo reduzida — tente outra'); return; }
+    const th=(await resizeBlob(f,300))||d;
     const id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); const kb=Math.round(d.length*3/4/1024);
-    const c={id,img:d,memo:'',at:new Date().toISOString(),by:whoName(),usedBy:null,kb};
-    try{ await FB.setDoc(FB.doc(FB.db,'cro_elo',id),c); if(!CRO.some(x=>x.id===id)) CRO.unshift(c); CSEL=id; CMODE='memo'; if(window.innerWidth>=980) DFASE='cro'; croRefresh(); toast(`📷 foto guardada · ${kb} KB`); }
+    const c={id,thumb:th,memo:'',at:new Date().toISOString(),by:whoName(),usedBy:null,kb};
+    try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'cro_img',id),{id,img:d,at:c.at}); b.set(FB.doc(FB.db,'cro_elo',id),c); await b.commit(); CROIMG[id]=d; if(!CRO.some(x=>x.id===id)) CRO.unshift(c); CSEL=id; CMODE='memo'; if(window.innerWidth>=980) DFASE='cro'; croRefresh(); toast(`📷 foto guardada · ${kb} KB`); }
     catch(e){ toast('⚠ '+(e&&(e.code||e.message)),6000); } };
   i.click(); }
 function croNextM(){ const n=Math.max(0,...DEB.models.map(m=>+String(m.aba||'').replace(/\D/g,'')||0)); return 'M'+(n+1); }
@@ -1813,7 +1837,7 @@ function croCanGo(){ return !!(NMF&&!croCodeExists(NMF.cod)&&NMF.tec&&NMF.tec.te
 function croWhy(){ const w=[]; if(croCodeExists(NMF.cod)) w.push('código duplicado'); if(!(NMF.tec&&NMF.tec.tec)) w.push('tecido'); if(!NMF.normal&&!NMF.plus) w.push('tamanho'); return w.length?'falta: '+w.join(' · '):'pronto p/ confirmar'; }
 function croFormHTML(c){ const ex=croCodeExists(NMF.cod); const nm=croNextM();
   return `<div class="fp"><h3>NOVO MODELO · a partir do croqui</h3>
-  <div style="display:flex;gap:10px;align-items:center"><img src="${c.img}" alt="" style="width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><div><div class="sm">número automático</div><span class="mauto">${nm}</span><div class="hint">próximo depois do maior M na nuvem</div></div></div>
+  <div style="display:flex;gap:10px;align-items:center"><img src="${croThumb(c)}" alt="" style="width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><div><div class="sm">número automático</div><span class="mauto">${nm}</span><div class="hint">próximo depois do maior M na nuvem</div></div></div>
   <label>CÓDIGO (opcional — pode entrar depois, na etapa Design)</label><input type="text" id="fCod" value="${esc(NMF.cod)}" placeholder="código do modelo" oninput="NMF.cod=this.value;croFormRefresh()" autocapitalize="characters" autocomplete="off">
   <div class="hint ${ex?'bad':NMF.cod.trim()?'ok':''}" id="fCodH">${ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'sem código por enquanto · duplicado bloqueia'}</div>
   <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`:'🧵 escolher tecido…'}</button>
@@ -1832,7 +1856,7 @@ async function croConfirm(cid){ if(!croCanGo()||!isLucas()) return; const c=CRO.
       aba=croNextM(); let ref=FB.doc(FB.db,'elo_deb',aba); let s=await tx.get(ref);
       if(s.exists()){ aba='M'+(+aba.slice(1)+1); ref=FB.doc(FB.db,'elo_deb',aba); s=await tx.get(ref); if(s.exists()) throw new Error('número M em uso — recarregue e tente de novo'); }
       const cref=FB.doc(FB.db,'cro_elo',cid); const cs=await tx.get(cref); if(cs.exists()&&cs.data().usedBy) throw new Error('este croqui já virou o modelo '+cs.data().usedBy);
-      const m={aba,nome:cod?`${cod} - ${desc||'NOVO MODELO'}`:(desc||'NOVO MODELO'),codigo:cod,forn:'',qt:+NMF.qt||null,qtProv:true,ini:TODAY,prazo:addDays(TODAY,PRAZO_DIAS.Normal),term:null,prog:0,status:'Em andamento',concl:false,fase:'Design',faseVazia:false,novorep:'',nf:(NMF.tec&&NMF.tec.nf)||'',items:tlTemplate(),foto:c.img,prazoTipo:'Normal',prazoAj:false,log:[{at:now,who:whoName(),t:'modelo criado a partir do croqui'}],
+      const m={aba,nome:cod?`${cod} - ${desc||'NOVO MODELO'}`:(desc||'NOVO MODELO'),codigo:cod,forn:'',qt:+NMF.qt||null,qtProv:true,ini:TODAY,prazo:addDays(TODAY,PRAZO_DIAS.Normal),term:null,prog:0,status:'Em andamento',concl:false,fase:'Design',faseVazia:false,novorep:'',nf:(NMF.tec&&NMF.tec.nf)||'',items:tlTemplate(),foto:croThumb(c),prazoTipo:'Normal',prazoAj:false,log:[{at:now,who:whoName(),t:'modelo criado a partir do croqui'}],
         origem:'elo',criadoEm:now,criadoPor:whoName(),criadoBy:(FBUSER&&FBUSER.email)||'',tecSel:{...NMF.tec,por:whoName(),at:now},sizes,memo:NMF.memo||'',cro:cid,edited:false};
       tx.set(ref,m); tx.set(cref,{...(cs.exists()?cs.data():c),usedBy:aba,usedAt:now}); });
     c.usedBy=aba; NMF=null; CMODE='view'; CSEL=null; if(window.innerWidth<980) closeMod(); DFASE='Design'; DMSEL=aba; render();
@@ -1899,7 +1923,8 @@ function modFichaHTML(aba){
       ${l.tecido?`<div class="sm">tecido: ${esc(l.tecido)}</div>`:''}${l.obs?`<div class="sm">${esc(l.obs)}</div>`:''}</div>`).join('')
     :`<div class="empty">${r.how==='semcodigo'?'sem código — o Roberto só registra depois que o modelo ganha código':r.how==='anterior'?'só há produção anterior deste base (outro episódio)':r.elo==='preparando'?'risco pronto — aguardando o Roberto cortar':'ainda não chegou ao CONTROLE do Roberto'}</div>`;
   const fam=DEB.models.filter(x=>x!==m&&x.codigo&&baseOf(x.codigo)===baseOf(m.codigo)&&m.codigo);
-  const phModel=m.foto?`<img loading="lazy" decoding="async" src="${m.foto}" alt="">`:`<div class="noph">sem foto na ficha</div>`;
+  if(m.cro) setTimeout(()=>croLoadBig(m.cro),0);
+  const phModel=m.foto?`<img loading="lazy" decoding="async" ${m.cro?`id="croBig_${m.cro}"`:''} src="${(m.cro&&CROIMG[m.cro])||m.foto}" alt="">`:`<div class="noph">sem foto na ficha</div>`;
   const phTec=tecs.length?(tecs[0].foto?`<img loading="lazy" decoding="async" src="${tecs[0].foto}" alt="">`:`<div class="noph">${tecs[0].code} sem foto</div>`):`<div class="noph">${!TEC.items.length?'arraste o ESTOQUE_TECIDOS':(m.nf?`NF ${esc(m.nf)} sem aba T`:'sem NF na ficha')}</div>`;
   const capTec=tecs.length?`${tecs.map(t=>t.code).join(' · ')} · ${esc(tecs[0].nome)}${tecs[0].estoque?` · ${fmt(Math.round(tecs[0].estoque))} m`:''}`:'tecido';
   const fotos=`<div class="fotos"><figure>${phModel}<figcaption>modelo${m.codigo?` · ${m.codigo}`:''}</figcaption></figure><figure ${tecs.length?`class="lnkf" onclick="openTecido('${tecs[0].code}')"`:''}>${phTec}<figcaption>${capTec}</figcaption></figure></div>`;
@@ -2954,10 +2979,13 @@ function eloSnapshot(){ /* P0: whitelist — SÓ progresso de produção no doc 
  const mods=(DEB.models||[]).map(m=>({aba:m.aba,codigo:m.codigo||'',nome:m.nome||'',fase:m.fase||'',prog:m.prog??null,
    qt:m.qt??null,ini:m.ini||null,prazo:m.prazo||null,concl:!!m.concl,risco:!!m.risco}));
  const lots=(ROB.lots||[]).map(l=>({modelo:l.modelo,desc:l.desc||'',qtd:l.qtd??null,corte:l.corte||null,
-   saida:l.saida||null,prev:l.prev||null,real:l.real||null,oficina:l.oficina||''}));
+   saida:l.saida||null,prev:l.prev||null,real:l.real||null,oficina:l.oficina||'',
+   ...(Array.isArray(l.tokens)&&l.tokens.length?{tokens:l.tokens.slice()}:{}),
+   ...(String(l.status||'').trim()?{status:String(l.status).trim()}:{}) }));
+ window.__snapStat={com:lots.filter(l=>l.status).length,total:lots.length};
  return { v:2, escopo:'whitelist-p0',
   debora:{ file:DEB.file||null, at:DEB.at||null, models:mods },
-  roberto:{ file:ROB.file||null, at:ROB.at||null, by:ROB.by||null, lots:lots } }; }
+  roberto:{ file:ROB.file||null, at:ROB.at||null, lots:lots } }; }
 function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
 async function publishSnap(force){
  try{ if(!FBUSER||!FB||!FB.setDoc) return;
@@ -2965,7 +2993,7 @@ async function publishSnap(force){
   if(!force&&hh===__pubH) return;
   await FB.setDoc(FB.doc(FB.db,'public','elo'),{v:1,geradoEm:new Date().toISOString(),bytes:j.length,json:j});
   __pubH=hh;
-  if(force) toast('☁ snapshot público atualizado ('+Math.round(j.length/1024)+' KB)');
+  { const s=window.__snapStat||{com:0,total:0}; console.log('[snapshot] status em '+s.com+'/'+s.total+' lotes · '+Math.round(j.length/1024)+' KB'); if(force) toast('☁ snapshot público atualizado · '+Math.round(j.length/1024)+' KB · status em '+s.com+'/'+s.total+' lotes',5000); }
  }catch(e){ if(force) toast('snapshot: '+(e&&e.code),4000); } }
 function exportJson(){ publishSnap(true); const blob=new Blob([JSON.stringify({exportado:new Date().toISOString(),tecidos:TDOCS,pedidos:PED})],{type:'application/json'}); dl(blob,'tecidos_backup_'+todayISO()+'.json'); }
 async function exportXlsx(){ toast('Gerando…'); const X=await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mjs').catch(()=>null); if(!X){ toast('Sem internet p/ baixar o gerador de xlsx'); return; }
