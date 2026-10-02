@@ -620,11 +620,25 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 .dlist img{width:44px;height:56px;object-fit:cover;border-radius:5px;background:#EFE9DD}
 .kc.desck .ktab{background:#5B554B;color:#fff}
 @media(max-width:860px){.tlit{grid-template-columns:16px minmax(0,1fr) 26px 18px}}
+/* ===== v9.22b ficha/cartão fixos · ! problemas ===== */
+.bang{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font:900 12px var(--mono);cursor:pointer;flex:none}
+.fh2{grid-template-columns:1fr;padding:12px 46px 8px 16px}
+.fh2 .tt{display:flex;align-items:center;gap:8px}
+.fh2 .tt .mc.big{flex:1}
+.kv2{grid-template-columns:1fr 1fr}
+.kv2 small{font:700 9px var(--mono);color:#9a5a00;margin-left:6px}
+.tlit.d .nm2{color:var(--ink);text-decoration:none}
+.card .rl,.card .tl2{font:700 9.5px var(--mono);letter-spacing:.03em;color:var(--ink2);margin-top:5px;line-height:1.55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .rl b{color:var(--ink)}
+.card .pale{color:#9a9386}.card .pale.late{color:#d08a85}
+.prob{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);font:12.5px var(--sans)}
+.prob:last-child{border-bottom:0}
+@media(max-width:860px){.kv2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.22a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.22b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1171,16 +1185,14 @@ function badge(r){
 }
 function card(r){
   const m=r.m;
-  const late=m.prazo&&m.prazo<TODAY&&!m.concl;
+  const late=m.prazo&&m.prazo<TODAY&&!m.concl; const ps=modProbs(m);
   return `<div class="card ${m.foto?'hasph':''} ${typeof DMSEL!=='undefined'&&DMSEL===m.aba?'dsel':''}" data-aba="${m.aba}" onclick="dCardClick('${m.aba}')">
     ${m.foto?`<img class="th" src="${m.foto}" alt="">`:''}
-    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span>${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg" style="margin-left:4px">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}</div>
+    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
     <div class="nm">${esc(m.nome.replace(/^\S+\s*[-·]?\s*/,'')||m.nome)}</div>
     <div class="c3"><span class="pg"><i style="width:${m.prog||0}%"></i></span><span class="pz ${late?'late':''}">${m.prog!=null?m.prog+'%':''}${m.prazo?` · ${dtBR(m.prazo)}`:''}</span></div>
-    ${m.fase==='Corte'&&!r.lots.length?`<div class="sub ${m.risco?'on':''}">${m.risco?'RISCO ✓ · pronto p/ cortar':'risco pendente'}</div>`:''}
-    ${m.fase==='Corte'&&!r.lots.length?(()=>{const c=mesmoTecido(m).filter(x=>x.fase==='Corte'&&!lotsOf(x).lots.length); if(!c.length) return ''; const t=tecidoOf(m)[0]; return `<div class="same" onclick="event.stopPropagation();${t?`openTecido('${t.code}')`:`openModel('${c[0].aba}')`}" title="${c.map(x=>x.aba+' '+x.codigo).join(', ')}">🧵 +${c.length} mesmo tecido · ${c.map(x=>x.aba).join(' ')}</div>`;})():''}
-    ${r.lots.length?`<div class="lots">${r.lots.map(lotLine).join('')}</div>`:''}
-    ${m.origem==='elo'?`<div class="nb">☁ CRIADO NO ELO · ainda não está na DEBORA.xlsx</div>`:''}
+    <div class="rl">${robLine(r)}</div>
+    <div class="tl2">${tecLine(m)}</div>
   </div>`;
 }
 
@@ -1908,6 +1920,26 @@ function tlCurIdx(m){ const es=tlEtapas(m); if(!es.length) return -1; const i=es
 function tlProg(m){ const n=(m.items||[]).length; return n?Math.round(m.items.filter(tlDone).length/n*100):(m.prog||0); }
 function tlNames(){ const s=new Set(); DEB.models.forEach(m=>(m.items||[]).forEach(i=>{ const r=String(i.resp||'').trim().toLowerCase(); if(r) s.add(r); })); TL_TPL.forEach(([e,...its])=>its.forEach(([,r])=>s.add(r))); return [...s].sort(); }
 function canTL(){ return !!FBUSER; }
+function modProbs(m){ const o=[]; const me=isLucas();
+  if(m.foraPlan) o.push({k:'fora',t:`📄 não veio no último drop (${esc(m.foraPlan.file||'')}, ${dtBR(m.foraPlan.at)}) — foi apagado na planilha de propósito?`,fix:me?`<span style="display:flex;gap:6px"><button class="btn mini danger" onclick="closeMod();descartar('${m.aba}')">🗑 descartar</button><button class="btn mini sec" onclick="closeMod();manter('${m.aba}')">✓ manter</button></span>`:''});
+  if(m.conflicts&&m.conflicts.length) o.push({k:'conf',t:`⚠ ${m.conflicts.length} campo(s) diferem entre planilha e painel`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver e resolver</button>`:'<span class="sm">resolver no PC</span>'});
+  if(m.pendPlan&&!(m.conflicts&&m.conflicts.length)) o.push({k:'pend',t:`📄 planilha ${esc(m.pendPlan.file||'')} retida — ${(m.pendPlan.diffs||[]).length} diferença(s) não aplicadas (modelo editado no ELO)`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver</button>`:'<span class="sm">ver no PC</span>'});
+  const ts=tecState(m); if(ts==='semcand'||ts==='multi'||ts==='naoconf') o.push({k:'tec',t:ts==='semcand'?'🧵 NF sem tecido na nuvem':ts==='multi'?'🧵 vários tecidos candidatos — confirme qual':'🧵 tecido candidato não confirmado',fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">escolher tecido</button>`:''});
+  if(m.prazo&&m.prazo<TODAY&&!m.concl) o.push({k:'prazo',t:`⏰ prazo vencido (${dtBR(m.prazo)})`,fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">editar prazo</button>`:''});
+  if(m.codigo&&codigoDup().has(String(m.codigo))) o.push({k:'dup',t:`🔁 código ${esc(m.codigo)} repetido em outro modelo ativo — lotes não vinculam`,fix:me?`<button class="btn mini sec" onclick="closeMod();croCodeOpen('${m.aba}')">corrigir código</button>`:''});
+  if(m.codElo&&m.codPlan&&m.codPlan!==m.codElo.cod) o.push({k:'codp',t:`✎ código ${esc(m.codElo.cod)} definido no ELO, mas a planilha traz ${esc(m.codPlan)} (planilha prevalece)`,fix:''});
+  return o; }
+function showProbs(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return; const ps=modProbs(m); if(!ps.length) return;
+  openMod(`! · ${aba} · ${ps.length} ponto(s)`,`<div class="fp2">${ps.map(p=>`<div class="prob"><span>${p.t}</span>${p.fix||''}</div>`).join('')}<div class="acts"><button class="btn sec" onclick="closeMod()">FECHAR</button></div></div>`,'',true); }
+function robLine(r){ const m=r.m; const lots=r.lots||[];
+  if(!lots.length){ if(m.fase==='Corte') return m.risco?'<b>✂ risco ✓</b> · pronto p/ cortar':'<span class="pale">✂ risco pendente</span>'; return '<span class="pale">—</span>'; }
+  return lots.map(l=>{ const p=[]; if(l.corte) p.push(`<b>✂ ${dtBR(l.corte)}</b>${l.qtd?' '+fmt(l.qtd)+'p':''}`); if(l.saida) p.push(`<b>📦 ${esc(l.oficina||'?')}</b> ${dtBR(l.saida)}`);
+    if(l.real) p.push(`<b style="color:var(--green)">📥 ${dtBR(l.real)} ✓</b>`); else if(l.saida) p.push(`📥 <span class="pale${l.prev&&l.prev<TODAY?' late':''}">prev. ${dtBR(l.prev)||'?'}</span>`); else if(l.corte) p.push('<span class="pale">não saiu</span>');
+    return p.join(' · '); }).join('<br>'); }
+function tecLine(m){ const tecs=tecidoOf(m); const t=tecs[0]; const sel=m.tecSel&&m.tecSel.tec?m.tecSel.tec:(t?t.code:'');
+  if(!sel&&!m.nf) return '<span class="pale">🧵 sem tecido</span>';
+  const same=mesmoTecido(m).filter(x=>x.fase===m.fase).length;
+  return `🧵 ${esc(sel||('NF '+m.nf))}${t?` · ${esc(t.nome).slice(0,22)} · ${fmt(Math.round(t.estoque))}m`:''}${tecState(m)!=='ok'&&tecState(m)!=='semnf'?' <span class="pale">não confirmado</span>':''}${same?` · +${same} mesmo tecido`:''}`; }
 function modFichaHTML(aba){
   const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
   const r={m,...eloOf(m)};
@@ -1916,24 +1948,21 @@ function modFichaHTML(aba){
   const late=m.prazo&&m.prazo<TODAY&&!m.concl;
   const tecs=tecidoOf(m); const tecLbl=m.tecSel&&m.tecSel.tec?`${esc(m.tecSel.tec)}${m.tecSel.nf?' · NF '+esc(m.tecSel.nf):''}${m.tecSel.nome?' · '+esc(m.tecSel.nome):''}`:(tecs.length?`${tecs.map(t=>t.code).join(' · ')} · ${esc(tecs[0].nome)}`:(m.nf?`NF ${esc(m.nf)}`:'—'));
   const me=isLucas();
+  const ps=modProbs(m); const ts=tecState(m);
   const head=`<div class="fh2">
-    <div><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span><h2>${esc(m.nome)}</h2>
-      <div class="elo">${rail(r.elo)}<b>${ELO_LBL[r.elo]||r.elo}</b>${r.alert?`<span class="bd ${r.alert.k}">${esc(r.alert.t)}</span>`:''}</div></div>
-    <div class="chips2">${m.origem==='elo'?`<span class="chp elo">☁ CRIADO NO ELO · ${dtBR(m.criadoEm)}${m.criadoPor?' · '+esc(m.criadoPor):''}</span>`:`<span class="chp xl">📄 DA PLANILHA${m.edited?' · editado no ELO':''}</span>`}${m.prazoTipo==='Urgente'?'<span class="chp urg">URGENTE</span>':''}${late?'<span class="chp late">PRAZO VENCIDO</span>':''}${m.foraPlan?'<span class="chp disc">📄 SUMIU DA PLANILHA</span>':''}${tecStateChip(m)}</div>
+    <div class="tt"><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span>${ps.length?`<span class="bang" onclick="showProbs('${aba}')">!</span>`:''}</div>
+    <h2 style="margin-top:0">${esc(m.nome)}</h2>
     <div class="kv2">
       <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.qt?fmt(m.qt)+' pçs':'—'}${m.qtProv?' (provisória)':''}</span></div>
-      <div><b>TECIDO</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${tecLbl}</span></div>
+      <div><b>TECIDO</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${tecLbl}${ts!=='ok'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span></div>
       <div><b>TAM</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${(m.sizes||[]).join(' + ')||'—'}</span></div>
       <div><b>INÍCIO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${dtBR(m.ini)||'—'}</span></div>
-      <div><b>PRAZO</b><span class="${me?'ed':''} ${late?'late':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.prazo?dtBR(m.prazo):(me?'<i style="color:#B8862B">definir</i>':'—')}${m.prazoTipo?' · '+esc(m.prazoTipo):''}${m.prazoAj?' (ajustado)':''}</span></div>
-      ${m.forn?`<div><b>FORNEC.</b><span>${esc(m.forn)}</span></div>`:''}
-      ${m.nf?`<div><b>NF</b><span>${esc(m.nf)}</span></div>`:''}
+      <div><b>PRAZO</b><span class="${me?'ed':''} ${late?'late':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.prazo?dtBR(m.prazo):'—'}${m.prazoTipo?' · '+esc(m.prazoTipo):''}${m.prazoAj?' (ajustado)':''}</span></div>
+      <div><b>FORNEC.</b><span>${esc(m.forn||'')||'—'}</span></div>
+      <div><b>NF</b><span>${esc(m.nf||'')||'—'}</span></div>
       <div><b>MEMO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${esc(m.memo||'')||'—'}</span></div>
     </div>
-    ${me?`<div class="acts2"><button class="btn mini" onclick="croCodeOpen('${aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button><button class="btn mini sec" onclick="tlHeadOpen('${aba}')">✎ EDITAR ficha</button>${ci>0?`<button class="btn mini sec" onclick="tlVoltar('${aba}')">← VOLTAR ETAPA</button>`:''}${ci>=0&&ci<es.length-1?`<button class="btn mini sec" onclick="tlAdvance('${aba}')">→ AVANÇAR ETAPA</button>`:''}${m.cro?`<button class="btn mini sec" onclick="croGoto('${m.cro}')">📷 croqui</button>`:''}${window.innerWidth>=980?`<button class="btn mini sec" onclick="debEdit('${aba}')">⊞ grade (PC)</button>`:''}<button class="btn mini danger" style="margin-left:auto" onclick="descartar('${aba}')">🗑 DESCARTAR</button></div>`:''}
-    ${m.foraPlan&&me?`<div class="warn2">📄 Não veio no último drop (${esc(m.foraPlan.file||'')}, ${dtBR(m.foraPlan.at)}). Foi apagado na planilha de propósito? <button class="btn mini danger" onclick="descartar('${aba}')">🗑 DESCARTAR</button> <button class="btn mini sec" onclick="manter('${aba}')">✓ MANTER na nuvem</button></div>`:''}
-    ${m.origem==='elo'?`<div class="warn2">⚠ não está na DEBORA.xlsx — o drop da planilha não apaga este modelo</div>`:(m.pendPlan?`<div class="warn2">📄 planilha ${esc(m.pendPlan.file||'')} retida — ${(m.pendPlan.diffs||[]).length} diferença(s); abra ⊞ grade (PC) p/ resolver</div>`:(m.edited?`<div class="warn2">✎ editado no ELO — no próximo drop da DEBORA.xlsx, mudanças da planilha neste modelo ficam retidas p/ conferir</div>`:''))}
-    ${m.codElo&&m.origem!=='elo'?`<div class="sm" style="grid-column:1/-1">✎ código <b>${esc(m.codElo.cod)}</b> definido no ELO em ${dtBR(m.codElo.at)}${m.codPlan?` · planilha traz <b>${esc(m.codPlan)}</b> (planilha prevalece)`:' · vale até a planilha trazer o código'}</div>`:''}
+    ${me?`<div class="acts2"><button class="btn mini" onclick="croCodeOpen('${aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button><button class="btn mini sec" onclick="tlHeadOpen('${aba}')">✎ EDITAR</button>${ci>0?`<button class="btn mini sec" onclick="tlVoltar('${aba}')">← VOLTAR</button>`:''}${ci>=0&&ci<es.length-1?`<button class="btn mini sec" onclick="tlAdvance('${aba}')">→ AVANÇAR</button>`:''}<button class="btn mini danger" onclick="descartar('${aba}')">🗑 DESCARTAR</button></div>`:''}
   </div>`;
   const left=es.length?`<div class="tlh2"><h4 style="margin:0">DEBORA · ${esc(curE)} · ${pg}%${ap.length?` · aprovados ${apD}/${ap.length}`:''}</h4>${canTL()?'<span class="sm">● status · nome · data · 💬 obs</span>':''}</div><div class="pgb2"><i style="width:${pg}%"></i></div>
    ${es.map((e,ei)=>{ const d=tlEtDone(e); const open=(UI.tl&&UI.tl[aba+'|'+e.e]!=null)?UI.tl[aba+'|'+e.e]:(ei===ci||!d); const last=e.its.map(i=>i.data).filter(Boolean).sort().pop();
@@ -1950,7 +1979,7 @@ function modFichaHTML(aba){
   const phModel=m.foto?`<img loading="lazy" decoding="async" ${m.cro?`id="croBig_${m.cro}"`:''} src="${(m.cro&&CROIMG[m.cro])||m.foto}" alt="">`:`<div class="noph">sem foto na ficha</div>`;
   const phTec=tecs.length?(tecs[0].foto?`<img loading="lazy" decoding="async" src="${tecs[0].foto}" alt="">`:`<div class="noph">${tecs[0].code} sem foto</div>`):`<div class="noph">${!TEC.items.length?'arraste o ESTOQUE_TECIDOS':(m.nf?`NF ${esc(m.nf)} sem aba T`:'sem NF na ficha')}</div>`;
   const capTec=tecs.length?`${tecs.map(t=>t.code).join(' · ')} · ${esc(tecs[0].nome)}${tecs[0].estoque?` · ${fmt(Math.round(tecs[0].estoque))} m`:''}`:'tecido';
-  const fotos=`<div class="fotos"><figure>${phModel}<figcaption>modelo${m.codigo?` · ${m.codigo}`:''}</figcaption></figure><figure ${tecs.length?`class="lnkf" onclick="openTecido('${tecs[0].code}')"`:''}>${phTec}<figcaption>${capTec}</figcaption></figure></div>`;
+  const fotos=`<div class="fotos"><figure>${phModel}<figcaption>modelo${m.codigo?` · ${m.codigo}`:''}${m.cro?` · <a href="#" onclick="event.preventDefault();croGoto('${m.cro}')">📷 croqui</a>`:''}</figcaption></figure><figure ${tecs.length?`class="lnkf" onclick="openTecido('${tecs[0].code}')"`:''}>${phTec}<figcaption>${capTec}</figcaption></figure></div>`;
   const logH=(m.log&&m.log.length)?`<h4>HISTÓRICO</h4><div class="log2">${m.log.slice(0,30).map(l=>`<div><b style="font:700 9.5px var(--mono)">${dtBR(l.at)} ${String(l.at||'').slice(11,16)}</b> · ${esc(l.who||'')} — ${esc(l.t||'')}</div>`).join('')}</div>`:'';
   return head+`<div class="mpc"><section>${left}</section>
       <section>${fotos}<h4>ROBERTO · CONTROLE</h4>${right}${fam.length?`<h4>outras produções do base ${baseOf(m.codigo)}</h4>${fam.map(x=>`<button class="lnk" onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo} · ${x.concl?'concluído':x.fase}</button>`).join('')}`:''}${logH}${msgThread('mod:'+m.aba,'mdI',`modMsgSend('${m.aba}')`)}</section></div>`; }
