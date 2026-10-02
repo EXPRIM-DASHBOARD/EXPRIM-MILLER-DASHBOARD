@@ -638,7 +638,7 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.22b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.22c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -1924,8 +1924,10 @@ function modProbs(m){ const o=[]; const me=isLucas();
   if(m.foraPlan) o.push({k:'fora',t:`📄 não veio no último drop (${esc(m.foraPlan.file||'')}, ${dtBR(m.foraPlan.at)}) — foi apagado na planilha de propósito?`,fix:me?`<span style="display:flex;gap:6px"><button class="btn mini danger" onclick="closeMod();descartar('${m.aba}')">🗑 descartar</button><button class="btn mini sec" onclick="closeMod();manter('${m.aba}')">✓ manter</button></span>`:''});
   if(m.conflicts&&m.conflicts.length) o.push({k:'conf',t:`⚠ ${m.conflicts.length} campo(s) diferem entre planilha e painel`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver e resolver</button>`:'<span class="sm">resolver no PC</span>'});
   if(m.pendPlan&&!(m.conflicts&&m.conflicts.length)) o.push({k:'pend',t:`📄 planilha ${esc(m.pendPlan.file||'')} retida — ${(m.pendPlan.diffs||[]).length} diferença(s) não aplicadas (modelo editado no ELO)`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver</button>`:'<span class="sm">ver no PC</span>'});
-  const ts=tecState(m); if(ts==='semcand'||ts==='multi'||ts==='naoconf') o.push({k:'tec',t:ts==='semcand'?'🧵 NF sem tecido na nuvem':ts==='multi'?'🧵 vários tecidos candidatos — confirme qual':'🧵 tecido candidato não confirmado',fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">escolher tecido</button>`:''});
-  if(m.prazo&&m.prazo<TODAY&&!m.concl) o.push({k:'prazo',t:`⏰ prazo vencido (${dtBR(m.prazo)})`,fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">editar prazo</button>`:''});
+  /* v9.22c: tecido só é problema quando é ambíguo, ou quando falta na hora de cortar */
+  const ts=tecState(m); const fi=FASES.indexOf(m.fase||''); const naFaseCorte=fi>=FASES.indexOf('Corte')&&!m.concl;
+  if(ts==='multi') o.push({k:'tec',t:'🧵 vários tecidos candidatos p/ esta NF — confirme qual',fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">escolher tecido</button>`:''});
+  else if(naFaseCorte&&(ts==='semnf'||ts==='semcand')) o.push({k:'tec',t:ts==='semnf'?`🧵 em ${esc(m.fase)} sem NF/tecido definido${m.nf?' ("'+esc(m.nf)+'")':''}`:`🧵 NF ${esc(m.nf)} não tem tecido na nuvem`,fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">escolher tecido</button>`:''});
   if(m.codigo&&codigoDup().has(String(m.codigo))) o.push({k:'dup',t:`🔁 código ${esc(m.codigo)} repetido em outro modelo ativo — lotes não vinculam`,fix:me?`<button class="btn mini sec" onclick="closeMod();croCodeOpen('${m.aba}')">corrigir código</button>`:''});
   if(m.codElo&&m.codPlan&&m.codPlan!==m.codElo.cod) o.push({k:'codp',t:`✎ código ${esc(m.codElo.cod)} definido no ELO, mas a planilha traz ${esc(m.codPlan)} (planilha prevalece)`,fix:''});
   return o; }
