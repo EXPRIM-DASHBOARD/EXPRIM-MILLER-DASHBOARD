@@ -678,6 +678,9 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 #lkTeste,#lkElo{display:none;font:800 9.5px var(--mono);letter-spacing:.1em;border:1.5px solid #C0392B;color:#C0392B;border-radius:6px;padding:2px 7px;margin-left:8px;text-decoration:none;vertical-align:middle}
 #lkTeste.on,#lkElo.on{display:inline-block}
 #lkElo{border-color:#F3E7C8;color:#F3E7C8}
+#lkCopy,#lkWipe{display:none;font:800 9.5px var(--mono);letter-spacing:.06em;border:1.5px solid #E8A33D;color:#E8A33D;border-radius:6px;padding:2px 7px;margin-left:6px;text-decoration:none;vertical-align:middle}
+#lkCopy.on,#lkWipe.on{display:inline-block}
+#tband small{display:block;font:700 9px var(--mono);letter-spacing:.1em;opacity:.85;margin-top:2px}
 #upd{display:none;position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:9998;background:#1D2A3F;color:#fff;border:2px solid #E8A33D;border-radius:999px;padding:9px 16px;font:800 12px var(--mono);letter-spacing:.06em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #upd.on{display:block}
 .qtd{font:700 10px var(--mono);color:#6b6459}.qtd b{color:var(--ink)}.qtd.neg{color:#C0392B}.qtd.neg b{color:#C0392B}
@@ -710,18 +713,30 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 .mbdg.unread{background:var(--red)}
 .card .cl{font:700 9.5px var(--mono);letter-spacing:.03em;color:var(--ink2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .cl b{color:var(--ink)}.card .cl .ok2{color:#2E7D32;font-weight:800}.card .cl .tol{color:#A3641A;font-weight:800}.card .cl .lt2{color:var(--red);font-weight:800}
+/* ===== v9.26b · caixa 90/10 · ㅇㅋ (ok) por leitor · badge verde ===== */
+.mnw input{flex:9;min-width:0}.mnw .tb{flex:1;min-width:64px;padding:9px 6px;white-space:nowrap}
+.mok{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
+.mok .okb{border:1.5px solid #2E7D32;background:#fff;color:#2E7D32;border-radius:999px;padding:1px 8px;font:800 9.5px var(--mono);cursor:pointer}
+.mok .okb.on{background:#2E7D32;color:#fff;cursor:default}
+.mok .who{font:700 9px var(--mono);color:#6b6459}
+.msg.unread{background:#FFF4E5;border-color:#F0C48A}
+.mbdg.okall{background:#2E7D32}
+/* portal ⇄ (PAINEL | ELO) — mesmo padrão do PAINEL */
+#portal{position:fixed;right:12px;bottom:12px;z-index:9999;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:#152540;border:1.5px solid #D4AF37;border-radius:50%;color:#D4AF37;font-size:17px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#portal:hover{background:#1D2A3F}
+@media(max-width:860px){#portal{bottom:70px}}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.26a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.27a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
   <div id="snap"></div>
   <input id="fileIn" type="file" accept=".xlsx" multiple="" hidden="">
   <div id="ref"></div>
-</header><div id="tband">TESTE &nbsp;·&nbsp; TESTE &nbsp;·&nbsp; TESTE</div>
+</header><div id="tband">TESTE &nbsp;·&nbsp; TESTE &nbsp;·&nbsp; TESTE<small>dados separados (coleções teste_*) · nada daqui vai p/ o ELO nem p/ o PAINEL</small></div>
 <div class="chips">
   <button class="chip atu" data-f="atualizar"><b id="chipAtu">0</b>ATUALIZAR <span class="hint">Roberto avançou · DEBORA ainda não</span></button>
   <button class="chip ver" data-f="verificar"><b id="chipVer">0</b>VERIFICAR <span class="hint">etapa não bate</span></button>
@@ -732,7 +747,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 <main id="main"></main><div id="upd" onclick="location.reload()">🔄 NOVA VERSÃO DISPONÍVEL — toque p/ atualizar</div>
 <div id="mp"><div class="mpw"><button id="mpClose">✕ fechar</button><div id="mpBody"></div></div></div>
 <div id="drop">Solte DEBORA, ROBERTO, ESTOQUE_TECIDOS ou BOLETOS (.xlsx)</div>
-<div id="toast"></div> <div class="docwait" id="docwait" hidden><div class="bx"><span class="ic">📄</span><b id="dwT">Lendo documento…</b><small id="dwS">preparando imagem</small></div></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
+<div id="toast"></div><a id="portal" href="https://exprim-dashboard.github.io/EXPRIM-MILLER-DASHBOARD/index.html?menu=1" title="EXPRIM — PAINEL/ELO 선택">⇄</a> <div class="docwait" id="docwait" hidden><div class="bx"><span class="ic">📄</span><b id="dwT">Lendo documento…</b><small id="dwS">preparando imagem</small></div></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
 <div class="tmod" id="tmod"><div class="box tapp"><div class="mh"><h2 id="tmTitle"></h2><button id="tmClose">FECHAR</button></div><div class="mb" id="tmBody"></div></div></div>
 <div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><div style="display:flex;flex-direction:column;gap:7px;max-width:290px;margin:0 auto">
   <input id="gEm" placeholder="e-mail" autocomplete="username" style="border:1.5px solid rgba(28,26,23,.25);border-radius:9px;padding:10px 12px;font:inherit">
@@ -746,12 +761,15 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, runTransaction, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection as _colRaw, doc as _docRaw, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, runTransaction, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 if(!(typeof META!=='undefined'&&META&&META.snapshot)){ try{
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
-  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
+  /* v9.26c: versão de TESTE usa coleções teste_* (dados separados) — 'config' é compartilhada */
+  const COLX=n=>(window.IS_TESTE&&n!=='config')?('teste_'+n):n;
+  const collection=(d,c)=>_colRaw(d,COLX(c)); const doc=(d,c,...r)=>_docRaw(d,COLX(c),...r);
+  window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction,_docRaw,_colRaw};
+  window.FB={auth,db,collection,doc,_docRaw,_colRaw,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
     loginPw:async(em,se)=>{ const g=document.getElementById('gMsg');
       try{ await signInWithEmailAndPassword(auth,em,se); }
       catch(e){ const c=(e&&e.code)||'';
@@ -813,8 +831,18 @@ const FASES=['Design','Amostra','Materiais','Corte','Costura','Qualidade','Embal
 const DB_NAME='exprim_elo', DB_STORE='kv';
 let DEB={models:[],at:null,file:''}, ROB={lots:[],custo:[],at:null,file:''}, TEC={items:[],at:null,file:''};
 let PLANO={key:'',sel:{}}; let TODO={done:{},extra:[]};
-const IS_TESTE=/elo_?teste|elo2/i.test(location.pathname); if(IS_TESTE){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
-function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&isLucas()); if(b) b.classList.toggle('on',IS_TESTE); }
+const IS_TESTE=/elo_?teste|elo2/i.test(location.pathname); window.IS_TESTE=IS_TESTE; if(IS_TESTE){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
+function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&isLucas()); if(b) b.classList.toggle('on',IS_TESTE); ['lkCopy','lkWipe'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.toggle('on',IS_TESTE&&isLucas()); }); }
+const TESTE_COLS=['elo_deb','cro_elo','cro_img','custo_elo','cortes','corte_conf','tecidos','pedidos','boletos','msgs','fila_manual','oficinas','movs','nfs','elo','public'];
+async function testeCopiar(){ if(!IS_TESTE||!isLucas()||window.__tcBusy) return; if(!confirm('Copiar TODOS os dados do ELO (produção) para a versão de TESTE?\nO que já existe no teste é sobrescrito. Nada muda no ELO.')) return;
+  window.__tcBusy=true; let n=0; try{ for(const c of TESTE_COLS){ pgShow('📥 copiando '+c+'…'); const src=await FB.getDocs(FB._colRaw(FB.db,c)); let b=FB.writeBatch(FB.db), k=0, bytes=0;
+      for(const d of src.docs){ const v=d.data(); const sz=JSON.stringify(v).length; if(k>=200||bytes+sz>8_000_000){ await b.commit(); b=FB.writeBatch(FB.db); k=0; bytes=0; } b.set(FB._docRaw(FB.db,'teste_'+c,d.id),v); k++; bytes+=sz; n++; }
+      if(k) await b.commit(); }
+    toast('📥 '+n+' documento(s) copiados p/ o TESTE',6000); }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),8000); } finally{ pgHide(); window.__tcBusy=false; } }
+async function testeLimpar(){ if(!IS_TESTE||!isLucas()||window.__tcBusy) return; if(prompt('Apagar TODOS os dados de TESTE? Escreva LIMPAR para confirmar.')!=='LIMPAR') return;
+  window.__tcBusy=true; let n=0; try{ for(const c of TESTE_COLS){ pgShow('🗑 limpando '+c+'…'); const src=await FB.getDocs(FB._colRaw(FB.db,'teste_'+c)); let b=FB.writeBatch(FB.db), k=0;
+      for(const d of src.docs){ if(k>=400){ await b.commit(); b=FB.writeBatch(FB.db); k=0; } b.delete(d.ref); k++; n++; } if(k) await b.commit(); }
+    toast('🗑 '+n+' documento(s) apagados do TESTE',6000); }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),8000); } finally{ pgHide(); window.__tcBusy=false; } }
 let FSZ=(function(){ try{ return localStorage.getItem('elo_fsz')||'M'; }catch(e){ return 'M'; } })();
 function setFsz(s){ FSZ=s; try{ localStorage.setItem('elo_fsz',s); }catch(e){} render(); }
 let VIEW='debora', FILTER='', Q='', TF='estoque', TORD='', FGRP=true, CV=false, TCAT='', TCOMP='';
@@ -1271,7 +1299,7 @@ function card(r){
   const late=m.prazo&&m.prazo<TODAY&&!m.concl; const ps=modProbs(m);
   return `<div class="card ${m.foto?'hasph':''} ${typeof DMSEL!=='undefined'&&DMSEL===m.aba?'dsel':''}" data-aba="${m.aba}" onclick="dCardClick('${m.aba}')">
     ${m.foto?`<img class="th" src="${m.foto}" alt="">`:''}
-    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg ${msgUnread('mod:'+m.aba).length?'unread':''}">💬 ${msgUnread('mod:'+m.aba).length||msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
+    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg ${msgUnread('mod:'+m.aba).length?'unread':'okall'}">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
     <div class="nm">${esc(m.nome.replace(/^\S+\s*[-·]?\s*/,'')||m.nome)}</div>
     <div class="c3"><span class="pg"><i style="width:${m.prog||0}%"></i></span><span class="pz ${late?'late':''}">${m.prog!=null?m.prog+'%':''}${m.prazo?` · ${dtBR(m.prazo)}`:''}${(qtCortOf(m)&&qtCortOf(m)!==(m.qtPedido!=null?m.qtPedido:m.qt))||m.qtAceite?' · '+qtLine(m):''}</span></div>
     ${m.fase==='Costura'?costLines(r):`<div class="rl">${robLine(r)}</div>
@@ -1727,7 +1755,7 @@ function renderTecidos(A){
   const kpi=(k,lbl,val,sub)=>`<button class="tk ${TF===k?'on':''}" onclick="TF='${k}';render()"><b>${lbl}</b><em>${val}</em><span>${sub}</span></button>`;
   const semFoto=T.filter(t=>!t.foto&&t.status==='estoque').map(t=>t.code);
   const alertFoto=semFoto.length?`<div class="empty" style="margin:6px 0 10px;border:1px dashed #c77;color:#a33;padding:8px 12px;border-radius:8px">⚠ caixa ① RECEBIDO sem foto (${semFoto.length}): ${semFoto.join(', ')} — inserir a foto do tecido em J:K na aba T</div>`:'';
-  const tbar=`<div class="tapp" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="tb" onclick="exportXlsx()">⬇ TECIDOS.xlsx</button><button class="tb pri" onclick="openTecNew()">+ TECIDO</button></div>`+chips;
+  const tbar=`<div class="tapp" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="tb" onclick="exportXlsx()">⬇ TECIDOS.xlsx</button>${isLucas()?`<button class="tb" onclick="setIcmsSP()" title="ICMS interno SP usado no DIFAL">ICMS SP ${icmsSP()}%</button><button class="tb" onclick="recalcImposto()" title="recalcula c/ imposto dos tecidos entrados pelo ELO">🔁 recalcular c/ imposto</button>`:''}<button class="tb pri" onclick="openTecNew()">+ TECIDO</button></div>`+chips;
   if(window.innerWidth>=980){
     const railK=(k,lbl,val,sub,cls)=>`<button class="brc ${cls||''}" aria-selected="${TF===k}" onclick="TF='${k}';TSEL=null;render()"><span class="ph">${lbl}</span><div class="big">${val}</div><div class="pcs">${sub}</div></button>`;
     return `${tbar}${alertFoto}<div class="bwrap tw ${TSEL?'has3':''}">
@@ -1782,7 +1810,7 @@ function tecFichaHTML(code){
     ${msgThread('tec:'+t.code,'tcI',`tecMsgSend('${t.code}')`)}</section></div>`;
     }
   const ms=modelosDe(t).map(m=>({m,...eloOf(m)})); const atv=ms.filter(r=>!r.m.concl), hist=ms.filter(r=>r.m.concl);
-  const kv=[['Categoria',t.categoria?esc(t.categoria):'<span style="color:#C0392B;font-weight:800">sem categoria — ✎ EDITAR</span>'],['NF',t.nf?`<span class="nflink" onclick="verNF('${esc(String(t.nf))}')">${esc(String(t.nf))}</span>`:'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['c/ imposto',t.precoImp!=null?'R$ '+t.precoImp.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/m'+(t.imposto?' ('+t.imposto+'%)':''):'—'],['Pedido',t.qtdPedida?fmt(t.qtdPedida)+' m'+(t.dataPedido?' · '+dtBR(t.dataPedido):''):'—'],['Rolos · Insp.',(t.rolosRec!=null?fmt(t.rolosRec)+' rolos':'—')+(t.inspecao?' · '+esc(t.inspecao):'')],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
+  const kv=[['Categoria',t.categoria?esc(t.categoria):'<span style="color:#C0392B;font-weight:800">sem categoria — ✎ EDITAR</span>'],['NF',t.nf?`<span class="nflink" onclick="verNF('${esc(String(t.nf))}')">${esc(String(t.nf))}</span>`:'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['c/ imposto',impLbl(t)],['Pedido',t.qtdPedida?fmt(t.qtdPedida)+' m'+(t.dataPedido?' · '+dtBR(t.dataPedido):''):'—'],['Rolos · Insp.',(t.rolosRec!=null?fmt(t.rolosRec)+' rolos':'—')+(t.inspecao?' · '+esc(t.inspecao):'')],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
   const mR=t.mediaRolo;
   const cores=t.cores.length?`<h4>CORES${mR?' · ROLOS':''}</h4><div class="cores">${t.cores.map(c=>`<div>${swBox(c)}<b>${esc(c.cor)}</b><span>${fmt(c.saldo)} / ${fmt(c.entrada)} ${mR?'rolos':'m'}${!mR&&c.rolos?` · ${fmt(c.rolos)} rolo(s)`:''}${mR?` · ${c.mt!=null?fmt(c.mt):fmt(Math.round(c.entrada*mR))} m`:''} · ${Math.round((c.pct||0)*100)}%</span></div>`).join('')}</div>`:'';
   const row=r=>`<div class="prow" onclick="openModel('${r.m.aba}')">${r.m.foto?`<img loading="lazy" decoding="async" src="${r.m.foto}" alt="">`:'<i class="noth"></i>'}<span class="mc">${r.m.aba} · ${r.m.codigo||'—'}${isRep(r.m.codigo)?'<small>REP</small>':''}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}${r.m.qt?` <i>· ${fmt(r.m.qt)} pçs</i>`:''}</span><span class="st">${rail(r.elo)}${r.m.concl?'OK '+(dtBR(r.m.term)||''):(r.m.fase||'?').toUpperCase()+(r.m.prog!=null?' '+r.m.prog+'%':'')}</span>${badge(r)}</div>`;
@@ -2028,6 +2056,20 @@ async function aceitarQt(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!
 async function desfazerQt(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!m.qtAceite||!FBUSER) return;
   const ok=await tlWrite(aba,d=>{ if(d.qtPedido!=null) d.qt=d.qtPedido; delete d.qtAceite; },'↩ volta p/ quantidade pedida',{auto:true});
   if(ok){ m.qt=m.qtPedido; delete m.qtAceite; render(); toast('↩ quantidade pedida restaurada'); } }
+/* ===== v9.27a · DIFAL: c/ imposto = preço × (1 + (ICMS SP − alíquota NF)/100) ===== */
+function icmsSP(){ const v=tnum(CFG&&CFG.icmsSP); return v==null?18:v; }
+function difalOf(nf){ const a=tnum(nf); if(a==null) return null; return Math.max(0,Math.round((icmsSP()-a)*100)/100); }
+function precoImpCalc(preco,nf){ const p=tnum(preco); const d=difalOf(nf); if(p==null) return null; if(d==null) return null; return Math.round(p*(1+d/100)*10000)/10000; }
+function impLbl(t){ if(t.precoImp==null) return '—'; const d=difalOf(t.imposto); return 'R$ '+t.precoImp.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/m'+(t.imposto!=null?` <small>(NF ${t.imposto}%${d!=null?' · DIFAL '+d+'%':''})</small>`:''); }
+async function setIcmsSP(){ if(!isLucas()) return; const v=prompt('ICMS interno de SP (%) — usado no DIFAL',icmsSP()); if(v===null) return; const n=tnum(v); if(n==null){ toast('número inválido'); return; } try{ await FB.setDoc(FB.doc(FB.db,'config','cfg'),{...CFG,icmsSP:n,icmsBy:(FBUSER&&FBUSER.email)||'',icmsAt:new Date().toISOString()}); CFG.icmsSP=n; toast('ICMS SP = '+n+'%'); render(); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function recalcImposto(){ if(!isLucas()||window.__riBusy) return;
+  const cand=TDOCS.filter(t=>t.pedidoId&&t.preco!=null&&t.imposto!=null&&!t.sobras).map(t=>({t,novo:precoImpCalc(t.preco,t.imposto)})).filter(x=>x.novo!=null&&Math.abs((x.t.precoImp||0)-x.novo)>0.0001);
+  if(!cand.length){ toast('✓ nada p/ recalcular (só tecidos entrados pelo ELO)'); return; }
+  const prev=cand.slice(0,12).map(x=>`${x.t.code}: ${x.t.precoImp!=null?x.t.precoImp.toFixed(2):'—'} → ${x.novo.toFixed(2)}`).join('\n');
+  if(!confirm(`Recalcular c/ imposto (DIFAL ${icmsSP()}% − NF) em ${cand.length} tecido(s) entrados pelo ELO? Tecidos vindos da planilha não mudam.\n\n${prev}${cand.length>12?'\n…':''}`)) return;
+  window.__riBusy=true; pgShow('🔁 recalculando…'); try{ let b=FB.writeBatch(FB.db), k=0; const now=new Date().toISOString();
+    for(const x of cand){ b.set(FB.doc(FB.db,'tecidos',x.t.code),{...TDOCS.find(q=>q.code===x.t.code),precoImp:x.novo,precoImpAntes:x.t.precoImp??null,updatedAt:now,updatedBy:(FBUSER&&FBUSER.email)||''}); if(++k>=300){ await b.commit(); b=FB.writeBatch(FB.db); k=0; } }
+    if(k) await b.commit(); toast(`🔁 ${cand.length} tecido(s) recalculado(s)`,6000); }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } finally{ pgHide(); window.__riBusy=false; } }
 /* ===== v9.24b · forro/renda do modelo (tecs2) ===== */
 function tecs2Of(m){ return (m&&Array.isArray(m.tecs2))?m.tecs2:[]; }
 function tecs2Lbl(m){ return tecs2Of(m).map(x=>`${esc(x.tec)} <small>${esc(x.papel||'forro')}</small>`).join(' + '); }
@@ -2175,7 +2217,7 @@ function modFichaHTML(aba){
     ${me?`<div class="acts2"><button class="btn mini" onclick="croCodeOpen('${aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button><button class="btn mini sec" onclick="tlHeadOpen('${aba}')">✎ EDITAR</button>${m.qtAceite?`<button class="btn mini sec" onclick="desfazerQt('${aba}')">↩ ${fmt(m.qtPedido)} pedidas</button>`:''}${ci>0?`<button class="btn mini sec" onclick="tlVoltar('${aba}')">← VOLTAR</button>`:''}${ci>=0&&ci<es.length-1?`<button class="btn mini sec" onclick="tlAdvance('${aba}')">→ AVANÇAR</button>`:''}<button class="btn mini danger" onclick="descartar('${aba}')">🗑 DESCARTAR</button></div>`:''}
   </div>`;
   const left=es.length?`<div class="tlh2"><h4 style="margin:0">DEBORA · ${esc(curE)} · ${pg}%${ap.length?` · aprovados ${apD}/${ap.length}`:''}</h4>${(()=>{ const k='mod:'+m.aba; const un=msgUnread(k).length; const on=!!(UI.msg&&UI.msg[k]); return `<button class="ib ${on?'on':''}" onclick="msgTog('${aba}')">💬 MENSAGEM${un?`<span class="n">${un}</span>`:''}</button><button class="ib ${UI.lg&&UI.lg[aba]?'on':''}" onclick="logTog('${aba}')">🕘 HISTÓRICO</button>`; })()}</div><div class="pgb2"><i style="width:${pg}%"></i></div>
-   ${(UI.msg&&UI.msg['mod:'+m.aba])?(()=>{ const k='mod:'+m.aba; const un=msgUnread(k).length; return `<div class="msgp"><div class="mh">💬 MENSAGENS · ${m.aba}${un?` · <span style="color:#E8A33D">${un} nova(s)</span>`:''}<button class="x" onclick="msgClose('${aba}')">✕</button></div>${msgThread(k,'mdI',`modMsgSend('${m.aba}')`)}</div>`; })():''}
+   ${(UI.msg&&UI.msg['mod:'+m.aba])?(()=>{ const k='mod:'+m.aba; const un=msgUnread(k).length; return `<div class="msgp"><div class="mh">💬 MENSAGENS · ${m.aba}${un?` · <span style="color:#E8A33D">${un} nova(s)</span>`:''}${un?`<span class="okb" style="border:1.5px solid #E8A33D;color:#E8A33D;border-radius:999px;padding:1px 8px;font:800 9.5px var(--mono);cursor:pointer" onclick="msgOkAll('${k}')">👍 ok todas</span>`:''}<button class="x" onclick="msgClose('${aba}')">✕</button></div>${msgThread(k,'mdI',`modMsgSend('${m.aba}')`)}</div>`; })():''}
    ${es.map((e,ei)=>{ const d=tlEtDone(e); const open=(UI.tl&&UI.tl[aba+'|'+e.e]!=null)?UI.tl[aba+'|'+e.e]:(ei===ci); const last=e.its.map(i=>i.data).filter(Boolean).sort().pop();
     return `<div class="et2 ${ei===ci?'cur':''} ${d?'done':''}"><div class="eth2" onclick="tlTog('${aba}','${esc(e.e)}')">${ei+1}. ${esc(e.e.toUpperCase())} ${ei===ci?'<span class="ctag">ETAPA ATUAL</span>':d?'<span class="otag">✓</span>':''}${me?`<span class="add" onclick="event.stopPropagation();tlAddItem('${aba}','${esc(e.e)}')">＋ item</span>`:''}<span class="n">${e.its.filter(tlDone).length}/${e.its.length}${last?' · '+dtBR(last):''}</span></div>
      ${open?e.its.map(it=>{ const cl=tlDone(it)?'d':/and/i.test(it.status||'')?'a':''; const ed=canTL();
@@ -2403,14 +2445,17 @@ async function cloudImportBoletos(list,fname){
 function whoName(){ const e=(FBUSER&&FBUSER.email)||''; if(e.startsWith('exprim.adm')) return 'Lucas'; if(e.startsWith('exprim.miller')) return 'Roberto'; return e.split('@')[0]||'?'; }
 function msgsFor(key){ return MSG.filter(m=>m.key===key); }
 const MSEEN=(function(){ try{ return JSON.parse(localStorage.getItem('elo_mseen')||'{}'); }catch(e){ return {}; } })();
-function msgUnread(key){ const s=MSEEN[key]||''; const me=whoName(); return msgsFor(key).filter(m=>String(m.at)>s&&m.who!==me); }
+function msgUnread(key){ const me=whoName(); return msgsFor(key).filter(m=>m.who!==me&&!(m.ok||[]).includes(me)); }
+async function msgOk(id){ const m=MSG.find(x=>x.id===id); if(!m||!FBUSER) return; const me=whoName(); if((m.ok||[]).includes(me)) return; const ok=[...(m.ok||[]),me]; m.ok=ok; try{ await FB.setDoc(FB.doc(FB.db,'msgs',id),{...m,ok}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } const aba=String(m.key||'').replace(/^mod:/,''); if(/^mod:/.test(m.key)) tlRefresh(aba); else render(); }
+async function msgOkAll(key){ for(const m of msgUnread(key)) await msgOk(m.id); }
 function msgSeen(key){ const th=msgsFor(key); const last=th.map(m=>String(m.at)).sort().pop()||new Date().toISOString(); MSEEN[key]=last; try{ localStorage.setItem('elo_mseen',JSON.stringify(MSEEN)); }catch(e){} }
-function msgTog(aba){ UI.msg=UI.msg||{}; const k='mod:'+aba; const on=!UI.msg[k]; UI.msg[k]=on; if(!on) msgSeen(k); if(on&&msgUnread(k).length) UI.msgSeenPending=k; tlRefresh(aba); }
-function msgClose(aba){ UI.msg=UI.msg||{}; UI.msg['mod:'+aba]=false; msgSeen('mod:'+aba); tlRefresh(aba); }
+function msgTog(aba){ UI.msg=UI.msg||{}; const k='mod:'+aba; UI.msg[k]=!UI.msg[k]; tlRefresh(aba); }
+function msgClose(aba){ UI.msg=UI.msg||{}; UI.msg['mod:'+aba]=false; tlRefresh(aba); }
 function logTog(aba){ UI.lg=UI.lg||{}; UI.lg[aba]=!UI.lg[aba]; tlRefresh(aba); }
 function msgThread(key,inputId,sendFn){ const th=msgsFor(key);
   return `<div class="mth"><h4>💬 MENSAGENS${th.length?' · '+th.length:''}</h4>
-    ${th.length?th.slice().reverse().map(m=>`<div class="msg ${m.who==='Lucas'?'lucas':''} ${(String(m.at)>(MSEEN[key]||'')&&m.who!==whoName())?'unread':''}"><div class="mwho">${esc(m.who)} <span>· ${esc(String(m.at).slice(5,16).replace('T',' '))}</span></div><p>${esc(m.t)}</p></div>`).join(''):'<div class="sm" style="text-align:center;padding:8px 0">Sem mensagens ainda.</div>'}
+    ${th.length?th.slice().reverse().map(m=>{ const me=whoName(); const mine=m.who===me; const oks=m.ok||[]; const un=!mine&&!oks.includes(me);
+      return `<div class="msg ${m.who==='Lucas'?'lucas':''} ${un?'unread':''}"><div class="mwho">${esc(m.who)} <span>· ${esc(String(m.at).slice(5,16).replace('T',' '))}</span></div><p>${esc(m.t)}</p><div class="mok">${mine?'':`<span class="okb ${un?'':'on'}" ${un?`onclick="msgOk('${m.id}')"`:''}>${un?'👍 ok':'✓ ok'}</span>`}${oks.length?`<span class="who">lido: ${oks.map(esc).join(', ')}</span>`:(mine?'<span class="who">ninguém leu ainda</span>':'')}</div></div>`; }).join(''):'<div class="sm" style="text-align:center;padding:8px 0">Sem mensagens ainda.</div>'}
   </div><div class="mnw"><input id="${inputId}" placeholder="${whoName()} escreve aqui…" maxlength="400" onkeydown="if(event.key==='Enter')${sendFn}"><button class="tb ok" type="button" onclick="${sendFn}">ENVIAR</button></div>`; }
 async function msgSend(key,inputId){ const i=$('#'+inputId); if(!i) return; const t=i.value.trim(); if(!t) return;
   const now=new Date().toISOString(); const d={id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),key,t,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
@@ -3238,7 +3283,7 @@ function drawTec(){ const t=cur; const inp=(k,l,type='text',cls='')=>`<div class
   openMod((t.novo?'NOVO · ':'')+t.code+(t.nome?' · '+t.nome:''),`
   <div class="sec"><div class="photo"><div class="ph" id="tPh">${t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'SEM FOTO'}</div><div class="ops"><button class="tb" id="tFoto">📷 FOTO</button>${t.foto?'<button class="tb red" id="tFotoDel">REMOVER</button>':''}</div></div></div>
   <div class="sec"><h3>TECIDO</h3><div class="f">${inp('code','CÓDIGO T')}${inp('nome','NOME')}${inp('forn','FORNECEDOR')}${inp('nf','NF')}<div class="fi"><label>CATEGORIA ${t.categoria?'':'<span style="color:#C0392B">· obrigatória</span>'}</label><select data-k="categoria" style="${t.categoria?'':'border-color:#C0392B'}"><option value="">— escolha —</option>${CATS.map(c=>`<option ${t.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div>${inp('comp','COMPOSIÇÃO (ex.: 100% VISCOSE)')}${inp('estacao','ESTAÇÃO')}</div>
-    <div class="f c3" style="margin-top:8px">${inp('preco','PREÇO R$/m')}${inp('largura','LARGURA (m)')}${inp('gramatura','GRAMATURA g/m²')}</div>
+    <div class="f c3" style="margin-top:8px">${inp('preco','PREÇO R$/m')}${inp('imposto','ALÍQUOTA NA NF % (DIFAL '+(difalOf(t.imposto)??'—')+'%)')}${inp('largura','LARGURA (m)')}${inp('gramatura','GRAMATURA g/m²')}</div>
     <div class="f" style="margin-top:8px">${inp('dataEntrada','ENTRADA (dd/mm/aa)')}<div class="fi"><label>OBS</label><input data-k="obs" value="${esc(t.obs||'')}"></div></div></div>
   <div class="sec"><h3>ESTOQUE · ${tfmt(t.estoque,1)} m</h3><div class="f c3"><div class="fi"><label>AJUSTE (m, use − p/ saída)</label><input id="ajM" placeholder="ex.: -120 ou 300"></div><div class="fi" style="grid-column:span 2"><label>MOTIVO</label><input id="ajMot" placeholder="corte lote 12185 · sobra · inventário…"></div></div><button class="tb" id="bAj" style="margin-top:8px">APLICAR AJUSTE</button>
     <div class="hist" id="hist" style="margin-top:8px"><div class="sm">carregando histórico…</div></div></div>
@@ -3253,11 +3298,11 @@ function drawTec(){ const t=cur; const inp=(k,l,type='text',cls='')=>`<div class
   const dl=$('#bDelT'); if(dl) dl.onclick=async()=>{ if(!confirm('Excluir '+cur.code+'? Isso não apaga o histórico.')) return; await FB.deleteDoc(FB.doc(FB.db,'tecidos',cur.code)); closeMod(); toast('Tecido excluído'); };
   loadHist(t.code);
 }
-function readTec(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k; let v=i.value.trim(); if(['preco','largura','gramatura'].includes(k)) v=tnum(v); else if(k==='dataEntrada') v=brToISO(v); else if(k==='code') v=v.toUpperCase(); cur[k]=v===''?null:v; });
+function readTec(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k; let v=i.value.trim(); if(['preco','largura','gramatura','imposto'].includes(k)) v=tnum(v); else if(k==='dataEntrada') v=brToISO(v); else if(k==='code') v=v.toUpperCase(); cur[k]=v===''?null:v; });
   $$('#corBody input').forEach(i=>{ const c=cur.cores[+i.dataset.cor]; if(!c) return; const f=i.dataset.f; c[f]=f==='cor'?i.value.trim().toUpperCase():tnum(i.value); }); if(!keep) cur.cores=cur.cores.filter(c=>c.cor); }
 async function saveTec(){ readTec(); if(!cur.code||!/^T\d+$/i.test(cur.code)){ toast('Código deve ser T + número (ex.: T54)'); return; }
   if(cur.novo&&TDOCS.find(t=>t.code===cur.code)){ toast(cur.code+' já existe'); return; }
-  const t={...cur}; delete t.novo; t.status=t.estoque>0?'estoque':(((t.usado||0)>0)||((t.cortes||[]).length>0)?'esgotado':'estoque'); t.updatedAt=new Date().toISOString(); t.updatedBy=by(); if(!t.createdAt) t.createdAt=t.updatedAt;
+  const t={...cur}; delete t.novo; if(t.pedidoId&&t.preco!=null&&t.imposto!=null) t.precoImp=precoImpCalc(t.preco,t.imposto); t.status=t.estoque>0?'estoque':(((t.usado||0)>0)||((t.cortes||[]).length>0)?'esgotado':'estoque'); t.updatedAt=new Date().toISOString(); t.updatedBy=by(); if(!t.createdAt) t.createdAt=t.updatedAt;
   try{ await FB.setDoc(FB.doc(FB.db,'tecidos',t.code),t); toast('Salvo · '+t.code); closeMod(); }catch(e){ toast('Erro ao salvar: '+e.code,5000); } }
 async function applyAjuste(){ readTec(); const d=tnum($('#ajM').value); const mot=$('#ajMot').value.trim(); if(d==null||!d){ toast('Informe os metros'); return; } if(!mot){ toast('Escreva o motivo'); return; }
   const antes=cur.estoque||0; cur.estoque=Math.round((antes+d)*100)/100; if(d<0) cur.usado=Math.round(((cur.usado||0)-d)*100)/100;
@@ -3282,7 +3327,7 @@ function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pende
   openMod((rec?p.entrada.t+' · ':'PEDIDO · ')+(p.nome||'novo'),`
   <div class="sec"><div class="photo"><div class="ph" id="pPh">${p.foto?`<img loading="lazy" decoding="async" src="${p.foto}">`:'FOTO / AMOSTRA'}</div><div class="ops"><button class="tb" id="pFoto">📷 FOTO</button><button class="tb pri" id="bRead" ${p.foto?'':'disabled'}>🤖 LER COM CLAUDE</button><button class="tb" id="bPaste">📋 COLAR LEITURA</button><span class="sm">status: <b>${p.status}</b>${rec?' · '+p.entrada.t:''}</span></div></div>${(p.unsure||[]).length?`<div class="pend">🤖 sem certeza: ${p.unsure.join(', ')} — confira</div>`:''}</div>
   <div class="sec"><h3>PEDIDO</h3><div class="f c3">${inp('data','DATA (dd/mm/aa)')}<div class="fi"><label>FORNECEDOR</label><input data-k="fornecedor" value="${esc(p.fornecedor||'')}" list="forns" class="${p._try&&!p.fornecedor?'miss':''}"></div>${inp('vendedor','VENDEDOR')}${inp('pagto','PAGTO','30/60/90')}${inp('prazo','PRAZO ENTREGA (dd/mm/aa)')}${inp('numforn','Nº PEDIDO FORN.')}</div></div>
-  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}${inp('estacao','ESTAÇÃO','VERÃO/26')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${inp('imposto','IMPOSTO %')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>CATEGORIA ${p.categoria?'':'<span style="color:#C0392B">· obrigatória</span>'}</label><select data-k="categoria" class="${!p.categoria&&p._try?'miss':''}" style="${p.categoria?'':'border-color:#C0392B'}"><option value="">— escolha —</option>${CATS.map(c=>`<option ${p.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="fi"><label>RENDIMENTO / PREÇO m</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}${precoM!=null&&tnum(p.imposto)?' · c/imp R$ '+tfmt(precoM*(1+tnum(p.imposto)/100),2)+'/m':''}"></div></div>
+  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}${inp('estacao','ESTAÇÃO','VERÃO/26')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${inp('imposto','ALÍQUOTA NA NF %','4 · 7 · 12 · 18')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>CATEGORIA ${p.categoria?'':'<span style="color:#C0392B">· obrigatória</span>'}</label><select data-k="categoria" class="${!p.categoria&&p._try?'miss':''}" style="${p.categoria?'':'border-color:#C0392B'}"><option value="">— escolha —</option>${CATS.map(c=>`<option ${p.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="fi"><label>RENDIMENTO / PREÇO m / DIFAL</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}${precoM!=null&&tnum(p.imposto)!=null?' · DIFAL '+difalOf(p.imposto)+'% → c/imp R$ '+tfmt(precoImpCalc(precoM,p.imposto),2)+'/m':''}"></div></div>
     <table class="t" style="margin-top:8px"><thead><tr><th style="width:80px">%</th><th>FIBRA</th></tr></thead><tbody id="compBody">${comp}</tbody></table><button class="tb" id="bAddComp" style="margin-top:6px">+ FIBRA</button><datalist id="fibras">${DEF_FIB.map(f=>`<option value="${f}">`).join('')}</datalist><datalist id="forns">${[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
   <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.length?'':'disabled'}>✂ RECORTAR SWATCHES</button><span class="sm" style="margin-left:8px">toque na 1ª coluna p/ recortar à mão</span></div>
   <div class="sec"><div class="fi"><label>OBS</label><textarea data-k="obs">${esc(p.obs||'')}</textarea></div>${pd.ped.length?`<div class="pend">⚠ falta: ${pd.ped.join(', ')}</div>`:''}</div>${p.id?msgThread('ped:'+p.id,'pdIM',`msgSend('ped:${p.id}','pdIM')`):''}
@@ -3322,7 +3367,7 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
   const gram=tnum(cur.gram),larg=tnum(cur.larg),preco=tnum(cur.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(cur.unid==='kg'?(rend?preco/rend:null):preco);
   const m=tnum(e.m)!=null?tnum(e.m):(rend&&tnum(e.kg)!=null?Math.round(tnum(e.kg)*rend*10)/10:0);
   const imp=tnum(cur.imposto); const qped=cur.cores.reduce((s,c)=>s+(tnum(c.qtd)||0),0); const rrec=Object.values(e.rolos||{}).reduce((s,r)=>s+(tnum(r)||0),0);
-  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',categoria:cur.categoria||'',imposto:imp,precoImp:(precoM!=null&&imp)?Math.round(precoM*(1+imp/100)*10000)/10000:null,estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:cur.estacao||'',preco:precoM,largura:larg,gramatura:gram,mediaRolo:(rrec>0&&m)?Math.round(m/rrec*10)/10:null,dataEntrada:e.data,qtdPedida:qped||null,dataPedido:cur.data||null,prevEntrega:cur.prazo||null,valorTotal:(precoM!=null&&m)?Math.round(m*precoM*100)/100:null,qtdRecebida:m??null,rolosRec:rrec||null,kg:e.kg??null,inspecao:e.insp||'',cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
+  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',categoria:cur.categoria||'',imposto:imp,precoImp:(precoM!=null&&imp!=null)?precoImpCalc(precoM,imp):null,estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:cur.estacao||'',preco:precoM,largura:larg,gramatura:gram,mediaRolo:(rrec>0&&m)?Math.round(m/rrec*10)/10:null,dataEntrada:e.data,qtdPedida:qped||null,dataPedido:cur.data||null,prevEntrega:cur.prazo||null,valorTotal:(precoM!=null&&m)?Math.round(m*precoM*100)/100:null,qtdRecebida:m??null,rolosRec:rrec||null,kg:e.kg??null,inspecao:e.insp||'',cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
   cur.status='RECEBIDO';
   try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); pgShow('criando '+t.code+' no estoque…'); await b.commit(); pgHide();
    toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000);
