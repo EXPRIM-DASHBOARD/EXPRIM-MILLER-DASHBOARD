@@ -671,7 +671,9 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 .xrow .xo{font:700 9.5px var(--mono);color:#6b6459;white-space:nowrap}
 #teste{display:none;background:#C0392B;color:#fff;font:900 10px var(--mono);letter-spacing:.14em;border-radius:6px;padding:3px 8px;margin-left:8px;vertical-align:middle}
 body.teste #teste{display:inline-block}
-body.teste header.top{box-shadow:inset 0 -4px 0 #C0392B}
+#tband{display:none;background:#C0392B;color:#fff;text-align:center;font:900 13px var(--mono);letter-spacing:.35em;padding:7px 0;border-top:3px solid #7a1f19;border-bottom:3px solid #7a1f19}
+body.teste #tband{display:block}
+body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 /* ===== v9.25a · teste link · nova versão · pedido→cortado ===== */
 #lkTeste,#lkElo{display:none;font:800 9.5px var(--mono);letter-spacing:.1em;border:1.5px solid #C0392B;color:#C0392B;border-radius:6px;padding:2px 7px;margin-left:8px;text-decoration:none;vertical-align:middle}
 #lkTeste.on,#lkElo.on{display:inline-block}
@@ -683,7 +685,7 @@ body.teste header.top{box-shadow:inset 0 -4px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.25a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.25b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -691,7 +693,7 @@ body.teste header.top{box-shadow:inset 0 -4px 0 #C0392B}
   <div id="snap"></div>
   <input id="fileIn" type="file" accept=".xlsx" multiple="" hidden="">
   <div id="ref"></div>
-</header>
+</header><div id="tband">TESTE &nbsp;·&nbsp; TESTE &nbsp;·&nbsp; TESTE</div>
 <div class="chips">
   <button class="chip atu" data-f="atualizar"><b id="chipAtu">0</b>ATUALIZAR <span class="hint">Roberto avançou · DEBORA ainda não</span></button>
   <button class="chip ver" data-f="verificar"><b id="chipVer">0</b>VERIFICAR <span class="hint">etapa não bate</span></button>
