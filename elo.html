@@ -250,7 +250,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .cut{border-collapse:collapse;font:600 10.5px var(--mono);white-space:nowrap}
 .cut th{background:#1D2A3F;color:#fff;font:800 8.5px var(--mono);padding:5px 7px;text-align:left;position:sticky;top:0;z-index:1}
 .cut td{border-bottom:1px solid var(--line);padding:4px 7px;vertical-align:middle}
-.cut td.xl{color:#5a544a;background:#FBFAF6}.cut td.elo{background:#FFFDF0}.cut td.calc{color:#1D2A3F;font-weight:800;background:#F3F5F9}
+.cut td.xl{color:#5a544a;background:#FBFAF6}.cut td.elo{background:#FFFDF0;display:table-cell}.cut td.calc{color:#1D2A3F;font-weight:800;background:#F3F5F9}
 .cut td.cu-el{max-width:150px;overflow:hidden;text-overflow:ellipsis}
 .cut td.elo input{width:74px;border:1px solid var(--line);border-radius:5px;padding:3px 5px;font:800 11px var(--mono);background:#fff;text-align:right}
 .cut td.elo input:focus{outline:2px solid var(--gold)}.cut td.elo input.set{border-color:#2E7D32;background:#EAF4EA}
@@ -678,32 +678,84 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 #lkTeste,#lkElo{display:none;font:800 9.5px var(--mono);letter-spacing:.1em;border:1.5px solid #C0392B;color:#C0392B;border-radius:6px;padding:2px 7px;margin-left:8px;text-decoration:none;vertical-align:middle}
 #lkTeste.on,#lkElo.on{display:inline-block}
 #lkElo{border-color:#F3E7C8;color:#F3E7C8}
+#lkCopy,#lkWipe{display:none;font:800 9.5px var(--mono);letter-spacing:.06em;border:1.5px solid #E8A33D;color:#E8A33D;border-radius:6px;padding:2px 7px;margin-left:6px;text-decoration:none;vertical-align:middle}
+#lkCopy.on,#lkWipe.on{display:inline-block}
+#tband small{display:block;font:700 9px var(--mono);letter-spacing:.1em;opacity:.85;margin-top:2px}
 #upd{display:none;position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:9998;background:#1D2A3F;color:#fff;border:2px solid #E8A33D;border-radius:999px;padding:9px 16px;font:800 12px var(--mono);letter-spacing:.06em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #upd.on{display:block}
 .qtd{font:700 10px var(--mono);color:#6b6459}.qtd b{color:var(--ink)}.qtd.neg{color:#C0392B}.qtd.neg b{color:#C0392B}
+/* ===== v9.25c · busca abaixo dos chips ===== */
+.qbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.qbar .qic{font-size:15px;opacity:.7}
+.qbar .search{flex:1;max-width:none;min-width:0;background:#fff;border:1.5px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 12px;font:14px var(--sans);box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.qbar .search:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(224,168,60,.25)}
+.qbar .search::placeholder{color:#9a9386}
+.qbar .qx{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font:800 11px var(--mono);cursor:pointer;color:#6b6459}
+@media(max-width:860px){.qbar{padding:6px 10px}}
+/* ===== v9.26a · ficha S/M/L · etapa atual aberta · 💬 · tecido (+) · histórico oculto · cartão COSTURA ===== */
+.bwrap.fsS.has3{grid-template-columns:200px 1fr minmax(320px,24vw)}
+.bwrap.fsM.has3{grid-template-columns:200px 1fr minmax(430px,34vw)}
+.bwrap.fsL.has3{grid-template-columns:200px 1fr minmax(680px,50vw)}
+.szt{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;margin-left:auto}
+.szt span{padding:2px 8px;font:800 9.5px var(--mono);cursor:pointer;color:#6b6459}.szt span.on{background:#1D2A3F;color:#fff}
+.fsS .rs2,.fsS .tlit .ob,.fsS .tobs{display:none}
+.fsS .kv2{grid-template-columns:1fr}
+.fsS .fotos{display:none}
+.fsL .mpc{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+.plus{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;border:1.5px solid #B8862B;color:#7A4E00;font:900 12px var(--mono);cursor:pointer;background:#fff;margin-left:5px;vertical-align:middle}
+.ib{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 8px;font:800 9.5px var(--mono);cursor:pointer;color:#1D2A3F;position:relative;margin-left:4px}
+.ib.on{background:#1D2A3F;color:#fff}
+.ib .n{position:absolute;top:-7px;right:-7px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font:900 9px var(--mono);display:flex;align-items:center;justify-content:center}
+.msgp{margin:6px 0 10px;border:2px solid #1D2A3F;border-radius:10px;background:#fff;overflow:hidden}
+.msgp .mh{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#1D2A3F;color:#fff;font:800 10px var(--mono);letter-spacing:.1em}
+.msgp .mh .x{margin-left:auto;background:transparent;border:1px solid #F3E7C8;color:#fff;border-radius:6px;padding:1px 7px;cursor:pointer;font:800 11px var(--mono)}
+.msgp .mth h4{display:none}.msgp .msg.unread{background:#FFF4E5}
+.mbdg.unread{background:var(--red)}
+.card .cl{font:700 9.5px var(--mono);letter-spacing:.03em;color:var(--ink2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .cl b{color:var(--ink)}.card .cl .ok2{color:#2E7D32;font-weight:800}.card .cl .tol{color:#A3641A;font-weight:800}.card .cl .lt2{color:var(--red);font-weight:800}
+/* ===== v9.26b · caixa 90/10 · ㅇㅋ (ok) por leitor · badge verde ===== */
+.mnw input{flex:9;min-width:0}.mnw .tb{flex:1;min-width:64px;padding:9px 6px;white-space:nowrap}
+.mok{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
+.mok .okb{border:1.5px solid #2E7D32;background:#fff;color:#2E7D32;border-radius:999px;padding:1px 8px;font:800 9.5px var(--mono);cursor:pointer}
+.mok .okb.on{background:#2E7D32;color:#fff;cursor:default}
+.mok .who{font:700 9px var(--mono);color:#6b6459}
+.msg.unread{background:#FFF4E5;border-color:#F0C48A}
+.mbdg.okall{background:#2E7D32}
+/* portal ⇄ (PAINEL | ELO) — mesmo padrão do PAINEL */
+#portal{position:fixed;right:12px;bottom:12px;z-index:9999;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:#152540;border:1.5px solid #D4AF37;border-radius:50%;color:#D4AF37;font-size:17px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#portal:hover{background:#1D2A3F}
+@media(max-width:860px){#portal{bottom:70px}}
+/* ===== v9.28a · tecido manual (✎) ===== */
+.tpFree{margin-top:10px;border:1.5px dashed #A3641A;background:#FBF3E2;border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tpFree b{font:800 12px var(--mono);color:#A3641A}.tpFree small{display:block;color:#6b6459;font-size:11px;margin-top:3px}.tpFree.off{opacity:.55}.tpFree button[disabled]{opacity:.5;cursor:not-allowed}
+.tp-liv b{color:#A3641A}
+.chipLiv{display:inline-block;border-radius:6px;padding:1px 7px;font:800 10px var(--mono);letter-spacing:.06em;background:#F6E6C3;color:#A3641A;border:1px dashed #A3641A}
+.ccl{display:flex;gap:6px;align-items:center;margin:2px 0}.ccl input{border:1px solid var(--line);border-radius:7px;padding:5px 7px;font:inherit}.ccl .cclc{flex:1;min-width:0}.ccl .cclk{max-width:86px}.ccl .cclm{width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459}
+.livbox{border:1.5px dashed #A3641A;border-radius:10px;background:#FBF3E2;padding:8px 10px;margin:0 0 8px}
+.livbox .lt{font:800 10px var(--mono);color:#A3641A;margin-bottom:5px}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.25b</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
-  <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
   <div id="snap"></div>
   <input id="fileIn" type="file" accept=".xlsx" multiple="" hidden="">
   <div id="ref"></div>
-</header><div id="tband">TESTE &nbsp;·&nbsp; TESTE &nbsp;·&nbsp; TESTE</div>
+</header><div id="tband">TESTE &nbsp;·&nbsp; TESTE &nbsp;·&nbsp; TESTE<small>dados separados (coleções teste_*) · nada daqui vai p/ o ELO nem p/ o PAINEL</small></div>
 <div class="chips">
   <button class="chip atu" data-f="atualizar"><b id="chipAtu">0</b>ATUALIZAR <span class="hint">Roberto avançou · DEBORA ainda não</span></button>
   <button class="chip ver" data-f="verificar"><b id="chipVer">0</b>VERIFICAR <span class="hint">etapa não bate</span></button>
   <button class="chip fila" data-f="fila"><b id="chipFila">0</b>FILA DE CORTE <span class="hint">DEBORA em Corte · sem lote</span></button>
   <span class="chip ficha"><b id="chipFicha">0</b>SEM FICHA <span class="hint">lote sem M-sheet</span></span>
 </div>
+<div class="qbar"><span class="qic">🔍</span><input id="q" class="search" placeholder="buscar modelo, código, oficina, tecido…" autocomplete="off"><button class="qx" id="qClear" title="limpar" onclick="const q=document.getElementById('q'); q.value=''; q.dispatchEvent(new Event('input')); q.focus()">✕</button></div>
 <main id="main"></main><div id="upd" onclick="location.reload()">🔄 NOVA VERSÃO DISPONÍVEL — toque p/ atualizar</div>
 <div id="mp"><div class="mpw"><button id="mpClose">✕ fechar</button><div id="mpBody"></div></div></div>
 <div id="drop">Solte DEBORA, ROBERTO, ESTOQUE_TECIDOS ou BOLETOS (.xlsx)</div>
-<div id="toast"></div> <div class="docwait" id="docwait" hidden><div class="bx"><span class="ic">📄</span><b id="dwT">Lendo documento…</b><small id="dwS">preparando imagem</small></div></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
+<div id="toast"></div><a id="portal" href="https://exprim-dashboard.github.io/EXPRIM-MILLER-DASHBOARD/index.html?menu=1" title="EXPRIM — PAINEL/ELO 선택">⇄</a> <div class="docwait" id="docwait" hidden><div class="bx"><span class="ic">📄</span><b id="dwT">Lendo documento…</b><small id="dwS">preparando imagem</small></div></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
 <div class="tmod" id="tmod"><div class="box tapp"><div class="mh"><h2 id="tmTitle"></h2><button id="tmClose">FECHAR</button></div><div class="mb" id="tmBody"></div></div></div>
 <div id="gate"><div class="gbox"><b>EXPRIM PRODUÇÃO · ELO</b><p>Painel compartilhado (Brasil × Coreia). Entre com a conta Google autorizada.</p><div style="display:flex;flex-direction:column;gap:7px;max-width:290px;margin:0 auto">
   <input id="gEm" placeholder="e-mail" autocomplete="username" style="border:1.5px solid rgba(28,26,23,.25);border-radius:9px;padding:10px 12px;font:inherit">
@@ -717,12 +769,15 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, runTransaction, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection as _colRaw, doc as _docRaw, setDoc, getDoc, getDocs, onSnapshot, writeBatch, deleteDoc, runTransaction, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 if(!(typeof META!=='undefined'&&META&&META.snapshot)){ try{
   const app=initializeApp({apiKey:"AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg",authDomain:"exprim-elo.firebaseapp.com",projectId:"exprim-elo",storageBucket:"exprim-elo.firebasestorage.app",messagingSenderId:"926078854136",appId:"1:926078854136:web:e51a7f305dcfbdf6352c0d"});
   const auth=getAuth(app); let db; try{ db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})}); }catch(e){ db=initializeFirestore(app,{}); }
-  window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction};
-  window.FB={auth,db,collection,doc,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
+  /* v9.26c: versão de TESTE usa coleções teste_* (dados separados) — 'config' é compartilhada */
+  const COLX=n=>(window.IS_TESTE&&n!=='config')?('teste_'+n):n;
+  const collection=(d,c)=>_colRaw(d,COLX(c)); const doc=(d,c,...r)=>_docRaw(d,COLX(c),...r);
+  window.__FBraw={setDoc,deleteDoc,writeBatch,runTransaction,_docRaw,_colRaw};
+  window.FB={auth,db,collection,doc,_docRaw,_colRaw,setDoc,getDoc,getDocs,onSnapshot,writeBatch,deleteDoc,runTransaction,query,orderBy,limit,signOut:()=>signOut(auth),
     loginPw:async(em,se)=>{ const g=document.getElementById('gMsg');
       try{ await signInWithEmailAndPassword(auth,em,se); }
       catch(e){ const c=(e&&e.code)||'';
@@ -784,8 +839,20 @@ const FASES=['Design','Amostra','Materiais','Corte','Costura','Qualidade','Embal
 const DB_NAME='exprim_elo', DB_STORE='kv';
 let DEB={models:[],at:null,file:''}, ROB={lots:[],custo:[],at:null,file:''}, TEC={items:[],at:null,file:''};
 let PLANO={key:'',sel:{}}; let TODO={done:{},extra:[]};
-const IS_TESTE=/elo_?teste|elo2/i.test(location.pathname); if(IS_TESTE){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
-function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&isLucas()); if(b) b.classList.toggle('on',IS_TESTE); }
+const IS_TESTE=/elo_?teste|elo2/i.test(location.pathname); window.IS_TESTE=IS_TESTE; if(IS_TESTE){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
+function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&isLucas()); if(b) b.classList.toggle('on',IS_TESTE); ['lkCopy','lkWipe'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.toggle('on',IS_TESTE&&isLucas()); }); }
+const TESTE_COLS=['elo_deb','cro_elo','cro_img','custo_elo','cortes','corte_conf','tecidos','pedidos','boletos','msgs','fila_manual','oficinas','movs','nfs','elo','public'];
+async function testeCopiar(){ if(!IS_TESTE||!isLucas()||window.__tcBusy) return; if(!confirm('Copiar TODOS os dados do ELO (produção) para a versão de TESTE?\nO que já existe no teste é sobrescrito. Nada muda no ELO.')) return;
+  window.__tcBusy=true; let n=0; try{ for(const c of TESTE_COLS){ pgShow('📥 copiando '+c+'…'); const src=await FB.getDocs(FB._colRaw(FB.db,c)); let b=FB.writeBatch(FB.db), k=0, bytes=0;
+      for(const d of src.docs){ const v=d.data(); const sz=JSON.stringify(v).length; if(k>=200||bytes+sz>8_000_000){ await b.commit(); b=FB.writeBatch(FB.db); k=0; bytes=0; } b.set(FB._docRaw(FB.db,'teste_'+c,d.id),v); k++; bytes+=sz; n++; }
+      if(k) await b.commit(); }
+    toast('📥 '+n+' documento(s) copiados p/ o TESTE',6000); }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),8000); } finally{ pgHide(); window.__tcBusy=false; } }
+async function testeLimpar(){ if(!IS_TESTE||!isLucas()||window.__tcBusy) return; if(prompt('Apagar TODOS os dados de TESTE? Escreva LIMPAR para confirmar.')!=='LIMPAR') return;
+  window.__tcBusy=true; let n=0; try{ for(const c of TESTE_COLS){ pgShow('🗑 limpando '+c+'…'); const src=await FB.getDocs(FB._colRaw(FB.db,'teste_'+c)); let b=FB.writeBatch(FB.db), k=0;
+      for(const d of src.docs){ if(k>=400){ await b.commit(); b=FB.writeBatch(FB.db); k=0; } b.delete(d.ref); k++; n++; } if(k) await b.commit(); }
+    toast('🗑 '+n+' documento(s) apagados do TESTE',6000); }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),8000); } finally{ pgHide(); window.__tcBusy=false; } }
+let FSZ=(function(){ try{ return localStorage.getItem('elo_fsz')||'M'; }catch(e){ return 'M'; } })();
+function setFsz(s){ FSZ=s; try{ localStorage.setItem('elo_fsz',s); }catch(e){} render(); }
 let VIEW='debora', FILTER='', Q='', TF='estoque', TORD='', FGRP=true, CV=false, TCAT='', TCOMP='';
 const CATS=['MALHA','PLANO','FORRO','RENDA']; const isForro=t=>!!t&&(t.categoria==='FORRO'||t.categoria==='RENDA');
 function fibrasDe(t){ return String((t&&t.comp)||'').split(/[\/+,]/).map(s=>s.replace(/[\d.,%]+/g,'').trim().toUpperCase()).filter(Boolean); }
@@ -1088,11 +1155,16 @@ function debThreeWay(prev,m){ const base=prev.imp, r=JSON.parse(JSON.stringify(p
      if(nv&&N!==B){ if(P===B){ tgt[c]=nv[c]??''; } else if(P!==N){ const id='p'+i+'.'+c;
        if(!r.conflicts.some(x=>x.campo===id)) r.conflicts.push({campo:id,rid:'p'+i,col:c,painel:tgt[c]??'',planilha:nv[c]??''}); } } }); }
  r.imp=debImpOf(m); r.edited=true; return r; }
-function tecState(m){ if(m.tecSel&&m.tecSel.tec) return 'ok';
+function tecNorm(s){ return String(s||'').toUpperCase().replace(/['"<>\\`]/g,'').replace(/\s+/g,' ').trim(); }
+function livreNames(){ const m=new Map(); const add=n=>{ n=tecNorm(n); if(n) m.set(n,(m.get(n)||0)+1); };
+  DEB.models.forEach(x=>{ if(x.tecSel&&x.tecSel.livre) add(x.tecSel.tec); }); CCONF.forEach(c=>{ if(c.livre) add(c.tec); });
+  return [...m].map(([n,c])=>({n,c})).sort((a,b)=>b.c-a.c||a.n.localeCompare(b.n)); }
+function grpLivre(its){ return its.some(c=>c.livre)||its.some(c=>{ const m=DEB.models.find(x=>x.aba===c.aba); return !!(m&&m.tecSel&&m.tecSel.livre&&m.tecSel.tec===(c.tec||'')); }); }
+function tecState(m){ if(m.tecSel&&m.tecSel.tec) return m.tecSel.livre?'livre':'ok';
  if(!nfKeys(m.nf).length) return 'semnf';
  const c=tecidoOf(m); return c.length===0?'semcand':(c.length>1?'multi':'naoconf'); }
 function tecStateChip(m){ const s=tecState(m);
- const L={ok:['✓ tecido confirmado','#EAF4EA;color:#2E7D32'],semnf:['sem NF','#EFE9DD;color:#6b6459'],
+ const L={ok:['✓ tecido confirmado','#EAF4EA;color:#2E7D32'],livre:['✎ tecido manual (sem estoque)','#F6E6C3;color:#A3641A'],semnf:['sem NF','#EFE9DD;color:#6b6459'],
    semcand:['NF sem tecido na nuvem','#FBEDEB;color:#C0392B'],multi:['⚠ vários candidatos','#FDF4E3;color:#8a6d00'],
    naoconf:['candidato não confirmado','#FDF4E3;color:#8a6d00']}[s];
  return `<span style="font:800 8.5px var(--mono);border-radius:5px;padding:1px 6px;background:${L[1]}">${L[0]}</span>`; }
@@ -1240,11 +1312,11 @@ function card(r){
   const late=m.prazo&&m.prazo<TODAY&&!m.concl; const ps=modProbs(m);
   return `<div class="card ${m.foto?'hasph':''} ${typeof DMSEL!=='undefined'&&DMSEL===m.aba?'dsel':''}" data-aba="${m.aba}" onclick="dCardClick('${m.aba}')">
     ${m.foto?`<img class="th" src="${m.foto}" alt="">`:''}
-    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
+    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg ${msgUnread('mod:'+m.aba).length?'unread':'okall'}">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
     <div class="nm">${esc(m.nome.replace(/^\S+\s*[-·]?\s*/,'')||m.nome)}</div>
     <div class="c3"><span class="pg"><i style="width:${m.prog||0}%"></i></span><span class="pz ${late?'late':''}">${m.prog!=null?m.prog+'%':''}${m.prazo?` · ${dtBR(m.prazo)}`:''}${(qtCortOf(m)&&qtCortOf(m)!==(m.qtPedido!=null?m.qtPedido:m.qt))||m.qtAceite?' · '+qtLine(m):''}</span></div>
-    <div class="rl">${robLine(r)}</div>
-    <div class="tl2">${tecLine(m)}</div>
+    ${m.fase==='Costura'?costLines(r):`<div class="rl">${robLine(r)}</div>
+    <div class="tl2">${tecLine(m)}</div>`}
   </div>`;
 }
 
@@ -1271,7 +1343,7 @@ function renderDebora(A){
     const railK=lanes.map(fz=>{ const r2=of(fz); const pcs=r2.reduce((s,r)=>s+(r.m.qt||0),0);
       const atu=r2.filter(r=>r.alert&&r.alert.k==='atualizar').length, ver=r2.filter(r=>r.alert&&r.alert.k==='verificar').length;
       return `<button class="brc ${fz==='Corte'?'gold':''}" aria-selected="${DFASE===fz}" onclick="DFASE='${fz}';DMSEL=null;render()"><span class="ph">${fz.toUpperCase()}</span><div class="big">${r2.length}</div><div class="pcs">${fmt(pcs)} p\u00e7s${atu?` \u00b7 \ud83d\udd04${atu}`:''}${ver?` \u00b7 \u26a0${ver}`:''}</div></button>`; }).join('');
-    return bar+`<div class="bwrap tw ${DMSEL?'has3':''}">
+    return bar+`<div class="bwrap tw ${DMSEL?'has3':''} fs${FSZ}">
       <nav class="brail">${croRailBtn()}${railK}${descRailBtn()}</nav>
       <div class="bmid"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${chips.map(c=>`<button class="dchip ${c[0]===curk?'on':''}" onclick="DCHIP['${f}']='${c[0]}';DMSEL=null;render()">${c[1]} ${c[3]}</button>`).join('')}</div>
         <div class="kgrid">${rs.map(card).join('')||'<div class="empty">nenhum modelo neste filtro</div>'}</div></div>
@@ -1302,7 +1374,12 @@ function passFilter(r){
 }
 
 function filaGroups(A){
-  const grp={}; A.fila.forEach(r=>{ const ts=tecidoOf(r.m); const key=ts.length?ts[0].code:(nfKeys(r.m.nf)[0]?'NF '+r.m.nf:'sem NF · '+r.m.aba); (grp[key]=grp[key]||{key,tec:ts[0]||null,nf:r.m.nf,rows:[]}).rows.push(r); });
+  const grp={}; A.fila.forEach(r=>{ const ts=tecidoOf(r.m); const sel=r.m.tecSel&&r.m.tecSel.tec?r.m.tecSel:null;
+    let key,tec=ts[0]||null,livre=false,name='';
+    if(sel&&sel.livre){ key='✎ '+sel.tec; tec=null; livre=true; name=sel.tec; }
+    else if(sel){ key=sel.tec; tec=TEC.items.find(t=>t.code===sel.tec)||ts[0]||null; }
+    else key=ts.length?ts[0].code:(nfKeys(r.m.nf)[0]?'NF '+r.m.nf:'sem NF · '+r.m.aba);
+    (grp[key]=grp[key]||{key,tec,livre,name,nf:r.m.nf,rows:[]}).rows.push(r); });
   return Object.values(grp).sort((a,b)=>b.rows.length-a.rows.length||(b.rows.filter(r=>r.elo==='preparando').length-a.rows.filter(r=>r.elo==='preparando').length));
 }
 function renderPlano(A){
@@ -1556,11 +1633,11 @@ function renderRoberto(A){
     const gk=g.key.replace(/'/g,''); const isOpen=UI.fgAll||!!UI.fg[gk];
     return `<div class="fg ${g.rows.length>1?'dup':''} ${isOpen?'open':''}">
       <div class="fgh" onclick="togFG('${gk}')"><span class="chev">${isOpen?'▾':'▸'}</span>${g.tec&&g.tec.foto?`<img loading="lazy" decoding="async" src="${g.tec.foto}" alt="" onclick="event.stopPropagation();openTecido('${g.tec.code}')">`:'<i class="noth"></i>'}
-        <div><b>${g.tec?g.tec.code+' · '+esc(g.tec.nome):esc(g.key)}${!g.tec&&/^NF/.test(g.key)?' <small class="okt" style="color:var(--red)">sem aba T</small>':''}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) · ${fmt(pcs)} pçs${g.rows.length>1?' · <em>cortar junto</em>':''}</span></div>
+        <div><b>${g.tec?g.tec.code+' · '+esc(g.tec.nome):esc(g.key)}${g.livre?' <span class="chipLiv">manual · sem estoque</span>':''}${!g.tec&&/^NF/.test(g.key)?' <small class="okt" style="color:var(--red)">sem aba T</small>':''}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) · ${fmt(pcs)} pçs${g.rows.length>1?' · <em>cortar junto</em>':''}</span></div>
         <span class="cnt">${pr.length}<small>prontos</small>${ag.length?`<i>+${ag.length}</i>`:''}</span><span class="fbt"><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="event.stopPropagation();confSel('${gk}')">✔ CONFIRMAR</button><button class="tg" onclick="event.stopPropagation();PLANO.key='${gk}';VIEW='plano';render()">✂ plano</button></span></div>
       ${isOpen?(()=>{const ref=g.rows[0].m; const up=mesmoTecido(ref).filter(x=>PRE_CORTE.includes(x.fase)); if(!up.length) return ''; return `<div class="fup"><b>vai juntar</b>${up.map(x=>`<span onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo||'—'} <i>${x.fase}${x.prazo?' · '+dtBR(x.prazo):''}</i></span>`).join('')}</div>`;})():''}
-      ${isOpen?(WIDE?`<div class="cgrid">${g.rows.map(r=>`<div class="mc2 ${RFICHA&&RFICHA.kind==='fila'&&RFICHA.key===r.m.aba?'on':''}" onclick="robPick('fila','${r.m.aba}')"><input type="checkbox" class="cfk cfkc" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">${r.m.foto?`<img class="top" src="${r.m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><span class="nm2">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="st2">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00">risco pend.</span>'}</span>${robChkHTML(r.m)}</div>`).join('')}</div>`
-  :g.rows.map(r=>`<div class="frow ${r.elo==='preparando'?'ok':''}" onclick="openModel('${r.m.aba}')"><input type="checkbox" class="cfk" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()"><span class="mc">${r.m.aba} · ${r.m.codigo||'—'}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="sm">${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'risco pendente'}${r.m.qt?' · '+fmt(r.m.qt)+' pçs':''}${r.m.prazo?' · prazo '+dtBR(r.m.prazo):''}</span>${robChkHTML(r.m)}</div>`).join('')):''}
+      ${isOpen?(WIDE?`<div class="cgrid">${g.rows.map(r=>`<div class="mc2 ${RFICHA&&RFICHA.kind==='fila'&&RFICHA.key===r.m.aba?'on':''}" onclick="robPick('fila','${r.m.aba}')"><input type="checkbox" class="cfk cfkc" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:(g.livre?esc(g.name):'')}" data-livre="${g.livre?1:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">${r.m.foto?`<img class="top" src="${r.m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><span class="nm2">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="st2">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00">risco pend.</span>'}</span>${robChkHTML(r.m)}</div>`).join('')}</div>`
+  :g.rows.map(r=>`<div class="frow ${r.elo==='preparando'?'ok':''}" onclick="openModel('${r.m.aba}')"><input type="checkbox" class="cfk" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:(g.livre?esc(g.name):'')}" data-livre="${g.livre?1:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()"><span class="mc">${r.m.aba} · ${r.m.codigo||'—'}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="sm">${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'risco pendente'}${r.m.qt?' · '+fmt(r.m.qt)+' pçs':''}${r.m.prazo?' · prazo '+dtBR(r.m.prazo):''}</span>${robChkHTML(r.m)}</div>`).join('')):''}
     </div>`;}).join('');
   const autoTag=new Set(filaR.flatMap(r=>[r.m.aba,String(r.m.codigo||'')]));
   const manHtml=()=>{ const btn=`<div class="fg open"><div class="fgh" style="border-style:dashed;cursor:pointer" onclick="openAddFila()"><i class="noth"></i><div><b>＋ ADICIONAR À FILA</b><span>tecido + modelo, na mão · salvo na nuvem</span></div></div></div>`;
@@ -1576,7 +1653,7 @@ function renderRoberto(A){
       const minis=its.slice(0,3).map(c=>{const m=DEB.models.find(x=>x.aba===c.aba)||{};
         return `<div><div class="aph">${m.foto?`<img loading="lazy" decoding="async" src="${m.foto}">`:''}</div><span class="alb">${esc(c.cod||c.aba||'—')}</span></div>`;}).join('');
       return `<div class="agc ${RFICHA&&RFICHA.kind==='cutg'&&RFICHA.key===tc?'on':''}" onclick="robPick('cutg','${tc}')">
-        <div class="agch">${t&&t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'<div class="agsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>${t?fmt(Math.round(t.estoque))+' m':'sem tecido'}</span></div><div class="agn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>
+        <div class="agch">${t&&t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'<div class="agsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):(grpLivre(its)?'✎ '+esc(tc):'⚠ '+esc(tc))}</b><span>${t?fmt(Math.round(t.estoque))+' m':(grpLivre(its)?'manual · sem estoque':'sem tecido')}</span></div><div class="agn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>
         <div class="agm">${minis}</div>
         <div class="agf"><span class="okt">✔ ${its.length} conf.</span>${its.length>3?`<span>+${its.length-3}…</span>`:''}<span style="margin-left:auto">✂ junto</span></div></div>`; }).join('')}</div>`:'')
     :Object.keys(gs).map(tc=>cutGroupFull(tc)).join('');
@@ -1596,7 +1673,7 @@ function renderRoberto(A){
     const minis=g.rows.slice(0,4).map(r=>`<div class="fmm">${r.m.foto?`<img loading="lazy" decoding="async" src="${r.m.foto}">`:'<div class="fmp"></div>'}<i>${r.elo==='preparando'?'✅':'⚠️'}</i><b>${r.m.aba}</b><small>${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,'')).slice(0,16)}</small></div>`).join('');
     return `<div class="fgc ${RFICHA&&RFICHA.kind==='grp'&&RFICHA.key===gk?'on':''}" onclick="robPick('grp','${gk}')">
       <div class="fgch">${g.tec&&g.tec.foto?`<img loading="lazy" decoding="async" src="${g.tec.foto}">`:'<div class="fgsw"></div>'}
-        <div style="min-width:0"><b>${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m · ':''}${g.rows.length} modelo(s)</span></div>
+        <div style="min-width:0"><b>${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m · ':(g.livre?'manual · sem estoque · ':'')}${g.rows.length} modelo(s)</span></div>
         <div class="fgcn"><b>${pr}</b><small>RISCO ✓</small></div></div>
       <div class="fmg">${minis}</div>
       <div class="fgcf"><span class="okt">${pr} prontos</span>${pd?`<span style="color:#8a6d00;font-weight:700">${pd} pend.</span>`:''}${g.rows.length>4?`<span>+${g.rows.length-4}…</span>`:''}</div></div>`; }).join('');
@@ -1696,7 +1773,7 @@ function renderTecidos(A){
   const kpi=(k,lbl,val,sub)=>`<button class="tk ${TF===k?'on':''}" onclick="TF='${k}';render()"><b>${lbl}</b><em>${val}</em><span>${sub}</span></button>`;
   const semFoto=T.filter(t=>!t.foto&&t.status==='estoque').map(t=>t.code);
   const alertFoto=semFoto.length?`<div class="empty" style="margin:6px 0 10px;border:1px dashed #c77;color:#a33;padding:8px 12px;border-radius:8px">⚠ caixa ① RECEBIDO sem foto (${semFoto.length}): ${semFoto.join(', ')} — inserir a foto do tecido em J:K na aba T</div>`:'';
-  const tbar=`<div class="tapp" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="tb" onclick="exportXlsx()">⬇ TECIDOS.xlsx</button><button class="tb pri" onclick="openTecNew()">+ TECIDO</button></div>`+chips;
+  const tbar=`<div class="tapp" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="tb" onclick="exportXlsx()">⬇ TECIDOS.xlsx</button>${isLucas()?`<button class="tb" onclick="setIcmsSP()" title="ICMS interno SP usado no DIFAL">ICMS SP ${icmsSP()}%</button><button class="tb" onclick="recalcImposto()" title="recalcula c/ imposto dos tecidos entrados pelo ELO">🔁 recalcular c/ imposto</button>`:''}<button class="tb pri" onclick="openTecNew()">+ TECIDO</button></div>`+chips;
   if(window.innerWidth>=980){
     const railK=(k,lbl,val,sub,cls)=>`<button class="brc ${cls||''}" aria-selected="${TF===k}" onclick="TF='${k}';TSEL=null;render()"><span class="ph">${lbl}</span><div class="big">${val}</div><div class="pcs">${sub}</div></button>`;
     return `${tbar}${alertFoto}<div class="bwrap tw ${TSEL?'has3':''}">
@@ -1751,7 +1828,7 @@ function tecFichaHTML(code){
     ${msgThread('tec:'+t.code,'tcI',`tecMsgSend('${t.code}')`)}</section></div>`;
     }
   const ms=modelosDe(t).map(m=>({m,...eloOf(m)})); const atv=ms.filter(r=>!r.m.concl), hist=ms.filter(r=>r.m.concl);
-  const kv=[['Categoria',t.categoria?esc(t.categoria):'<span style="color:#C0392B;font-weight:800">sem categoria — ✎ EDITAR</span>'],['NF',t.nf?`<span class="nflink" onclick="verNF('${esc(String(t.nf))}')">${esc(String(t.nf))}</span>`:'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['c/ imposto',t.precoImp!=null?'R$ '+t.precoImp.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/m'+(t.imposto?' ('+t.imposto+'%)':''):'—'],['Pedido',t.qtdPedida?fmt(t.qtdPedida)+' m'+(t.dataPedido?' · '+dtBR(t.dataPedido):''):'—'],['Rolos · Insp.',(t.rolosRec!=null?fmt(t.rolosRec)+' rolos':'—')+(t.inspecao?' · '+esc(t.inspecao):'')],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
+  const kv=[['Categoria',t.categoria?esc(t.categoria):'<span style="color:#C0392B;font-weight:800">sem categoria — ✎ EDITAR</span>'],['NF',t.nf?`<span class="nflink" onclick="verNF('${esc(String(t.nf))}')">${esc(String(t.nf))}</span>`:'—'],['Entrada',dtBR(t.dataEntrada)||'—'],['Estoque',fmt(Math.round(t.estoque))+' m'],['Usado',fmt(Math.round(t.usado))+' m'],['Preço/m',t.preco!=null?'R$ '+t.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'],['c/ imposto',impLbl(t)],['Pedido',t.qtdPedida?fmt(t.qtdPedida)+' m'+(t.dataPedido?' · '+dtBR(t.dataPedido):''):'—'],['Rolos · Insp.',(t.rolosRec!=null?fmt(t.rolosRec)+' rolos':'—')+(t.inspecao?' · '+esc(t.inspecao):'')],['Estação',t.estacao||'—'],['Composição',t.comp||'—'],['Largura',t.largura?t.largura+' m':'—'],['Gramatura',t.gramatura?t.gramatura+' g/m²':'—']];
   const mR=t.mediaRolo;
   const cores=t.cores.length?`<h4>CORES${mR?' · ROLOS':''}</h4><div class="cores">${t.cores.map(c=>`<div>${swBox(c)}<b>${esc(c.cor)}</b><span>${fmt(c.saldo)} / ${fmt(c.entrada)} ${mR?'rolos':'m'}${!mR&&c.rolos?` · ${fmt(c.rolos)} rolo(s)`:''}${mR?` · ${c.mt!=null?fmt(c.mt):fmt(Math.round(c.entrada*mR))} m`:''} · ${Math.round((c.pct||0)*100)}%</span></div>`).join('')}</div>`:'';
   const row=r=>`<div class="prow" onclick="openModel('${r.m.aba}')">${r.m.foto?`<img loading="lazy" decoding="async" src="${r.m.foto}" alt="">`:'<i class="noth"></i>'}<span class="mc">${r.m.aba} · ${r.m.codigo||'—'}${isRep(r.m.codigo)?'<small>REP</small>':''}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}${r.m.qt?` <i>· ${fmt(r.m.qt)} pçs</i>`:''}</span><span class="st">${rail(r.elo)}${r.m.concl?'OK '+(dtBR(r.m.term)||''):(r.m.fase||'?').toUpperCase()+(r.m.prog!=null?' '+r.m.prog+'%':'')}</span>${badge(r)}</div>`;
@@ -1787,7 +1864,8 @@ function render(){ __codDup=null; try{ testeLinks(); }catch(e){} clearTimeout(__
 }
 
 /* ---------- página do modelo ---------- */
-function openModel(aba){ const html=modFichaHTML(aba); if(!html) return; $('#mpBody').innerHTML=html; $('#mp').classList.add('on'); }
+function msgAuto(aba){ const k='mod:'+aba; UI.msg=UI.msg||{}; if(msgUnread(k).length) UI.msg[k]=true; }
+function openModel(aba){ msgAuto(aba); const html=modFichaHTML(aba); if(!html) return; $('#mpBody').innerHTML=html; $('#mp').classList.add('on'); }
 let __DED=null;
 function debEdit(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
  const rows=(m.items||[]).map((it,i)=>({rid:it.rid||('p'+i),etapa:it.etapa||'',item:it.item||'',resp:it.resp||'',data:it.data||'',status:it.status||'',obs:it.obs||''}));
@@ -1813,7 +1891,7 @@ function dedDraw(){ const D=__DED; const m=DEB.models.find(x=>x.aba===D.aba)||{}
   <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:9px 0">
    ${['qt','ini','prazo'].map(f=>`<label style="font:800 8px var(--mono);color:#6b6459">${f.toUpperCase()}<input value="${esc(String(D.hdr[f]??''))}" oninput="__DED.hdr['${f}']=this.value" style="display:block;width:100%;border:1px solid var(--line);border-radius:7px;padding:5px 7px;font:700 11px var(--mono)"></label>`).join('')}
    <label style="font:800 8px var(--mono);color:#6b6459">NF (da planilha)<input value="${esc(D.hdr.nf)}" disabled style="display:block;width:100%;border:1px dashed var(--line);border-radius:7px;padding:5px 7px;font:700 11px var(--mono);background:#EFE9DD"></label>
-   <label style="font:800 8px var(--mono);color:#6b6459">TECIDO<button class="tg" style="display:block;width:100%" onclick="tecPickOpen(s=>{__DED.tecSel={...s,por:whoName(),at:new Date().toISOString()};dedDraw();})">${D.tecSel?esc(D.tecSel.tec):'🧵 escolher'}</button></label>
+   <label style="font:800 8px var(--mono);color:#6b6459">TECIDO<button class="tg" style="display:block;width:100%" onclick="tecPickOpen(s=>{__DED.tecSel={...s,por:whoName(),at:new Date().toISOString()};dedDraw();})">${D.tecSel?(D.tecSel.livre?'✎ ':'')+esc(D.tecSel.tec)+(D.tecSel.livre?' · manual':''):'🧵 escolher'}</button></label>
   </div>
   ${pendBlk}${confBlk}
   <table style="border-collapse:collapse;width:100%;font:600 11px var(--mono)">
@@ -1937,7 +2015,7 @@ function croFormHTML(c){ const ex=croCodeExists(NMF.cod); const nm=croNextM();
   <div style="display:flex;gap:10px;align-items:center"><img src="${croThumb(c)}" alt="" style="width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><div><div class="sm">número automático</div><span class="mauto">${nm}</span><div class="hint">próximo depois do maior M na nuvem</div></div></div>
   <label>CÓDIGO (opcional — pode entrar depois, na etapa Design)</label><input type="text" id="fCod" value="${esc(NMF.cod)}" placeholder="código do modelo" oninput="NMF.cod=this.value;croFormRefresh()" autocapitalize="characters" autocomplete="off">
   <div class="hint ${ex?'bad':NMF.cod.trim()?'ok':''}" id="fCodH">${ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'sem código por enquanto · duplicado bloqueia'}</div>
-  <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`:'🧵 escolher tecido…'}</button>
+  <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?(NMF.tec.livre?`✎ ${esc(NMF.tec.tec)} · manual`:`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`):'🧵 escolher tecido…'}</button>
   <label>QUANTIDADE (provisória)</label><input type="number" id="fQt" value="${esc(NMF.qt)}" placeholder="pçs" oninput="NMF.qt=this.value">
   <label>TAMANHO * (pode marcar os dois)</label><div class="chk"><span class="${NMF.normal?'on':''}" onclick="NMF.normal=!NMF.normal;croRefresh()">${NMF.normal?'☑':'☐'} NORMAL</span><span class="${NMF.plus?'on':''}" onclick="NMF.plus=!NMF.plus;croRefresh()">${NMF.plus?'☑':'☐'} PLUS SIZE</span></div>
   <label>MEMO</label><textarea id="fMemo" oninput="NMF.memo=this.value">${esc(NMF.memo)}</textarea>
@@ -1962,7 +2040,7 @@ async function croConfirm(cid){ if(!croCanGo()||!isLucas()) return; const c=CRO.
   pgHide(); window.__croBusy=false; }
 async function croAdvance(aba){ return tlAdvance(aba); }
 function croGoto(id){ closeModel(); CSEL=id; CMODE='view'; if(window.innerWidth>=980){ VIEW='debora'; DFASE='cro'; DMSEL=null; render(); } else croRefresh(); }
-function dCardClick(aba){ if(window.innerWidth>=980&&VIEW==='debora'){ DMSEL=(DMSEL===aba?null:aba); render(); } else openModel(aba); }
+function dCardClick(aba){ msgAuto(aba); if(window.innerWidth>=980&&VIEW==='debora'){ DMSEL=(DMSEL===aba?null:aba); render(); } else openModel(aba); }
 async function modMsgSend(aba){ await msgSend('mod:'+aba,'mdI'); if($('#mp').classList.contains('on')) openModel(aba); else render(); }
 /* ===== v9.21 · FICHA com timeline editável ===== */
 const TL_TPL=[['Design',['DEFINIR TECIDO / DESIGN / COR / AVIAMENTO','luri'],['MODELAGEM','paula'],['✅ APROVADO: design','luri']],
@@ -1996,6 +2074,20 @@ async function aceitarQt(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!
 async function desfazerQt(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!m.qtAceite||!FBUSER) return;
   const ok=await tlWrite(aba,d=>{ if(d.qtPedido!=null) d.qt=d.qtPedido; delete d.qtAceite; },'↩ volta p/ quantidade pedida',{auto:true});
   if(ok){ m.qt=m.qtPedido; delete m.qtAceite; render(); toast('↩ quantidade pedida restaurada'); } }
+/* ===== v9.27a · DIFAL: c/ imposto = preço × (1 + (ICMS SP − alíquota NF)/100) ===== */
+function icmsSP(){ const v=tnum(CFG&&CFG.icmsSP); return v==null?18:v; }
+function difalOf(nf){ const a=tnum(nf); if(a==null) return null; return Math.max(0,Math.round((icmsSP()-a)*100)/100); }
+function precoImpCalc(preco,nf){ const p=tnum(preco); const d=difalOf(nf); if(p==null) return null; if(d==null) return null; return Math.round(p*(1+d/100)*10000)/10000; }
+function impLbl(t){ if(t.precoImp==null) return '—'; const d=difalOf(t.imposto); return 'R$ '+t.precoImp.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/m'+(t.imposto!=null?` <small>(NF ${t.imposto}%${d!=null?' · DIFAL '+d+'%':''})</small>`:''); }
+async function setIcmsSP(){ if(!isLucas()) return; const v=prompt('ICMS interno de SP (%) — usado no DIFAL',icmsSP()); if(v===null) return; const n=tnum(v); if(n==null){ toast('número inválido'); return; } try{ await FB.setDoc(FB.doc(FB.db,'config','cfg'),{...CFG,icmsSP:n,icmsBy:(FBUSER&&FBUSER.email)||'',icmsAt:new Date().toISOString()}); CFG.icmsSP=n; toast('ICMS SP = '+n+'%'); render(); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+async function recalcImposto(){ if(!isLucas()||window.__riBusy) return;
+  const cand=TDOCS.filter(t=>t.pedidoId&&t.preco!=null&&t.imposto!=null&&!t.sobras).map(t=>({t,novo:precoImpCalc(t.preco,t.imposto)})).filter(x=>x.novo!=null&&Math.abs((x.t.precoImp||0)-x.novo)>0.0001);
+  if(!cand.length){ toast('✓ nada p/ recalcular (só tecidos entrados pelo ELO)'); return; }
+  const prev=cand.slice(0,12).map(x=>`${x.t.code}: ${x.t.precoImp!=null?x.t.precoImp.toFixed(2):'—'} → ${x.novo.toFixed(2)}`).join('\n');
+  if(!confirm(`Recalcular c/ imposto (DIFAL ${icmsSP()}% − NF) em ${cand.length} tecido(s) entrados pelo ELO? Tecidos vindos da planilha não mudam.\n\n${prev}${cand.length>12?'\n…':''}`)) return;
+  window.__riBusy=true; pgShow('🔁 recalculando…'); try{ let b=FB.writeBatch(FB.db), k=0; const now=new Date().toISOString();
+    for(const x of cand){ b.set(FB.doc(FB.db,'tecidos',x.t.code),{...TDOCS.find(q=>q.code===x.t.code),precoImp:x.novo,precoImpAntes:x.t.precoImp??null,updatedAt:now,updatedBy:(FBUSER&&FBUSER.email)||''}); if(++k>=300){ await b.commit(); b=FB.writeBatch(FB.db); k=0; } }
+    if(k) await b.commit(); toast(`🔁 ${cand.length} tecido(s) recalculado(s)`,6000); }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } finally{ pgHide(); window.__riBusy=false; } }
 /* ===== v9.24b · forro/renda do modelo (tecs2) ===== */
 function tecs2Of(m){ return (m&&Array.isArray(m.tecs2))?m.tecs2:[]; }
 function tecs2Lbl(m){ return tecs2Of(m).map(x=>`${esc(x.tec)} <small>${esc(x.papel||'forro')}</small>`).join(' + '); }
@@ -2099,6 +2191,15 @@ function modProbs(m){ const o=[]; const me=isLucas();
   return o; }
 function showProbs(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return; const ps=modProbs(m); if(!ps.length) return;
   openMod(`! · ${aba} · ${ps.length} ponto(s)`,`<div class="fp2">${ps.map(p=>`<div class="prob"><span>${p.t}</span>${p.fix||''}</div>`).join('')}<div class="acts"><button class="btn sec" onclick="closeMod()">FECHAR</button></div></div>`,'',true); }
+function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>c.cloud.xref&&trazKey(c.cloud.xref.modelo,c.cloud.xref.corte,c.cloud.xref.saida)===trazKey(l.modelo,l.corte,l.saida))).concat(cl);
+  if(!lots.length) return `<div class="cl"><span class="pale">sem lote do Roberto</span></div><div class="cl">${tecLine(m)}</div>`;
+  const l=lots.slice().sort((a,b)=>String(b.corte||'').localeCompare(String(a.corte||'')))[0]; const extra=lots.length>1?` <span class="pale">+${lots.length-1} lote</span>`:'';
+  const l1=l.saida?`🏭 <b>${esc(l.oficina||'?')}</b> ${l.qtd?fmt(l.qtd)+'p':''} · ✂ ${dtBR(l.corte)||'—'}${extra}`:`✂ cortado ${l.qtd?fmt(l.qtd)+'p':''} · ${dtBR(l.corte)||'—'}${extra}`;
+  let l2; const rec=l.cloud?chegRec(l.cloud):0; const tol=(typeof META_TOL!=='undefined'?META_TOL:3);
+  if(!l.saida) l2=`<span class="pale">📦 não saiu p/ oficina</span>`;
+  else if(l.real) l2=`<span class="ok2">📥 chegou ${dtBR(l.real)} ✓</span>${l.def>0?` <span class="pale">def ${l.def}</span>`:''}`;
+  else { const d=l.prev?daysBetween(l.prev,TODAY):null; const part=rec?`${fmt(rec)}/${fmt(l.qtd)} · `:''; if(d==null) l2=`📥 ${part}<span class="pale">sem previsão</span>`; else if(d<=0) l2=`📥 ${part}<span class="pale">prev. ${dtBR(l.prev)}</span>`; else if(d<=tol) l2=`📥 ${part}<span class="tol">tolerância +${d}d</span>`; else l2=`📥 ${part}<span class="lt2">atrasado ${d}d</span>`; }
+  return `<div class="cl">${l1}</div><div class="cl">${l2}</div>`; }
 function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>c.cloud.xref&&trazKey(c.cloud.xref.modelo,c.cloud.xref.corte,c.cloud.xref.saida)===trazKey(l.modelo,l.corte,l.saida))).concat(cl);
   if(!lots.length){ if(m.fase==='Corte') return m.risco?'<b>✂ risco ✓</b> · pronto p/ cortar':'<span class="pale">✂ risco pendente</span>'; return '<span class="pale">—</span>'; }
   return lots.map(l=>{ const p=[]; if(l.corte) p.push(`<b>✂ ${dtBR(l.corte)}</b>${l.qtd?' '+fmt(l.qtd)+'p':''}`); if(l.saida) p.push(`<b>📦 ${esc(l.oficina||'?')}</b> ${dtBR(l.saida)}`);
@@ -2108,7 +2209,7 @@ function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]
 function tecLine(m){ const tecs=tecidoOf(m); const t=tecs[0]; const sel=m.tecSel&&m.tecSel.tec?m.tecSel.tec:(t?t.code:'');
   if(!sel&&!m.nf) return '<span class="pale">🧵 sem tecido</span>';
   const same=mesmoTecido(m).filter(x=>x.fase===m.fase).length;
-  return `🧵 ${esc(sel||('NF '+m.nf))}${t?` · ${esc(t.nome).slice(0,22)} · ${fmt(Math.round(t.estoque))}m`:''}${tecs2Of(m).length?' + '+tecs2Of(m).map(x=>esc(x.tec)).join('+'):''}${tecState(m)!=='ok'&&tecState(m)!=='semnf'?' <span class="pale">não confirmado</span>':''}${same?` · +${same} mesmo tecido`:''}`; }
+  return `🧵 ${esc(sel||('NF '+m.nf))}${t?` · ${esc(t.nome).slice(0,22)} · ${fmt(Math.round(t.estoque))}m`:''}${tecs2Of(m).length?' + '+tecs2Of(m).map(x=>esc(x.tec)).join('+'):''}${tecState(m)==='livre'?' <span class="chipLiv">✎ manual</span>':''}${tecState(m)!=='ok'&&tecState(m)!=='livre'&&tecState(m)!=='semnf'?' <span class="pale">não confirmado</span>':''}${same?` · +${same} mesmo tecido`:''}`; }
 function modFichaHTML(aba){
   const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
   const r={m,...eloOf(m)};
@@ -2119,11 +2220,11 @@ function modFichaHTML(aba){
   const me=isLucas();
   const ps=modProbs(m); const ts=tecState(m);
   const head=`<div class="fh2">
-    <div class="tt"><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span>${ps.length?`<span class="bang" onclick="showProbs('${aba}')">!</span>`:''}</div>
+    <div class="tt"><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span>${ps.length?`<span class="bang" onclick="showProbs('${aba}')">!</span>`:''}${window.innerWidth>=980&&!$('#mp').classList.contains('on')?`<span class="szt">${['S','M','L'].map(s=>`<span class="${FSZ===s?'on':''}" onclick="setFsz('${s}')">${s}</span>`).join('')}</span>`:''}</div>
     <h2 style="margin-top:0">${esc(m.nome)}</h2>
     <div class="kv2">
       <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${qtLine(m)}${m.qtProv?' (provisória)':''}</span></div>
-      <div><b>TECIDO</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${tecLbl}${ts!=='ok'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?`<div class="sm"><span style="cursor:pointer;color:#9a5a00" onclick="addTec2('${aba}')">＋ forro / renda</span></div>`:''}</div>
+      <div><b>TECIDO${me?`<span class="plus" title="＋ tecido · forro · renda" onclick="addTec2('${aba}')">+</span>`:''}</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${ts==='livre'?'✎ ':''}${tecLbl}${ts==='livre'?' <span class="chipLiv">manual · sem estoque</span>':''}${ts!=='ok'&&ts!=='livre'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?``:''}</div>
       <div><b>TAM</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${(m.sizes||[]).join(' + ')||'—'}</span></div>
       <div><b>INÍCIO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${dtBR(m.ini)||'—'}</span></div>
       <div><b>PRAZO</b><span class="${me?'ed':''} ${late?'late':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.prazo?dtBR(m.prazo):'—'}${m.prazoTipo?' · '+esc(m.prazoTipo):''}${m.prazoAj?' (ajustado)':''}</span></div>
@@ -2133,8 +2234,9 @@ function modFichaHTML(aba){
     </div>
     ${me?`<div class="acts2"><button class="btn mini" onclick="croCodeOpen('${aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button><button class="btn mini sec" onclick="tlHeadOpen('${aba}')">✎ EDITAR</button>${m.qtAceite?`<button class="btn mini sec" onclick="desfazerQt('${aba}')">↩ ${fmt(m.qtPedido)} pedidas</button>`:''}${ci>0?`<button class="btn mini sec" onclick="tlVoltar('${aba}')">← VOLTAR</button>`:''}${ci>=0&&ci<es.length-1?`<button class="btn mini sec" onclick="tlAdvance('${aba}')">→ AVANÇAR</button>`:''}<button class="btn mini danger" onclick="descartar('${aba}')">🗑 DESCARTAR</button></div>`:''}
   </div>`;
-  const left=es.length?`<div class="tlh2"><h4 style="margin:0">DEBORA · ${esc(curE)} · ${pg}%${ap.length?` · aprovados ${apD}/${ap.length}`:''}</h4>${canTL()?'<span class="sm">● status · nome · data · 💬 obs</span>':''}</div><div class="pgb2"><i style="width:${pg}%"></i></div>
-   ${es.map((e,ei)=>{ const d=tlEtDone(e); const open=(UI.tl&&UI.tl[aba+'|'+e.e]!=null)?UI.tl[aba+'|'+e.e]:(ei===ci||!d); const last=e.its.map(i=>i.data).filter(Boolean).sort().pop();
+  const left=es.length?`<div class="tlh2"><h4 style="margin:0">DEBORA · ${esc(curE)} · ${pg}%${ap.length?` · aprovados ${apD}/${ap.length}`:''}</h4>${(()=>{ const k='mod:'+m.aba; const un=msgUnread(k).length; const on=!!(UI.msg&&UI.msg[k]); return `<button class="ib ${on?'on':''}" onclick="msgTog('${aba}')">💬 MENSAGEM${un?`<span class="n">${un}</span>`:''}</button><button class="ib ${UI.lg&&UI.lg[aba]?'on':''}" onclick="logTog('${aba}')">🕘 HISTÓRICO</button>`; })()}</div><div class="pgb2"><i style="width:${pg}%"></i></div>
+   ${(UI.msg&&UI.msg['mod:'+m.aba])?(()=>{ const k='mod:'+m.aba; const un=msgUnread(k).length; return `<div class="msgp"><div class="mh">💬 MENSAGENS · ${m.aba}${un?` · <span style="color:#E8A33D">${un} nova(s)</span>`:''}${un?`<span class="okb" style="border:1.5px solid #E8A33D;color:#E8A33D;border-radius:999px;padding:1px 8px;font:800 9.5px var(--mono);cursor:pointer" onclick="msgOkAll('${k}')">👍 ok todas</span>`:''}<button class="x" onclick="msgClose('${aba}')">✕</button></div>${msgThread(k,'mdI',`modMsgSend('${m.aba}')`)}</div>`; })():''}
+   ${es.map((e,ei)=>{ const d=tlEtDone(e); const open=(UI.tl&&UI.tl[aba+'|'+e.e]!=null)?UI.tl[aba+'|'+e.e]:(ei===ci); const last=e.its.map(i=>i.data).filter(Boolean).sort().pop();
     return `<div class="et2 ${ei===ci?'cur':''} ${d?'done':''}"><div class="eth2" onclick="tlTog('${aba}','${esc(e.e)}')">${ei+1}. ${esc(e.e.toUpperCase())} ${ei===ci?'<span class="ctag">ETAPA ATUAL</span>':d?'<span class="otag">✓</span>':''}${me?`<span class="add" onclick="event.stopPropagation();tlAddItem('${aba}','${esc(e.e)}')">＋ item</span>`:''}<span class="n">${e.its.filter(tlDone).length}/${e.its.length}${last?' · '+dtBR(last):''}</span></div>
      ${open?e.its.map(it=>{ const cl=tlDone(it)?'d':/and/i.test(it.status||'')?'a':''; const ed=canTL();
        return `<div class="tlit ${cl}"><span class="tdot ${cl}" title="${esc(it.status||'Pendente')}" ${ed?`onclick="tlCycle('${aba}','${it.rid}')"`:''}></span><span class="nm2" title="${esc(it.item)}">${esc(it.item)}${it.auto&&tlDone(it)?'<span class="auto">auto</span>':''}</span><span class="rs2 ${it.resp?'':'empty'}" ${ed?`onclick="tlRespOpen('${aba}','${it.rid}')"`:''}>${esc(it.resp)||(ed?'+ resp.':'—')}</span><span class="dt2 ${it.data?'':'empty'}" ${ed?`onclick="tlDataOpen('${aba}','${it.rid}')"`:''}>${dtBR(it.data)||(ed?'+ data':'—')}</span><span class="tob" ${ed?`onclick="tlObsOpen('${aba}','${it.rid}')"`:''} title="obs">💬</span><span class="tdel" ${me?`onclick="tlDelItem('${aba}','${it.rid}')" title="apagar item"`:''}>${me?'✕':''}</span>${it.obs?`<span class="tobs">${esc(it.obs)}</span>`:''}</div>`; }).join(''):''}</div>`; }).join('')}`
@@ -2149,10 +2251,10 @@ function modFichaHTML(aba){
   const phTec=tecs.length?(tecs[0].foto?`<img loading="lazy" decoding="async" src="${tecs[0].foto}" alt="">`:`<div class="noph">${tecs[0].code} sem foto</div>`):`<div class="noph">${!TEC.items.length?'arraste o ESTOQUE_TECIDOS':(m.nf?`NF ${esc(m.nf)} sem aba T`:'sem NF na ficha')}</div>`;
   const capTec=tecs.length?`${tecs.map(t=>t.code).join(' · ')} · ${esc(tecs[0].nome)}${tecs[0].estoque?` · ${fmt(Math.round(tecs[0].estoque))} m`:''}`:'tecido';
   const fotos=`<div class="fotos"><figure>${phModel}<figcaption>modelo${m.codigo?` · ${m.codigo}`:''}${m.cro?` · <a href="#" onclick="event.preventDefault();croGoto('${m.cro}')">📷 croqui</a>`:''}</figcaption></figure><figure ${tecs.length?`class="lnkf" onclick="openTecido('${tecs[0].code}')"`:''}>${phTec}<figcaption>${capTec}</figcaption></figure></div>`;
-  const logH=(m.log&&m.log.length)?`<h4>HISTÓRICO</h4><div class="log2">${m.log.slice(0,30).map(l=>`<div><b style="font:700 9.5px var(--mono)">${dtBR(l.at)} ${String(l.at||'').slice(11,16)}</b> · ${esc(l.who||'')} — ${esc(l.t||'')}</div>`).join('')}</div>`:'';
+  const logH=(UI.lg&&UI.lg[aba]&&m.log&&m.log.length)?`<h4>HISTÓRICO</h4><div class="log2">${m.log.slice(0,30).map(l=>`<div><b style="font:700 9.5px var(--mono)">${dtBR(l.at)} ${String(l.at||'').slice(11,16)}</b> · ${esc(l.who||'')} — ${esc(l.t||'')}</div>`).join('')}</div>`:'';
   return head+`<div class="mpc"><section>${left}</section>
-      <section>${fotos}<h4>ROBERTO · CONTROLE</h4>${right}${fam.length?`<h4>outras produções do base ${baseOf(m.codigo)}</h4>${fam.map(x=>`<button class="lnk" onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo} · ${x.concl?'concluído':x.fase}</button>`).join('')}`:''}${logH}${msgThread('mod:'+m.aba,'mdI',`modMsgSend('${m.aba}')`)}</section></div>`; }
-function tlTog(aba,e){ UI.tl=UI.tl||{}; const m=DEB.models.find(x=>x.aba===aba); const es=tlEtapas(m); const ci=tlCurIdx(m); const k=aba+'|'+e; const ei=es.findIndex(x=>x.e===e); const cur=UI.tl[k]!=null?UI.tl[k]:(ei===ci||!tlEtDone(es[ei])); UI.tl[k]=!cur; tlRefresh(aba); }
+      <section>${fotos}<h4>ROBERTO · CONTROLE</h4>${right}${fam.length?`<h4>outras produções do base ${baseOf(m.codigo)}</h4>${fam.map(x=>`<button class="lnk" onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo} · ${x.concl?'concluído':x.fase}</button>`).join('')}`:''}${logH}</section></div>`; }
+function tlTog(aba,e){ UI.tl=UI.tl||{}; const m=DEB.models.find(x=>x.aba===aba); const es=tlEtapas(m); const ci=tlCurIdx(m); const k=aba+'|'+e; const ei=es.findIndex(x=>x.e===e); const cur=UI.tl[k]!=null?UI.tl[k]:(ei===ci); UI.tl[k]=!cur; tlRefresh(aba); }
 function tlRefresh(aba){ if($('#mp').classList.contains('on')) openModel(aba); else render(); }
 /* escrita por campo (transação): nunca sobrescreve o doc inteiro */
 async function tlWrite(aba,fn,logT,opts){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!FBUSER) return false; opts=opts||{};
@@ -2196,7 +2298,7 @@ function tlHeadOpen(aba,keep){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!
   <div class="row"><div><label>QTD (pçs)</label><input type="number" value="${__TL.qt??''}" oninput="__TL.qt=this.value===''?null:(+this.value||null)"></div><div><label>INÍCIO</label><input type="date" id="tlIni" value="${__TL.ini}" oninput="__TL.ini=this.value;tlPrazoAuto()"></div></div>
   <div class="row"><div><label>PRAZO FINAL</label><input type="date" id="tlPz" value="${__TL.prazo}" oninput="__TL.prazo=this.value"></div><div><label>PRAZO TIPO</label><div class="seg"><span class="${__TL.prazoTipo==='Normal'?'on':''}" onclick="__TL.prazoTipo='Normal';tlSeg(this);tlPrazoAuto(true)">NORMAL · ${PRAZO_DIAS.Normal}d</span><span class="${__TL.prazoTipo==='Urgente'?'on':''}" onclick="__TL.prazoTipo='Urgente';tlSeg(this);tlPrazoAuto(true)">URGENTE · ${PRAZO_DIAS.Urgente}d</span></div></div></div>
   <div class="hint" id="tlPzH"></div>
-  <label>TECIDO (T-card)</label><div class="row"><button class="btn sec" style="flex:3;text-align:left;font:600 12px var(--sans)" onclick="tecPickOpen(s=>{__TL.tec=s;tlHeadOpen('${aba}',true);})">${__TL.tec&&__TL.tec.tec?`🧵 ${esc(__TL.tec.tec)}${__TL.tec.nf?' · NF '+esc(__TL.tec.nf):''}${__TL.tec.nome?' · '+esc(__TL.tec.nome):''}`:'🧵 escolher tecido…'}</button>${__TL.tec&&__TL.tec.tec?`<button class="btn sec" style="flex:1" onclick="__TL.tec=null;tlHeadOpen('${aba}',true)">✕ remover</button>`:''}</div>
+  <label>TECIDO (T-card)</label><div class="row"><button class="btn sec" style="flex:3;text-align:left;font:600 12px var(--sans)" onclick="tecPickOpen(s=>{__TL.tec=s;tlHeadOpen('${aba}',true);})">${__TL.tec&&__TL.tec.tec?(__TL.tec.livre?`✎ ${esc(__TL.tec.tec)} · manual (sem estoque)`:`🧵 ${esc(__TL.tec.tec)}${__TL.tec.nf?' · NF '+esc(__TL.tec.nf):''}${__TL.tec.nome?' · '+esc(__TL.tec.nome):''}`):'🧵 escolher tecido…'}</button>${__TL.tec&&__TL.tec.tec?`<button class="btn sec" style="flex:1" onclick="__TL.tec=null;tlHeadOpen('${aba}',true)">✕ remover</button>`:''}</div>
   <label>TAMANHO</label><div class="seg"><span class="${__TL.normal?'on':''}" onclick="__TL.normal=!__TL.normal;this.classList.toggle('on')">NORMAL</span><span class="${__TL.plus?'on':''}" onclick="__TL.plus=!__TL.plus;this.classList.toggle('on')">PLUS SIZE</span></div>
   <label>MEMO</label><textarea rows="2" oninput="__TL.memo=this.value">${esc(__TL.memo)}</textarea>
   <div class="acts"><button class="btn" onclick="tlHeadSave('${aba}')">SALVAR</button><button class="btn sec" onclick="closeMod()">CANCELAR</button></div></div>`,'',true); tlPrazoAuto(!keep&&!m.prazo); }
@@ -2204,7 +2306,7 @@ function tlSeg(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('o
 function tlPrazoAuto(force){ const n=PRAZO_DIAS[__TL.prazoTipo]||PRAZO_DIAS.Normal; const auto=addDays(__TL.ini,n); const h=document.getElementById('tlPzH'); if(force&&auto){ __TL.prazo=auto; const i=document.getElementById('tlPz'); if(i) i.value=auto; } if(h) h.textContent=auto?`${__TL.prazoTipo}: início + ${n} dias = ${dtBR(auto)}${__TL.prazo&&__TL.prazo!==auto?' · prazo ajustado à mão':''}`:'defina o início p/ calcular o prazo'; }
 async function tlHeadSave(aba){ const T=__TL; const n=PRAZO_DIAS[T.prazoTipo]||PRAZO_DIAS.Normal; const auto=addDays(T.ini,n);
   const ok=await tlWrite(aba,d=>{ d.nome=(T.nome||'').trim()||d.nome; d.qt=T.qt; d.qtProv=false; d.ini=T.ini||null; d.prazo=T.prazo||null; d.prazoTipo=T.prazoTipo; d.prazoAj=!!(T.prazo&&auto&&T.prazo!==auto); d.sizes=[T.normal?'NORMAL':null,T.plus?'PLUS':null].filter(Boolean); d.memo=(T.memo||'').trim();
-    const tnow=T.tec&&T.tec.tec?T.tec.tec:''; if(tnow!==(T.tec0||'')){ if(tnow){ d.tecSel={tec:T.tec.tec,tecAt:T.tec.tecAt||null,nome:T.tec.nome||'',forn:T.tec.forn||'',nf:T.tec.nf||'',por:whoName(),at:new Date().toISOString()}; if(d.origem==='elo') d.nf=T.tec.nf||''; } else { d.tecSel=null; if(d.origem==='elo') d.nf=''; } } },
+    const tnow=T.tec&&T.tec.tec?T.tec.tec:''; if(tnow!==(T.tec0||'')){ if(tnow){ d.tecSel={tec:T.tec.tec,tecAt:T.tec.tecAt||null,nome:T.tec.nome||'',forn:T.tec.forn||'',nf:T.tec.nf||'',livre:!!T.tec.livre,por:whoName(),at:new Date().toISOString()}; if(d.origem==='elo') d.nf=T.tec.nf||''; } else { d.tecSel=null; if(d.origem==='elo') d.nf=''; } } },
     'ficha editada (nome/qtd/datas/tecido/tamanho/memo)');
   closeMod(); if(ok){ tlRefresh(aba); toast('✓ ficha salva'); } }
 function closeModel(){ $('#mp').classList.remove('on'); }
@@ -2360,9 +2462,18 @@ async function cloudImportBoletos(list,fname){
 }
 function whoName(){ const e=(FBUSER&&FBUSER.email)||''; if(e.startsWith('exprim.adm')) return 'Lucas'; if(e.startsWith('exprim.miller')) return 'Roberto'; return e.split('@')[0]||'?'; }
 function msgsFor(key){ return MSG.filter(m=>m.key===key); }
+const MSEEN=(function(){ try{ return JSON.parse(localStorage.getItem('elo_mseen')||'{}'); }catch(e){ return {}; } })();
+function msgUnread(key){ const me=whoName(); return msgsFor(key).filter(m=>m.who!==me&&!(m.ok||[]).includes(me)); }
+async function msgOk(id){ const m=MSG.find(x=>x.id===id); if(!m||!FBUSER) return; const me=whoName(); if((m.ok||[]).includes(me)) return; const ok=[...(m.ok||[]),me]; m.ok=ok; try{ await FB.setDoc(FB.doc(FB.db,'msgs',id),{...m,ok}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } const aba=String(m.key||'').replace(/^mod:/,''); if(/^mod:/.test(m.key)) tlRefresh(aba); else render(); }
+async function msgOkAll(key){ for(const m of msgUnread(key)) await msgOk(m.id); }
+function msgSeen(key){ const th=msgsFor(key); const last=th.map(m=>String(m.at)).sort().pop()||new Date().toISOString(); MSEEN[key]=last; try{ localStorage.setItem('elo_mseen',JSON.stringify(MSEEN)); }catch(e){} }
+function msgTog(aba){ UI.msg=UI.msg||{}; const k='mod:'+aba; UI.msg[k]=!UI.msg[k]; tlRefresh(aba); }
+function msgClose(aba){ UI.msg=UI.msg||{}; UI.msg['mod:'+aba]=false; tlRefresh(aba); }
+function logTog(aba){ UI.lg=UI.lg||{}; UI.lg[aba]=!UI.lg[aba]; tlRefresh(aba); }
 function msgThread(key,inputId,sendFn){ const th=msgsFor(key);
   return `<div class="mth"><h4>💬 MENSAGENS${th.length?' · '+th.length:''}</h4>
-    ${th.length?th.slice().reverse().map(m=>`<div class="msg ${m.who==='Lucas'?'lucas':''}"><div class="mwho">${esc(m.who)} <span>· ${esc(String(m.at).slice(5,16).replace('T',' '))}</span></div><p>${esc(m.t)}</p></div>`).join(''):'<div class="sm" style="text-align:center;padding:8px 0">Sem mensagens ainda.</div>'}
+    ${th.length?th.slice().reverse().map(m=>{ const me=whoName(); const mine=m.who===me; const oks=m.ok||[]; const un=!mine&&!oks.includes(me);
+      return `<div class="msg ${m.who==='Lucas'?'lucas':''} ${un?'unread':''}"><div class="mwho">${esc(m.who)} <span>· ${esc(String(m.at).slice(5,16).replace('T',' '))}</span></div><p>${esc(m.t)}</p><div class="mok">${mine?'':`<span class="okb ${un?'':'on'}" ${un?`onclick="msgOk('${m.id}')"`:''}>${un?'👍 ok':'✓ ok'}</span>`}${oks.length?`<span class="who">lido: ${oks.map(esc).join(', ')}</span>`:(mine?'<span class="who">ninguém leu ainda</span>':'')}</div></div>`; }).join(''):'<div class="sm" style="text-align:center;padding:8px 0">Sem mensagens ainda.</div>'}
   </div><div class="mnw"><input id="${inputId}" placeholder="${whoName()} escreve aqui…" maxlength="400" onkeydown="if(event.key==='Enter')${sendFn}"><button class="tb ok" type="button" onclick="${sendFn}">ENVIAR</button></div>`; }
 async function msgSend(key,inputId){ const i=$('#'+inputId); if(!i) return; const t=i.value.trim(); if(!t) return;
   const now=new Date().toISOString(); const d={id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),key,t,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
@@ -2491,7 +2602,7 @@ async function confSel(gk){
   const now=new Date().toISOString();
   try{
     const b=FB.writeBatch(FB.db);
-    boxes.forEach(x=>{ const __m=DEB.models.find(mm=>mm.aba===x.dataset.aba); const d={id:'C'+(x.dataset.aba||x.dataset.man),tecAt:(__m&&__m.tecSel&&__m.tecSel.tecAt)||null,aba:x.dataset.aba||'',cod:x.dataset.cod||'',nm:x.dataset.nm||'',tec:x.dataset.tec||'',pcs:tnum(x.dataset.q)||null,man:x.dataset.man||null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
+    boxes.forEach(x=>{ const __m=DEB.models.find(mm=>mm.aba===x.dataset.aba); const d={id:'C'+(x.dataset.aba||x.dataset.man),tecAt:(__m&&__m.tecSel&&__m.tecSel.tecAt)||null,aba:x.dataset.aba||'',cod:x.dataset.cod||'',nm:x.dataset.nm||'',tec:x.dataset.tec||'',livre:x.dataset.livre==='1',pcs:tnum(x.dataset.q)||null,man:x.dataset.man||null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
       b.set(FB.doc(FB.db,'corte_conf',d.id),d);
       if(x.dataset.man) b.delete(FB.doc(FB.db,'fila_manual',x.dataset.man)); });
     await b.commit(); toast('✔ confirmado p/ corte ('+boxes.length+')');
@@ -2503,6 +2614,9 @@ function tecPickOpen(cb,pre){ __tpCb=cb;
   <label style="display:flex;gap:6px;align-items:center;margin-top:6px;font:700 10px var(--mono);color:#6b6459;cursor:pointer"><input type="checkbox" id="tpE" onchange="tecPickList()"> incluir esgotados <span id="tpEn"></span></label>
   <div id="tpL" style="max-height:52vh;overflow:auto;margin-top:8px"></div>`,'',true);
  tecPickList(); }
+function tecPickFree(name){ const n=tecNorm(name!=null?name:(document.getElementById('tpQ')||{}).value); if(!n) return;
+ if(TDOCS.some(t=>t.code.toUpperCase()===n)){ tecPickGo(TDOCS.find(t=>t.code.toUpperCase()===n).code); return; }
+ closeMod(); const cb=__tpCb; __tpCb=null; cb&&cb({tec:n,livre:true,tecAt:null,nome:'',forn:'',nf:''}); }
 function tecPickList(){ const q=(document.getElementById('tpQ').value||'').trim().toLowerCase();
  const ks=nfKeys(q); const incE=!!(document.getElementById('tpE')&&document.getElementById('tpE').checked);
  const isEsg=t=>{ const ti=TEC.items.find(x=>x.code===t.code); return ti?ti.status==='esgotado':(t.status==='esgotado'||!(t.estoque>0)); };
@@ -2515,7 +2629,13 @@ function tecPickList(){ const q=(document.getElementById('tpQ').value||'').trim(
    ${t.foto?`<img src="${t.foto}" style="width:38px;height:48px;object-fit:cover;border-radius:6px;flex:none">`:'<div style="width:38px;height:48px;border-radius:6px;background:#EAE4D8;flex:none"></div>'}
    <div style="min-width:0;flex:1"><b style="font:800 11px var(--mono)">${esc(t.code)} · ${esc(t.nome||'')}</b>
     <div style="font:600 10px var(--mono);color:#6b6459">${esc(t.forn||'—')} · NF ${esc(t.nf||'—')} · ${fmt(Math.round(t.estoque))} m ${t.status==='esgotado'?'<b style="color:#C0392B">esgotado</b>':''}</div></div></div>`).join('')
-  ||'<div class="empty">nada encontrado — confira em TECIDOS se o rolo foi dado entrada</div>'; }
+  ||'<div class="empty">nada encontrado — confira em TECIDOS se o rolo foi dado entrada</div>';
+ /* v9.28a: nomes manuais já usados + usar como escrito */
+ const qn=tecNorm(q); const liv=livreNames().filter(x=>!qn||x.n.includes(qn));
+ const livH=liv.slice(0,20).map(x=>`<div class="tp-liv" onclick="tecPickFree('${esc(x.n)}')" style="display:flex;gap:9px;align-items:center;padding:7px 6px;border-bottom:1px dashed var(--line);cursor:pointer"><div style="width:38px;height:48px;border-radius:6px;background:#F6E6C3;flex:none;display:flex;align-items:center;justify-content:center;color:#A3641A;font-weight:800">✎</div><div style="min-width:0;flex:1"><b style="font:800 11px var(--mono)">✎ ${esc(x.n)}</b><div style="font:600 10px var(--mono);color:#6b6459">manual · já usado em ${x.c} modelo(s) · sem estoque</div></div></div>`).join('');
+ const can=!!qn&&!TDOCS.some(t=>t.code.toUpperCase()===qn)&&!liv.some(x=>x.n===qn);
+ const freeH=`<div class="tpFree ${can?'':'off'}"><div><b>✎ usar como escrito${qn?': "'+esc(qn)+'"':''}</b><small>${qn?'vira tecido manual — Roberto agrupa pelo nome igual; sem cores/estoque até cadastrar em TECIDOS':'escreva o nome do tecido na busca acima p/ usar como tecido manual'}</small></div><button class="btn" ${can?'':'disabled'} onclick="tecPickFree()">USAR</button></div>`;
+ document.getElementById('tpL').innerHTML+=livH+freeH; }
 function tecPickGo(code){ const t=TDOCS.find(x=>x.code===code); if(!t) return;
  closeMod(); const cb=__tpCb; __tpCb=null;
  cb&&cb({tec:t.code,tecAt:t.createdAt||null,nome:t.nome||'',forn:t.forn||'',nf:t.nf||''}); }
@@ -2524,7 +2644,8 @@ async function linkConfTec(oldTc){
   const its=CCONF.filter(c=>(c.tec||'?')===oldTc||((c.tec||'')===''&&oldTc==='?'));
   try{ const b=FB.writeBatch(FB.db);
     const __t=TDOCS.find(x=>x.code===tc);
-    its.forEach(c=>b.set(FB.doc(FB.db,'corte_conf',c.id),{...c,tec:tc,tecAt:(__t&&__t.createdAt)||null}));
+    its.forEach(c=>{ b.set(FB.doc(FB.db,'corte_conf',c.id),{...c,tec:tc,livre:false,tecAt:(__t&&__t.createdAt)||null});
+      const m=c.aba?DEB.models.find(x=>x.aba===c.aba):null; if(m&&m.tecSel&&m.tecSel.livre&&__t){ b.set(FB.doc(FB.db,'elo_deb',m.aba),{...m,tecSel:{tec:__t.code,tecAt:__t.createdAt||null,nome:__t.nome||'',forn:__t.forn||'',nf:__t.nf||'',livre:false,por:whoName(),at:new Date().toISOString()},edited:m.edited||false}); } });
     await b.commit(); toast('🧵 vinculado a '+tc);
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 function cssIdA(s){ return String(s).replace(/[^A-Za-z0-9]/g,'_'); }
@@ -2533,7 +2654,10 @@ async function desConfC(id){ const c=CCONF.find(x=>x.id===id); if(!c) return;
     if(c.man) b.set(FB.doc(FB.db,'fila_manual',c.man),{id:c.man,tec:c.tec,modelo:c.nm,pcs:c.pcs,who:c.who,by:c.by,at:c.at});
     await b.commit();
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+function ccLRow(tc){ return `<div class="ccl"><input class="cclc" placeholder="cor" oninput="ccCalc('${tc}')"><input class="cclk" type="number" placeholder="folhas" oninput="ccCalc('${tc}')"><span class="cclm">—</span></div>`; }
+function ccLAdd(tc){ const e=document.getElementById('ccL_'+tc); if(!e) return; e.insertAdjacentHTML('beforeend',ccLRow(tc)); const last=e.lastElementChild.querySelector('.cclc'); if(last) last.focus(); }
 function ccRead(tec){ const t=TDOCS.find(x=>x.code===tec); const T=v=>document.getElementById(v+'_'+tec); const its=CCONF.filter(c=>(c.tec||'?')===tec);
+  const livre=!t&&grpLivre(its); const lc=livre?[...((document.getElementById('ccL_'+tec)||{children:[]}).children)].map(r=>({cor:tecNorm((r.querySelector('.cclc')||{}).value),folhas:+((r.querySelector('.cclk')||{}).value)||0,el:r})):[];
   let cp=parseFloat(String((T('ccC')||{}).value||'').replace(',','.'))||0; if(cp>30) cp=cp/100; /* cm → m */
   const f=+((T('ccF')||{}).value)||0; const aprov=parseFloat(String((T('ccA')||{}).value||'').replace(',','.'))||null;
   const rows=its.map(c=>{ const k=cssIdA(c.id); const comp=((document.getElementById('rkC_'+k)||{}).value||'').trim(); const moldes=+((document.getElementById('rkM_'+k)||{}).value)||null; const area=parseFloat(String((document.getElementById('rkA_'+k)||{}).value||'').replace(',','.'))||(its.length===1?100:0);
@@ -2541,13 +2665,14 @@ function ccRead(tec){ const t=TDOCS.find(x=>x.code===tec); const T=v=>document.g
     const mm=DEB.models.find(x=>x.aba===c.aba); const extras=tecs2Of(mm).map((x,j)=>{ const mt=parseFloat(String((document.getElementById('rkX_'+k+'_'+j)||{}).value||'').replace(',','.'))||0; const sel=document.getElementById('rkXc_'+k+'_'+j); return {tec:x.tec,papel:x.papel,cor:sel?sel.value:null,mt,j}; });
     return {c,k,comp,moldes,area,g,len,mPc:len&&g?Math.round(len/g*100)/100:null,extras}; });
   const kf=t&&t.cores&&t.cores.length?(t.cores||[]).map((c,i)=>+((T('ccK'+i)||{}).value)||0):[]; const skip=t&&t.cores?(t.cores||[]).map((c,i)=>{ const e=T('ccS'+i); return !!(e&&e.classList.contains('on')); }):[];
-  return {t,its,cp,f,aprov,rows,kf,skip}; }
-function ccCalc(tec){ const R=ccRead(tec); const {t,cp,f,rows,kf,skip}=R; if(!t) return; const T=v=>document.getElementById(v+'_'+tec);
+  return {t,its,cp,f,aprov,rows,kf,skip,livre,lc}; }
+function ccCalc(tec){ const R=ccRead(tec); const {t,cp,f,rows,kf,skip}=R; if(!t&&!R.livre) return; const T=v=>document.getElementById(v+'_'+tec);
   const lenSum=rows.reduce((s,r)=>s+r.len,0);
   rows.forEach(r=>{ const o=document.getElementById('rkO_'+r.k); if(!o) return; const m=DEB.models.find(x=>x.aba===r.c.aba)||{}; const warn=(r.g&&compIsPlus(r.comp)!==modelIsPlus(m))?` <span style="color:#C0392B">⚠ ${modelIsPlus(m)?'modelo PLUS, risco normal':'risco plus (B…), modelo normal'}</span>`:'';
     r.extras.forEach(x=>{ const e=document.getElementById('rkXo_'+r.k+'_'+x.j); if(!e) return; const pcs=r.g*f; e.textContent=x.mt&&pcs?(Math.round(x.mt/pcs*100)/100)+' m/pç':'—'; });
     o.innerHTML=r.g?`${r.g} pçs/risco${r.len?` · ${r.len} m · <b>${r.mPc} m/pç</b>`:''}${r.moldes?` · ${r.moldes} moldes/pç`:''}${f?` · <b>${r.g*f} pçs</b> ${r.c.pcs?(r.g*f>=r.c.pcs?'<span class="okt">✓ cobre '+fmt(r.c.pcs)+'</span>':'<span style="color:#C0392B">faltam '+(r.c.pcs-r.g*f)+'</span>'):''}`:''}${warn}`:'—'; });
-  let sk=0; (t.cores||[]).forEach((c,i)=>{ const k=kf[i]||0; if(!skip[i]) sk+=k; const km=T('ccKm'+i); if(km) km.textContent=(lenSum&&k&&!skip[i])?(Math.round(lenSum*k*10)/10)+' m'+(lenSum*k>corAvail(t,c)+0.05?' ⚠':''):'—'; });
+  let sk=0; if(R.livre){ R.lc.forEach(x=>{ sk+=x.folhas; const km=x.el.querySelector('.cclm'); if(km) km.textContent=(lenSum&&x.folhas)?(Math.round(lenSum*x.folhas*10)/10)+' m':'—'; }); }
+  ((t&&t.cores)||[]).forEach((c,i)=>{ const k=kf[i]||0; if(!skip[i]) sk+=k; const km=T('ccKm'+i); if(km) km.textContent=(lenSum&&k&&!skip[i])?(Math.round(lenSum*k*10)/10)+' m'+(lenSum*k>corAvail(t,c)+0.05?' ⚠':''):'—'; });
   const out=T('ccOut'); if(!out) return; const msg=[];
   const aSum=rows.reduce((s,r)=>s+(r.area||0),0); if(rows.length>1&&aSum&&Math.abs(aSum-100)>0.5) msg.push('⚠ áreas somam '+Math.round(aSum*100)/100+'%');
   if(cp) msg.push('risco '+cp+' m'+(rows.length>1?' dividido por área':''));
@@ -2555,7 +2680,7 @@ function ccCalc(tec){ const R=ccRead(tec); const {t,cp,f,rows,kf,skip}=R; if(!t)
   if(f&&sk&&sk!==f) msg.push('⚠ cores somam '+sk+'/'+f);
   out.textContent=msg.join(' · ')||'— comprimento · completos · folhas —'; }
 function ccSkip(tec,i){ const e=document.getElementById('ccS'+i+'_'+tec); if(!e) return; e.classList.toggle('on'); e.textContent=e.classList.contains('on')?'⏸ depois':'⏸'; const inp=document.getElementById('ccK'+i+'_'+tec); if(inp){ inp.disabled=e.classList.contains('on'); if(inp.disabled) inp.value=''; } ccCalc(tec); }
-function ccNeed(tec){ const R=ccRead(tec); if(!R.t) return; const need=Math.max(0,...R.rows.map(r=>r.g&&r.c.pcs?Math.ceil(r.c.pcs/r.g):0)); if(!need){ toast('preencha completos (e as peças do modelo)'); return; } document.getElementById('ccF_'+tec).value=need; ccPct(tec); }
+function ccNeed(tec){ const R=ccRead(tec); if(!R.t&&!R.livre) return; const need=Math.max(0,...R.rows.map(r=>r.g&&r.c.pcs?Math.ceil(r.c.pcs/r.g):0)); if(!need){ toast('preencha completos (e as peças do modelo)'); return; } document.getElementById('ccF_'+tec).value=need; ccPct(tec); }
 function ccPct(tec){ const R=ccRead(tec); const {t,f,skip,rows}=R; if(!t) return; const T=v=>document.getElementById(v+'_'+tec); if(!f){ toast('primeiro as folhas totais (ou "folhas p/ atender o pedido")'); return; }
   const live=(t.cores||[]).map((c,i)=>skip[i]?0:corAvail(t,c)); const tot=live.reduce((s,x)=>s+x,0)||1; const lenSum=rows.reduce((s,r)=>s+r.len,0);
   let rest=f; const idx=live.map((v,i)=>i).filter(i=>!skip[i]); idx.forEach((i,n)=>{ let v=(n===idx.length-1)?rest:Math.round(f*live[i]/tot); if(lenSum){ const mx=Math.floor(corAvail(t,t.cores[i])/lenSum); if(v>mx) v=mx; } T('ccK'+i).value=v; rest-=v; });
@@ -2567,8 +2692,11 @@ async function regCorteCloud(tec){
   if(!cp||!f){ toast('Preencha comprimento e folhas'); return; }
   const bad=rows.find(r=>!r.g||!r.len); if(bad){ toast('Preencha completos e área % de '+(bad.c.cod||bad.c.aba)); return; }
   const aSum=rows.reduce((s,r)=>s+(r.area||0),0); if(rows.length>1&&Math.abs(aSum-100)>0.5){ toast('⚠ áreas por modelo devem somar 100% (estão em '+Math.round(aSum*100)/100+')'); return; }
-  if(!tLoc){ toast('Tecido não está na nuvem'); return; }
-  const temCores=!!(tLoc.cores&&tLoc.cores.length);
+  const livre=!tLoc&&R.livre;
+  if(!tLoc&&!livre){ toast('Tecido não está na nuvem'); return; }
+  if(livre){ if(!R.lc.length||R.lc.some(x=>!x.cor||!(x.folhas>0))){ toast('Tecido manual: informe cor e folhas em cada linha'); return; }
+    const sL=R.lc.reduce((s,x)=>s+x.folhas,0); if(sL!==f){ toast('Folhas por cor ('+sL+') ≠ total ('+f+')'); return; } }
+  const temCores=!!(tLoc&&tLoc.cores&&tLoc.cores.length);
   const kfL=temCores?kf.map((k,i)=>skip[i]?0:k):[]; const sk=kfL.reduce((s,x)=>s+x,0);
   if(temCores&&sk!==f){ toast('Folhas por cor ('+sk+') ≠ total ('+f+')'); return; }
   const lenSum=rows.reduce((s,r)=>s+r.len,0); const mt=Math.round(lenSum*f*10)/10, now=new Date().toISOString();
@@ -2580,13 +2708,16 @@ async function regCorteCloud(tec){
     await FB.runTransaction(FB.db, async tx=>{
       for(const it of its){ const cs=await tx.get(FB.doc(FB.db,'corte_conf',it.id));
         if(!cs.exists()) throw new Error((it.aba||it.nm)+': já foi cortado por outro usuário'); }
+      let colUsed=[];
+      if(livre){ colUsed=R.lc.map(x=>({cor:x.cor,folhas:x.folhas,m:Math.round(lenSum*x.folhas*10)/10})); }
+      else {
       const ref=FB.doc(FB.db,'tecidos',tec);
       const snap=await tx.get(ref);
       if(!snap.exists()) throw new Error('tecido sumiu da nuvem');
       const t=snap.data(); const mR=t.mediaRolo;
       const badAt=its.find(it=>it.tecAt&&t.createdAt&&it.tecAt!==t.createdAt);
       if(badAt) throw new Error('o tecido '+tec+' foi recriado depois da confirmação — reconfirme o vínculo');
-      const colUsed=temCores?(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kfL[i]||0,m:Math.round(lenSum*(kfL[i]||0)*10)/10})).filter(c=>c.folhas>0):[];
+      colUsed=temCores?(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kfL[i]||0,m:Math.round(lenSum*(kfL[i]||0)*10)/10})).filter(c=>c.folhas>0):[];
       for(const cu of colUsed){ const c=(t.cores||[]).find(x=>x.cor===cu.cor); const av=c?corAvail(t,c):0;
         if(cu.m>av+0.05) throw new Error(cu.cor+': precisa '+cu.m+' m, saldo AGORA é '+av+' m'); }
       if(!temCores && mt>(t.estoque||0)+0.05) throw new Error('precisa '+mt+' m, estoque AGORA é '+Math.round(t.estoque)+' m');
@@ -2599,6 +2730,7 @@ async function regCorteCloud(tec){
       colUsed.forEach(cu=>{ tD.corteOut.cores[cu.cor]=Math.round(((tD.corteOut.cores[cu.cor]||0)+cu.m)*100)/100; });
       tD.updatedAt=now; tD.updatedBy=(FBUSER&&FBUSER.email)||'';
       tx.set(ref,tD);
+      }
       /* v9.24b: forro/renda — baixa estoque de cada tecido extra */
       const xAll=rows.flatMap(r=>r.extras.filter(x=>x.mt>0).map(x=>({...x,aba:r.c.aba,cod:r.c.cod})));
       const xByTec={}; xAll.forEach(x=>(xByTec[x.tec]=xByTec[x.tec]||[]).push(x));
@@ -2612,7 +2744,7 @@ async function regCorteCloud(tec){
         xD.corteOut=xD.corteOut||{total:0,cores:{}}; xD.corteOut.total=Math.round((xD.corteOut.total+tot)*10)/10; xs.forEach(x=>{ if(x.cor) xD.corteOut.cores[x.cor]=Math.round(((xD.corteOut.cores[x.cor]||0)+x.mt)*100)/100; });
         xD.updatedAt=now; xD.updatedBy=(FBUSER&&FBUSER.email)||''; tx.set(xref,xD); }
       rows.forEach(r=>{ const it=r.c; const pcs=r.g*f; const mtM=Math.round(r.len*f*10)/10; const share=lenSum?r.len/lenSum:1/rows.length;
-        const d={id:kid+'_'+(it.aba||it.id),corteId:kid,tec,aba:it.aba||'',cod:it.cod||'',nm:it.nm||'',pcs,tam:r.comp,grade:compParse(r.comp),folhas:f,comp:cp,mt:mtM,coresUse:colUsed.map(c=>({cor:c.cor,folhas:c.folhas,m:Math.round(c.m*share*100)/100,pcs:c.folhas*r.g})),junto:its.length,corte:now.slice(0,10),who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,env:null,cheg:null,memo:'',
+        const d={id:kid+'_'+(it.aba||it.id),corteId:kid,tec,tecLivre:!!livre,aba:it.aba||'',cod:it.cod||'',nm:it.nm||'',pcs,tam:r.comp,grade:compParse(r.comp),folhas:f,comp:cp,mt:mtM,coresUse:colUsed.map(c=>({cor:c.cor,folhas:c.folhas,m:Math.round(c.m*share*100)/100,pcs:c.folhas*r.g})),junto:its.length,corte:now.slice(0,10),who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,env:null,cheg:null,memo:'',
           risco:{completos:r.comp,garments:r.g,moldes:r.moldes,area:r.area,len:r.len,mPc:r.mPc,comp:cp,aprov,junto:its.map(x=>x.cod||x.aba)},
           extras:r.extras.filter(x=>x.mt>0).map(x=>({tec:x.tec,papel:x.papel,cor:x.cor||null,mt:x.mt,mPc:pcs?Math.round(x.mt/pcs*100)/100:null})),
           parcialDe:it.parcial?it.parcial.de||null:null};
@@ -2620,7 +2752,7 @@ async function regCorteCloud(tec){
         const falta=(it.pcs||0)-pcs; if(parcialCores.length&&falta>0){ tx.set(FB.doc(FB.db,'corte_conf',it.id),{...it,pcs:falta,parcial:{de:kid,pend:parcialCores,feito:pcs,at:now}}); }
         else tx.delete(FB.doc(FB.db,'corte_conf',it.id)); });
     });
-    toast('✂ corte registrado · '+mt+' m baixados de '+tec+(parcialCores.length?' · '+parcialCores.join(', ')+' fica p/ depois':''));
+    toast(livre?('✂ corte registrado · '+mt+' m de '+tec+' (tecido manual — sem baixa de estoque)'):('✂ corte registrado · '+mt+' m baixados de '+tec+(parcialCores.length?' · '+parcialCores.join(', ')+' fica p/ depois':'')));
     for(const r of rows){ const it=r.c; if(it.aba){ const falta=(it.pcs||0)-r.g*f; try{ await robCorteSync(it.aba,now.slice(0,10),Math.round(r.len*f*10)/10,{risco:{completos:r.comp,garments:r.g,moldes:r.moldes,len:r.len,mPc:r.mPc},parcial:parcialCores.length&&falta>0}); }catch(e){} } }
   }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
   finally{ pgHide(); window.__cutBusy=false; } }
@@ -2649,7 +2781,7 @@ async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return
         xD.cores=(xD.cores||[]).map(cc=>cc.cor===x.cor?{...cc,saldo:Math.round((cc.saldo+(xt.mediaRolo?x.mt/xt.mediaRolo:x.mt))*100)/100}:cc); xD.estoque=Math.round((xD.estoque+x.mt)*10)/10; xD.status='estoque';
         xD.cortes=[...(xD.cortes||[]),{data:now.slice(0,10),modelo:(d.cod||d.aba)+' (forro) ↩ desfeito',cor:x.cor||'',m:-x.mt,por:whoName()}]; xD.updatedAt=now; tx.set(xref,xD); }
       tx.delete(cref);
-      tx.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,pcs:null,man:null,who:d.who,by:d.by,at:now});
+      tx.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,livre:!!d.tecLivre,pcs:null,man:null,who:d.who,by:d.by,at:now});
       window.__unsyncAba=d.aba||'';
     });
     toast('↩ corte desfeito · estoque restaurado');
@@ -2664,31 +2796,32 @@ function matrizHTML(grade,coresUse,pcs){ if(!grade||!grade.length||!(coresUse||[
  return `<h4>GRADE — tam × cor</h4><table style="border-collapse:collapse;width:100%;font-size:12px"><tr><th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">TAM</th>${head}<th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">Σ</th></tr>${rows}${tot}</table>`; }
 function cutGroupFull(tc){ const its=CCONF.filter(c=>(c.tec||'?')===tc); if(!its.length) return '';
  const WIDE=window.innerWidth>=980;
- const t=TDOCS.find(x=>x.code===tc);
- const linkSel=!t?`<div style="border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:0 0 8px">
-    <div style="font:800 10px var(--mono);color:#C0392B;margin-bottom:5px">🧵 ESTE GRUPO NÃO ESTÁ LIGADO A UM TECIDO DA NUVEM</div>
+ const t=TDOCS.find(x=>x.code===tc); const livre=!t&&grpLivre(its);
+ const linkSel=!t?`<div class="${livre?'livbox':''}" style="${livre?'':'border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:0 0 8px'}">
+    <div class="lt" style="${livre?'':'font:800 10px var(--mono);color:#C0392B;margin-bottom:5px'}">${livre?'✎ TECIDO MANUAL — sem estoque no ELO. Quando der entrada em TECIDOS, vincule aqui:':'🧵 ESTE GRUPO NÃO ESTÁ LIGADO A UM TECIDO DA NUVEM'}</div>
     <div style="display:flex;gap:6px"><select id="lk_${cssIdA(tc)}" style="flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit">
       <option value="">— escolha o tecido —</option>
       ${TDOCS.filter(x=>x.status!=='esgotado'&&!x.sobras).map(x=>`<option value="${x.code}">${x.code} · ${esc(x.nome)} (${fmt(Math.round(x.estoque))} m)</option>`).join('')}
     </select><button class="tg on" onclick="linkConfTec('${tc}')">VINCULAR</button></div>
-    <div style="font-size:10.5px;color:#6b6459;margin-top:4px">sem vínculo não dá para descontar estoque nem cortar</div></div>`:'';
+    <div style="font-size:10.5px;color:#6b6459;margin-top:4px">${livre?'enquanto isso dá para riscar e cortar — cores e folhas à mão, sem baixa de metros':'sem vínculo não dá para descontar estoque nem cortar'}</div></div>`:'';
  const tcs=t?((t.cores||[]).map(c=>corAvail(t,c))):[]; const tsum=tcs.reduce((s,x)=>s+x,0);
  const cores=t?((t.cores&&t.cores.length)?(t.cores||[]).map((c,i)=>`<div style="display:flex;gap:6px;align-items:center;margin:2px 0"><span style="flex:1;font-size:11.5px"><b>${esc(c.cor)}</b> <small style="color:#6b6459">saldo ${corAvail(t,c)} m${tsum?' · '+Math.round(tcs[i]/tsum*100)+'%':''}</small></span><input id="ccK${i}_${tc}" type="number" placeholder="folhas" style="max-width:86px" oninput="ccCalc('${tc}')"><span id="ccKm${i}_${tc}" style="width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459">—</span><span class="ccskip" id="ccS${i}_${tc}" title="não cortar esta cor agora — fica p/ um 2º corte" onclick="ccSkip('${tc}',${i})">⏸</span></div>`).join(''):'<div class="sm">tecido sem cores cadastradas — desconta do estoque total</div>'):'';
  const riscoRows=its.map(c=>{ const m=DEB.models.find(x=>x.aba===c.aba)||{}; const plus=modelIsPlus(m); const k=cssIdA(c.id);
    const xrows=tecs2Of(m).map((x,j)=>{ const xt=TDOCS.find(q=>q.code===x.tec); const cs=xt?(xt.cores||[]):[]; return `<div class="xrow"><span><b>${esc(x.tec)}</b> <small>${esc(x.papel)}${xt?' · '+esc(xt.nome):' · <span style="color:#C0392B">não está na nuvem</span>'}</small></span><input id="rkX_${k}_${j}" type="number" step="0.1" placeholder="metros" oninput="ccCalc('${tc}')">${cs.length?`<select id="rkXc_${k}_${j}">${cs.map(cc=>`<option value="${esc(cc.cor)}">${esc(cc.cor)} ${xt?corAvail(xt,cc):''}m</option>`).join('')}</select>`:`<span class="xo">${xt?fmt(Math.round(xt.estoque))+' m':''}</span>`}<span class="xo" id="rkXo_${k}_${j}">—</span></div>`; }).join('');
    return `<div class="rkrow"><span>${codAba(c.cod||m.codigo,c.aba)}<br><small style="color:#6b6459">${c.parcial?`<span class="parc">parcial · faltam ${fmt(c.pcs||0)}</span>`:(c.pcs?fmt(c.pcs)+' pçs':'')}${plus?' · PLUS':''}</small> <span style="cursor:pointer;color:#9a5a00;font-size:10px" onclick="addTec2('${c.aba}')">＋ forro</span></span><label><span class="rklab">COMPLETOS</span><input id="rkC_${k}" placeholder="${plus?'2-BP 2-BM':'1-P 1-M 1-G'}" oninput="ccCalc('${tc}')"></label><label><span class="rklab">MOLDES/PÇ</span><input id="rkM_${k}" type="number" placeholder="14" oninput="ccCalc('${tc}')"></label><label><span class="rklab">ÁREA %</span><input id="rkA_${k}" type="number" step="0.01" placeholder="49.05" value="${its.length===1?'100':''}" oninput="ccCalc('${tc}')"></label><span class="rkout" id="rkO_${k}">—</span>${xrows}</div>`; }).join('');
- const calc=t?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:10px 12px">
+ const coresL=livre?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (manual — folhas por cor) <button class="tg" onclick="ccLAdd('${tc}')">⊕ cor</button></div><div id="ccL_${tc}">${ccLRow(tc)}</div>`:'';
+ const calc=(t||livre)?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:10px 12px">
    <div style="font:800 10px var(--mono);letter-spacing:.1em;color:#2E7D32;margin-bottom:7px">📐 RISCO (folha do Audaces) → 🧺 ENFESTO → ✂ CORTE</div>
    <div class="ccrow"><label>COMPRIMENTO (cm ou m)<input id="ccC_${tc}" placeholder="607,78" oninput="ccCalc('${tc}')"></label><label>APROV. %<input id="ccA_${tc}" type="number" step="0.01" placeholder="78,45"></label><label>FOLHAS (total)<input id="ccF_${tc}" type="number" placeholder="50" oninput="ccCalc('${tc}')"></label></div>
    <div style="font:800 9.5px var(--mono);color:#6b6459;margin:4px 0 2px">POR MODELO — completos · moldes/pç · área % ${its.length>1?'(somam 100)':''}</div>
    ${riscoRows}
    <input id="ccT_${tc}" type="hidden">
    <div id="ccOut_${tc}" style="font:700 11px var(--mono);color:#2E7D32;margin:6px 0 5px">— comprimento · completos · folhas —</div>
-   ${(t.cores&&t.cores.length)?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) <button class="tg" onclick="ccNeed('${tc}')">folhas p/ atender o pedido</button> <button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="ccPct('${tc}')">✔ MANTER PROPORÇÃO DO SALDO</button></div>`:''}
-   ${cores}
-   <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">✂ CORTADO — registrar e baixar estoque</button>
+   ${(t&&t.cores&&t.cores.length)?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) <button class="tg" onclick="ccNeed('${tc}')">folhas p/ atender o pedido</button> <button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="ccPct('${tc}')">✔ MANTER PROPORÇÃO DO SALDO</button></div>`:''}
+   ${livre?coresL:cores}
+   <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">${livre?'✂ CORTADO — registrar (tecido manual, sem baixa)':'✂ CORTADO — registrar e baixar estoque'}</button>
   </div>`:'';
- const header=`<div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}${its.some(c=>c.parcial)?' · <span class="parc">2º corte</span>':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>`;
+ const header=`<div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):(livre?'✎ '+esc(tc)+' · manual':'⚠ '+esc(tc))}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}${its.some(c=>c.parcial)?' · <span class="parc">2º corte</span>':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>`;
  const cardOf=c=>{ const m=DEB.models.find(x=>x.aba===c.aba)||{};
    return `<div class="mc2" style="cursor:default"><span class="who2">✔ ${esc(c.who)}</span>${m.foto?`<img class="top" loading="lazy" decoding="async" src="${m.foto}">`:'<div class="top"></div>'}<b>${codAba(c.cod||m.codigo,c.aba)}</b><span class="nm2">${esc(c.nm)}</span>${c.parcial?`<span class="parc">faltam ${fmt(c.pcs||0)}</span>`:''}<button class="tg" style="margin:4px auto 6px;display:block" onclick="desConfC('${c.id}')">↩ fila</button></div>`; };
  if(WIDE){
@@ -2702,7 +2835,7 @@ function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&win
         else { const html=robFichaHTML(kind,key); if(html) openMod('FICHA',html,''); } } }
 async function rfMsgSend(aba){ await msgSend('mod:'+aba,'rfI'); render(); }
 async function confOne(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
- const go=async(sel)=>{ const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:sel?sel.tec:'',tecAt:sel?sel.tecAt:null,pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
+ const go=async(sel)=>{ const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:sel?sel.tec:'',livre:!!(sel&&sel.livre),tecAt:sel?sel.tecAt:null,pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
    try{ await FB.setDoc(FB.doc(FB.db,'corte_conf',d.id),d); toast('✔ '+aba+' confirmado p/ corte'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } };
  if(m.tecSel&&m.tecSel.tec){ return go(m.tecSel); }
  tecConfirmGate(m, async sel=>{ if(sel){ try{ await FB.setDoc(FB.doc(FB.db,'elo_deb',m.aba),{...m,tecSel:{...sel,por:whoName(),at:new Date().toISOString()},edited:m.edited||false}); }catch(e){} }
@@ -2733,7 +2866,7 @@ function robFichaHTML(kind,key){
   const up=(g.rows.length?mesmoTecido(g.rows[0].m).filter(x=>PRE_CORTE.includes(x.fase)):[]);
   if(GV>=g.rows.length) GV=0;
   const rows=g.rows.map((r,i)=>`<div class="ovr ${i===GV?'on':''}" onclick="GV=${i};render()">
-     <input type="checkbox" class="cfk" ${r.elo==='preparando'?'checked':''} data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">
+     <input type="checkbox" class="cfk" ${r.elo==='preparando'?'checked':''} data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:(g.livre?esc(g.name):'')}" data-livre="${g.livre?1:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">
      <div style="min-width:0"><b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><div class="ovnm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</div>
       <div class="ovdt">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00;font-weight:700">risco pend.</span>'}</div>${robChkHTML(r.m)}</div></div>`).join('');
   const s=g.rows[GV]; let vw='';
@@ -2746,7 +2879,7 @@ function robFichaHTML(kind,key){
   return `<div class="mph" style="padding:14px 46px 8px 14px"><div style="display:flex;gap:12px">
     ${g.tec&&g.tec.foto?`<img src="${g.tec.foto}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none">`:'<div style="width:56px;height:56px;border-radius:10px;background:#EAE4D8;flex:none"></div>'}
     <div><h2 style="margin:0">${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</h2>
-     <div class="sm">${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) na fila${up.length?' · ⏳ vai juntar: '+up.map(x=>x.aba).join(', '):''}</div></div></div></div>
+     <div class="sm">${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':(g.livre?'<span class="chipLiv">✎ manual · sem estoque</span> · ':'')}${g.rows.length} modelo(s) na fila${up.length?' · ⏳ vai juntar: '+up.map(x=>x.aba).join(', '):''}</div></div></div></div>
    <div class="mpc" style="padding:0 14px 8px"><section>
     <div class="sm" style="margin-bottom:4px">marque quem vai cortar · toque na linha p/ ver a foto</div>
     <div class="ovwrap"><div class="ovrows">${rows}</div><div class="ovview">${vw}</div></div>
@@ -3190,7 +3323,7 @@ function drawTec(){ const t=cur; const inp=(k,l,type='text',cls='')=>`<div class
   openMod((t.novo?'NOVO · ':'')+t.code+(t.nome?' · '+t.nome:''),`
   <div class="sec"><div class="photo"><div class="ph" id="tPh">${t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'SEM FOTO'}</div><div class="ops"><button class="tb" id="tFoto">📷 FOTO</button>${t.foto?'<button class="tb red" id="tFotoDel">REMOVER</button>':''}</div></div></div>
   <div class="sec"><h3>TECIDO</h3><div class="f">${inp('code','CÓDIGO T')}${inp('nome','NOME')}${inp('forn','FORNECEDOR')}${inp('nf','NF')}<div class="fi"><label>CATEGORIA ${t.categoria?'':'<span style="color:#C0392B">· obrigatória</span>'}</label><select data-k="categoria" style="${t.categoria?'':'border-color:#C0392B'}"><option value="">— escolha —</option>${CATS.map(c=>`<option ${t.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div>${inp('comp','COMPOSIÇÃO (ex.: 100% VISCOSE)')}${inp('estacao','ESTAÇÃO')}</div>
-    <div class="f c3" style="margin-top:8px">${inp('preco','PREÇO R$/m')}${inp('largura','LARGURA (m)')}${inp('gramatura','GRAMATURA g/m²')}</div>
+    <div class="f c3" style="margin-top:8px">${inp('preco','PREÇO R$/m')}${inp('imposto','ALÍQUOTA NA NF % (DIFAL '+(difalOf(t.imposto)??'—')+'%)')}${inp('largura','LARGURA (m)')}${inp('gramatura','GRAMATURA g/m²')}</div>
     <div class="f" style="margin-top:8px">${inp('dataEntrada','ENTRADA (dd/mm/aa)')}<div class="fi"><label>OBS</label><input data-k="obs" value="${esc(t.obs||'')}"></div></div></div>
   <div class="sec"><h3>ESTOQUE · ${tfmt(t.estoque,1)} m</h3><div class="f c3"><div class="fi"><label>AJUSTE (m, use − p/ saída)</label><input id="ajM" placeholder="ex.: -120 ou 300"></div><div class="fi" style="grid-column:span 2"><label>MOTIVO</label><input id="ajMot" placeholder="corte lote 12185 · sobra · inventário…"></div></div><button class="tb" id="bAj" style="margin-top:8px">APLICAR AJUSTE</button>
     <div class="hist" id="hist" style="margin-top:8px"><div class="sm">carregando histórico…</div></div></div>
@@ -3205,11 +3338,11 @@ function drawTec(){ const t=cur; const inp=(k,l,type='text',cls='')=>`<div class
   const dl=$('#bDelT'); if(dl) dl.onclick=async()=>{ if(!confirm('Excluir '+cur.code+'? Isso não apaga o histórico.')) return; await FB.deleteDoc(FB.doc(FB.db,'tecidos',cur.code)); closeMod(); toast('Tecido excluído'); };
   loadHist(t.code);
 }
-function readTec(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k; let v=i.value.trim(); if(['preco','largura','gramatura'].includes(k)) v=tnum(v); else if(k==='dataEntrada') v=brToISO(v); else if(k==='code') v=v.toUpperCase(); cur[k]=v===''?null:v; });
+function readTec(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k; let v=i.value.trim(); if(['preco','largura','gramatura','imposto'].includes(k)) v=tnum(v); else if(k==='dataEntrada') v=brToISO(v); else if(k==='code') v=v.toUpperCase(); cur[k]=v===''?null:v; });
   $$('#corBody input').forEach(i=>{ const c=cur.cores[+i.dataset.cor]; if(!c) return; const f=i.dataset.f; c[f]=f==='cor'?i.value.trim().toUpperCase():tnum(i.value); }); if(!keep) cur.cores=cur.cores.filter(c=>c.cor); }
 async function saveTec(){ readTec(); if(!cur.code||!/^T\d+$/i.test(cur.code)){ toast('Código deve ser T + número (ex.: T54)'); return; }
   if(cur.novo&&TDOCS.find(t=>t.code===cur.code)){ toast(cur.code+' já existe'); return; }
-  const t={...cur}; delete t.novo; t.status=t.estoque>0?'estoque':(((t.usado||0)>0)||((t.cortes||[]).length>0)?'esgotado':'estoque'); t.updatedAt=new Date().toISOString(); t.updatedBy=by(); if(!t.createdAt) t.createdAt=t.updatedAt;
+  const t={...cur}; delete t.novo; if(t.pedidoId&&t.preco!=null&&t.imposto!=null) t.precoImp=precoImpCalc(t.preco,t.imposto); t.status=t.estoque>0?'estoque':(((t.usado||0)>0)||((t.cortes||[]).length>0)?'esgotado':'estoque'); t.updatedAt=new Date().toISOString(); t.updatedBy=by(); if(!t.createdAt) t.createdAt=t.updatedAt;
   try{ await FB.setDoc(FB.doc(FB.db,'tecidos',t.code),t); toast('Salvo · '+t.code); closeMod(); }catch(e){ toast('Erro ao salvar: '+e.code,5000); } }
 async function applyAjuste(){ readTec(); const d=tnum($('#ajM').value); const mot=$('#ajMot').value.trim(); if(d==null||!d){ toast('Informe os metros'); return; } if(!mot){ toast('Escreva o motivo'); return; }
   const antes=cur.estoque||0; cur.estoque=Math.round((antes+d)*100)/100; if(d<0) cur.usado=Math.round(((cur.usado||0)-d)*100)/100;
@@ -3234,7 +3367,7 @@ function drawPed(){ const p=cur; const rec=p.status==='RECEBIDO'; const pd=pende
   openMod((rec?p.entrada.t+' · ':'PEDIDO · ')+(p.nome||'novo'),`
   <div class="sec"><div class="photo"><div class="ph" id="pPh">${p.foto?`<img loading="lazy" decoding="async" src="${p.foto}">`:'FOTO / AMOSTRA'}</div><div class="ops"><button class="tb" id="pFoto">📷 FOTO</button><button class="tb pri" id="bRead" ${p.foto?'':'disabled'}>🤖 LER COM CLAUDE</button><button class="tb" id="bPaste">📋 COLAR LEITURA</button><span class="sm">status: <b>${p.status}</b>${rec?' · '+p.entrada.t:''}</span></div></div>${(p.unsure||[]).length?`<div class="pend">🤖 sem certeza: ${p.unsure.join(', ')} — confira</div>`:''}</div>
   <div class="sec"><h3>PEDIDO</h3><div class="f c3">${inp('data','DATA (dd/mm/aa)')}<div class="fi"><label>FORNECEDOR</label><input data-k="fornecedor" value="${esc(p.fornecedor||'')}" list="forns" class="${p._try&&!p.fornecedor?'miss':''}"></div>${inp('vendedor','VENDEDOR')}${inp('pagto','PAGTO','30/60/90')}${inp('prazo','PRAZO ENTREGA (dd/mm/aa)')}${inp('numforn','Nº PEDIDO FORN.')}</div></div>
-  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}${inp('estacao','ESTAÇÃO','VERÃO/26')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${inp('imposto','IMPOSTO %')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>CATEGORIA ${p.categoria?'':'<span style="color:#C0392B">· obrigatória</span>'}</label><select data-k="categoria" class="${!p.categoria&&p._try?'miss':''}" style="${p.categoria?'':'border-color:#C0392B'}"><option value="">— escolha —</option>${CATS.map(c=>`<option ${p.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="fi"><label>RENDIMENTO / PREÇO m</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}${precoM!=null&&tnum(p.imposto)?' · c/imp R$ '+tfmt(precoM*(1+tnum(p.imposto)/100),2)+'/m':''}"></div></div>
+  <div class="sec"><h3>TECIDO</h3><div class="f">${inp('codigo','CÓD. FORNECEDOR')}${inp('nome','NOME')}${inp('estacao','ESTAÇÃO','VERÃO/26')}</div><div class="f c3" style="margin-top:8px">${inp('gram','GRAMATURA g/m²')}${inp('larg','LARGURA m')}${sel('unid','UNIDADE',['m','kg'])}${inp('preco','PREÇO R$ / unid')}${inp('imposto','ALÍQUOTA NA NF %','4 · 7 · 12 · 18')}${sel('tipo','TIPO',['LISO','ESTAMPADO','LISTRADO','XADREZ','JACQUARD'])}<div class="fi"><label>CATEGORIA ${p.categoria?'':'<span style="color:#C0392B">· obrigatória</span>'}</label><select data-k="categoria" class="${!p.categoria&&p._try?'miss':''}" style="${p.categoria?'':'border-color:#C0392B'}"><option value="">— escolha —</option>${CATS.map(c=>`<option ${p.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="fi"><label>RENDIMENTO / PREÇO m / DIFAL</label><input disabled value="${rend?tfmt(rend,2)+' m/kg':'—'} · ${precoM!=null?'R$ '+tfmt(precoM,2)+'/m':'—'}${precoM!=null&&tnum(p.imposto)!=null?' · DIFAL '+difalOf(p.imposto)+'% → c/imp R$ '+tfmt(precoImpCalc(precoM,p.imposto),2)+'/m':''}"></div></div>
     <table class="t" style="margin-top:8px"><thead><tr><th style="width:80px">%</th><th>FIBRA</th></tr></thead><tbody id="compBody">${comp}</tbody></table><button class="tb" id="bAddComp" style="margin-top:6px">+ FIBRA</button><datalist id="fibras">${DEF_FIB.map(f=>`<option value="${f}">`).join('')}</datalist><datalist id="forns">${[...new Set([...DEF_FORN,...TDOCS.map(t=>t.forn).filter(Boolean)])].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
   <div class="sec"><h3>CORES · ${tfmt(totalM(p))} ${p.unid}</h3><table class="t"><thead><tr><th style="width:36px"></th><th>COR</th><th>QTD</th><th>ROLOS PREV.</th><th>ROLOS RECEB.</th></tr></thead><tbody id="corBody">${cores}</tbody></table><button class="tb" id="bAddCor" style="margin-top:6px">+ COR</button> <button class="tb" id="bCrop" style="margin-top:6px" ${p.foto&&p.cores.length?'':'disabled'}>✂ RECORTAR SWATCHES</button><span class="sm" style="margin-left:8px">toque na 1ª coluna p/ recortar à mão</span></div>
   <div class="sec"><div class="fi"><label>OBS</label><textarea data-k="obs">${esc(p.obs||'')}</textarea></div>${pd.ped.length?`<div class="pend">⚠ falta: ${pd.ped.join(', ')}</div>`:''}</div>${p.id?msgThread('ped:'+p.id,'pdIM',`msgSend('ped:${p.id}','pdIM')`):''}
@@ -3274,7 +3407,7 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
   const gram=tnum(cur.gram),larg=tnum(cur.larg),preco=tnum(cur.preco); const rend=gram&&larg?1000/(gram*larg):null; const precoM=preco==null?null:(cur.unid==='kg'?(rend?preco/rend:null):preco);
   const m=tnum(e.m)!=null?tnum(e.m):(rend&&tnum(e.kg)!=null?Math.round(tnum(e.kg)*rend*10)/10:0);
   const imp=tnum(cur.imposto); const qped=cur.cores.reduce((s,c)=>s+(tnum(c.qtd)||0),0); const rrec=Object.values(e.rolos||{}).reduce((s,r)=>s+(tnum(r)||0),0);
-  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',categoria:cur.categoria||'',imposto:imp,precoImp:(precoM!=null&&imp)?Math.round(precoM*(1+imp/100)*10000)/10000:null,estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:cur.estacao||'',preco:precoM,largura:larg,gramatura:gram,mediaRolo:(rrec>0&&m)?Math.round(m/rrec*10)/10:null,dataEntrada:e.data,qtdPedida:qped||null,dataPedido:cur.data||null,prevEntrega:cur.prazo||null,valorTotal:(precoM!=null&&m)?Math.round(m*precoM*100)/100:null,qtdRecebida:m??null,rolosRec:rrec||null,kg:e.kg??null,inspecao:e.insp||'',cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
+  const t={code:e.t,nome:cur.nome||'',forn:cur.fornecedor||'',nf:e.nf||'',categoria:cur.categoria||'',imposto:imp,precoImp:(precoM!=null&&imp!=null)?precoImpCalc(precoM,imp):null,estoque:m,usado:0,status:m>0?'estoque':'esgotado',comp:cur.comp.filter(c=>c.fibra).map(c=>(c.pct!=null?c.pct+'% ':'')+c.fibra).join(' / '),estacao:cur.estacao||'',preco:precoM,largura:larg,gramatura:gram,mediaRolo:(rrec>0&&m)?Math.round(m/rrec*10)/10:null,dataEntrada:e.data,qtdPedida:qped||null,dataPedido:cur.data||null,prevEntrega:cur.prazo||null,valorTotal:(precoM!=null&&m)?Math.round(m*precoM*100)/100:null,qtdRecebida:m??null,rolosRec:rrec||null,kg:e.kg??null,inspecao:e.insp||'',cores:cur.cores.filter(c=>c.cor).map((c,i)=>({cor:c.cor,entrada:tnum(c.qtd)||0,saldo:tnum(c.qtd)||0,rolos:e.rolos[i]||null,thumb:c.thumb||null,hex:c.hex||null})),foto:cur.foto||null,obs:cur.obs||'',pedidoId:cur.id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),updatedBy:by()};
   cur.status='RECEBIDO';
   try{ const b=FB.writeBatch(FB.db); b.set(FB.doc(FB.db,'tecidos',t.code),t); const p={...cur}; delete p._try; p.atualizado=t.updatedAt; p.por=by(); b.set(FB.doc(FB.db,'pedidos',p.id),p); b.set(FB.doc(FB.db,'movs','M'+Date.now().toString(36)),{id:'M'+Date.now().toString(36),code:t.code,delta:m,antes:0,depois:m,motivo:'entrada NF '+(e.nf||'?')+' · pedido '+(cur.fornecedor||''),at:t.updatedAt,by:by()}); pgShow('criando '+t.code+' no estoque…'); await b.commit(); pgHide();
    toast(`Entrada confirmada → ${t.code} criado no ESTOQUE`,4000);

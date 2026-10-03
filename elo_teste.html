@@ -250,7 +250,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .cut{border-collapse:collapse;font:600 10.5px var(--mono);white-space:nowrap}
 .cut th{background:#1D2A3F;color:#fff;font:800 8.5px var(--mono);padding:5px 7px;text-align:left;position:sticky;top:0;z-index:1}
 .cut td{border-bottom:1px solid var(--line);padding:4px 7px;vertical-align:middle}
-.cut td.xl{color:#5a544a;background:#FBFAF6}.cut td.elo{background:#FFFDF0}.cut td.calc{color:#1D2A3F;font-weight:800;background:#F3F5F9}
+.cut td.xl{color:#5a544a;background:#FBFAF6}.cut td.elo{background:#FFFDF0;display:table-cell}.cut td.calc{color:#1D2A3F;font-weight:800;background:#F3F5F9}
 .cut td.cu-el{max-width:150px;overflow:hidden;text-overflow:ellipsis}
 .cut td.elo input{width:74px;border:1px solid var(--line);border-radius:5px;padding:3px 5px;font:800 11px var(--mono);background:#fff;text-align:right}
 .cut td.elo input:focus{outline:2px solid var(--gold)}.cut td.elo input.set{border-color:#2E7D32;background:#EAF4EA}
@@ -725,11 +725,19 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 #portal{position:fixed;right:12px;bottom:12px;z-index:9999;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:#152540;border:1.5px solid #D4AF37;border-radius:50%;color:#D4AF37;font-size:17px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.3)}
 #portal:hover{background:#1D2A3F}
 @media(max-width:860px){#portal{bottom:70px}}
+/* ===== v9.28a · tecido manual (✎) ===== */
+.tpFree{margin-top:10px;border:1.5px dashed #A3641A;background:#FBF3E2;border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tpFree b{font:800 12px var(--mono);color:#A3641A}.tpFree small{display:block;color:#6b6459;font-size:11px;margin-top:3px}.tpFree.off{opacity:.55}.tpFree button[disabled]{opacity:.5;cursor:not-allowed}
+.tp-liv b{color:#A3641A}
+.chipLiv{display:inline-block;border-radius:6px;padding:1px 7px;font:800 10px var(--mono);letter-spacing:.06em;background:#F6E6C3;color:#A3641A;border:1px dashed #A3641A}
+.ccl{display:flex;gap:6px;align-items:center;margin:2px 0}.ccl input{border:1px solid var(--line);border-radius:7px;padding:5px 7px;font:inherit}.ccl .cclc{flex:1;min-width:0}.ccl .cclk{max-width:86px}.ccl .cclm{width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459}
+.livbox{border:1.5px dashed #A3641A;border-radius:10px;background:#FBF3E2;padding:8px 10px;margin:0 0 8px}
+.livbox .lt{font:800 10px var(--mono);color:#A3641A;margin-bottom:5px}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.27a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1147,11 +1155,16 @@ function debThreeWay(prev,m){ const base=prev.imp, r=JSON.parse(JSON.stringify(p
      if(nv&&N!==B){ if(P===B){ tgt[c]=nv[c]??''; } else if(P!==N){ const id='p'+i+'.'+c;
        if(!r.conflicts.some(x=>x.campo===id)) r.conflicts.push({campo:id,rid:'p'+i,col:c,painel:tgt[c]??'',planilha:nv[c]??''}); } } }); }
  r.imp=debImpOf(m); r.edited=true; return r; }
-function tecState(m){ if(m.tecSel&&m.tecSel.tec) return 'ok';
+function tecNorm(s){ return String(s||'').toUpperCase().replace(/['"<>\\`]/g,'').replace(/\s+/g,' ').trim(); }
+function livreNames(){ const m=new Map(); const add=n=>{ n=tecNorm(n); if(n) m.set(n,(m.get(n)||0)+1); };
+  DEB.models.forEach(x=>{ if(x.tecSel&&x.tecSel.livre) add(x.tecSel.tec); }); CCONF.forEach(c=>{ if(c.livre) add(c.tec); });
+  return [...m].map(([n,c])=>({n,c})).sort((a,b)=>b.c-a.c||a.n.localeCompare(b.n)); }
+function grpLivre(its){ return its.some(c=>c.livre)||its.some(c=>{ const m=DEB.models.find(x=>x.aba===c.aba); return !!(m&&m.tecSel&&m.tecSel.livre&&m.tecSel.tec===(c.tec||'')); }); }
+function tecState(m){ if(m.tecSel&&m.tecSel.tec) return m.tecSel.livre?'livre':'ok';
  if(!nfKeys(m.nf).length) return 'semnf';
  const c=tecidoOf(m); return c.length===0?'semcand':(c.length>1?'multi':'naoconf'); }
 function tecStateChip(m){ const s=tecState(m);
- const L={ok:['✓ tecido confirmado','#EAF4EA;color:#2E7D32'],semnf:['sem NF','#EFE9DD;color:#6b6459'],
+ const L={ok:['✓ tecido confirmado','#EAF4EA;color:#2E7D32'],livre:['✎ tecido manual (sem estoque)','#F6E6C3;color:#A3641A'],semnf:['sem NF','#EFE9DD;color:#6b6459'],
    semcand:['NF sem tecido na nuvem','#FBEDEB;color:#C0392B'],multi:['⚠ vários candidatos','#FDF4E3;color:#8a6d00'],
    naoconf:['candidato não confirmado','#FDF4E3;color:#8a6d00']}[s];
  return `<span style="font:800 8.5px var(--mono);border-radius:5px;padding:1px 6px;background:${L[1]}">${L[0]}</span>`; }
@@ -1361,7 +1374,12 @@ function passFilter(r){
 }
 
 function filaGroups(A){
-  const grp={}; A.fila.forEach(r=>{ const ts=tecidoOf(r.m); const key=ts.length?ts[0].code:(nfKeys(r.m.nf)[0]?'NF '+r.m.nf:'sem NF · '+r.m.aba); (grp[key]=grp[key]||{key,tec:ts[0]||null,nf:r.m.nf,rows:[]}).rows.push(r); });
+  const grp={}; A.fila.forEach(r=>{ const ts=tecidoOf(r.m); const sel=r.m.tecSel&&r.m.tecSel.tec?r.m.tecSel:null;
+    let key,tec=ts[0]||null,livre=false,name='';
+    if(sel&&sel.livre){ key='✎ '+sel.tec; tec=null; livre=true; name=sel.tec; }
+    else if(sel){ key=sel.tec; tec=TEC.items.find(t=>t.code===sel.tec)||ts[0]||null; }
+    else key=ts.length?ts[0].code:(nfKeys(r.m.nf)[0]?'NF '+r.m.nf:'sem NF · '+r.m.aba);
+    (grp[key]=grp[key]||{key,tec,livre,name,nf:r.m.nf,rows:[]}).rows.push(r); });
   return Object.values(grp).sort((a,b)=>b.rows.length-a.rows.length||(b.rows.filter(r=>r.elo==='preparando').length-a.rows.filter(r=>r.elo==='preparando').length));
 }
 function renderPlano(A){
@@ -1615,11 +1633,11 @@ function renderRoberto(A){
     const gk=g.key.replace(/'/g,''); const isOpen=UI.fgAll||!!UI.fg[gk];
     return `<div class="fg ${g.rows.length>1?'dup':''} ${isOpen?'open':''}">
       <div class="fgh" onclick="togFG('${gk}')"><span class="chev">${isOpen?'▾':'▸'}</span>${g.tec&&g.tec.foto?`<img loading="lazy" decoding="async" src="${g.tec.foto}" alt="" onclick="event.stopPropagation();openTecido('${g.tec.code}')">`:'<i class="noth"></i>'}
-        <div><b>${g.tec?g.tec.code+' · '+esc(g.tec.nome):esc(g.key)}${!g.tec&&/^NF/.test(g.key)?' <small class="okt" style="color:var(--red)">sem aba T</small>':''}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) · ${fmt(pcs)} pçs${g.rows.length>1?' · <em>cortar junto</em>':''}</span></div>
+        <div><b>${g.tec?g.tec.code+' · '+esc(g.tec.nome):esc(g.key)}${g.livre?' <span class="chipLiv">manual · sem estoque</span>':''}${!g.tec&&/^NF/.test(g.key)?' <small class="okt" style="color:var(--red)">sem aba T</small>':''}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) · ${fmt(pcs)} pçs${g.rows.length>1?' · <em>cortar junto</em>':''}</span></div>
         <span class="cnt">${pr.length}<small>prontos</small>${ag.length?`<i>+${ag.length}</i>`:''}</span><span class="fbt"><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="event.stopPropagation();confSel('${gk}')">✔ CONFIRMAR</button><button class="tg" onclick="event.stopPropagation();PLANO.key='${gk}';VIEW='plano';render()">✂ plano</button></span></div>
       ${isOpen?(()=>{const ref=g.rows[0].m; const up=mesmoTecido(ref).filter(x=>PRE_CORTE.includes(x.fase)); if(!up.length) return ''; return `<div class="fup"><b>vai juntar</b>${up.map(x=>`<span onclick="openModel('${x.aba}')">${x.aba} · ${x.codigo||'—'} <i>${x.fase}${x.prazo?' · '+dtBR(x.prazo):''}</i></span>`).join('')}</div>`;})():''}
-      ${isOpen?(WIDE?`<div class="cgrid">${g.rows.map(r=>`<div class="mc2 ${RFICHA&&RFICHA.kind==='fila'&&RFICHA.key===r.m.aba?'on':''}" onclick="robPick('fila','${r.m.aba}')"><input type="checkbox" class="cfk cfkc" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">${r.m.foto?`<img class="top" src="${r.m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><span class="nm2">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="st2">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00">risco pend.</span>'}</span>${robChkHTML(r.m)}</div>`).join('')}</div>`
-  :g.rows.map(r=>`<div class="frow ${r.elo==='preparando'?'ok':''}" onclick="openModel('${r.m.aba}')"><input type="checkbox" class="cfk" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()"><span class="mc">${r.m.aba} · ${r.m.codigo||'—'}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="sm">${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'risco pendente'}${r.m.qt?' · '+fmt(r.m.qt)+' pçs':''}${r.m.prazo?' · prazo '+dtBR(r.m.prazo):''}</span>${robChkHTML(r.m)}</div>`).join('')):''}
+      ${isOpen?(WIDE?`<div class="cgrid">${g.rows.map(r=>`<div class="mc2 ${RFICHA&&RFICHA.kind==='fila'&&RFICHA.key===r.m.aba?'on':''}" onclick="robPick('fila','${r.m.aba}')"><input type="checkbox" class="cfk cfkc" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:(g.livre?esc(g.name):'')}" data-livre="${g.livre?1:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">${r.m.foto?`<img class="top" src="${r.m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><span class="nm2">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="st2">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00">risco pend.</span>'}</span>${robChkHTML(r.m)}</div>`).join('')}</div>`
+  :g.rows.map(r=>`<div class="frow ${r.elo==='preparando'?'ok':''}" onclick="openModel('${r.m.aba}')"><input type="checkbox" class="cfk" data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:(g.livre?esc(g.name):'')}" data-livre="${g.livre?1:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()"><span class="mc">${r.m.aba} · ${r.m.codigo||'—'}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="sm">${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'risco pendente'}${r.m.qt?' · '+fmt(r.m.qt)+' pçs':''}${r.m.prazo?' · prazo '+dtBR(r.m.prazo):''}</span>${robChkHTML(r.m)}</div>`).join('')):''}
     </div>`;}).join('');
   const autoTag=new Set(filaR.flatMap(r=>[r.m.aba,String(r.m.codigo||'')]));
   const manHtml=()=>{ const btn=`<div class="fg open"><div class="fgh" style="border-style:dashed;cursor:pointer" onclick="openAddFila()"><i class="noth"></i><div><b>＋ ADICIONAR À FILA</b><span>tecido + modelo, na mão · salvo na nuvem</span></div></div></div>`;
@@ -1635,7 +1653,7 @@ function renderRoberto(A){
       const minis=its.slice(0,3).map(c=>{const m=DEB.models.find(x=>x.aba===c.aba)||{};
         return `<div><div class="aph">${m.foto?`<img loading="lazy" decoding="async" src="${m.foto}">`:''}</div><span class="alb">${esc(c.cod||c.aba||'—')}</span></div>`;}).join('');
       return `<div class="agc ${RFICHA&&RFICHA.kind==='cutg'&&RFICHA.key===tc?'on':''}" onclick="robPick('cutg','${tc}')">
-        <div class="agch">${t&&t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'<div class="agsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>${t?fmt(Math.round(t.estoque))+' m':'sem tecido'}</span></div><div class="agn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>
+        <div class="agch">${t&&t.foto?`<img loading="lazy" decoding="async" src="${t.foto}">`:'<div class="agsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):(grpLivre(its)?'✎ '+esc(tc):'⚠ '+esc(tc))}</b><span>${t?fmt(Math.round(t.estoque))+' m':(grpLivre(its)?'manual · sem estoque':'sem tecido')}</span></div><div class="agn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>
         <div class="agm">${minis}</div>
         <div class="agf"><span class="okt">✔ ${its.length} conf.</span>${its.length>3?`<span>+${its.length-3}…</span>`:''}<span style="margin-left:auto">✂ junto</span></div></div>`; }).join('')}</div>`:'')
     :Object.keys(gs).map(tc=>cutGroupFull(tc)).join('');
@@ -1655,7 +1673,7 @@ function renderRoberto(A){
     const minis=g.rows.slice(0,4).map(r=>`<div class="fmm">${r.m.foto?`<img loading="lazy" decoding="async" src="${r.m.foto}">`:'<div class="fmp"></div>'}<i>${r.elo==='preparando'?'✅':'⚠️'}</i><b>${r.m.aba}</b><small>${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,'')).slice(0,16)}</small></div>`).join('');
     return `<div class="fgc ${RFICHA&&RFICHA.kind==='grp'&&RFICHA.key===gk?'on':''}" onclick="robPick('grp','${gk}')">
       <div class="fgch">${g.tec&&g.tec.foto?`<img loading="lazy" decoding="async" src="${g.tec.foto}">`:'<div class="fgsw"></div>'}
-        <div style="min-width:0"><b>${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m · ':''}${g.rows.length} modelo(s)</span></div>
+        <div style="min-width:0"><b>${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</b><span>${g.tec?fmt(Math.round(g.tec.estoque))+' m · ':(g.livre?'manual · sem estoque · ':'')}${g.rows.length} modelo(s)</span></div>
         <div class="fgcn"><b>${pr}</b><small>RISCO ✓</small></div></div>
       <div class="fmg">${minis}</div>
       <div class="fgcf"><span class="okt">${pr} prontos</span>${pd?`<span style="color:#8a6d00;font-weight:700">${pd} pend.</span>`:''}${g.rows.length>4?`<span>+${g.rows.length-4}…</span>`:''}</div></div>`; }).join('');
@@ -1873,7 +1891,7 @@ function dedDraw(){ const D=__DED; const m=DEB.models.find(x=>x.aba===D.aba)||{}
   <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:9px 0">
    ${['qt','ini','prazo'].map(f=>`<label style="font:800 8px var(--mono);color:#6b6459">${f.toUpperCase()}<input value="${esc(String(D.hdr[f]??''))}" oninput="__DED.hdr['${f}']=this.value" style="display:block;width:100%;border:1px solid var(--line);border-radius:7px;padding:5px 7px;font:700 11px var(--mono)"></label>`).join('')}
    <label style="font:800 8px var(--mono);color:#6b6459">NF (da planilha)<input value="${esc(D.hdr.nf)}" disabled style="display:block;width:100%;border:1px dashed var(--line);border-radius:7px;padding:5px 7px;font:700 11px var(--mono);background:#EFE9DD"></label>
-   <label style="font:800 8px var(--mono);color:#6b6459">TECIDO<button class="tg" style="display:block;width:100%" onclick="tecPickOpen(s=>{__DED.tecSel={...s,por:whoName(),at:new Date().toISOString()};dedDraw();})">${D.tecSel?esc(D.tecSel.tec):'🧵 escolher'}</button></label>
+   <label style="font:800 8px var(--mono);color:#6b6459">TECIDO<button class="tg" style="display:block;width:100%" onclick="tecPickOpen(s=>{__DED.tecSel={...s,por:whoName(),at:new Date().toISOString()};dedDraw();})">${D.tecSel?(D.tecSel.livre?'✎ ':'')+esc(D.tecSel.tec)+(D.tecSel.livre?' · manual':''):'🧵 escolher'}</button></label>
   </div>
   ${pendBlk}${confBlk}
   <table style="border-collapse:collapse;width:100%;font:600 11px var(--mono)">
@@ -1997,7 +2015,7 @@ function croFormHTML(c){ const ex=croCodeExists(NMF.cod); const nm=croNextM();
   <div style="display:flex;gap:10px;align-items:center"><img src="${croThumb(c)}" alt="" style="width:64px;height:84px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><div><div class="sm">número automático</div><span class="mauto">${nm}</span><div class="hint">próximo depois do maior M na nuvem</div></div></div>
   <label>CÓDIGO (opcional — pode entrar depois, na etapa Design)</label><input type="text" id="fCod" value="${esc(NMF.cod)}" placeholder="código do modelo" oninput="NMF.cod=this.value;croFormRefresh()" autocapitalize="characters" autocomplete="off">
   <div class="hint ${ex?'bad':NMF.cod.trim()?'ok':''}" id="fCodH">${ex?`✖ código já existe em ${ex.aba} — CONFIRMAR bloqueado`:NMF.cod.trim()?'✓ código livre':'sem código por enquanto · duplicado bloqueia'}</div>
-  <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`:'🧵 escolher tecido…'}</button>
+  <label>TECIDO (T-card) *</label><button class="tecbtn" onclick="tecPickOpen(s=>{NMF.tec=s;CMODE='form';croRefresh();})">${NMF.tec&&NMF.tec.tec?(NMF.tec.livre?`✎ ${esc(NMF.tec.tec)} · manual`:`🧵 ${esc(NMF.tec.tec)} · NF ${esc(NMF.tec.nf||'—')} · ${esc(NMF.tec.nome||'')}`):'🧵 escolher tecido…'}</button>
   <label>QUANTIDADE (provisória)</label><input type="number" id="fQt" value="${esc(NMF.qt)}" placeholder="pçs" oninput="NMF.qt=this.value">
   <label>TAMANHO * (pode marcar os dois)</label><div class="chk"><span class="${NMF.normal?'on':''}" onclick="NMF.normal=!NMF.normal;croRefresh()">${NMF.normal?'☑':'☐'} NORMAL</span><span class="${NMF.plus?'on':''}" onclick="NMF.plus=!NMF.plus;croRefresh()">${NMF.plus?'☑':'☐'} PLUS SIZE</span></div>
   <label>MEMO</label><textarea id="fMemo" oninput="NMF.memo=this.value">${esc(NMF.memo)}</textarea>
@@ -2191,7 +2209,7 @@ function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]
 function tecLine(m){ const tecs=tecidoOf(m); const t=tecs[0]; const sel=m.tecSel&&m.tecSel.tec?m.tecSel.tec:(t?t.code:'');
   if(!sel&&!m.nf) return '<span class="pale">🧵 sem tecido</span>';
   const same=mesmoTecido(m).filter(x=>x.fase===m.fase).length;
-  return `🧵 ${esc(sel||('NF '+m.nf))}${t?` · ${esc(t.nome).slice(0,22)} · ${fmt(Math.round(t.estoque))}m`:''}${tecs2Of(m).length?' + '+tecs2Of(m).map(x=>esc(x.tec)).join('+'):''}${tecState(m)!=='ok'&&tecState(m)!=='semnf'?' <span class="pale">não confirmado</span>':''}${same?` · +${same} mesmo tecido`:''}`; }
+  return `🧵 ${esc(sel||('NF '+m.nf))}${t?` · ${esc(t.nome).slice(0,22)} · ${fmt(Math.round(t.estoque))}m`:''}${tecs2Of(m).length?' + '+tecs2Of(m).map(x=>esc(x.tec)).join('+'):''}${tecState(m)==='livre'?' <span class="chipLiv">✎ manual</span>':''}${tecState(m)!=='ok'&&tecState(m)!=='livre'&&tecState(m)!=='semnf'?' <span class="pale">não confirmado</span>':''}${same?` · +${same} mesmo tecido`:''}`; }
 function modFichaHTML(aba){
   const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
   const r={m,...eloOf(m)};
@@ -2206,7 +2224,7 @@ function modFichaHTML(aba){
     <h2 style="margin-top:0">${esc(m.nome)}</h2>
     <div class="kv2">
       <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${qtLine(m)}${m.qtProv?' (provisória)':''}</span></div>
-      <div><b>TECIDO${me?`<span class="plus" title="＋ tecido · forro · renda" onclick="addTec2('${aba}')">+</span>`:''}</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${tecLbl}${ts!=='ok'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?``:''}</div>
+      <div><b>TECIDO${me?`<span class="plus" title="＋ tecido · forro · renda" onclick="addTec2('${aba}')">+</span>`:''}</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${ts==='livre'?'✎ ':''}${tecLbl}${ts==='livre'?' <span class="chipLiv">manual · sem estoque</span>':''}${ts!=='ok'&&ts!=='livre'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?``:''}</div>
       <div><b>TAM</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${(m.sizes||[]).join(' + ')||'—'}</span></div>
       <div><b>INÍCIO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${dtBR(m.ini)||'—'}</span></div>
       <div><b>PRAZO</b><span class="${me?'ed':''} ${late?'late':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.prazo?dtBR(m.prazo):'—'}${m.prazoTipo?' · '+esc(m.prazoTipo):''}${m.prazoAj?' (ajustado)':''}</span></div>
@@ -2280,7 +2298,7 @@ function tlHeadOpen(aba,keep){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!
   <div class="row"><div><label>QTD (pçs)</label><input type="number" value="${__TL.qt??''}" oninput="__TL.qt=this.value===''?null:(+this.value||null)"></div><div><label>INÍCIO</label><input type="date" id="tlIni" value="${__TL.ini}" oninput="__TL.ini=this.value;tlPrazoAuto()"></div></div>
   <div class="row"><div><label>PRAZO FINAL</label><input type="date" id="tlPz" value="${__TL.prazo}" oninput="__TL.prazo=this.value"></div><div><label>PRAZO TIPO</label><div class="seg"><span class="${__TL.prazoTipo==='Normal'?'on':''}" onclick="__TL.prazoTipo='Normal';tlSeg(this);tlPrazoAuto(true)">NORMAL · ${PRAZO_DIAS.Normal}d</span><span class="${__TL.prazoTipo==='Urgente'?'on':''}" onclick="__TL.prazoTipo='Urgente';tlSeg(this);tlPrazoAuto(true)">URGENTE · ${PRAZO_DIAS.Urgente}d</span></div></div></div>
   <div class="hint" id="tlPzH"></div>
-  <label>TECIDO (T-card)</label><div class="row"><button class="btn sec" style="flex:3;text-align:left;font:600 12px var(--sans)" onclick="tecPickOpen(s=>{__TL.tec=s;tlHeadOpen('${aba}',true);})">${__TL.tec&&__TL.tec.tec?`🧵 ${esc(__TL.tec.tec)}${__TL.tec.nf?' · NF '+esc(__TL.tec.nf):''}${__TL.tec.nome?' · '+esc(__TL.tec.nome):''}`:'🧵 escolher tecido…'}</button>${__TL.tec&&__TL.tec.tec?`<button class="btn sec" style="flex:1" onclick="__TL.tec=null;tlHeadOpen('${aba}',true)">✕ remover</button>`:''}</div>
+  <label>TECIDO (T-card)</label><div class="row"><button class="btn sec" style="flex:3;text-align:left;font:600 12px var(--sans)" onclick="tecPickOpen(s=>{__TL.tec=s;tlHeadOpen('${aba}',true);})">${__TL.tec&&__TL.tec.tec?(__TL.tec.livre?`✎ ${esc(__TL.tec.tec)} · manual (sem estoque)`:`🧵 ${esc(__TL.tec.tec)}${__TL.tec.nf?' · NF '+esc(__TL.tec.nf):''}${__TL.tec.nome?' · '+esc(__TL.tec.nome):''}`):'🧵 escolher tecido…'}</button>${__TL.tec&&__TL.tec.tec?`<button class="btn sec" style="flex:1" onclick="__TL.tec=null;tlHeadOpen('${aba}',true)">✕ remover</button>`:''}</div>
   <label>TAMANHO</label><div class="seg"><span class="${__TL.normal?'on':''}" onclick="__TL.normal=!__TL.normal;this.classList.toggle('on')">NORMAL</span><span class="${__TL.plus?'on':''}" onclick="__TL.plus=!__TL.plus;this.classList.toggle('on')">PLUS SIZE</span></div>
   <label>MEMO</label><textarea rows="2" oninput="__TL.memo=this.value">${esc(__TL.memo)}</textarea>
   <div class="acts"><button class="btn" onclick="tlHeadSave('${aba}')">SALVAR</button><button class="btn sec" onclick="closeMod()">CANCELAR</button></div></div>`,'',true); tlPrazoAuto(!keep&&!m.prazo); }
@@ -2288,7 +2306,7 @@ function tlSeg(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('o
 function tlPrazoAuto(force){ const n=PRAZO_DIAS[__TL.prazoTipo]||PRAZO_DIAS.Normal; const auto=addDays(__TL.ini,n); const h=document.getElementById('tlPzH'); if(force&&auto){ __TL.prazo=auto; const i=document.getElementById('tlPz'); if(i) i.value=auto; } if(h) h.textContent=auto?`${__TL.prazoTipo}: início + ${n} dias = ${dtBR(auto)}${__TL.prazo&&__TL.prazo!==auto?' · prazo ajustado à mão':''}`:'defina o início p/ calcular o prazo'; }
 async function tlHeadSave(aba){ const T=__TL; const n=PRAZO_DIAS[T.prazoTipo]||PRAZO_DIAS.Normal; const auto=addDays(T.ini,n);
   const ok=await tlWrite(aba,d=>{ d.nome=(T.nome||'').trim()||d.nome; d.qt=T.qt; d.qtProv=false; d.ini=T.ini||null; d.prazo=T.prazo||null; d.prazoTipo=T.prazoTipo; d.prazoAj=!!(T.prazo&&auto&&T.prazo!==auto); d.sizes=[T.normal?'NORMAL':null,T.plus?'PLUS':null].filter(Boolean); d.memo=(T.memo||'').trim();
-    const tnow=T.tec&&T.tec.tec?T.tec.tec:''; if(tnow!==(T.tec0||'')){ if(tnow){ d.tecSel={tec:T.tec.tec,tecAt:T.tec.tecAt||null,nome:T.tec.nome||'',forn:T.tec.forn||'',nf:T.tec.nf||'',por:whoName(),at:new Date().toISOString()}; if(d.origem==='elo') d.nf=T.tec.nf||''; } else { d.tecSel=null; if(d.origem==='elo') d.nf=''; } } },
+    const tnow=T.tec&&T.tec.tec?T.tec.tec:''; if(tnow!==(T.tec0||'')){ if(tnow){ d.tecSel={tec:T.tec.tec,tecAt:T.tec.tecAt||null,nome:T.tec.nome||'',forn:T.tec.forn||'',nf:T.tec.nf||'',livre:!!T.tec.livre,por:whoName(),at:new Date().toISOString()}; if(d.origem==='elo') d.nf=T.tec.nf||''; } else { d.tecSel=null; if(d.origem==='elo') d.nf=''; } } },
     'ficha editada (nome/qtd/datas/tecido/tamanho/memo)');
   closeMod(); if(ok){ tlRefresh(aba); toast('✓ ficha salva'); } }
 function closeModel(){ $('#mp').classList.remove('on'); }
@@ -2584,7 +2602,7 @@ async function confSel(gk){
   const now=new Date().toISOString();
   try{
     const b=FB.writeBatch(FB.db);
-    boxes.forEach(x=>{ const __m=DEB.models.find(mm=>mm.aba===x.dataset.aba); const d={id:'C'+(x.dataset.aba||x.dataset.man),tecAt:(__m&&__m.tecSel&&__m.tecSel.tecAt)||null,aba:x.dataset.aba||'',cod:x.dataset.cod||'',nm:x.dataset.nm||'',tec:x.dataset.tec||'',pcs:tnum(x.dataset.q)||null,man:x.dataset.man||null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
+    boxes.forEach(x=>{ const __m=DEB.models.find(mm=>mm.aba===x.dataset.aba); const d={id:'C'+(x.dataset.aba||x.dataset.man),tecAt:(__m&&__m.tecSel&&__m.tecSel.tecAt)||null,aba:x.dataset.aba||'',cod:x.dataset.cod||'',nm:x.dataset.nm||'',tec:x.dataset.tec||'',livre:x.dataset.livre==='1',pcs:tnum(x.dataset.q)||null,man:x.dataset.man||null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now};
       b.set(FB.doc(FB.db,'corte_conf',d.id),d);
       if(x.dataset.man) b.delete(FB.doc(FB.db,'fila_manual',x.dataset.man)); });
     await b.commit(); toast('✔ confirmado p/ corte ('+boxes.length+')');
@@ -2596,6 +2614,9 @@ function tecPickOpen(cb,pre){ __tpCb=cb;
   <label style="display:flex;gap:6px;align-items:center;margin-top:6px;font:700 10px var(--mono);color:#6b6459;cursor:pointer"><input type="checkbox" id="tpE" onchange="tecPickList()"> incluir esgotados <span id="tpEn"></span></label>
   <div id="tpL" style="max-height:52vh;overflow:auto;margin-top:8px"></div>`,'',true);
  tecPickList(); }
+function tecPickFree(name){ const n=tecNorm(name!=null?name:(document.getElementById('tpQ')||{}).value); if(!n) return;
+ if(TDOCS.some(t=>t.code.toUpperCase()===n)){ tecPickGo(TDOCS.find(t=>t.code.toUpperCase()===n).code); return; }
+ closeMod(); const cb=__tpCb; __tpCb=null; cb&&cb({tec:n,livre:true,tecAt:null,nome:'',forn:'',nf:''}); }
 function tecPickList(){ const q=(document.getElementById('tpQ').value||'').trim().toLowerCase();
  const ks=nfKeys(q); const incE=!!(document.getElementById('tpE')&&document.getElementById('tpE').checked);
  const isEsg=t=>{ const ti=TEC.items.find(x=>x.code===t.code); return ti?ti.status==='esgotado':(t.status==='esgotado'||!(t.estoque>0)); };
@@ -2608,7 +2629,13 @@ function tecPickList(){ const q=(document.getElementById('tpQ').value||'').trim(
    ${t.foto?`<img src="${t.foto}" style="width:38px;height:48px;object-fit:cover;border-radius:6px;flex:none">`:'<div style="width:38px;height:48px;border-radius:6px;background:#EAE4D8;flex:none"></div>'}
    <div style="min-width:0;flex:1"><b style="font:800 11px var(--mono)">${esc(t.code)} · ${esc(t.nome||'')}</b>
     <div style="font:600 10px var(--mono);color:#6b6459">${esc(t.forn||'—')} · NF ${esc(t.nf||'—')} · ${fmt(Math.round(t.estoque))} m ${t.status==='esgotado'?'<b style="color:#C0392B">esgotado</b>':''}</div></div></div>`).join('')
-  ||'<div class="empty">nada encontrado — confira em TECIDOS se o rolo foi dado entrada</div>'; }
+  ||'<div class="empty">nada encontrado — confira em TECIDOS se o rolo foi dado entrada</div>';
+ /* v9.28a: nomes manuais já usados + usar como escrito */
+ const qn=tecNorm(q); const liv=livreNames().filter(x=>!qn||x.n.includes(qn));
+ const livH=liv.slice(0,20).map(x=>`<div class="tp-liv" onclick="tecPickFree('${esc(x.n)}')" style="display:flex;gap:9px;align-items:center;padding:7px 6px;border-bottom:1px dashed var(--line);cursor:pointer"><div style="width:38px;height:48px;border-radius:6px;background:#F6E6C3;flex:none;display:flex;align-items:center;justify-content:center;color:#A3641A;font-weight:800">✎</div><div style="min-width:0;flex:1"><b style="font:800 11px var(--mono)">✎ ${esc(x.n)}</b><div style="font:600 10px var(--mono);color:#6b6459">manual · já usado em ${x.c} modelo(s) · sem estoque</div></div></div>`).join('');
+ const can=!!qn&&!TDOCS.some(t=>t.code.toUpperCase()===qn)&&!liv.some(x=>x.n===qn);
+ const freeH=`<div class="tpFree ${can?'':'off'}"><div><b>✎ usar como escrito${qn?': "'+esc(qn)+'"':''}</b><small>${qn?'vira tecido manual — Roberto agrupa pelo nome igual; sem cores/estoque até cadastrar em TECIDOS':'escreva o nome do tecido na busca acima p/ usar como tecido manual'}</small></div><button class="btn" ${can?'':'disabled'} onclick="tecPickFree()">USAR</button></div>`;
+ document.getElementById('tpL').innerHTML+=livH+freeH; }
 function tecPickGo(code){ const t=TDOCS.find(x=>x.code===code); if(!t) return;
  closeMod(); const cb=__tpCb; __tpCb=null;
  cb&&cb({tec:t.code,tecAt:t.createdAt||null,nome:t.nome||'',forn:t.forn||'',nf:t.nf||''}); }
@@ -2617,7 +2644,8 @@ async function linkConfTec(oldTc){
   const its=CCONF.filter(c=>(c.tec||'?')===oldTc||((c.tec||'')===''&&oldTc==='?'));
   try{ const b=FB.writeBatch(FB.db);
     const __t=TDOCS.find(x=>x.code===tc);
-    its.forEach(c=>b.set(FB.doc(FB.db,'corte_conf',c.id),{...c,tec:tc,tecAt:(__t&&__t.createdAt)||null}));
+    its.forEach(c=>{ b.set(FB.doc(FB.db,'corte_conf',c.id),{...c,tec:tc,livre:false,tecAt:(__t&&__t.createdAt)||null});
+      const m=c.aba?DEB.models.find(x=>x.aba===c.aba):null; if(m&&m.tecSel&&m.tecSel.livre&&__t){ b.set(FB.doc(FB.db,'elo_deb',m.aba),{...m,tecSel:{tec:__t.code,tecAt:__t.createdAt||null,nome:__t.nome||'',forn:__t.forn||'',nf:__t.nf||'',livre:false,por:whoName(),at:new Date().toISOString()},edited:m.edited||false}); } });
     await b.commit(); toast('🧵 vinculado a '+tc);
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 function cssIdA(s){ return String(s).replace(/[^A-Za-z0-9]/g,'_'); }
@@ -2626,7 +2654,10 @@ async function desConfC(id){ const c=CCONF.find(x=>x.id===id); if(!c) return;
     if(c.man) b.set(FB.doc(FB.db,'fila_manual',c.man),{id:c.man,tec:c.tec,modelo:c.nm,pcs:c.pcs,who:c.who,by:c.by,at:c.at});
     await b.commit();
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+function ccLRow(tc){ return `<div class="ccl"><input class="cclc" placeholder="cor" oninput="ccCalc('${tc}')"><input class="cclk" type="number" placeholder="folhas" oninput="ccCalc('${tc}')"><span class="cclm">—</span></div>`; }
+function ccLAdd(tc){ const e=document.getElementById('ccL_'+tc); if(!e) return; e.insertAdjacentHTML('beforeend',ccLRow(tc)); const last=e.lastElementChild.querySelector('.cclc'); if(last) last.focus(); }
 function ccRead(tec){ const t=TDOCS.find(x=>x.code===tec); const T=v=>document.getElementById(v+'_'+tec); const its=CCONF.filter(c=>(c.tec||'?')===tec);
+  const livre=!t&&grpLivre(its); const lc=livre?[...((document.getElementById('ccL_'+tec)||{children:[]}).children)].map(r=>({cor:tecNorm((r.querySelector('.cclc')||{}).value),folhas:+((r.querySelector('.cclk')||{}).value)||0,el:r})):[];
   let cp=parseFloat(String((T('ccC')||{}).value||'').replace(',','.'))||0; if(cp>30) cp=cp/100; /* cm → m */
   const f=+((T('ccF')||{}).value)||0; const aprov=parseFloat(String((T('ccA')||{}).value||'').replace(',','.'))||null;
   const rows=its.map(c=>{ const k=cssIdA(c.id); const comp=((document.getElementById('rkC_'+k)||{}).value||'').trim(); const moldes=+((document.getElementById('rkM_'+k)||{}).value)||null; const area=parseFloat(String((document.getElementById('rkA_'+k)||{}).value||'').replace(',','.'))||(its.length===1?100:0);
@@ -2634,13 +2665,14 @@ function ccRead(tec){ const t=TDOCS.find(x=>x.code===tec); const T=v=>document.g
     const mm=DEB.models.find(x=>x.aba===c.aba); const extras=tecs2Of(mm).map((x,j)=>{ const mt=parseFloat(String((document.getElementById('rkX_'+k+'_'+j)||{}).value||'').replace(',','.'))||0; const sel=document.getElementById('rkXc_'+k+'_'+j); return {tec:x.tec,papel:x.papel,cor:sel?sel.value:null,mt,j}; });
     return {c,k,comp,moldes,area,g,len,mPc:len&&g?Math.round(len/g*100)/100:null,extras}; });
   const kf=t&&t.cores&&t.cores.length?(t.cores||[]).map((c,i)=>+((T('ccK'+i)||{}).value)||0):[]; const skip=t&&t.cores?(t.cores||[]).map((c,i)=>{ const e=T('ccS'+i); return !!(e&&e.classList.contains('on')); }):[];
-  return {t,its,cp,f,aprov,rows,kf,skip}; }
-function ccCalc(tec){ const R=ccRead(tec); const {t,cp,f,rows,kf,skip}=R; if(!t) return; const T=v=>document.getElementById(v+'_'+tec);
+  return {t,its,cp,f,aprov,rows,kf,skip,livre,lc}; }
+function ccCalc(tec){ const R=ccRead(tec); const {t,cp,f,rows,kf,skip}=R; if(!t&&!R.livre) return; const T=v=>document.getElementById(v+'_'+tec);
   const lenSum=rows.reduce((s,r)=>s+r.len,0);
   rows.forEach(r=>{ const o=document.getElementById('rkO_'+r.k); if(!o) return; const m=DEB.models.find(x=>x.aba===r.c.aba)||{}; const warn=(r.g&&compIsPlus(r.comp)!==modelIsPlus(m))?` <span style="color:#C0392B">⚠ ${modelIsPlus(m)?'modelo PLUS, risco normal':'risco plus (B…), modelo normal'}</span>`:'';
     r.extras.forEach(x=>{ const e=document.getElementById('rkXo_'+r.k+'_'+x.j); if(!e) return; const pcs=r.g*f; e.textContent=x.mt&&pcs?(Math.round(x.mt/pcs*100)/100)+' m/pç':'—'; });
     o.innerHTML=r.g?`${r.g} pçs/risco${r.len?` · ${r.len} m · <b>${r.mPc} m/pç</b>`:''}${r.moldes?` · ${r.moldes} moldes/pç`:''}${f?` · <b>${r.g*f} pçs</b> ${r.c.pcs?(r.g*f>=r.c.pcs?'<span class="okt">✓ cobre '+fmt(r.c.pcs)+'</span>':'<span style="color:#C0392B">faltam '+(r.c.pcs-r.g*f)+'</span>'):''}`:''}${warn}`:'—'; });
-  let sk=0; (t.cores||[]).forEach((c,i)=>{ const k=kf[i]||0; if(!skip[i]) sk+=k; const km=T('ccKm'+i); if(km) km.textContent=(lenSum&&k&&!skip[i])?(Math.round(lenSum*k*10)/10)+' m'+(lenSum*k>corAvail(t,c)+0.05?' ⚠':''):'—'; });
+  let sk=0; if(R.livre){ R.lc.forEach(x=>{ sk+=x.folhas; const km=x.el.querySelector('.cclm'); if(km) km.textContent=(lenSum&&x.folhas)?(Math.round(lenSum*x.folhas*10)/10)+' m':'—'; }); }
+  ((t&&t.cores)||[]).forEach((c,i)=>{ const k=kf[i]||0; if(!skip[i]) sk+=k; const km=T('ccKm'+i); if(km) km.textContent=(lenSum&&k&&!skip[i])?(Math.round(lenSum*k*10)/10)+' m'+(lenSum*k>corAvail(t,c)+0.05?' ⚠':''):'—'; });
   const out=T('ccOut'); if(!out) return; const msg=[];
   const aSum=rows.reduce((s,r)=>s+(r.area||0),0); if(rows.length>1&&aSum&&Math.abs(aSum-100)>0.5) msg.push('⚠ áreas somam '+Math.round(aSum*100)/100+'%');
   if(cp) msg.push('risco '+cp+' m'+(rows.length>1?' dividido por área':''));
@@ -2648,7 +2680,7 @@ function ccCalc(tec){ const R=ccRead(tec); const {t,cp,f,rows,kf,skip}=R; if(!t)
   if(f&&sk&&sk!==f) msg.push('⚠ cores somam '+sk+'/'+f);
   out.textContent=msg.join(' · ')||'— comprimento · completos · folhas —'; }
 function ccSkip(tec,i){ const e=document.getElementById('ccS'+i+'_'+tec); if(!e) return; e.classList.toggle('on'); e.textContent=e.classList.contains('on')?'⏸ depois':'⏸'; const inp=document.getElementById('ccK'+i+'_'+tec); if(inp){ inp.disabled=e.classList.contains('on'); if(inp.disabled) inp.value=''; } ccCalc(tec); }
-function ccNeed(tec){ const R=ccRead(tec); if(!R.t) return; const need=Math.max(0,...R.rows.map(r=>r.g&&r.c.pcs?Math.ceil(r.c.pcs/r.g):0)); if(!need){ toast('preencha completos (e as peças do modelo)'); return; } document.getElementById('ccF_'+tec).value=need; ccPct(tec); }
+function ccNeed(tec){ const R=ccRead(tec); if(!R.t&&!R.livre) return; const need=Math.max(0,...R.rows.map(r=>r.g&&r.c.pcs?Math.ceil(r.c.pcs/r.g):0)); if(!need){ toast('preencha completos (e as peças do modelo)'); return; } document.getElementById('ccF_'+tec).value=need; ccPct(tec); }
 function ccPct(tec){ const R=ccRead(tec); const {t,f,skip,rows}=R; if(!t) return; const T=v=>document.getElementById(v+'_'+tec); if(!f){ toast('primeiro as folhas totais (ou "folhas p/ atender o pedido")'); return; }
   const live=(t.cores||[]).map((c,i)=>skip[i]?0:corAvail(t,c)); const tot=live.reduce((s,x)=>s+x,0)||1; const lenSum=rows.reduce((s,r)=>s+r.len,0);
   let rest=f; const idx=live.map((v,i)=>i).filter(i=>!skip[i]); idx.forEach((i,n)=>{ let v=(n===idx.length-1)?rest:Math.round(f*live[i]/tot); if(lenSum){ const mx=Math.floor(corAvail(t,t.cores[i])/lenSum); if(v>mx) v=mx; } T('ccK'+i).value=v; rest-=v; });
@@ -2660,8 +2692,11 @@ async function regCorteCloud(tec){
   if(!cp||!f){ toast('Preencha comprimento e folhas'); return; }
   const bad=rows.find(r=>!r.g||!r.len); if(bad){ toast('Preencha completos e área % de '+(bad.c.cod||bad.c.aba)); return; }
   const aSum=rows.reduce((s,r)=>s+(r.area||0),0); if(rows.length>1&&Math.abs(aSum-100)>0.5){ toast('⚠ áreas por modelo devem somar 100% (estão em '+Math.round(aSum*100)/100+')'); return; }
-  if(!tLoc){ toast('Tecido não está na nuvem'); return; }
-  const temCores=!!(tLoc.cores&&tLoc.cores.length);
+  const livre=!tLoc&&R.livre;
+  if(!tLoc&&!livre){ toast('Tecido não está na nuvem'); return; }
+  if(livre){ if(!R.lc.length||R.lc.some(x=>!x.cor||!(x.folhas>0))){ toast('Tecido manual: informe cor e folhas em cada linha'); return; }
+    const sL=R.lc.reduce((s,x)=>s+x.folhas,0); if(sL!==f){ toast('Folhas por cor ('+sL+') ≠ total ('+f+')'); return; } }
+  const temCores=!!(tLoc&&tLoc.cores&&tLoc.cores.length);
   const kfL=temCores?kf.map((k,i)=>skip[i]?0:k):[]; const sk=kfL.reduce((s,x)=>s+x,0);
   if(temCores&&sk!==f){ toast('Folhas por cor ('+sk+') ≠ total ('+f+')'); return; }
   const lenSum=rows.reduce((s,r)=>s+r.len,0); const mt=Math.round(lenSum*f*10)/10, now=new Date().toISOString();
@@ -2673,13 +2708,16 @@ async function regCorteCloud(tec){
     await FB.runTransaction(FB.db, async tx=>{
       for(const it of its){ const cs=await tx.get(FB.doc(FB.db,'corte_conf',it.id));
         if(!cs.exists()) throw new Error((it.aba||it.nm)+': já foi cortado por outro usuário'); }
+      let colUsed=[];
+      if(livre){ colUsed=R.lc.map(x=>({cor:x.cor,folhas:x.folhas,m:Math.round(lenSum*x.folhas*10)/10})); }
+      else {
       const ref=FB.doc(FB.db,'tecidos',tec);
       const snap=await tx.get(ref);
       if(!snap.exists()) throw new Error('tecido sumiu da nuvem');
       const t=snap.data(); const mR=t.mediaRolo;
       const badAt=its.find(it=>it.tecAt&&t.createdAt&&it.tecAt!==t.createdAt);
       if(badAt) throw new Error('o tecido '+tec+' foi recriado depois da confirmação — reconfirme o vínculo');
-      const colUsed=temCores?(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kfL[i]||0,m:Math.round(lenSum*(kfL[i]||0)*10)/10})).filter(c=>c.folhas>0):[];
+      colUsed=temCores?(t.cores||[]).map((c,i)=>({cor:c.cor,folhas:kfL[i]||0,m:Math.round(lenSum*(kfL[i]||0)*10)/10})).filter(c=>c.folhas>0):[];
       for(const cu of colUsed){ const c=(t.cores||[]).find(x=>x.cor===cu.cor); const av=c?corAvail(t,c):0;
         if(cu.m>av+0.05) throw new Error(cu.cor+': precisa '+cu.m+' m, saldo AGORA é '+av+' m'); }
       if(!temCores && mt>(t.estoque||0)+0.05) throw new Error('precisa '+mt+' m, estoque AGORA é '+Math.round(t.estoque)+' m');
@@ -2692,6 +2730,7 @@ async function regCorteCloud(tec){
       colUsed.forEach(cu=>{ tD.corteOut.cores[cu.cor]=Math.round(((tD.corteOut.cores[cu.cor]||0)+cu.m)*100)/100; });
       tD.updatedAt=now; tD.updatedBy=(FBUSER&&FBUSER.email)||'';
       tx.set(ref,tD);
+      }
       /* v9.24b: forro/renda — baixa estoque de cada tecido extra */
       const xAll=rows.flatMap(r=>r.extras.filter(x=>x.mt>0).map(x=>({...x,aba:r.c.aba,cod:r.c.cod})));
       const xByTec={}; xAll.forEach(x=>(xByTec[x.tec]=xByTec[x.tec]||[]).push(x));
@@ -2705,7 +2744,7 @@ async function regCorteCloud(tec){
         xD.corteOut=xD.corteOut||{total:0,cores:{}}; xD.corteOut.total=Math.round((xD.corteOut.total+tot)*10)/10; xs.forEach(x=>{ if(x.cor) xD.corteOut.cores[x.cor]=Math.round(((xD.corteOut.cores[x.cor]||0)+x.mt)*100)/100; });
         xD.updatedAt=now; xD.updatedBy=(FBUSER&&FBUSER.email)||''; tx.set(xref,xD); }
       rows.forEach(r=>{ const it=r.c; const pcs=r.g*f; const mtM=Math.round(r.len*f*10)/10; const share=lenSum?r.len/lenSum:1/rows.length;
-        const d={id:kid+'_'+(it.aba||it.id),corteId:kid,tec,aba:it.aba||'',cod:it.cod||'',nm:it.nm||'',pcs,tam:r.comp,grade:compParse(r.comp),folhas:f,comp:cp,mt:mtM,coresUse:colUsed.map(c=>({cor:c.cor,folhas:c.folhas,m:Math.round(c.m*share*100)/100,pcs:c.folhas*r.g})),junto:its.length,corte:now.slice(0,10),who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,env:null,cheg:null,memo:'',
+        const d={id:kid+'_'+(it.aba||it.id),corteId:kid,tec,tecLivre:!!livre,aba:it.aba||'',cod:it.cod||'',nm:it.nm||'',pcs,tam:r.comp,grade:compParse(r.comp),folhas:f,comp:cp,mt:mtM,coresUse:colUsed.map(c=>({cor:c.cor,folhas:c.folhas,m:Math.round(c.m*share*100)/100,pcs:c.folhas*r.g})),junto:its.length,corte:now.slice(0,10),who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now,env:null,cheg:null,memo:'',
           risco:{completos:r.comp,garments:r.g,moldes:r.moldes,area:r.area,len:r.len,mPc:r.mPc,comp:cp,aprov,junto:its.map(x=>x.cod||x.aba)},
           extras:r.extras.filter(x=>x.mt>0).map(x=>({tec:x.tec,papel:x.papel,cor:x.cor||null,mt:x.mt,mPc:pcs?Math.round(x.mt/pcs*100)/100:null})),
           parcialDe:it.parcial?it.parcial.de||null:null};
@@ -2713,7 +2752,7 @@ async function regCorteCloud(tec){
         const falta=(it.pcs||0)-pcs; if(parcialCores.length&&falta>0){ tx.set(FB.doc(FB.db,'corte_conf',it.id),{...it,pcs:falta,parcial:{de:kid,pend:parcialCores,feito:pcs,at:now}}); }
         else tx.delete(FB.doc(FB.db,'corte_conf',it.id)); });
     });
-    toast('✂ corte registrado · '+mt+' m baixados de '+tec+(parcialCores.length?' · '+parcialCores.join(', ')+' fica p/ depois':''));
+    toast(livre?('✂ corte registrado · '+mt+' m de '+tec+' (tecido manual — sem baixa de estoque)'):('✂ corte registrado · '+mt+' m baixados de '+tec+(parcialCores.length?' · '+parcialCores.join(', ')+' fica p/ depois':'')));
     for(const r of rows){ const it=r.c; if(it.aba){ const falta=(it.pcs||0)-r.g*f; try{ await robCorteSync(it.aba,now.slice(0,10),Math.round(r.len*f*10)/10,{risco:{completos:r.comp,garments:r.g,moldes:r.moldes,len:r.len,mPc:r.mPc},parcial:parcialCores.length&&falta>0}); }catch(e){} } }
   }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
   finally{ pgHide(); window.__cutBusy=false; } }
@@ -2742,7 +2781,7 @@ async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return
         xD.cores=(xD.cores||[]).map(cc=>cc.cor===x.cor?{...cc,saldo:Math.round((cc.saldo+(xt.mediaRolo?x.mt/xt.mediaRolo:x.mt))*100)/100}:cc); xD.estoque=Math.round((xD.estoque+x.mt)*10)/10; xD.status='estoque';
         xD.cortes=[...(xD.cortes||[]),{data:now.slice(0,10),modelo:(d.cod||d.aba)+' (forro) ↩ desfeito',cor:x.cor||'',m:-x.mt,por:whoName()}]; xD.updatedAt=now; tx.set(xref,xD); }
       tx.delete(cref);
-      tx.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,pcs:null,man:null,who:d.who,by:d.by,at:now});
+      tx.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,livre:!!d.tecLivre,pcs:null,man:null,who:d.who,by:d.by,at:now});
       window.__unsyncAba=d.aba||'';
     });
     toast('↩ corte desfeito · estoque restaurado');
@@ -2757,31 +2796,32 @@ function matrizHTML(grade,coresUse,pcs){ if(!grade||!grade.length||!(coresUse||[
  return `<h4>GRADE — tam × cor</h4><table style="border-collapse:collapse;width:100%;font-size:12px"><tr><th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">TAM</th>${head}<th style="border:1px solid #ccc;padding:4px 7px;background:#EEF2F7;font-size:11px">Σ</th></tr>${rows}${tot}</table>`; }
 function cutGroupFull(tc){ const its=CCONF.filter(c=>(c.tec||'?')===tc); if(!its.length) return '';
  const WIDE=window.innerWidth>=980;
- const t=TDOCS.find(x=>x.code===tc);
- const linkSel=!t?`<div style="border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:0 0 8px">
-    <div style="font:800 10px var(--mono);color:#C0392B;margin-bottom:5px">🧵 ESTE GRUPO NÃO ESTÁ LIGADO A UM TECIDO DA NUVEM</div>
+ const t=TDOCS.find(x=>x.code===tc); const livre=!t&&grpLivre(its);
+ const linkSel=!t?`<div class="${livre?'livbox':''}" style="${livre?'':'border:1.5px dashed #C0392B;border-radius:10px;background:#FBF0EE;padding:8px 10px;margin:0 0 8px'}">
+    <div class="lt" style="${livre?'':'font:800 10px var(--mono);color:#C0392B;margin-bottom:5px'}">${livre?'✎ TECIDO MANUAL — sem estoque no ELO. Quando der entrada em TECIDOS, vincule aqui:':'🧵 ESTE GRUPO NÃO ESTÁ LIGADO A UM TECIDO DA NUVEM'}</div>
     <div style="display:flex;gap:6px"><select id="lk_${cssIdA(tc)}" style="flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit">
       <option value="">— escolha o tecido —</option>
       ${TDOCS.filter(x=>x.status!=='esgotado'&&!x.sobras).map(x=>`<option value="${x.code}">${x.code} · ${esc(x.nome)} (${fmt(Math.round(x.estoque))} m)</option>`).join('')}
     </select><button class="tg on" onclick="linkConfTec('${tc}')">VINCULAR</button></div>
-    <div style="font-size:10.5px;color:#6b6459;margin-top:4px">sem vínculo não dá para descontar estoque nem cortar</div></div>`:'';
+    <div style="font-size:10.5px;color:#6b6459;margin-top:4px">${livre?'enquanto isso dá para riscar e cortar — cores e folhas à mão, sem baixa de metros':'sem vínculo não dá para descontar estoque nem cortar'}</div></div>`:'';
  const tcs=t?((t.cores||[]).map(c=>corAvail(t,c))):[]; const tsum=tcs.reduce((s,x)=>s+x,0);
  const cores=t?((t.cores&&t.cores.length)?(t.cores||[]).map((c,i)=>`<div style="display:flex;gap:6px;align-items:center;margin:2px 0"><span style="flex:1;font-size:11.5px"><b>${esc(c.cor)}</b> <small style="color:#6b6459">saldo ${corAvail(t,c)} m${tsum?' · '+Math.round(tcs[i]/tsum*100)+'%':''}</small></span><input id="ccK${i}_${tc}" type="number" placeholder="folhas" style="max-width:86px" oninput="ccCalc('${tc}')"><span id="ccKm${i}_${tc}" style="width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459">—</span><span class="ccskip" id="ccS${i}_${tc}" title="não cortar esta cor agora — fica p/ um 2º corte" onclick="ccSkip('${tc}',${i})">⏸</span></div>`).join(''):'<div class="sm">tecido sem cores cadastradas — desconta do estoque total</div>'):'';
  const riscoRows=its.map(c=>{ const m=DEB.models.find(x=>x.aba===c.aba)||{}; const plus=modelIsPlus(m); const k=cssIdA(c.id);
    const xrows=tecs2Of(m).map((x,j)=>{ const xt=TDOCS.find(q=>q.code===x.tec); const cs=xt?(xt.cores||[]):[]; return `<div class="xrow"><span><b>${esc(x.tec)}</b> <small>${esc(x.papel)}${xt?' · '+esc(xt.nome):' · <span style="color:#C0392B">não está na nuvem</span>'}</small></span><input id="rkX_${k}_${j}" type="number" step="0.1" placeholder="metros" oninput="ccCalc('${tc}')">${cs.length?`<select id="rkXc_${k}_${j}">${cs.map(cc=>`<option value="${esc(cc.cor)}">${esc(cc.cor)} ${xt?corAvail(xt,cc):''}m</option>`).join('')}</select>`:`<span class="xo">${xt?fmt(Math.round(xt.estoque))+' m':''}</span>`}<span class="xo" id="rkXo_${k}_${j}">—</span></div>`; }).join('');
    return `<div class="rkrow"><span>${codAba(c.cod||m.codigo,c.aba)}<br><small style="color:#6b6459">${c.parcial?`<span class="parc">parcial · faltam ${fmt(c.pcs||0)}</span>`:(c.pcs?fmt(c.pcs)+' pçs':'')}${plus?' · PLUS':''}</small> <span style="cursor:pointer;color:#9a5a00;font-size:10px" onclick="addTec2('${c.aba}')">＋ forro</span></span><label><span class="rklab">COMPLETOS</span><input id="rkC_${k}" placeholder="${plus?'2-BP 2-BM':'1-P 1-M 1-G'}" oninput="ccCalc('${tc}')"></label><label><span class="rklab">MOLDES/PÇ</span><input id="rkM_${k}" type="number" placeholder="14" oninput="ccCalc('${tc}')"></label><label><span class="rklab">ÁREA %</span><input id="rkA_${k}" type="number" step="0.01" placeholder="49.05" value="${its.length===1?'100':''}" oninput="ccCalc('${tc}')"></label><span class="rkout" id="rkO_${k}">—</span>${xrows}</div>`; }).join('');
- const calc=t?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:10px 12px">
+ const coresL=livre?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (manual — folhas por cor) <button class="tg" onclick="ccLAdd('${tc}')">⊕ cor</button></div><div id="ccL_${tc}">${ccLRow(tc)}</div>`:'';
+ const calc=(t||livre)?`<div style="border:1.5px dashed #2E7D32;border-radius:10px;background:#F4FAF3;padding:10px 12px">
    <div style="font:800 10px var(--mono);letter-spacing:.1em;color:#2E7D32;margin-bottom:7px">📐 RISCO (folha do Audaces) → 🧺 ENFESTO → ✂ CORTE</div>
    <div class="ccrow"><label>COMPRIMENTO (cm ou m)<input id="ccC_${tc}" placeholder="607,78" oninput="ccCalc('${tc}')"></label><label>APROV. %<input id="ccA_${tc}" type="number" step="0.01" placeholder="78,45"></label><label>FOLHAS (total)<input id="ccF_${tc}" type="number" placeholder="50" oninput="ccCalc('${tc}')"></label></div>
    <div style="font:800 9.5px var(--mono);color:#6b6459;margin:4px 0 2px">POR MODELO — completos · moldes/pç · área % ${its.length>1?'(somam 100)':''}</div>
    ${riscoRows}
    <input id="ccT_${tc}" type="hidden">
    <div id="ccOut_${tc}" style="font:700 11px var(--mono);color:#2E7D32;margin:6px 0 5px">— comprimento · completos · folhas —</div>
-   ${(t.cores&&t.cores.length)?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) <button class="tg" onclick="ccNeed('${tc}')">folhas p/ atender o pedido</button> <button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="ccPct('${tc}')">✔ MANTER PROPORÇÃO DO SALDO</button></div>`:''}
-   ${cores}
-   <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">✂ CORTADO — registrar e baixar estoque</button>
+   ${(t&&t.cores&&t.cores.length)?`<div style="font:800 9.5px var(--mono);color:#6b6459;margin-bottom:2px">CORES (folhas por cor) <button class="tg" onclick="ccNeed('${tc}')">folhas p/ atender o pedido</button> <button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="ccPct('${tc}')">✔ MANTER PROPORÇÃO DO SALDO</button></div>`:''}
+   ${livre?coresL:cores}
+   <button class="tg on ccgo" onclick="regCorteCloud('${tc}')">${livre?'✂ CORTADO — registrar (tecido manual, sem baixa)':'✂ CORTADO — registrar e baixar estoque'}</button>
   </div>`:'';
- const header=`<div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):'⚠ '+esc(tc)}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}${its.some(c=>c.parcial)?' · <span class="parc">2º corte</span>':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>`;
+ const header=`<div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):(livre?'✎ '+esc(tc)+' · manual':'⚠ '+esc(tc))}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}${its.some(c=>c.parcial)?' · <span class="parc">2º corte</span>':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>`;
  const cardOf=c=>{ const m=DEB.models.find(x=>x.aba===c.aba)||{};
    return `<div class="mc2" style="cursor:default"><span class="who2">✔ ${esc(c.who)}</span>${m.foto?`<img class="top" loading="lazy" decoding="async" src="${m.foto}">`:'<div class="top"></div>'}<b>${codAba(c.cod||m.codigo,c.aba)}</b><span class="nm2">${esc(c.nm)}</span>${c.parcial?`<span class="parc">faltam ${fmt(c.pcs||0)}</span>`:''}<button class="tg" style="margin:4px auto 6px;display:block" onclick="desConfC('${c.id}')">↩ fila</button></div>`; };
  if(WIDE){
@@ -2795,7 +2835,7 @@ function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&win
         else { const html=robFichaHTML(kind,key); if(html) openMod('FICHA',html,''); } } }
 async function rfMsgSend(aba){ await msgSend('mod:'+aba,'rfI'); render(); }
 async function confOne(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return;
- const go=async(sel)=>{ const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:sel?sel.tec:'',tecAt:sel?sel.tecAt:null,pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
+ const go=async(sel)=>{ const d={id:'C'+aba,aba,cod:String(m.codigo||''),nm:m.nome,tec:sel?sel.tec:'',livre:!!(sel&&sel.livre),tecAt:sel?sel.tecAt:null,pcs:m.qt||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:new Date().toISOString()};
    try{ await FB.setDoc(FB.doc(FB.db,'corte_conf',d.id),d); toast('✔ '+aba+' confirmado p/ corte'); }catch(e){ toast('Erro: '+(e&&e.code),5000); } };
  if(m.tecSel&&m.tecSel.tec){ return go(m.tecSel); }
  tecConfirmGate(m, async sel=>{ if(sel){ try{ await FB.setDoc(FB.doc(FB.db,'elo_deb',m.aba),{...m,tecSel:{...sel,por:whoName(),at:new Date().toISOString()},edited:m.edited||false}); }catch(e){} }
@@ -2826,7 +2866,7 @@ function robFichaHTML(kind,key){
   const up=(g.rows.length?mesmoTecido(g.rows[0].m).filter(x=>PRE_CORTE.includes(x.fase)):[]);
   if(GV>=g.rows.length) GV=0;
   const rows=g.rows.map((r,i)=>`<div class="ovr ${i===GV?'on':''}" onclick="GV=${i};render()">
-     <input type="checkbox" class="cfk" ${r.elo==='preparando'?'checked':''} data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">
+     <input type="checkbox" class="cfk" ${r.elo==='preparando'?'checked':''} data-g="${gk}" data-aba="${r.m.aba}" data-cod="${esc(String(r.m.codigo||''))}" data-nm="${esc(r.m.nome)}" data-tec="${g.tec?g.tec.code:(g.livre?esc(g.name):'')}" data-livre="${g.livre?1:''}" data-q="${r.m.qt||''}" onclick="event.stopPropagation()">
      <div style="min-width:0"><b>${r.m.aba}${r.m.codigo?' · '+r.m.codigo:''}</b><div class="ovnm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</div>
       <div class="ovdt">${r.m.qt?fmt(r.m.qt)+' pçs · ':''}${r.elo==='preparando'?'<b class="okt">RISCO ✓</b>':'<span style="color:#8a6d00;font-weight:700">risco pend.</span>'}</div>${robChkHTML(r.m)}</div></div>`).join('');
   const s=g.rows[GV]; let vw='';
@@ -2839,7 +2879,7 @@ function robFichaHTML(kind,key){
   return `<div class="mph" style="padding:14px 46px 8px 14px"><div style="display:flex;gap:12px">
     ${g.tec&&g.tec.foto?`<img src="${g.tec.foto}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none">`:'<div style="width:56px;height:56px;border-radius:10px;background:#EAE4D8;flex:none"></div>'}
     <div><h2 style="margin:0">${g.tec?esc(g.tec.code)+' · '+esc(g.tec.nome):esc(g.key)}</h2>
-     <div class="sm">${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':''}${g.rows.length} modelo(s) na fila${up.length?' · ⏳ vai juntar: '+up.map(x=>x.aba).join(', '):''}</div></div></div></div>
+     <div class="sm">${g.tec?fmt(Math.round(g.tec.estoque))+' m em estoque · ':(g.livre?'<span class="chipLiv">✎ manual · sem estoque</span> · ':'')}${g.rows.length} modelo(s) na fila${up.length?' · ⏳ vai juntar: '+up.map(x=>x.aba).join(', '):''}</div></div></div></div>
    <div class="mpc" style="padding:0 14px 8px"><section>
     <div class="sm" style="margin-bottom:4px">marque quem vai cortar · toque na linha p/ ver a foto</div>
     <div class="ovwrap"><div class="ovrows">${rows}</div><div class="ovview">${vw}</div></div>
