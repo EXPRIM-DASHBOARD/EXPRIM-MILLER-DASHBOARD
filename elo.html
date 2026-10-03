@@ -726,6 +726,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 #portal:hover{background:#1D2A3F}
 @media(max-width:860px){#portal{bottom:70px}}
 /* ===== v9.28a · tecido manual (✎) ===== */
+.plus{font-size:9px;letter-spacing:.04em;padding:0 6px;width:auto;height:16px;border-radius:9px;white-space:nowrap;line-height:1}
 .tpFree{margin-top:10px;border:1.5px dashed #A3641A;background:#FBF3E2;border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .tpFree b{font:800 12px var(--mono);color:#A3641A}.tpFree small{display:block;color:#6b6459;font-size:11px;margin-top:3px}.tpFree.off{opacity:.55}.tpFree button[disabled]{opacity:.5;cursor:not-allowed}
 .tp-liv b{color:#A3641A}
@@ -737,7 +738,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28d</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1047,6 +1048,22 @@ let __codDup=null;
 function codigoDup(){ if(__codDup) return __codDup;
   const cnt={}; (DEB.models||[]).forEach(m=>{ if(!m.concl&&m.codigo){ const k=String(m.codigo); cnt[k]=(cnt[k]||0)+1; } });
   __codDup=new Set(Object.keys(cnt).filter(k=>cnt[k]>1)); return __codDup; }
+function modOfCod(cod,corte){ const c=String(cod||'').trim(); if(!c) return null; const toks=c.split(/[\s\/,+]+/).filter(Boolean);
+  const ex=DEB.models.filter(m=>m.codigo&&toks.includes(String(m.codigo))); if(ex.length===1) return ex[0];
+  if(ex.length>1){ const ok=ex.filter(m=>!corte||!m.ini||m.ini<=corte).sort((a,b)=>String(b.ini||'').localeCompare(String(a.ini||''))); return ok[0]||ex[0]; }
+  const bs=toks.map(baseOf).filter(Boolean); const fam=DEB.models.filter(m=>m.codigo&&bs.includes(baseOf(m.codigo))); if(!fam.length) return null;
+  const ep=fam.filter(m=>!corte||!m.ini||m.ini<=corte).sort((a,b)=>String(b.ini||'').localeCompare(String(a.ini||'')));
+  return ep[0]||null; }
+function modOfLot(d){ if(!d) return null; if(d.aba){ const m=DEB.models.find(x=>x.aba===d.aba); if(m) return m; } return modOfCod(d.cod||d.nm,d.corte); }
+/* religa lotes da nuvem que ficaram sem aba (bug trazerLot ≤ v9.28a) */
+function cortesSemAba(){ return CEVT.filter(d=>!d.aba&&modOfLot(d)); }
+async function religarFichas(){ if(!isLucas()||window.__chgBusy) return; const todo=cortesSemAba(); if(!todo.length){ toast('✓ todos os lotes da nuvem já têm ficha'); return; }
+  const prev=todo.slice(0,12).map(d=>`${d.cod||d.nm} → ${modOfLot(d).aba}`).join('\n'); if(!confirm(`Religar ${todo.length} lote(s) à ficha da DEBORA?\n\n${prev}${todo.length>12?'\n…':''}`)) return;
+  window.__chgBusy=true; pgShow('🔗 religando…'); let n=0;
+  try{ let b=FB.writeBatch(FB.db), k=0; for(const d of todo){ const m=modOfLot(d); b.set(FB.doc(FB.db,'cortes',d.id),{...d,aba:m.aba,relig:{at:new Date().toISOString(),by:whoName()}}); n++; if(++k>=300){ await b.commit(); b=FB.writeBatch(FB.db); k=0; } }
+    if(k) await b.commit(); toast('🔗 '+n+' lote(s) religados à ficha');
+    for(const d of todo){ const m=modOfLot(d); try{ if(d.env) await robCosturaSync(m.aba); else await robCorteSync(m.aba,d.corte,d.mt||null,{risco:d.risco||null,parcial:false}); }catch(e){} }
+  }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } finally{ pgHide(); window.__chgBusy=false; } }
 function lotsOf(m){
   if(!m.codigo) return {lots:[],how:'semcodigo'};
   if(codigoDup().has(String(m.codigo))){ return {lots:[],how:'duplicado'}; }
@@ -1064,11 +1081,11 @@ function eloOf(m){
   const st=how==='duplicado'?'dup':(lots.length?(lots.some(l=>lotState(l)==='oficina')?'oficina':(lots.every(l=>lotState(l)==='entregue')?'entregue':'parado')):'');
   const fi=FASES.indexOf(m.fase);
   let elo, alert=null;
-  if(st==='entregue'){ elo='entregue'; if(fi>=0&&fi<FASES.indexOf('Qualidade')&&!m.concl) alert={k:'atualizar',t:'oficina já entregou — avançar p/ Qualidade'}; }
+  if(st==='entregue'){ elo='entregue'; if(fi>=0&&fi<FASES.indexOf('Qualidade')&&!m.concl) alert={k:'atualizar',t:'oficina já entregou tudo → avançar p/ Qualidade'}; }
   else if((m.conflicts&&m.conflicts.length)||m.pendPlan){ elo='fila'; alert={k:'verificar',t:(m.pendPlan?'📄 planilha retida (modelo editado no painel)':'⚠ planilha × painel divergem')+' — abrir ✎ EDITAR p/ resolver'}; }
   else if(st==='dup'){ elo='fila'; alert={k:'verificar',t:'⚠ código repetido em modelos ativos — o painel não vincula lotes; diferencie o código'}; }
-  else if(st==='oficina'){ elo='oficina'; if(fi<FASES.indexOf('Costura')) alert={k:'atualizar',t:'lote já na oficina — avançar p/ Costura'}; }
-  else if(st==='parado'){ elo='parado'; if(m.fase==='Corte'||m.faseVazia) alert={k:'atualizar',t:'Roberto já cortou — avançar p/ Costura'}; else if(fi<FASES.indexOf('Corte')) alert={k:'verificar',t:`cortado pelo Roberto mas DEBORA em ${m.fase}`}; }
+  else if(st==='oficina'){ elo='oficina'; if(fi<FASES.indexOf('Costura')) alert={k:'atualizar',t:'lote já saiu p/ oficina → avançar p/ Costura'}; }
+  else if(st==='parado'){ elo='parado'; if(m.fase==='Corte'||m.faseVazia) alert={k:'atualizar',t:'já cortado (ainda não saiu) → avançar p/ Costura'}; else if(fi<FASES.indexOf('Corte')) alert={k:'verificar',t:`cortado pelo Roberto mas DEBORA em ${m.fase}`}; }
   else if(m.fase==='Corte'){ if(how==='semcodigo'){ elo='semcodigo'; alert={k:'verificar',t:'em Corte sem código de modelo'}; } else elo=m.risco?'preparando':'fila'; }
   else if(fi>=FASES.indexOf('Costura')&&!m.concl){ elo='semlote'; alert={k:'verificar',t:`DEBORA em ${m.fase} mas sem lote no CONTROLE`}; }
   else elo='design';
@@ -1312,7 +1329,7 @@ function card(r){
   const late=m.prazo&&m.prazo<TODAY&&!m.concl; const ps=modProbs(m);
   return `<div class="card ${m.foto?'hasph':''} ${typeof DMSEL!=='undefined'&&DMSEL===m.aba?'dsel':''}" data-aba="${m.aba}" onclick="dCardClick('${m.aba}')">
     ${m.foto?`<img class="th" src="${m.foto}" alt="">`:''}
-    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg ${msgUnread('mod:'+m.aba).length?'unread':'okall'}">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
+    <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${msgsFor('mod:'+m.aba).length?`<span class="mbdg ${msgUnread('mod:'+m.aba).length?'unread':'okall'}">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
     <div class="nm">${esc(m.nome.replace(/^\S+\s*[-·]?\s*/,'')||m.nome)}</div>
     <div class="c3"><span class="pg"><i style="width:${m.prog||0}%"></i></span><span class="pz ${late?'late':''}">${m.prog!=null?m.prog+'%':''}${m.prazo?` · ${dtBR(m.prazo)}`:''}${(qtCortOf(m)&&qtCortOf(m)!==(m.qtPedido!=null?m.qtPedido:m.qt))||m.qtAceite?' · '+qtLine(m):''}</span></div>
     ${m.fase==='Costura'?costLines(r):`<div class="rl">${robLine(r)}</div>
@@ -1543,9 +1560,8 @@ function custoMensal(){
   /* fonte 1: lotes do pipeline (cortes na nuvem) — têm chegadas/defeitos detalhados */
   const ds=CEVT.filter(d=>d.env&&d.env.saida).slice();
   /* fonte 2: lotes da planilha ROBERTO ainda não trazidos p/ o pipeline — só datas (sem defeito) */
-  const nuvKey=new Set(CEVT.map(d=>d.xref?trazKey(d.xref.modelo,d.xref.corte,d.xref.saida):null).filter(Boolean));
   (ROB.lots||[]).forEach(l=>{ if(!l.saida||!l.oficina) return;
-    if(nuvKey.has(trazKey(l.modelo,l.corte,l.saida))) return;
+    if(trazido(l)) return;
     ds.push({id:'PL'+l.modelo+l.saida, nm:l.desc||l.modelo, aba:l.modelo, pcs:l.qtd||0, planilha:true,
       env:{oficina:l.oficina,saida:l.saida,prev:l.prev,rs:null},
       chegadas: l.real?[{id:'x',data:l.real,qtd:l.qtd||0,def:0,presumido:true}]:[] }); });
@@ -1616,8 +1632,7 @@ function renderRoberto(A){
   const VMAP=Object.fromEntries(velRows().map(r=>[r.name,r]));
   const cloudOf=CEVT.filter(d=>d.env&&chegPend(d)>0).map(d=>({modelo:d.aba||d.nm,desc:d.nm,qtd:d.pcs,saida:d.env.saida,prev:d.env.prev,oficina:d.env.oficina,real:null,cloud:d}));
   const cloudCheg=CEVT.filter(d=>d.env&&chegList(d).length&&chegPend(d)<=0);
-  const trazS=new Set(CEVT.filter(d=>d.origem==='planilha'&&d.xref).map(d=>trazKey(d.xref.modelo,d.xref.corte,d.xref.saida)));
-  const naoTraz=l=>!trazS.has(trazKey(l.modelo,l.corte,l.saida));
+  const naoTraz=l=>!trazido(l);
   const ofi=open.filter(l=>l.saida&&lotHit(l)&&(l.cloud||naoTraz(l))).concat(cloudOf.filter(lotHit)), par=open.filter(l=>!l.saida&&l.corte&&lotHit(l)&&naoTraz(l));
   const late=ofi.filter(l=>l.prev&&l.prev<TODAY);
   const confSet=new Set(CCONF.map(c=>c.aba).filter(Boolean));
@@ -1657,14 +1672,14 @@ function renderRoberto(A){
         <div class="agm">${minis}</div>
         <div class="agf"><span class="okt">✔ ${its.length} conf.</span>${its.length>3?`<span>+${its.length-3}…</span>`:''}<span style="margin-left:auto">✂ junto</span></div></div>`; }).join('')}</div>`:'')
     :Object.keys(gs).map(tc=>cutGroupFull(tc)).join('');
-    const cardsPend=cloudPend.map(d=>{const m=DEB.models.find(x=>x.aba===d.aba)||{};
+    const cardsPend=cloudPend.map(d=>{const m=modOfLot(d)||{};
       return `<div class="mc2 ${RFICHA&&RFICHA.kind==='cort'&&RFICHA.key===d.id?'on':''}" onclick="robPick('cort','${d.id}')">${m.foto?`<img class="top" src="${m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${codAba(d.cod||m.codigo,d.aba)}</b><span class="nm2">${esc(d.nm)}</span><span class="st2">${fmt(d.pcs)} pçs · <b class="okt">✂ ${dtBR(d.corte)}</b></span><button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F;margin:5px auto 0;display:block" onclick="event.stopPropagation();openEnviar('${d.id}')">📦 ENVIAR</button></div>`;}).join('');
     const cardsPar=(WIDE&&par.length)?par.map((l,i)=>{const r=A.rows.find(x=>x.lots.includes(l)); const m=r&&r.m; const dd=daysBetween(l.corte,TODAY);
       return `<div class="mc2 ${RFICHA&&RFICHA.kind==='xlot'&&RFICHA.key===i?'on':''}" onclick="robPick('xlot',${i})"><span class="orig">📄 planilha</span>${m&&m.foto?`<img class="top" src="${m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${esc(l.modelo)}</b><span class="nm2">${esc(l.desc||'')}</span><span class="st2">${l.qtd?fmt(l.qtd)+' pçs · ':''}✂ ${dtBR(l.corte)}${dd>3?` · <b style="color:#C0392B">+${dd}d</b>`:''}</span></div>`;}).join(''):'';
     const pendRows=WIDE?((cloudPend.length+par.length)?`<div class="cgrid">${cardsPend}${cardsPar}</div>`:'')
       :(cloudPend.map(d=>`<div class="frow"><span class="mc">${codAba(d.cod,d.aba)}</span><span class="nm">${esc(d.nm)}</span><span class="sm">${fmt(d.pcs)} pçs · ✂ ${dtBR(d.corte)}${d.junto>1?' · junto +'+(d.junto-1):''} · ${esc(d.tec)} ${d.mt} m</span><span style="margin-left:auto;display:flex;gap:6px"><button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desCorteCloud('${d.id}')">↩</button></span></div>`).join('')+par.map(lotRow).join(''));
     return [`<h3>🧺 AGUARDANDO CORTAR — risco · enfesto <span>${CCONF.length}</span></h3>${conf||(WIDE?`<div class="cgrid"><div class="mc2 dash2" onclick="RSEL='fila';RFICHA=null;render()"><div class="top" style="background:#FDF8EC;font-size:30px;display:flex;align-items:center;justify-content:center">✔</div><b>NADA CONFIRMADO</b><span class="nm2">vá na FILA e confirme</span><span class="st2">toque p/ ir à FILA</span></div></div>`:'<div class="empty">nada confirmado — vá na FILA, marque e ✔ CONFIRME</div>')}
-      `,`<h3>📦 AGUARDANDO SAIR — cortado, ainda na EXPRIM <span>${cloudPend.length+par.length}</span></h3>${isLucas()&&(ROB.lots||[]).length?`<div class="sm" style="margin:0 0 6px"><button class="tg" onclick="trazerTodos()">☁ trazer TODOS os lotes da planilha p/ a nuvem</button> <small>${ROB.lots.length} na planilha · ${CEVT.filter(d=>d.origem==='planilha').length} já na nuvem</small></div>`:''}${pendRows||(WIDE?`<div class="cgrid"><div class="mc2 dash2" style="cursor:default"><div class="top" style="background:#F4FAF3;font-size:30px;display:flex;align-items:center;justify-content:center">📦</div><b>NENHUM</b><span class="nm2">corte pelo painel cai aqui</span><span class="st2">pronto p/ enviar</span></div></div>`:'<div class="empty">nenhum</div>')}
+      `,`<h3>📦 AGUARDANDO SAIR — cortado, ainda na EXPRIM <span>${cloudPend.length+par.length}</span></h3>${isLucas()&&(ROB.lots||[]).length?`<div class="sm" style="margin:0 0 6px"><button class="tg" onclick="trazerTodos()">☁ trazer TODOS os lotes da planilha p/ a nuvem</button> <small>${ROB.lots.length} na planilha · ${CEVT.filter(d=>d.origem==='planilha').length} já na nuvem</small>${cortesSemAba().length?` <button class="tg" style="border-color:#C0392B;color:#C0392B" onclick="religarFichas()">🔗 religar fichas (${cortesSemAba().length})</button>`:''}${lotesDup().length?` <small style="color:#2E7D32" title="${esc(lotesDup().map(l=>l.modelo+' ✂ '+dtBR(l.corte)).join(' · '))}">✓ ${lotesDup().length} lote(s) que contavam em dobro agora casam (modelo + data de corte)</small>`:''}</div>`:''}${pendRows||(WIDE?`<div class="cgrid"><div class="mc2 dash2" style="cursor:default"><div class="top" style="background:#F4FAF3;font-size:30px;display:flex;align-items:center;justify-content:center">📦</div><b>NENHUM</b><span class="nm2">corte pelo painel cai aqui</span><span class="st2">pronto p/ enviar</span></div></div>`:'<div class="empty">nenhum</div>')}
       `]; };
   const cortarBody=()=>aguaBody()[0], sairBody=()=>aguaBody()[1];
   ROBG=groups; ROBXP=par;
@@ -2062,8 +2077,8 @@ function tlProg(m){ const n=(m.items||[]).length; return n?Math.round(m.items.fi
 function tlNames(){ const s=new Set(); DEB.models.forEach(m=>(m.items||[]).forEach(i=>{ const r=String(i.resp||'').trim().toLowerCase(); if(r) s.add(r); })); TL_TPL.forEach(([e,...its])=>its.forEach(([,r])=>s.add(r))); return [...s].sort(); }
 function canTL(){ return !!FBUSER; }
 /* ===== v9.25a · pedido (DEBORA) × cortado (Roberto) ===== */
-function qtCortOf(m){ if(!m) return 0; const cl=cevtLotsOf(m); const keys=new Set(cl.map(c=>c.cloud.xref?trazKey(c.cloud.xref.modelo,c.cloud.xref.corte,c.cloud.xref.saida):null).filter(Boolean));
-  const ex=lotsOf(m).lots.filter(l=>l.corte&&!keys.has(trazKey(l.modelo,l.corte,l.saida))); return cl.reduce((s,c)=>s+(c.qtd||0),0)+ex.reduce((s,l)=>s+(l.qtd||0),0); }
+function qtCortOf(m){ if(!m) return 0; const cl=cevtLotsOf(m);
+  const ex=lotsOf(m).lots.filter(l=>l.corte&&!cl.some(c=>trazHit(c.cloud,l))); return cl.reduce((s,c)=>s+(c.qtd||0),0)+ex.reduce((s,l)=>s+(l.qtd||0),0); }
 function qtAberto(m){ return CCONF.some(c=>c.aba===m.aba); } /* ainda tem corte pendente (parcial) */
 function qtLine(m){ const qc=qtCortOf(m); const ped=m.qtPedido!=null?m.qtPedido:m.qt; if(!qc||!ped||qc===ped&&!m.qtAceite) return m.qt?`${fmt(m.qt)} pçs`:'—';
   const d=qc-ped; return `<span class="qtd ${d<0&&!m.qtAceite?'neg':''}">${fmt(ped)} pedido → <b>${fmt(qc)} cortado</b> (${d>0?'+':''}${fmt(d)})${m.qtAceite?' <small>✓ '+esc(m.qtAceite.por)+'</small>':''}</span>`; }
@@ -2145,13 +2160,13 @@ async function robCosturaSync(aba){ const m=DEB.models.find(x=>x.aba===aba); if(
 async function lotMemoSave(id,v){ const d=CEVT.find(x=>x.id===id); if(!d) return; try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,memo:String(v||'').trim()}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 /* trazer TODOS os lotes da planilha p/ a nuvem (Lucas) — inclusive entregues */
 async function trazerTodos(){ if(!isLucas()||window.__chgBusy) return;
-  const nuvKey=new Set(CEVT.map(d=>d.xref?trazKey(d.xref.modelo,d.xref.corte,d.xref.saida):null).filter(Boolean));
-  const todo=ROB.lots.filter(l=>l.corte&&!nuvKey.has(trazKey(l.modelo,l.corte,l.saida)));
+  const todo=ROB.lots.filter(l=>l.corte&&!trazido(l));
   if(!todo.length){ toast('✓ todos os lotes da planilha já estão na nuvem'); return; }
   if(!confirm(`Trazer ${todo.length} lote(s) da planilha ROBERTO p/ a nuvem (inclui entregues)? A planilha vira histórico.`)) return;
   window.__chgBusy=true; pgShow('☁ trazendo '+todo.length+' lotes…'); let n=0;
   try{ let b=FB.writeBatch(FB.db), k=0; const now=new Date().toISOString();
-    for(const l of todo){ const xid='XP'+djb2(trazKey(l.modelo,l.corte,l.saida)); const m=DEB.models.find(x=>x.codigo&&(l.tokens||[]).includes(String(x.codigo)))||null;
+    const rowsA=computeAll().rows;
+    for(const l of todo){ const xid='XP'+djb2(trazKey(l.modelo,l.corte,l.saida)); const m=(()=>{ const r=rowsA.find(x=>x.lots&&x.lots.includes(l)); return (r&&r.m)||modOfCod(l.modelo,l.corte); })();
       const d={id:xid,corteId:xid,origem:'planilha',tec:l.tecido||null,aba:(m&&m.aba)||'',cod:String(l.modelo||''),nm:l.desc||String(l.modelo||''),pcs:l.qtd||0,tam:null,grade:null,folhas:null,comp:null,mt:null,coresUse:[],junto:1,corte:l.corte||null,who:'planilha',by:(FBUSER&&FBUSER.email)||'',at:now,
         env:l.saida?{oficina:l.oficina||'',saida:l.saida,prev:l.prev||null,rs:null,by:'planilha',at:now,am:l.amostra?{at:l.amostra,by:'planilha'}:null}:null,
         chegadas:l.real?[{id:'LEG',data:l.real,qtd:l.qtd||0,def:0,retrab:false,legado:true,by:'planilha'}]:[],cheg:null,memo:l.obs||'',xref:{modelo:String(l.modelo||''),corte:l.corte||null,saida:l.saida||null}};
@@ -2177,7 +2192,10 @@ function mergeAuto(prev,out){ if(!prev||!prev.items||!out.items) return out; let
   if(n){ const es=tlEtapas(out); const ci=tlCurIdx(out); const f=es.length?tlFaseOf(es[ci].e):''; if(f&&FASES.indexOf(f)>FASES.indexOf(out.fase||'')) { out.fase=f; out.faseVazia=false; } out.prog=tlProg(out); }
   if(prev.log&&!out.log) out.log=prev.log;
   if(prev.qtAceite&&(out.qt==null||out.qt===prev.qtPedido)){ out.qtPedido=prev.qtPedido; out.qt=prev.qt; out.qtAceite=prev.qtAceite; } return out; }
-function modProbs(m){ const o=[]; const me=isLucas();
+function alertProb(m){ const e=eloOf(m); const a=e&&e.alert; if(!a) return null; const me=isLucas();
+  const atu=a.k==='atualizar'; const t=atu?`🔄 ROBERTO avançou, DEBORA ainda em ${esc(m.fase||'—')} — ${a.t}`:`⚠ ${a.t}`;
+  return {k:atu?'atu':'ver',t,fix:(atu&&me)?`<button class="btn mini sec" onclick="closeMod();tlAdvance('${m.aba}')">→ AVANÇAR</button>`:''}; }
+function modProbs(m){ const o=[]; const me=isLucas(); { const a=alertProb(m); if(a) o.push(a); }
   if(m.foraPlan) o.push({k:'fora',t:`📄 não veio no último drop (${esc(m.foraPlan.file||'')}, ${dtBR(m.foraPlan.at)}) — foi apagado na planilha de propósito?`,fix:me?`<span style="display:flex;gap:6px"><button class="btn mini danger" onclick="closeMod();descartar('${m.aba}')">🗑 descartar</button><button class="btn mini sec" onclick="closeMod();manter('${m.aba}')">✓ manter</button></span>`:''});
   if(m.conflicts&&m.conflicts.length) o.push({k:'conf',t:`⚠ ${m.conflicts.length} campo(s) diferem entre planilha e painel`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver e resolver</button>`:'<span class="sm">resolver no PC</span>'});
   if(m.pendPlan&&!(m.conflicts&&m.conflicts.length)) o.push({k:'pend',t:`📄 planilha ${esc(m.pendPlan.file||'')} retida — ${(m.pendPlan.diffs||[]).length} diferença(s) não aplicadas (modelo editado no ELO)`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver</button>`:'<span class="sm">ver no PC</span>'});
@@ -2190,8 +2208,8 @@ function modProbs(m){ const o=[]; const me=isLucas();
   if(m.codElo&&m.codPlan&&m.codPlan!==m.codElo.cod) o.push({k:'codp',t:`✎ código ${esc(m.codElo.cod)} definido no ELO, mas a planilha traz ${esc(m.codPlan)} (planilha prevalece)`,fix:''});
   return o; }
 function showProbs(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return; const ps=modProbs(m); if(!ps.length) return;
-  openMod(`! · ${aba} · ${ps.length} ponto(s)`,`<div class="fp2">${ps.map(p=>`<div class="prob"><span>${p.t}</span>${p.fix||''}</div>`).join('')}<div class="acts"><button class="btn sec" onclick="closeMod()">FECHAR</button></div></div>`,'',true); }
-function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>c.cloud.xref&&trazKey(c.cloud.xref.modelo,c.cloud.xref.corte,c.cloud.xref.saida)===trazKey(l.modelo,l.corte,l.saida))).concat(cl);
+  openMod(`! · ${aba} · ${ps.length} ponto(s) a resolver`,`<div class="fp2">${ps.map(p=>`<div class="prob"><span>${p.t}</span>${p.fix||''}</div>`).join('')}<div class="acts"><button class="btn sec" onclick="closeMod()">FECHAR</button></div></div>`,'',true); }
+function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>trazHit(c.cloud,l))).concat(cl);
   if(!lots.length) return `<div class="cl"><span class="pale">sem lote do Roberto</span></div><div class="cl">${tecLine(m)}</div>`;
   const l=lots.slice().sort((a,b)=>String(b.corte||'').localeCompare(String(a.corte||'')))[0]; const extra=lots.length>1?` <span class="pale">+${lots.length-1} lote</span>`:'';
   const l1=l.saida?`🏭 <b>${esc(l.oficina||'?')}</b> ${l.qtd?fmt(l.qtd)+'p':''} · ✂ ${dtBR(l.corte)||'—'}${extra}`:`✂ cortado ${l.qtd?fmt(l.qtd)+'p':''} · ${dtBR(l.corte)||'—'}${extra}`;
@@ -2200,7 +2218,7 @@ function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||
   else if(l.real) l2=`<span class="ok2">📥 chegou ${dtBR(l.real)} ✓</span>${l.def>0?` <span class="pale">def ${l.def}</span>`:''}`;
   else { const d=l.prev?daysBetween(l.prev,TODAY):null; const part=rec?`${fmt(rec)}/${fmt(l.qtd)} · `:''; if(d==null) l2=`📥 ${part}<span class="pale">sem previsão</span>`; else if(d<=0) l2=`📥 ${part}<span class="pale">prev. ${dtBR(l.prev)}</span>`; else if(d<=tol) l2=`📥 ${part}<span class="tol">tolerância +${d}d</span>`; else l2=`📥 ${part}<span class="lt2">atrasado ${d}d</span>`; }
   return `<div class="cl">${l1}</div><div class="cl">${l2}</div>`; }
-function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>c.cloud.xref&&trazKey(c.cloud.xref.modelo,c.cloud.xref.corte,c.cloud.xref.saida)===trazKey(l.modelo,l.corte,l.saida))).concat(cl);
+function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>trazHit(c.cloud,l))).concat(cl);
   if(!lots.length){ if(m.fase==='Corte') return m.risco?'<b>✂ risco ✓</b> · pronto p/ cortar':'<span class="pale">✂ risco pendente</span>'; return '<span class="pale">—</span>'; }
   return lots.map(l=>{ const p=[]; if(l.corte) p.push(`<b>✂ ${dtBR(l.corte)}</b>${l.qtd?' '+fmt(l.qtd)+'p':''}`); if(l.saida) p.push(`<b>📦 ${esc(l.oficina||'?')}</b> ${dtBR(l.saida)}`);
     if(l.real) p.push(`<b style="color:var(--green)">📥 ${dtBR(l.real)} ✓</b>`); else if(l.saida) p.push(`📥 ${l.cloud&&chegRec(l.cloud)>0?`<b>${fmt(chegRec(l.cloud))}/${fmt(l.qtd)}</b> · `:''}<span class="pale${l.prev&&l.prev<TODAY?' late':''}">prev. ${dtBR(l.prev)||'?'}</span>`); else if(l.corte) p.push('<span class="pale">não saiu</span>');
@@ -2224,7 +2242,7 @@ function modFichaHTML(aba){
     <h2 style="margin-top:0">${esc(m.nome)}</h2>
     <div class="kv2">
       <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${qtLine(m)}${m.qtProv?' (provisória)':''}</span></div>
-      <div><b>TECIDO${me?`<span class="plus" title="＋ tecido · forro · renda" onclick="addTec2('${aba}')">+</span>`:''}</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${ts==='livre'?'✎ ':''}${tecLbl}${ts==='livre'?' <span class="chipLiv">manual · sem estoque</span>':''}${ts!=='ok'&&ts!=='livre'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?``:''}</div>
+      <div><b>TECIDO${me?`<span class="plus" title="＋ forro · renda (tecido secundário — o principal é em ✎ EDITAR)" onclick="addTec2('${aba}')">+ forro/renda</span>`:''}</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${ts==='livre'?'✎ ':''}${tecLbl}${ts==='livre'?' <span class="chipLiv">manual · sem estoque</span>':''}${ts!=='ok'&&ts!=='livre'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?``:''}</div>
       <div><b>TAM</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${(m.sizes||[]).join(' + ')||'—'}</span></div>
       <div><b>INÍCIO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${dtBR(m.ini)||'—'}</span></div>
       <div><b>PRAZO</b><span class="${me?'ed':''} ${late?'late':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.prazo?dtBR(m.prazo):'—'}${m.prazoTipo?' · '+esc(m.prazoTipo):''}${m.prazoAj?' (ajustado)':''}</span></div>
@@ -2912,8 +2930,8 @@ function robFichaHTML(kind,key){
     `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="trazerLot(${key})">☁ TRAZER P/ O PAINEL</button> ${m?`<button class="tg" onclick="openModel('${m.aba}')">ficha completa do modelo</button>`:''}`)
    +(m?msgThread('mod:'+m.aba,'rfI',`rfMsgSend('${m.aba}')`):''); }
  if(kind==='cort'){ const d=CEVT.find(x=>x.id===key); if(!d) return '';
-  const m=DEB.models.find(x=>x.aba===d.aba)||{};
-  return box(m, codAba(d.cod,d.aba)||esc(d.nm), esc(d.nm),
+  const m=modOfLot(d)||{};
+  return box(m, codAba(d.cod,d.aba||m.aba)||esc(d.nm), esc(d.nm),
     chip('✂ cortado '+dtBR(d.corte),'g')+chip(esc(d.tec)+' · '+d.mt+' m')+(d.junto>1?chip('junto +'+(d.junto-1)):''),
     `<div class="kv2"><b>Risco</b><span>${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m${d.risco&&d.risco.mPc?` · <b>${d.risco.mPc} m/pç</b>`:''}${d.risco&&d.risco.moldes?` · ${d.risco.moldes} moldes/pç`:''}</span><b>Cores</b><span>${(d.coresUse||[]).map(c=>esc(c.cor)+' '+(c.pcs!=null?c.pcs+'p':c.folhas+'f')).join(' · ')||'—'}</span>${(d.extras||[]).length?`<b>Forro</b><span>${d.extras.map(x=>esc(x.tec)+' '+esc(x.papel)+(x.cor?' '+esc(x.cor):'')+' · '+x.mt+' m'+(x.mPc?' ('+x.mPc+' m/pç)':'')).join(' · ')}</span>`:''}<b>Por</b><span>${esc(d.who)}</span></div>
      <div style="margin-top:8px">${matrizHTML(d.grade,d.coresUse,d.pcs)}</div>
@@ -2951,11 +2969,19 @@ async function togAmostraC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) 
   const env={...d.env,am:d.env.am?null:{at:new Date().toISOString().slice(0,10),by:whoName()}};
   try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env}); if(d.aba) setTimeout(()=>robCosturaSync(d.aba),800); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 function trazKey(mo,co,sa){ return String(mo||'')+'|'+String(co||'')+'|'+String(sa||''); }
+/* v9.28c: o mesmo lote da planilha pode ganhar saída DEPOIS de trazido p/ a nuvem → não pode entrar na chave */
+function trazHit(d,l){ const x=d&&d.xref; if(!x||!l) return false;
+  if(String(x.modelo||'').trim()!==String(l.modelo||'').trim()) return false;
+  if(String(x.corte||'')!==String(l.corte||'')) return false;
+  return !x.saida||!l.saida||String(x.saida)===String(l.saida); }
+function trazido(l){ return CEVT.some(d=>trazHit(d,l)); }
+function lotesDup(){ /* lotes da planilha que ainda contam em dobro (chave antiga ≠, mas modelo+corte casam) — só diagnóstico */
+  return (ROB.lots||[]).filter(l=>l.corte&&trazido(l)&&!CEVT.some(d=>d.xref&&trazKey(d.xref.modelo,d.xref.corte,d.xref.saida)===trazKey(l.modelo,l.corte,l.saida))); }
 async function trazerLot(i){ const l=ROBXP[i]; if(!l){ toast('lote não encontrado'); return; }
-  if(window.__chgBusy) return;
+  if(window.__chgBusy) return; if(trazido(l)){ toast('este lote já está no painel (mesmo modelo + data de corte)'); return; }
   const now=new Date().toISOString();
   const xid='XP'+djb2(trazKey(l.modelo,l.corte,l.saida));
-  const r=(typeof A!=='undefined'&&A.rows)?A.rows.find(x=>x.lots&&x.lots.includes(l)):null; const m=r&&r.m;
+  const m=(()=>{ const rows=computeAll().rows; const r=rows.find(x=>x.lots&&x.lots.includes(l)); return (r&&r.m)||modOfCod(l.modelo,l.corte); })();
   window.__chgBusy=true; pgShow('☁ trazendo p/ o painel…');
   try{
     await FB.runTransaction(FB.db, async tx=>{
