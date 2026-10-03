@@ -23,7 +23,7 @@ var o=Math.min(a.sheetRows||1e7,f.length);var l={s:{r:0,c:0},e:{r:n,c:i}};if(e["
 var o=((a=s[17])==null?void 0:a[0])?Ob(e,e[_b(s[17][0].data)][0]):[];var l=vb(s[3][0].data);var c=0;l[1].forEach(function(r){var a=vb(r.data);var n=e[_b(a[2][0].data)][0];var i=db(n.meta[1][0].data);if(i!=6002)throw new Error("6001 unexpected reference to ".concat(i));var s=Ib(e,n);s.data.forEach(function(e,r){e.forEach(function(e,a){var n=Ra({r:c+r,c:a});var i=Sb(e,f,o);if(i)t[n]=i})});c+=s.nrows})}function Db(e,r){var t=vb(r.data);var a={"!ref":"A1"};var n=e[_b(t[2][0].data)];var i=db(n[0].meta[1][0].data);if(i!=6001)throw new Error("6000 unexpected reference to ".concat(i));Nb(e,n[0],a);return a}function Fb(e,r){var t;var a=vb(r.data);var n={name:((t=a[1])==null?void 0:t[0])?nb(a[1][0].data):"",sheets:[]};var i=gb(a[2],_b);i.forEach(function(r){e[r].forEach(function(r){var t=db(r.meta[1][0].data);if(t==6e3)n.sheets.push(Db(e,r))})});return n}function Pb(e,r){var t=Nw();var a=vb(r.data);var n=gb(a[1],_b);n.forEach(function(r){e[r].forEach(function(r){var a=db(r.meta[1][0].data);if(a==2){var n=Fb(e,r);n.sheets.forEach(function(e,r){Dw(t,e,r==0?n.name:n.name+"_"+r,true)})}})});if(t.SheetNames.length==0)throw new Error("Empty NUMBERS file");return t}function Lb(e){var r,t,a,n;var i={},s=[];e.FullPaths.forEach(function(e){if(e.match(/\.iwpv2/))throw new Error("Unsupported password protection")});e.FileIndex.forEach(function(e){if(!e.name.match(/\.iwa$/))return;var r;try{r=kb(e.content)}catch(t){return console.log("?? "+e.content.length+" "+(t.message||t))}var a;try{a=mb(r)}catch(t){return console.log("## "+(t.message||t))}a.forEach(function(e){i[e.id]=e.messages;s.push(e.id)})});if(!s.length)throw new Error("File has no messages");var f=((n=(a=(t=(r=i==null?void 0:i[1])==null?void 0:r[0])==null?void 0:t.meta)==null?void 0:a[1])==null?void 0:n[0].data)&&db(i[1][0].meta[1][0].data)==1&&i[1][0];if(!f)s.forEach(function(e){i[e].forEach(function(e){var r=db(e.meta[1][0].data)>>>0;if(r==1){if(!f)f=e;else throw new Error("Document has multiple roots")}})});if(!f)throw new Error("Cannot find Document root");return Pb(i,f)}function Mb(e,r,t){var a,n,i,s;if(!((a=e[6])==null?void 0:a[0])||!((n=e[7])==null?void 0:n[0]))throw"Mutation only works on post-BNC storages!";var f=((s=(i=e[8])==null?void 0:i[0])==null?void 0:s.data)&&db(e[8][0].data)>0||false;if(f)throw"Math only works with normal offsets";var o=0;var l=ab(e[7][0].data),c=0,h=[];var u=ab(e[4][0].data),d=0,v=[];for(var p=0;p<r.length;++p){if(r[p]==null){l.setUint16(p*2,65535,true);u.setUint16(p*2,65535);continue}l.setUint16(p*2,c,true);u.setUint16(p*2,d,true);var g,m;switch(typeof r[p]){case"string":g=Cb({t:"s",v:r[p]},t);m=yb({t:"s",v:r[p]},t);break;case"number":g=Cb({t:"n",v:r[p]},t);m=yb({t:"n",v:r[p]},t);break;case"boolean":g=Cb({t:"b",v:r[p]},t);m=yb({t:"b",v:r[p]},t);break;default:throw new Error("Unsupported value "+r[p]);}h.push(g);c+=g.length;v.push(m);d+=m.length;++o}e[2][0].data=ub(o);for(;p<e[7][0].data.length/2;++p){l.setUint16(p*2,65535,true);u.setUint16(p*2,65535,true)}e[6][0].data=fb(h);e[3][0].data=fb(v);return o}function Ub(e,r){if(!r||!r.numbers)throw new Error("Must pass a `numbers` option -- check the README");var t=e.Sheets[e.SheetNames[0]];if(e.SheetNames.length>1)console.error("The Numbers writer currently writes only the first table");var a=Ia(t["!ref"]);a.s.r=a.s.c=0;var n=false;if(a.e.c>9){n=true;a.e.c=9}if(a.e.r>49){n=true;a.e.r=49}if(n)console.error("The Numbers writer is currently limited to ".concat(Na(a)));var i=Aw(t,{range:a,header:1});var s=["~Sh33tJ5~"];i.forEach(function(e){return e.forEach(function(e){if(typeof e=="string")s.push(e)})});var f={};var o=[];var l=Ke.read(r.numbers,{type:"base64"});l.FileIndex.map(function(e,r){return[e,l.FullPaths[r]]}).forEach(function(e){var r=e[0],t=e[1];if(r.type!=2)return;if(!r.name.match(/\.iwa/))return;var a=r.content;var n=kb(a);var i=mb(n);i.forEach(function(e){o.push(e.id);f[e.id]={deps:[],location:t,type:db(e.messages[0].meta[1][0].data)}})});o.sort(function(e,r){return e-r});var c=o.filter(function(e){return e>1}).map(function(e){return[e,ub(e)]});l.FileIndex.map(function(e,r){return[e,l.FullPaths[r]]}).forEach(function(e){var r=e[0],t=e[1];if(!r.name.match(/\.iwa/))return;var a=mb(kb(r.content));a.forEach(function(e){e.messages.forEach(function(r){c.forEach(function(r){if(e.messages.some(function(e){return db(e.meta[1][0].data)!=11006&&sb(e.data,r[1])})){f[r[0]].deps.push(e.id)}})})})});function h(){for(var e=927262;e<2e6;++e)if(!f[e])return e;throw new Error("Too many messages")}var u=Ke.find(l,f[1].location);var d=mb(kb(u.content));var v;for(var p=0;p<d.length;++p){var g=d[p];if(g.id==1)v=g}var m=_b(vb(v.messages[0].data)[1][0].data);u=Ke.find(l,f[m].location);d=mb(kb(u.content));for(p=0;p<d.length;++p){g=d[p];if(g.id==m)v=g}m=_b(vb(v.messages[0].data)[2][0].data);u=Ke.find(l,f[m].location);d=mb(kb(u.content));for(p=0;p<d.length;++p){g=d[p];if(g.id==m)v=g}m=_b(vb(v.messages[0].data)[2][0].data);u=Ke.find(l,f[m].location);d=mb(kb(u.content));for(p=0;p<d.length;++p){g=d[p];if(g.id==m)v=g}var b=vb(v.messages[0].data);{b[6][0].data=ub(a.e.r+1);b[7][0].data=ub(a.e.c+1);var w=_b(b[46][0].data);var k=Ke.find(l,f[w].location);var T=mb(kb(k.content));{for(var A=0;A<T.length;++A){if(T[A].id==w)break}if(T[A].id!=w)throw"Bad ColumnRowUIDMapArchive";var E=vb(T[A].messages[0].data);E[1]=[];E[2]=[],E[3]=[];for(var C=0;C<=a.e.c;++C){var y=[];y[1]=y[2]=[{type:0,data:ub(C+420690)}];E[1].push({type:2,data:pb(y)});E[2].push({type:0,data:ub(C)});E[3].push({type:0,data:ub(C)})}E[4]=[];E[5]=[],E[6]=[];for(var S=0;S<=a.e.r;++S){y=[];y[1]=y[2]=[{type:0,data:ub(S+726270)}];E[4].push({type:2,data:pb(y)});E[5].push({type:0,data:ub(S)});E[6].push({type:0,data:ub(S)})}T[A].messages[0].data=pb(E)}k.content=Tb(bb(T));k.size=k.content.length;delete b[46];var _=vb(b[4][0].data);{_[7][0].data=ub(a.e.r+1);var x=vb(_[1][0].data);var O=_b(x[2][0].data);k=Ke.find(l,f[O].location);T=mb(kb(k.content));{if(T[0].id!=O)throw"Bad HeaderStorageBucket";var R=vb(T[0].messages[0].data);for(S=0;S<i.length;++S){var I=vb(R[2][0].data);I[1][0].data=ub(S);I[4][0].data=ub(i[S].length);R[2][S]={type:R[2][0].type,data:pb(I)}}T[0].messages[0].data=pb(R)}k.content=Tb(bb(T));k.size=k.content.length;var N=_b(_[2][0].data);k=Ke.find(l,f[N].location);T=mb(kb(k.content));{if(T[0].id!=N)throw"Bad HeaderStorageBucket";R=vb(T[0].messages[0].data);for(C=0;C<=a.e.c;++C){I=vb(R[2][0].data);I[1][0].data=ub(C);I[4][0].data=ub(a.e.r+1);R[2][C]={type:R[2][0].type,data:pb(I)}}T[0].messages[0].data=pb(R)}k.content=Tb(bb(T));k.size=k.content.length;var D=_b(_[4][0].data);(function(){var e=Ke.find(l,f[D].location);var r=mb(kb(e.content));var t;for(var a=0;a<r.length;++a){var n=r[a];if(n.id==D)t=n}var i=vb(t.messages[0].data);{i[3]=[];var o=[];s.forEach(function(e,r){o[1]=[{type:0,data:ub(r)}];o[2]=[{type:0,data:ub(1)}];o[3]=[{type:2,data:ib(e)}];i[3].push({type:2,data:pb(o)})})}t.messages[0].data=pb(i);var c=bb(r);var h=Tb(c);e.content=h;e.size=e.content.length})();var F=vb(_[3][0].data);{var P=F[1][0];delete F[2];var L=vb(P.data);{var M=_b(L[2][0].data);(function(){var e=Ke.find(l,f[M].location);var r=mb(kb(e.content));var t;for(var n=0;n<r.length;++n){var o=r[n];if(o.id==M)t=o}var c=vb(t.messages[0].data);{delete c[6];delete F[7];var h=new Uint8Array(c[5][0].data);c[5]=[];var u=0;for(var d=0;d<=a.e.r;++d){var v=vb(h);u+=Mb(v,i[d],s);v[1][0].data=ub(d);c[5].push({data:pb(v),type:2})}c[1]=[{type:0,data:ub(a.e.c+1)}];c[2]=[{type:0,data:ub(a.e.r+1)}];c[3]=[{type:0,data:ub(u)}];c[4]=[{type:0,data:ub(a.e.r+1)}]}t.messages[0].data=pb(c);var p=bb(r);var g=Tb(p);e.content=g;e.size=e.content.length})()}P.data=pb(L)}_[3][0].data=pb(F)}b[4][0].data=pb(_)}v.messages[0].data=pb(b);var U=bb(d);var B=Tb(U);u.content=B;u.size=u.content.length;return l}function Bb(e){return function r(t){for(var a=0;a!=e.length;++a){var n=e[a];if(t[n[0]]===undefined)t[n[0]]=n[1];if(n[2]==="n")t[n[0]]=Number(t[n[0]])}}}function Wb(e){Bb([["cellNF",false],["cellHTML",true],["cellFormula",true],["cellStyles",false],["cellText",true],["cellDates",false],["sheetStubs",false],["sheetRows",0,"n"],["bookDeps",false],["bookSheets",false],["bookProps",false],["bookFiles",false],["bookVBA",false],["password",""],["WTF",false]])(e)}function Hb(e){Bb([["cellDates",false],["bookSST",false],["bookType","xlsx"],["compression",false],["WTF",false]])(e)}function zb(e){if(qn.WS.indexOf(e)>-1)return"sheet";if(qn.CS&&e==qn.CS)return"chart";if(qn.DS&&e==qn.DS)return"dialog";if(qn.MS&&e==qn.MS)return"macro";return e&&e.length?e:"sheet"}function Vb(e,r){if(!e)return 0;try{e=r.map(function a(r){if(!r.id)r.id=r.strRelID;return[r.name,e["!id"][r.id].Target,zb(e["!id"][r.id].Type)]})}catch(t){return null}return!e||e.length===0?null:e}function Gb(e,r,t,a,n,i,s,f,o,l,c,h){try{i[a]=Qn(Rr(e,t,true),r);var u=Or(e,r);var d;switch(f){case"sheet":d=pg(u,r,n,o,i[a],l,c,h);break;case"chart":d=gg(u,r,n,o,i[a],l,c,h);if(!d||!d["!drawel"])break;var v=Lr(d["!drawel"].Target,r);var p=Zn(v);var g=th(Rr(e,v,true),Qn(Rr(e,p,true),v));var m=Lr(g,v);var b=Zn(m);d=Pp(Rr(e,m,true),m,o,Qn(Rr(e,b,true),m),l,d);break;case"macro":d=mg(u,r,n,o,i[a],l,c,h);break;case"dialog":d=bg(u,r,n,o,i[a],l,c,h);break;default:throw new Error("Unrecognized sheet type "+f);}s[a]=d;var w=[];if(i&&i[a])rr(i[a]).forEach(function(t){var n="";if(i[a][t].Type==qn.CMNT){n=Lr(i[a][t].Target,r);var s=Ag(Or(e,n,true),n,o);if(!s||!s.length)return;ih(d,s,false)}if(i[a][t].Type==qn.TCMNT){n=Lr(i[a][t].Target,r);w=w.concat(oh(Or(e,n,true),o))}});if(w&&w.length)ih(d,w,true,o.people||[])}catch(k){if(o.WTF)throw k}}function jb(e){return e.charAt(0)=="/"?e.slice(1):e}function Xb(e,r){ze();r=r||{};Wb(r);if(_r(e,"META-INF/manifest.xml"))return Zm(e,r);if(_r(e,"objectdata.xml"))return Zm(e,r);if(_r(e,"Index/Document.iwa")){if(typeof Uint8Array=="undefined")throw new Error("NUMBERS file parsing requires Uint8Array support");if(typeof Lb!="undefined"){if(e.FileIndex)return Lb(e);var t=Ke.utils.cfb_new();Nr(e).forEach(function(r){Dr(t,r,Ir(e,r))});return Lb(t)}throw new Error("Unsupported NUMBERS file")}if(!_r(e,"[Content_Types].xml")){if(_r(e,"index.xml.gz"))throw new Error("Unsupported NUMBERS 08 file");if(_r(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Error("Unsupported ZIP file")}var a=Nr(e);var n=Kn(Rr(e,"[Content_Types].xml"));var i=false;var s,f;if(n.workbooks.length===0){f="xl/workbook.xml";if(Or(e,f,true))n.workbooks.push(f)}if(n.workbooks.length===0){f="xl/workbook.bin";if(!Or(e,f,true))throw new Error("Could not find workbook");n.workbooks.push(f);i=true}if(n.workbooks[0].slice(-3)=="bin")i=true;var o={};var l={};if(!r.bookSheets&&!r.bookProps){xd=[];if(n.sst)try{xd=Tg(Or(e,jb(n.sst)),n.sst,r)}catch(c){if(r.WTF)throw c}if(r.cellStyles&&n.themes.length)o=kg(Rr(e,n.themes[0].replace(/^\//,""),true)||"",n.themes[0],r);if(n.style)l=wg(Or(e,jb(n.style)),n.style,o,r)}n.links.map(function(t){try{var a=Qn(Rr(e,Zn(jb(t))),t);return Cg(Or(e,jb(t)),a,t,r)}catch(n){}});var h=vg(Or(e,jb(n.workbooks[0])),n.workbooks[0],r);var u={},d="";if(n.coreprops.length){d=Or(e,jb(n.coreprops[0]),true);if(d)u=hi(d);if(n.extprops.length!==0){d=Or(e,jb(n.extprops[0]),true);if(d)mi(d,u,r)}}var v={};if(!r.bookSheets||r.bookProps){if(n.custprops.length!==0){d=Rr(e,jb(n.custprops[0]),true);if(d)v=ki(d,r)}}var p={};if(r.bookSheets||r.bookProps){if(h.Sheets)s=h.Sheets.map(function I(e){return e.name});else if(u.Worksheets&&u.SheetNames.length>0)s=u.SheetNames;if(r.bookProps){p.Props=u;p.Custprops=v}if(r.bookSheets&&typeof s!=="undefined")p.SheetNames=s;if(r.bookSheets?p.SheetNames:r.bookProps)return p}s={};var g={};if(r.bookDeps&&n.calcchain)g=Eg(Or(e,jb(n.calcchain)),n.calcchain,r);var m=0;var b={};var w,k;{var T=h.Sheets;u.Worksheets=T.length;u.SheetNames=[];for(var A=0;A!=T.length;++A){u.SheetNames[A]=T[A].name}}var E=i?"bin":"xml";var C=n.workbooks[0].lastIndexOf("/");var y=(n.workbooks[0].slice(0,C+1)+"_rels/"+n.workbooks[0].slice(C+1)+".rels").replace(/^\//,"");if(!_r(e,y))y="xl/_rels/workbook."+E+".rels";var S=Qn(Rr(e,y,true),y.replace(/_rels.*/,"s5s"));if((n.metadata||[]).length>=1){r.xlmeta=yg(Or(e,jb(n.metadata[0])),n.metadata[0],r)}if((n.people||[]).length>=1){r.people=ch(Or(e,jb(n.people[0])),r)}if(S)S=Vb(S,h.Sheets);var _=Or(e,"xl/worksheets/sheet.xml",true)?1:0;e:for(m=0;m!=u.Worksheets;++m){var x="sheet";if(S&&S[m]){w="xl/"+S[m][1].replace(/[\/]?xl\//,"");if(!_r(e,w))w=S[m][1];if(!_r(e,w))w=y.replace(/_rels\/.*$/,"")+S[m][1];x=S[m][2]}else{w="xl/worksheets/sheet"+(m+1-_)+"."+E;w=w.replace(/sheet0\./,"sheet.")}k=w.replace(/^(.*)(\/)([^\/]*)$/,"$1/_rels/$3.rels");if(r&&r.sheets!=null)switch(typeof r.sheets){case"number":if(m!=r.sheets)continue e;break;case"string":if(u.SheetNames[m].toLowerCase()!=r.sheets.toLowerCase())continue e;break;default:if(Array.isArray&&Array.isArray(r.sheets)){var O=false;for(var R=0;R!=r.sheets.length;++R){if(typeof r.sheets[R]=="number"&&r.sheets[R]==m)O=1;if(typeof r.sheets[R]=="string"&&r.sheets[R].toLowerCase()==u.SheetNames[m].toLowerCase())O=1}if(!O)continue e};}Gb(e,w,k,u.SheetNames[m],m,b,s,x,r,h,o,l)}p={Directory:n,Workbook:h,Props:u,Custprops:v,Deps:g,Sheets:s,SheetNames:u.SheetNames,Strings:xd,Styles:l,Themes:o,SSF:br(X)};if(r&&r.bookFiles){if(e.files){p.keys=a;p.files=e.files}else{p.keys=[];p.files={};e.FullPaths.forEach(function(r,t){r=r.replace(/^Root Entry[\/]/,"");p.keys.push(r);p.files[r]=e.FileIndex[t]})}}if(r&&r.bookVBA){if(n.vba.length>0)p.vbaraw=Or(e,jb(n.vba[0]),true);else if(n.defaults&&n.defaults.bin===bh)p.vbaraw=Or(e,"xl/vbaProject.bin",true)}return p}function $b(e,r){var t=r||{};var a="Workbook",n=Ke.find(e,a);try{a="/!DataSpaces/Version";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);Ko(n.content);a="/!DataSpaces/DataSpaceMap";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);var i=qo(n.content);if(i.length!==1||i[0].comps.length!==1||i[0].comps[0].t!==0||i[0].name!=="StrongEncryptionDataSpace"||i[0].comps[0].v!=="EncryptedPackage")throw new Error("ECMA-376 Encrypted file bad "+a);a="/!DataSpaces/DataSpaceInfo/StrongEncryptionDataSpace";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);var s=Zo(n.content);if(s.length!=1||s[0]!="StrongEncryptionTransform")throw new Error("ECMA-376 Encrypted file bad "+a);a="/!DataSpaces/TransformInfo/StrongEncryptionTransform/!Primary";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);el(n.content)}catch(f){}a="/EncryptionInfo";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);var o=al(n.content);a="/EncryptedPackage";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);if(o[0]==4&&typeof decrypt_agile!=="undefined")return decrypt_agile(o[1],n.content,t.password||"",t);if(o[0]==2&&typeof decrypt_std76!=="undefined")return decrypt_std76(o[1],n.content,t.password||"",t);throw new Error("File is password-protected")}function Yb(e,r){if(r.bookType=="ods")return tb(e,r);if(r.bookType=="numbers")return Ub(e,r);if(r.bookType=="xlsb")return Kb(e,r);return Jb(e,r)}function Kb(e,r){ah=1024;if(e&&!e.SSF){e.SSF=br(X)}if(e&&e.SSF){ze();He(e.SSF);r.revssf=nr(e.SSF);r.revssf[e.SSF[65535]]=0;r.ssf=e.SSF}r.rels={};r.wbrels={};r.Strings=[];r.Strings.Count=0;r.Strings.Unique=0;if(Rd)r.revStrings=new Map;else{r.revStrings={};r.revStrings.foo=[];delete r.revStrings.foo}var t=r.bookType=="xlsb"?"bin":"xml";var a=Th.indexOf(r.bookType)>-1;var n=Yn();Hb(r=r||{});var i=Fr();var s="",f=0;r.cellXfs=[];Fd(r.cellXfs,{},{revssf:{General:0}});if(!e.Props)e.Props={};s="docProps/core.xml";Dr(i,s,di(e.Props,r));n.coreprops.push(s);ri(r.rels,2,s,qn.CORE_PROPS);s="docProps/app.xml";if(e.Props&&e.Props.SheetNames){}else if(!e.Workbook||!e.Workbook.Sheets)e.Props.SheetNames=e.SheetNames;else{var o=[];for(var l=0;l<e.SheetNames.length;++l)if((e.Workbook.Sheets[l]||{}).Hidden!=2)o.push(e.SheetNames[l]);e.Props.SheetNames=o}e.Props.Worksheets=e.Props.SheetNames.length;Dr(i,s,bi(e.Props,r));n.extprops.push(s);ri(r.rels,3,s,qn.EXT_PROPS);if(e.Custprops!==e.Props&&rr(e.Custprops||{}).length>0){s="docProps/custom.xml";Dr(i,s,Ti(e.Custprops,r));n.custprops.push(s);ri(r.rels,4,s,qn.CUST_PROPS)}for(f=1;f<=e.SheetNames.length;++f){var c={"!id":{}};var h=e.Sheets[e.SheetNames[f-1]];var u=(h||{})["!type"]||"sheet";switch(u){case"chart":;default:s="xl/worksheets/sheet"+f+"."+t;Dr(i,s,_g(f-1,s,r,e,c));n.sheets.push(s);ri(r.wbrels,-1,"worksheets/sheet"+f+"."+t,qn.WS[0]);}if(h){var d=h["!comments"];var v=false;var p="";if(d&&d.length>0){p="xl/comments"+f+"."+t;Dr(i,p,Ig(d,p,r));n.comments.push(p);ri(c,-1,"../comments"+f+"."+t,qn.CMNT);v=true}if(h["!legacy"]){if(v)Dr(i,"xl/drawings/vmlDrawing"+f+".vml",nh(f,h["!comments"]))}delete h["!comments"];delete h["!legacy"]}if(c["!id"].rId1)Dr(i,Zn(s),ei(c))}if(r.Strings!=null&&r.Strings.length>0){s="xl/sharedStrings."+t;Dr(i,s,Rg(r.Strings,s,r));n.strs.push(s);ri(r.wbrels,-1,"sharedStrings."+t,qn.SST)}s="xl/workbook."+t;Dr(i,s,Sg(e,s,r));n.workbooks.push(s);ri(r.rels,1,s,qn.WB);s="xl/theme/theme1.xml";Dr(i,s,Ic(e.Themes,r));n.themes.push(s);ri(r.wbrels,-1,"theme/theme1.xml",qn.THEME);s="xl/styles."+t;Dr(i,s,Og(e,s,r));n.styles.push(s);ri(r.wbrels,-1,"styles."+t,qn.STY);if(e.vbaraw&&a){s="xl/vbaProject.bin";Dr(i,s,e.vbaraw);n.vba.push(s);ri(r.wbrels,-1,"vbaProject.bin",qn.VBA)}s="xl/metadata."+t;Dr(i,s,Ng(s));n.metadata.push(s);ri(r.wbrels,-1,"metadata."+t,qn.XLMETA);Dr(i,"[Content_Types].xml",Jn(n,r));Dr(i,"_rels/.rels",ei(r.rels));Dr(i,"xl/_rels/workbook."+t+".rels",ei(r.wbrels));delete r.revssf;delete r.ssf;return i}function Jb(e,r){ah=1024;if(e&&!e.SSF){e.SSF=br(X)}if(e&&e.SSF){ze();He(e.SSF);r.revssf=nr(e.SSF);r.revssf[e.SSF[65535]]=0;r.ssf=e.SSF}r.rels={};r.wbrels={};r.Strings=[];r.Strings.Count=0;r.Strings.Unique=0;if(Rd)r.revStrings=new Map;else{r.revStrings={};r.revStrings.foo=[];delete r.revStrings.foo}var t="xml";var a=Th.indexOf(r.bookType)>-1;var n=Yn();Hb(r=r||{});var i=Fr();var s="",f=0;r.cellXfs=[];Fd(r.cellXfs,{},{revssf:{General:0}});if(!e.Props)e.Props={};s="docProps/core.xml";Dr(i,s,di(e.Props,r));n.coreprops.push(s);ri(r.rels,2,s,qn.CORE_PROPS);s="docProps/app.xml";if(e.Props&&e.Props.SheetNames){}else if(!e.Workbook||!e.Workbook.Sheets)e.Props.SheetNames=e.SheetNames;else{var o=[];for(var l=0;l<e.SheetNames.length;++l)if((e.Workbook.Sheets[l]||{}).Hidden!=2)o.push(e.SheetNames[l]);e.Props.SheetNames=o}e.Props.Worksheets=e.Props.SheetNames.length;Dr(i,s,bi(e.Props,r));n.extprops.push(s);ri(r.rels,3,s,qn.EXT_PROPS);if(e.Custprops!==e.Props&&rr(e.Custprops||{}).length>0){s="docProps/custom.xml";Dr(i,s,Ti(e.Custprops,r));n.custprops.push(s);ri(r.rels,4,s,qn.CUST_PROPS)}var c=["SheetJ5"];r.tcid=0;for(f=1;f<=e.SheetNames.length;++f){var h={"!id":{}};var u=e.Sheets[e.SheetNames[f-1]];var d=(u||{})["!type"]||"sheet";switch(d){case"chart":;default:s="xl/worksheets/sheet"+f+"."+t;Dr(i,s,pv(f-1,r,e,h));n.sheets.push(s);ri(r.wbrels,-1,"worksheets/sheet"+f+"."+t,qn.WS[0]);}if(u){var v=u["!comments"];var p=false;var g="";if(v&&v.length>0){var m=false;v.forEach(function(e){e[1].forEach(function(e){if(e.T==true)m=true})});if(m){g="xl/threadedComments/threadedComment"+f+"."+t;Dr(i,g,lh(v,c,r));n.threadedcomments.push(g);ri(h,-1,"../threadedComments/threadedComment"+f+"."+t,qn.TCMNT)}g="xl/comments"+f+"."+t;Dr(i,g,fh(v,r));n.comments.push(g);ri(h,-1,"../comments"+f+"."+t,qn.CMNT);p=true}if(u["!legacy"]){if(p)Dr(i,"xl/drawings/vmlDrawing"+f+".vml",nh(f,u["!comments"]))}delete u["!comments"];delete u["!legacy"]}if(h["!id"].rId1)Dr(i,Zn(s),ei(h))}if(r.Strings!=null&&r.Strings.length>0){s="xl/sharedStrings."+t;Dr(i,s,Ho(r.Strings,r));n.strs.push(s);ri(r.wbrels,-1,"sharedStrings."+t,qn.SST)}s="xl/workbook."+t;Dr(i,s,rg(e,r));n.workbooks.push(s);ri(r.rels,1,s,qn.WB);s="xl/theme/theme1.xml";Dr(i,s,Ic(e.Themes,r));n.themes.push(s);ri(r.wbrels,-1,"theme/theme1.xml",qn.THEME);s="xl/styles."+t;Dr(i,s,$l(e,r));n.styles.push(s);ri(r.wbrels,-1,"styles."+t,qn.STY);if(e.vbaraw&&a){s="xl/vbaProject.bin";Dr(i,s,e.vbaraw);n.vba.push(s);ri(r.wbrels,-1,"vbaProject.bin",qn.VBA)}s="xl/metadata."+t;Dr(i,s,Jc());n.metadata.push(s);ri(r.wbrels,-1,"metadata."+t,qn.XLMETA);if(c.length>1){s="xl/persons/person.xml";Dr(i,s,hh(c,r));n.people.push(s);ri(r.wbrels,-1,"persons/person.xml",qn.PEOPLE)}Dr(i,"[Content_Types].xml",Jn(n,r));Dr(i,"_rels/.rels",ei(r.rels));Dr(i,"xl/_rels/workbook."+t+".rels",ei(r.wbrels));delete r.revssf;delete r.ssf;return i}function qb(e,r){var t="";switch((r||{}).type||"base64"){case"buffer":return[e[0],e[1],e[2],e[3],e[4],e[5],e[6],e[7]];case"base64":t=k(e.slice(0,12));break;case"binary":t=e;break;case"array":return[e[0],e[1],e[2],e[3],e[4],e[5],e[6],e[7]];default:throw new Error("Unrecognized type "+(r&&r.type||"undefined"));}return[t.charCodeAt(0),t.charCodeAt(1),t.charCodeAt(2),t.charCodeAt(3),t.charCodeAt(4),t.charCodeAt(5),t.charCodeAt(6),t.charCodeAt(7)]}function Zb(e,r){if(Ke.find(e,"EncryptedPackage"))return $b(e,r);return vm(e,r)}function Qb(e,r){var t,a=e;var n=r||{};if(!n.type)n.type=T&&Buffer.isBuffer(e)?"buffer":"base64";t=Pr(a,n);return Xb(t,n)}function ew(e,r){var t=0;e:while(t<e.length)switch(e.charCodeAt(t)){case 10:;case 13:;case 32:++t;break;case 60:return jg(e.slice(t),r);default:break e;}return So.to_workbook(e,r)}function rw(e,r){var t="",a=qb(e,r);switch(r.type){case"base64":t=k(e);break;case"binary":t=e;break;case"buffer":t=e.toString("binary");break;case"array":t=mr(e);break;default:throw new Error("Unrecognized type "+r.type);}if(a[0]==239&&a[1]==187&&a[2]==191)t=lt(t);r.type="binary";return ew(t,r)}function tw(e,r){var t=e;if(r.type=="base64")t=k(t);t=a.utils.decode(1200,t.slice(2),"str");r.type="binary";return ew(t,r)}function aw(e){return!e.match(/[^\x00-\x7F]/)?e:ct(e)}function nw(e,r,t,a){if(a){t.type="string";return So.to_workbook(e,t)}return So.to_workbook(r,t)}function iw(e,r){l();var t=r||{};if(typeof ArrayBuffer!=="undefined"&&e instanceof ArrayBuffer)return iw(new Uint8Array(e),(t=br(t),t.type="array",t));if(typeof Uint8Array!=="undefined"&&e instanceof Uint8Array&&!t.type)t.type=typeof Deno!=="undefined"?"buffer":"array";var a=e,n=[0,0,0,0],i=false;if(t.cellStyles){t.cellNF=true;t.sheetStubs=true}Od={};if(t.dateNF)Od.dateNF=t.dateNF;if(!t.type)t.type=T&&Buffer.isBuffer(e)?"buffer":"base64";if(t.type=="file"){t.type=T?"buffer":"binary";a=er(e);if(typeof Uint8Array!=="undefined"&&!T)t.type="array"}if(t.type=="string"){i=true;t.type="binary";t.codepage=65001;a=aw(e)}if(t.type=="array"&&typeof Uint8Array!=="undefined"&&e instanceof Uint8Array&&typeof ArrayBuffer!=="undefined"){var s=new ArrayBuffer(3),f=new Uint8Array(s);f.foo="bar";if(!f.foo){t=br(t);t.type="array";return iw(O(a),t)}}switch((n=qb(a,t))[0]){case 208:if(n[1]===207&&n[2]===17&&n[3]===224&&n[4]===161&&n[5]===177&&n[6]===26&&n[7]===225)return Zb(Ke.read(a,t),t);break;case 9:if(n[1]<=8)return vm(a,t);break;case 60:return jg(a,t);case 73:if(n[1]===73&&n[2]===42&&n[3]===0)throw new Error("TIFF Image File is not a spreadsheet");if(n[1]===68)return _o(a,t);break;case 84:if(n[1]===65&&n[2]===66&&n[3]===76)return Co.to_workbook(a,t);break;case 80:return n[1]===75&&n[2]<9&&n[3]<9?Qb(a,t):nw(e,a,t,i);case 239:return n[3]===60?jg(a,t):nw(e,a,t,i);case 255:if(n[1]===254){return tw(a,t)}else if(n[1]===0&&n[2]===2&&n[3]===0)return xo.to_workbook(a,t);break;case 0:if(n[1]===0){if(n[2]>=2&&n[3]===0)return xo.to_workbook(a,t);if(n[2]===0&&(n[3]===8||n[3]===9))return xo.to_workbook(a,t)}break;case 3:;case 131:;case 139:;case 140:return Ao.to_workbook(a,t);case 123:if(n[1]===92&&n[2]===114&&n[3]===116)return gl.to_workbook(a,t);break;case 10:;case 13:;case 32:return rw(a,t);case 137:if(n[1]===80&&n[2]===78&&n[3]===71)throw new Error("PNG Image File is not a spreadsheet");break;}if(To.indexOf(n[0])>-1&&n[2]<=12&&n[3]<=31)return Ao.to_workbook(a,t);return nw(e,a,t,i)}function sw(e,r){var t=r||{};t.type="file";return iw(e,t)}function fw(e,r){switch(r.type){case"base64":;case"binary":break;case"buffer":;case"array":r.type="";break;case"file":return Qe(r.file,Ke.write(e,{type:T?"buffer":""}));case"string":throw new Error("'string' output type invalid for '"+r.bookType+"' files");default:throw new Error("Unrecognized type "+r.type);}return Ke.write(e,r)}function ow(e,r){var t=br(r||{});var a=Yb(e,t);return cw(a,t)}function lw(e,r){var t=br(r||{});var a=Jb(e,t);return cw(a,t)}function cw(e,r){var t={};var a=T?"nodebuffer":typeof Uint8Array!=="undefined"?"array":"string";if(r.compression)t.compression="DEFLATE";if(r.password)t.type=a;else switch(r.type){case"base64":t.type="base64";break;case"binary":t.type="string";break;case"string":throw new Error("'string' output type invalid for '"+r.bookType+"' files");case"buffer":;case"file":t.type=a;break;default:throw new Error("Unrecognized type "+r.type);}var n=e.FullPaths?Ke.write(e,{fileType:"zip",type:{nodebuffer:"buffer",string:"binary"}[t.type]||t.type,compression:!!r.compression}):e.generate(t);if(typeof Deno!=="undefined"){if(typeof n=="string"){if(r.type=="binary"||r.type=="base64")return n;n=new Uint8Array(S(n))}}if(r.password&&typeof encrypt_agile!=="undefined")return fw(encrypt_agile(n,r.password),r);if(r.type==="file")return Qe(r.file,n);return r.type=="string"?lt(n):n}function hw(e,r){var t=r||{};var a=pm(e,t);return fw(a,t)}function uw(e,r,t){if(!t)t="";var a=t+e;switch(r.type){case"base64":return w(ct(a));case"binary":return ct(a);case"string":return e;case"file":return Qe(r.file,a,"utf8");case"buffer":{if(T)return A(a,"utf8");else if(typeof TextEncoder!=="undefined")return(new TextEncoder).encode(a);else return uw(a,{type:"binary"}).split("").map(function(e){return e.charCodeAt(0)})};}throw new Error("Unrecognized type "+r.type)}function dw(e,r){switch(r.type){case"base64":return w(e);case"binary":return e;case"string":return e;case"file":return Qe(r.file,e,"binary");case"buffer":{if(T)return A(e,"binary");else return e.split("").map(function(e){return e.charCodeAt(0)})};}throw new Error("Unrecognized type "+r.type)}function vw(e,r){switch(r.type){case"string":;case"base64":;case"binary":var t="";for(var a=0;a<e.length;++a)t+=String.fromCharCode(e[a]);return r.type=="base64"?w(t):r.type=="string"?lt(t):t;case"file":return Qe(r.file,e);case"buffer":return e;default:throw new Error("Unrecognized type "+r.type);}}function pw(e,r){l();Zp(e);var t=br(r||{});if(t.cellStyles){t.cellNF=true;t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=pw(e,t);t.type="array";return S(a)}return lw(e,t)}function gw(e,r){l();Zp(e);var t=br(r||{});if(t.cellStyles){t.cellNF=true;t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=gw(e,t);t.type="array";return S(a)}var n=0;if(t.sheet){if(typeof t.sheet=="number")n=t.sheet;else n=e.SheetNames.indexOf(t.sheet);if(!e.SheetNames[n])throw new Error("Sheet not found: "+t.sheet+" : "+typeof t.sheet)}switch(t.bookType||"xlsb"){case"xml":;case"xlml":return uw(nm(e,t),t);case"slk":;case"sylk":return uw(Eo.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"htm":;case"html":return uw(Vm(e.Sheets[e.SheetNames[n]],t),t);case"txt":return dw(Sw(e.Sheets[e.SheetNames[n]],t),t);case"csv":return uw(yw(e.Sheets[e.SheetNames[n]],t),t,"\ufeff");case"dif":return uw(Co.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"dbf":return vw(Ao.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"prn":return uw(So.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"rtf":return uw(gl.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"eth":return uw(yo.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"fods":return uw(tb(e,t),t);case"wk1":return vw(xo.sheet_to_wk1(e.Sheets[e.SheetNames[n]],t),t);case"wk3":return vw(xo.book_to_wk3(e,t),t);case"biff2":if(!t.biff)t.biff=2;case"biff3":if(!t.biff)t.biff=3;case"biff4":if(!t.biff)t.biff=4;return vw(Lm(e,t),t);case"biff5":if(!t.biff)t.biff=5;case"biff8":;case"xla":;case"xls":if(!t.biff)t.biff=8;return hw(e,t);case"xlsx":;case"xlsm":;case"xlam":;case"xlsb":;case"numbers":;case"ods":return ow(e,t);default:throw new Error("Unrecognized bookType |"+t.bookType+"|");}}function mw(e){if(e.bookType)return;var r={xls:"biff8",htm:"html",slk:"sylk",socialcalc:"eth",Sh33tJS:"WTF"};var t=e.file.slice(e.file.lastIndexOf(".")).toLowerCase();if(t.match(/^\.[a-z]+$/))e.bookType=t.slice(1);e.bookType=r[e.bookType]||e.bookType}function bw(e,r,t){var a=t||{};a.type="file";a.file=r;mw(a);return gw(e,a)}function ww(e,r,t){var a=t||{};a.type="file";a.file=r;mw(a);return pw(e,a)}function kw(e,r,t,a){var n=t||{};n.type="file";n.file=e;mw(n);n.type="buffer";var i=a;if(!(i instanceof Function))i=t;return Je.writeFile(e,gw(r,n),i)}function Tw(e,r,t,a,n,i,s,f){var o=Ta(t);var l=f.defval,c=f.raw||!Object.prototype.hasOwnProperty.call(f,"raw");var h=true;var u=n===1?[]:{};if(n!==1){if(Object.defineProperty)try{Object.defineProperty(u,"__rowNum__",{value:t,enumerable:false})}catch(d){u.__rowNum__=t}else u.__rowNum__=t}if(!s||e[t])for(var v=r.s.c;v<=r.e.c;++v){var p=s?e[t][v]:e[a[v]+o];if(p===undefined||p.t===undefined){if(l===undefined)continue;if(i[v]!=null){u[i[v]]=l}continue}var g=p.v;switch(p.t){case"z":if(g==null)break;continue;case"e":g=g==0?null:void 0;break;case"s":;case"d":;case"b":;case"n":break;default:throw new Error("unrecognized type "+p.t);}if(i[v]!=null){if(g==null){if(p.t=="e"&&g===null)u[i[v]]=null;else if(l!==undefined)u[i[v]]=l;else if(c&&g===null)u[i[v]]=null;else continue}else{u[i[v]]=c&&(p.t!=="n"||p.t==="n"&&f.rawNumbers!==false)?g:Pa(p,g,f)}if(g!=null)h=false}}return{row:u,isempty:h}}function Aw(e,r){if(e==null||e["!ref"]==null)return[];var t={t:"n",v:0},a=0,n=1,i=[],s=0,f="";var o={s:{r:0,c:0},e:{r:0,c:0}};var l=r||{};var c=l.range!=null?l.range:e["!ref"];if(l.header===1)a=1;else if(l.header==="A")a=2;else if(Array.isArray(l.header))a=3;else if(l.header==null)a=0;switch(typeof c){case"string":o=Da(c);break;case"number":o=Da(e["!ref"]);o.s.r=c;break;default:o=c;}if(a>0)n=0;var h=Ta(o.s.r);var u=[];var d=[];var v=0,p=0;var g=Array.isArray(e);var m=o.s.r,b=0;var w={};if(g&&!e[m])e[m]=[];var k=l.skipHidden&&e["!cols"]||[];var T=l.skipHidden&&e["!rows"]||[];for(b=o.s.c;b<=o.e.c;++b){if((k[b]||{}).hidden)continue;u[b]=ya(b);t=g?e[m][b]:e[u[b]+h];switch(a){case 1:i[b]=b-o.s.c;break;case 2:i[b]=u[b];break;case 3:i[b]=l.header[b-o.s.c];break;default:if(t==null)t={w:"__EMPTY",t:"s"};f=s=Pa(t,null,l);p=w[s]||0;if(!p)w[s]=1;else{do{f=s+"_"+p++}while(w[f]);w[s]=p;w[f]=1}i[b]=f;}}for(m=o.s.r+n;m<=o.e.r;++m){if((T[m]||{}).hidden)continue;var A=Tw(e,o,m,u,a,i,g,l);if(A.isempty===false||(a===1?l.blankrows!==false:!!l.blankrows))d[v++]=A.row}d.length=v;return d}var Ew=/"/g;function Cw(e,r,t,a,n,i,s,f){var o=true;var l=[],c="",h=Ta(t);for(var u=r.s.c;u<=r.e.c;++u){if(!a[u])continue;var d=f.dense?(e[t]||[])[u]:e[a[u]+h];if(d==null)c="";else if(d.v!=null){o=false;c=""+(f.rawNumbers&&d.t=="n"?d.v:Pa(d,null,f));for(var v=0,p=0;v!==c.length;++v)if((p=c.charCodeAt(v))===n||p===i||p===34||f.forceQuotes){c='"'+c.replace(Ew,'""')+'"';break}if(c=="ID")c='"ID"'}else if(d.f!=null&&!d.F){o=false;c="="+d.f;if(c.indexOf(",")>=0)c='"'+c.replace(Ew,'""')+'"'}else c="";l.push(c)}if(f.blankrows===false&&o)return null;return l.join(s)}function yw(e,r){var t=[];var a=r==null?{}:r;if(e==null||e["!ref"]==null)return"";var n=Da(e["!ref"]);var i=a.FS!==undefined?a.FS:",",s=i.charCodeAt(0);var f=a.RS!==undefined?a.RS:"\n",o=f.charCodeAt(0);var l=new RegExp((i=="|"?"\\|":i)+"+$");var c="",h=[];a.dense=Array.isArray(e);var u=a.skipHidden&&e["!cols"]||[];var d=a.skipHidden&&e["!rows"]||[];for(var v=n.s.c;v<=n.e.c;++v)if(!(u[v]||{}).hidden)h[v]=ya(v);var p=0;for(var g=n.s.r;g<=n.e.r;++g){if((d[g]||{}).hidden)continue;c=Cw(e,n,g,h,s,o,i,a);if(c==null){continue}if(a.strip)c=c.replace(l,"");if(c||a.blankrows!==false)t.push((p++?f:"")+c)}delete a.dense;return t.join("")}function Sw(e,r){if(!r)r={};r.FS="\t";r.RS="\n";var t=yw(e,r);if(typeof a=="undefined"||r.type=="string")return t;var n=a.utils.encode(1200,t,"str");return String.fromCharCode(255)+String.fromCharCode(254)+n}function _w(e){var r="",t,a="";if(e==null||e["!ref"]==null)return[];var n=Da(e["!ref"]),i="",s=[],f;
 var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.s.r;c<=n.e.r;++c){i=Ta(c);for(f=n.s.c;f<=n.e.c;++f){r=s[f]+i;t=l?(e[c]||[])[f]:e[r];a="";if(t===undefined)continue;else if(t.F!=null){r=t.F;if(!t.f)continue;a=t.f;if(r.indexOf(":")==-1)r=r+":"+r}if(t.f!=null)a=t.f;else if(t.t=="z")continue;else if(t.t=="n"&&t.v!=null)a=""+t.v;else if(t.t=="b")a=t.v?"TRUE":"FALSE";else if(t.w!==undefined)a="'"+t.w;else if(t.v===undefined)continue;else if(t.t=="s")a="'"+t.v;else a=""+t.v;o[o.length]=r+"="+a}}return o}function xw(e,r,t){var a=t||{};var n=+!a.skipHeader;var i=e||{};var s=0,f=0;if(i&&a.origin!=null){if(typeof a.origin=="number")s=a.origin;else{var o=typeof a.origin=="string"?Oa(a.origin):a.origin;s=o.r;f=o.c}}var l;var c={s:{c:0,r:0},e:{c:f,r:s+r.length-1+n}};if(i["!ref"]){var h=Da(i["!ref"]);c.e.c=Math.max(c.e.c,h.e.c);c.e.r=Math.max(c.e.r,h.e.r);if(s==-1){s=h.e.r+1;c.e.r=s+r.length-1+n}}else{if(s==-1){s=0;c.e.r=r.length-1+n}}var u=a.header||[],d=0;r.forEach(function(e,r){rr(e).forEach(function(t){if((d=u.indexOf(t))==-1)u[d=u.length]=t;var o=e[t];var c="z";var h="";var v=Ra({c:f+d,r:s+r+n});l=Rw(i,v);if(o&&typeof o==="object"&&!(o instanceof Date)){i[v]=o}else{if(typeof o=="number")c="n";else if(typeof o=="boolean")c="b";else if(typeof o=="string")c="s";else if(o instanceof Date){c="d";if(!a.cellDates){c="n";o=fr(o)}h=a.dateNF||X[14]}else if(o===null&&a.nullError){c="e";o=0}if(!l)i[v]=l={t:c,v:o};else{l.t=c;l.v=o;delete l.w;delete l.R;if(h)l.z=h}if(h)l.z=h}})});c.e.c=Math.max(c.e.c,f+u.length-1);var v=Ta(s);if(n)for(d=0;d<u.length;++d)i[ya(d+f)+v]={t:"s",v:u[d]};i["!ref"]=Na(c);return i}function Ow(e,r){return xw(null,e,r)}function Rw(e,r,t){if(typeof r=="string"){if(Array.isArray(e)){var a=Oa(r);if(!e[a.r])e[a.r]=[];return e[a.r][a.c]||(e[a.r][a.c]={t:"z"})}return e[r]||(e[r]={t:"z"})}if(typeof r!="number")return Rw(e,Ra(r));return Rw(e,Ra({r:r,c:t||0}))}function Iw(e,r){if(typeof r=="number"){if(r>=0&&e.SheetNames.length>r)return r;throw new Error("Cannot find sheet # "+r)}else if(typeof r=="string"){var t=e.SheetNames.indexOf(r);if(t>-1)return t;throw new Error("Cannot find sheet name |"+r+"|")}else throw new Error("Cannot find sheet |"+r+"|")}function Nw(){return{SheetNames:[],Sheets:{}}}function Dw(e,r,t,a){var n=1;if(!t)for(;n<=65535;++n,t=undefined)if(e.SheetNames.indexOf(t="Sheet"+n)==-1)break;if(!t||e.SheetNames.length>=65535)throw new Error("Too many worksheets");if(a&&e.SheetNames.indexOf(t)>=0){var i=t.match(/(^.*?)(\d+)$/);n=i&&+i[2]||0;var s=i&&i[1]||t;for(++n;n<=65535;++n)if(e.SheetNames.indexOf(t=s+n)==-1)break}Jp(t);if(e.SheetNames.indexOf(t)>=0)throw new Error("Worksheet with name |"+t+"| already exists!");e.SheetNames.push(t);e.Sheets[t]=r;return t}function Fw(e,r,t){if(!e.Workbook)e.Workbook={};if(!e.Workbook.Sheets)e.Workbook.Sheets=[];var a=Iw(e,r);if(!e.Workbook.Sheets[a])e.Workbook.Sheets[a]={};switch(t){case 0:;case 1:;case 2:break;default:throw new Error("Bad sheet visibility setting "+t);}e.Workbook.Sheets[a].Hidden=t}function Pw(e,r){e.z=r;return e}function Lw(e,r,t){if(!r){delete e.l}else{e.l={Target:r};if(t)e.l.Tooltip=t}return e}function Mw(e,r,t){return Lw(e,"#"+r,t)}function Uw(e,r,t){if(!e.c)e.c=[];e.c.push({t:r,a:t||"SheetJS"})}function Bw(e,r,t,a){var n=typeof r!="string"?r:Da(r);var i=typeof r=="string"?r:Na(r);for(var s=n.s.r;s<=n.e.r;++s)for(var f=n.s.c;f<=n.e.c;++f){var o=Rw(e,s,f);o.t="n";o.F=i;delete o.v;if(s==n.s.r&&f==n.s.c){o.f=t;if(a)o.D=true}}return e}var Ww={encode_col:ya,encode_row:Ta,encode_cell:Ra,encode_range:Na,decode_col:Ca,decode_row:ka,split_cell:xa,decode_cell:Oa,decode_range:Ia,format_cell:Pa,sheet_add_aoa:Ma,sheet_add_json:xw,sheet_add_dom:Gm,aoa_to_sheet:Ua,json_to_sheet:Ow,table_to_sheet:jm,table_to_book:Xm,sheet_to_csv:yw,sheet_to_txt:Sw,sheet_to_json:Aw,sheet_to_html:Vm,sheet_to_formulae:_w,sheet_to_row_object_array:Aw,sheet_get_cell:Rw,book_new:Nw,book_append_sheet:Dw,book_set_sheet_visibility:Fw,cell_set_number_format:Pw,cell_set_hyperlink:Lw,cell_set_internal_link:Mw,cell_add_comment:Uw,sheet_set_array_formula:Bw,consts:{SHEET_VISIBLE:0,SHEET_HIDDEN:1,SHEET_VERY_HIDDEN:2}};var Hw;function zw(e){Hw=e}function Vw(e,r){var t=Hw();var a=r==null?{}:r;if(e==null||e["!ref"]==null){t.push(null);return t}var n=Da(e["!ref"]);var i=a.FS!==undefined?a.FS:",",s=i.charCodeAt(0);var f=a.RS!==undefined?a.RS:"\n",o=f.charCodeAt(0);var l=new RegExp((i=="|"?"\\|":i)+"+$");var c="",h=[];a.dense=Array.isArray(e);var u=a.skipHidden&&e["!cols"]||[];var d=a.skipHidden&&e["!rows"]||[];for(var v=n.s.c;v<=n.e.c;++v)if(!(u[v]||{}).hidden)h[v]=ya(v);var p=n.s.r;var g=false,m=0;t._read=function(){if(!g){g=true;return t.push("\ufeff")}while(p<=n.e.r){++p;if((d[p-1]||{}).hidden)continue;c=Cw(e,n,p-1,h,s,o,i,a);if(c!=null){if(a.strip)c=c.replace(l,"");if(c||a.blankrows!==false)return t.push((m++?f:"")+c)}}return t.push(null)};return t}function Gw(e,r){var t=Hw();var a=r||{};var n=a.header!=null?a.header:Bm;var i=a.footer!=null?a.footer:Wm;t.push(n);var s=Ia(e["!ref"]);a.dense=Array.isArray(e);t.push(zm(e,s,a));var f=s.s.r;var o=false;t._read=function(){if(f>s.e.r){if(!o){o=true;t.push("</table>"+i)}return t.push(null)}while(f<=s.e.r){t.push(Um(e,s,f,a));++f;break}};return t}function jw(e,r){var t=Hw({objectMode:true});if(e==null||e["!ref"]==null){t.push(null);return t}var a={t:"n",v:0},n=0,i=1,s=[],f=0,o="";var l={s:{r:0,c:0},e:{r:0,c:0}};var c=r||{};var h=c.range!=null?c.range:e["!ref"];if(c.header===1)n=1;else if(c.header==="A")n=2;else if(Array.isArray(c.header))n=3;switch(typeof h){case"string":l=Da(h);break;case"number":l=Da(e["!ref"]);l.s.r=h;break;default:l=h;}if(n>0)i=0;var u=Ta(l.s.r);var d=[];var v=0;var p=Array.isArray(e);var g=l.s.r,m=0;var b={};if(p&&!e[g])e[g]=[];var w=c.skipHidden&&e["!cols"]||[];var k=c.skipHidden&&e["!rows"]||[];for(m=l.s.c;m<=l.e.c;++m){if((w[m]||{}).hidden)continue;d[m]=ya(m);a=p?e[g][m]:e[d[m]+u];switch(n){case 1:s[m]=m-l.s.c;break;case 2:s[m]=d[m];break;case 3:s[m]=c.header[m-l.s.c];break;default:if(a==null)a={w:"__EMPTY",t:"s"};o=f=Pa(a,null,c);v=b[f]||0;if(!v)b[f]=1;else{do{o=f+"_"+v++}while(b[o]);b[f]=v;b[o]=1}s[m]=o;}}g=l.s.r+i;t._read=function(){while(g<=l.e.r){if((k[g-1]||{}).hidden)continue;var r=Tw(e,l,g,d,n,s,p,c);++g;if(r.isempty===false||(n===1?c.blankrows!==false:!!c.blankrows)){t.push(r.row);return}}return t.push(null)};return t}var Xw={to_json:jw,to_html:Gw,to_csv:Vw,set_readable:zw};if(typeof vm!=="undefined")e.parse_xlscfb=vm;e.parse_zip=Xb;e.read=iw;e.readFile=sw;e.readFileSync=sw;e.write=gw;e.writeFile=bw;e.writeFileSync=bw;e.writeFileAsync=kw;e.utils=Ww;e.writeXLSX=pw;e.writeFileXLSX=ww;e.SSF=Ve;if(typeof Xw!=="undefined")e.stream=Xw;if(typeof Ke!=="undefined")e.CFB=Ke;if(typeof require!=="undefined"){var $w=undefined;if(($w||{}).Readable)zw($w.Readable)}}if(typeof exports!=="undefined")make_xlsx_lib(exports);else if(typeof module!=="undefined"&&module.exports)make_xlsx_lib(module.exports);else if(typeof define==="function"&&define.amd)define("xlsx",function(){if(!XLSX.version)make_xlsx_lib(XLSX);return XLSX});else make_xlsx_lib(XLSX);if(typeof window!=="undefined"&&!window.XLSX)try{window.XLSX=XLSX}catch(e){}
 </script>
-<title>EXPRIM · Painel — TESTE 5S (SEGURA)</title>
+<title>EXPRIM · Painel — TESTE 6C</title>
 <style>
 :root{--bg:#0E1B2E;--card:#152540;--line:#24344E;--navy:#24344E;--gold:#D4AF37;
 --green:#2DD4BF;--red:#F0705A;--ink:#E8EDF5;--ink2:#8FA1BC;--cream:#1D2E4A}
@@ -166,6 +166,17 @@ textarea.exp{width:100%;height:150px;background:var(--cream);color:var(--ink);bo
 #gate .gm{font-size:12.5px;color:var(--ink2);line-height:1.6;margin-bottom:18px;white-space:pre-line}
 #gate button{display:block;width:100%;margin:7px 0;padding:11px;border-radius:9px;border:1.5px solid var(--line);background:var(--cream);color:var(--ink);font-size:13px;font-weight:700;cursor:pointer}
 #gate #gbtn{background:var(--gold);color:#0E1B2E;border-color:var(--gold)}
+.bresin{max-height:360px;overflow:auto;margin-top:6px}
+@media(max-width:700px){.pcbusca{display:none}}
+
+.arow{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.arara{flex:1;min-width:148px;background:var(--cream);border:1.5px solid var(--line);border-top:4px solid var(--ac);border-radius:11px;padding:10px 12px;cursor:pointer}
+.arara:hover{border-color:var(--ac);box-shadow:0 0 14px rgba(212,175,55,.12)}
+.arod{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--ac),transparent);margin-bottom:6px;opacity:.6}
+.anm{font-weight:800;font-size:11px;letter-spacing:.09em;color:var(--ac);text-transform:uppercase}
+.an{font-weight:800;font-size:20px;margin-top:4px}.an span{font-size:10px;color:var(--ink2);font-weight:600}
+.as{font-size:10.5px;color:var(--ink2);margin-top:2px}
+@media(max-width:700px){.arow{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.arara{min-width:128px;flex:0 0 auto}}
 </style></head><body>
 <div id="gate"><div class="gbox"><div class="gt">EXPRIM · PAINEL</div><div class="gm" id="gmsg">클라우드 연결 중…</div><button id="gbtn" style="display:none" onclick="window.__login&&__login()">ENTRAR COM GOOGLE</button><button id="gred" style="display:none" onclick="window.__loginR&&__loginR()">MODO COMPATÍVEL</button><button id="gout" style="display:none" onclick="window.__logout&&__logout()">SAIR</button><button id="glocal" style="display:none" onclick="window.__localMode()">MODO LOCAL — 클라우드 없이 열기</button></div></div>
 <div class="wrap">
@@ -362,11 +373,12 @@ window.expSem=()=>{const F=D.fup;if(!F)return;
  expXls(F.SEM.cli,cols,'FOLLOWUP_'+F.SEM.nome.replace(/\s+/g,'')+'_'+new Date().toISOString().slice(0,10));};
 function rail(){
  const P=[
- ['goal','목표',(sep.q?((sep.rev/mNeedRev(9)*100).toFixed(1)+'%'):augAch.toFixed(1)+'%'),(sep.q?'9월':'8월')+' 계절 목표 달성률',''],
- ['sell','판다',cats[0]?cats[0].k:'-','최근 4주 1위 · 둔화 '+slow.length,''],
- ['make','만든다',E?urgOut.length:urgent.length,E?'긴급 '+urgent.length+' 중 생산라인 없음':'재생산 후보 (재고 4주 미만)',(E?urgOut.length:urgent.length)?'warn':''],
- ['care','관리한다',fmt(totEst),'총 재고 · '+fmtR(totVal),''],
- ['cust','영업한다',(D.fup&&D.fup.N?D.fup.N.SEM:0),'FOLLOW-UP 이번 주 리스트 · 후보 '+(D.fup&&D.fup.N?(D.fup.N.HORA+D.fup.N.ESF+D.fup.N.REC):'-'),'']];
+ ['goal','HOME','🏠','대시보드 — KPI · 오늘의 흐름 · 찾기 · ARARAS',''],
+ ['goal2','GOAL · 목표',(sep.q?((sep.rev/mNeedRev(9)*100).toFixed(1)+'%'):augAch.toFixed(1)+'%'),(sep.q?'9월':'8월')+' 계절 목표 · 클릭: 설정·관리',''],
+ ['sell','LOJA · 판다',cats[0]?cats[0].k:'-','최근 4주 1위 · 둔화 '+slow.length,''],
+ ['make','PRODUÇÃO · 만든다',E?urgOut.length:urgent.length,E?'긴급 '+urgent.length+' 중 생산라인 없음':'재생산 후보 (재고 4주 미만)',(E?urgOut.length:urgent.length)?'warn':''],
+ ['care','ESTOQUE · 관리한다',fmt(totEst),'총 재고 · '+fmtR(totVal),''],
+ ['cust','CLIENTES · 영업한다',(D.fup&&D.fup.N?D.fup.N.SEM:0),'FOLLOW-UP 이번 주 리스트 · 후보 '+(D.fup&&D.fup.N?(D.fup.N.HORA+D.fup.N.ESF+D.fup.N.REC):'-'),'']];
  document.getElementById('rail').innerHTML=P.map(([id,t,n,s,w])=>`
  <div class="stat ${VIEW===id?'on':''}" onclick="VIEW='${id}';closeP();rail();mid()">
  <span class="tag ${w}">${t}</span><div class="big">${n}</div><div class="sub">${s}</div></div>`).join('');
@@ -455,6 +467,18 @@ cust(){
  const F=D.fup;
  if(!F){const wait=D.cont.filter(c=>!(c.obs||'').includes('Comprou'));
   return `<div class="mgrid">${card('fup','Follow-up',wait.length+' 고객','gold','27/08 연락 기록','')}</div>`;}
+ if(F.SEM&&Array.isArray(F.SEM.cli)){const vh=l=>l.reduce((a,x)=>a+(x.ta||0)+(x.t26||0),0);
+ return `<div class="hero" style="border-color:var(--gold)"><span class="lab" style="color:var(--gold)">CUSTOMER FOLLOW-UP v0.1 — 🟢 잠긴 문서 로드됨 (이 화면은 클라우드에만, 파일에 비내장)</span>
+ <div class="mgrid" style="margin-top:10px">
+ ${card('fupS:1','이번 주 연락 리스트',F.SEM.cli.length+'명 · 3회','gold',(F.SEM.nome||'')+' — 클릭: 세션별 명단·전화','')}
+ ${card('fupG:ESF','CLIENTE ESFRIANDO',F.ESF.length+'곳','red','상반기엔 사다가 이번 분기 0 — 식기 전에 연락 (이력액 R$ '+fmt(vh(F.ESF))+')','')}
+ ${card('fupG:HORA','HORA DE VOLTAR',F.HORA.length+'곳','green','평소 리듬상 올 때가 된 고객 (이력액 R$ '+fmt(vh(F.HORA))+')','')}
+ ${card('fupG:REC','RECUPERAÇÃO',F.REC.length+'곳','','2026 무구매 · 2025 R$3.000+ (2025 합 R$ '+fmt(vh(F.REC))+')','')}
+ ${card(null,'2026 도매 페이스','44%','red','2025 대비 (기대 71%) — 재활성화가 필요한 이유','<span class="chip r">경보</span>')}
+ ${F.DB?card(null,'고객 DB 품질','전화없음 '+F.DB.semTel+' · 번호2개 '+F.DB.dois,'','FOLLOW-UP 하면서 자동 정비',''):''}
+ </div>
+ <div class="s" style="font-size:10.5px;color:var(--ink2);margin-top:8px">🔒 명단은 로그인된 이 화면의 메모리에만 — 파일·공개 웹에 저장되지 않음. 결과 코드는 시트 6코드 그대로.</div>
+ </div>`;}
  const N=F.N||{};
  return `<div class="hero" style="border-color:var(--gold)"><span class="lab" style="color:var(--gold)">CUSTOMER FOLLOW-UP v0.1 — 집계 (명단·전화는 보안상 비내장)</span>
  <div class="mgrid" style="margin-top:10px">
@@ -465,7 +489,12 @@ cust(){
  ${card(null,'2026 도매 페이스','44%','red','2025 대비 (기대 71%) — 재활성화가 필요한 이유','<span class="chip r">경보</span>')}
  ${card(null,'고객 DB 품질','전화없음 '+F.DB.semTel+' · 번호2개 '+F.DB.dois,'','FOLLOW-UP 하면서 자동 정비','')}
  </div>
- <div class="s" style="font-size:10.5px;color:var(--ink2);margin-top:8px">🔒 고객 명단·전화는 보안 규칙(02/10)에 따라 이 파일에 내장되지 않습니다. 상세 리스트는 잠긴 클라우드 문서 로드(준비 중)로 제공 예정 — 이번 주 명단은 주간 루프 채팅에서.</div></div>`;
+ <div class="sec">이번 주 연락 리스트 — 형식 미리보기 <span class="chip o">예시 데이터 (실명 아님)</span></div>
+ <div class="prow"><span class="c" style="font-size:11px">CLIENTE EXEMPLO A</span><span class="i">ESFRIANDO · 최종 07/07 (88일) · 26년 3회</span><span class="v"><span style="color:var(--green);font-weight:bold">💬 (xx) 9xxxx-xxxx</span></span></div>
+ <div class="prow"><span class="c" style="font-size:11px">CLIENTE EXEMPLO B</span><span class="i">HORA DE VOLTAR · 최종 20/08 · 분기 리듬 도달</span><span class="v"><span style="color:var(--green);font-weight:bold">💬 (xx) 9xxxx-xxxx</span></span></div>
+ <div class="prow"><span class="c" style="font-size:11px">CLIENTE EXEMPLO C</span><span class="i">RECUPERAÇÃO · 2025 R$ 4.800 · 2026 무구매</span><span class="v"><span style="color:var(--green);font-weight:bold">💬 (xx) 9xxxx-xxxx</span></span></div>
+ <div class="note">🔓 <b>실제 명단 보는 법</b>: ① exprim.adm 로그인 → 잠긴 클라우드 문서(painel/clientes)에서 자동 로드 · ② 또는 CLIENTES_SEED.json 파일을 화면에 드래그(1회 게시). 로드되면 이 자리에 세션별 실명단 · 전화 · WhatsApp 바로가기(💬)가 열립니다 — 보안 규칙(02/10)상 공개 파일에는 실명·전화를 넣지 않습니다.</div>
+ <div class="s" style="font-size:10.5px;color:var(--ink2);margin-top:8px">🔒 고객 명단·전화는 보안 규칙(02/10)에 따라 이 파일에 내장되지 않습니다. 위 예시는 화면 형식 설명용입니다.</div></div>`;
 }};
 
 if(V3&&V3.kpi2){MID.goal=function(){
@@ -502,19 +531,18 @@ if(V3&&V3.kpi2){MID.goal=function(){
   {l:'D90+ 정리 검토 잔존',n:23,src:'정본 산식 없음 — 자동화 보류(정의 확정 후)',cap:'실측 13/09 기준'}
  ];
  const mx=Math.max(...T.map(t=>t.rev));
- const kpi=(t,n,d,cl)=>`<div class="kpi"><div class="t">${t}</div><div class="n ${cl||''}">${n}</div><div class="d">${d}</div></div>`;
+ const kpi=(t,n,d,cl,kid)=>`<div class="kpi" ${kid?`onclick="openKpi('${kid}')" style="cursor:pointer"`:''}><div class="t">${t}${kid?' <span style="font-size:8px;color:var(--ink2)">▸</span>':''}</div><div class="n ${cl||''}">${n}</div><div class="d">${d}</div></div>`;
  const dec=(id,cl,t,n,s)=>`<div class="dec ${cl}" ${id?`onclick="openP('${id}')"`:''}><div class="t" style="font-size:9.5px;font-weight:bold;letter-spacing:.08em;color:var(--ink2)">${t}</div><div style="font-weight:bold;font-size:20px;margin-top:4px">${n}</div><div style="font-size:10.5px;color:var(--ink2);margin-top:2px">${s}</div></div>`;
  return `
  <div class="kpis">
- ${kpi('FULL PRICE %',(K.fp*100).toFixed(1).replace('.',',')+'%',K.fpw||'')}
- ${kpi('VENDAS SEMANA','R$ '+fmt(K.vend),fmt(K.vendq)+' pçs · '+(K.wow>=0?'<span class=up>▲'+K.wow+'%</span>':'<span class=dn>▼'+Math.abs(K.wow)+'%</span>')+' vs 前주')}
- ${kpi('ESTOQUE','R$ '+fmt(K.val),fmt(K.est)+' pçs')}
- ${kpi('PROMO+SALDO','R$ '+fmt(K.ps),'가격 기준 (존 기준 R$ '+fmt(K.psz)+')')}
- ${kpi('GIRO',K.giro.toFixed(1).replace('.',',')+'%/sem','주판매 ÷ 총재고')}
- ${kpi('PRODUÇÃO',(E&&E.sewPcs!=null&&E.cutPcs!=null)?fmt(E.sewPcs+E.cutPcs)+' pçs':'DADO INDISPONÍVEL','생산 중 · 도착임박 '+((E&&E.arr)?E.arr.length+'모델':'—'))}
+ ${kpi('FULL PRICE %',(K.fp*100).toFixed(1).replace('.',',')+'%',K.fpw||'','','fp')}
+ ${kpi('VENDAS SEMANA','R$ '+fmt(K.vend),fmt(K.vendq)+' pçs · '+(K.wow>=0?'<span class=up>▲'+K.wow+'%</span>':'<span class=dn>▼'+Math.abs(K.wow)+'%</span>')+' vs 前주','','vend')}
+ ${kpi('ESTOQUE','R$ '+fmt(K.val),fmt(K.est)+' pçs','','est')}
+ ${kpi('PROMO+SALDO','R$ '+fmt(K.ps),'가격 기준 (존 기준 R$ '+fmt(K.psz)+')','','ps')}
+ ${kpi('GIRO',K.giro.toFixed(1).replace('.',',')+'%/sem','주판매 ÷ 총재고','','giro')}
+ ${kpi('PRODUÇÃO',(E&&E.sewPcs!=null&&E.cutPcs!=null)?fmt(E.sewPcs+E.cutPcs)+' pçs':'DADO INDISPONÍVEL','생산 중 · 도착임박 '+((E&&E.arr)?E.arr.length+'모델':'—'),'','prod')}
  </div>
- <div class="hero" style="border-color:var(--gold);padding:13px 16px"><span class="lab" style="color:var(--gold)">DECISÕES DA SEMANA</span>
- <div class="mgrid" style="margin-top:9px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+ ${(()=>{window.__DECSHTML=`<div class="mgrid" style="margin-top:9px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
  ${dec('b19','r','🔴 PROMOÇÃO 승인',V3.b19.length,'R$ 32.673 재고 — 실행일 결정')}
  ${dec('esg','r','🔴 ESGOTADO × 생산없음',C.esgSem,'품절 성공모델 — REORDER/FINALIZAR')}
  ${dec('saldo3','o','🟠 SALDO 실사',V3.saldo3.length,'가격표 확인 — 반올림 승격 금지')}
@@ -522,31 +550,60 @@ if(V3&&V3.kpi2){MID.goal=function(){
  ${dec('loc64','o','🟠 위치 대조',V3.loc64.length,'PROMO 20 + SALDO 44 실물 확인')}
  ${dec('urgent','g','🟢 REORDER 기회',urgent.length,'잘 팔리는데 재고 4주 미만')}
  ${dec('conf','t','⚪ TEST/OBSERVAÇÃO',C.test,'기존 엔진 vs 신규 판단 — 위험 아님·관찰')}
- </div></div>
- <div class="c3">
- <div class="mc"><div class="t">VENDER</div>
-  ${VENDER.map(v=>`<div class="crow" data-src="${v.src}" title="SOURCE: ${v.src}"><span>${v.l}${v.cap?' <i style="font-style:normal;font-size:9.5px;color:var(--ink2)">· '+v.cap+'</i>':''}</span><b>${v.n}</b></div>`).join('')}</div>
- <div class="mc" style="border-color:#E8A33D"><div class="t" style="color:#E8A33D">CONFLITOS — 판매 ↔ 생산 &nbsp;${eloBadge()}</div>
-  <div class="crow"><span>🔴 품절 임박 × 생산라인 없음</span><b>${C.esgSem}</b></div>
-  <div class="crow"><span>🔴 재고 249장·판매 0 × 생산 중</span><b>${C.estProdMod}</b></div>
-  <div class="crow"><span>🟠 강판매 × 생산계획 없음</span><b>${C.fortSem}</b></div>
-  <div class="crow"><span>생산완료 × D0 없음</span><b>버튼 가동 후</b></div>
-  <div class="crow"><span>REORDER 승인 × 미진행</span><b>${C.reoSem}</b></div>
-  <div class="crow"><span>⚪ 엔진 vs 신규 (관찰 표본)</span><b>${C.test}</b></div></div>
- <div class="mc"><div class="t">PRODUZIR</div>
-  <div class="crow"><span>봉제 중</span><b>${E?vv(E.sewPcs,x=>fmt(x)+' pçs'):'—'}</b></div>
-  <div class="crow"><span>재단 단계</span><b>${E?vv(E.cutPcs,x=>fmt(x)+' pçs'):'—'}</b></div>
-  <div class="crow"><span>도착 임박</span><b>${E?vv(E.arr,x=>x.length+' 모델'):'—'}</b></div>
-  <div class="crow"><span>확정 대기</span><b>${E?vv(E.conf,x=>x.length+'건'):'—'}</b></div>
-  <div class="crow"><span>데이터</span><b>${ELOSTATE.label}</b></div></div>
+ </div>`;
+ window.__DECN=(V3.acoes||[]).length;
+ setTimeout(()=>{const b=document.getElementById('decn2');if(b)b.textContent=window.__DECN;},0);
+ return '';})()}
+ ${(()=>{const fxr=PD.estreia.filter(x=>x.reo).length,fxg=PD.estreia.filter(x=>x.n>=5).length,
+   fxs=PD.slow.filter(x=>!x.nov&&!LADSET.has(x.mod)).length,
+   N=(D.fup&&D.fup.N)||{},full=!!(D.fup&&D.fup.SEM&&Array.isArray(D.fup.SEM.cli)),
+   nSem=N.SEM??(full?D.fup.SEM.cli.length:'—'),nEsf=N.ESF??(full?D.fup.ESF.length:'—'),
+   sewN=(E&&E.sewN!=null)?E.sewN:'—',arrN=(E&&E.arr)?E.arr.length:'—';
+  const bt=(ic,lb,n,fn)=>`<span class="cb on" style="cursor:pointer" onclick="${fn}">${ic} ${lb} <b>${n}</b></span>`;
+  return `<div class="mc" style="border-color:var(--green);display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center;padding:11px 16px">
+  <span class="t" style="margin:0;color:var(--green)">FLUXO — 오늘의 흐름</span>
+  ${bt('🌟','신상',PD.estreia.length,"goPanda('nov')")}
+  ${bt('🎓','졸업 임박',fxg,"goPanda('nov')")}
+  ${bt('🔥','리오더',fxr,"goPanda('nov')")}
+  ${bt('🧊','둔화',fxs,"goPanda('weak')")}
+  ${bt('📞','팔로우업',nSem,"VIEW='cust';rail();mid()")}
+  ${bt('🥶','식는 중',nEsf,"VIEW='cust';rail();mid()")}
+  ${bt('🧵','봉제 중',sewN+'로트',"openP('sewing')")}
+  ${bt('📦','도착 임박',arrN,"openD0()")}
+  <span class="s" style="font-size:10px;color:var(--ink2)">클릭 → 해당 섹터</span>
+  </div>`;})()}
+ <div class="mc pcbusca" style="border-color:var(--green);padding:11px 16px;cursor:default">
+  <div class="t" style="color:var(--green)">🔍 찾기 — 모델 코드 · 카테고리 · 등급 <i style="font-style:normal;font-size:9.5px;color:var(--ink2)">코드 일부 숫자만 입력해도 됩니다 · 행 클릭: 상세 · Enter: 첫 결과</i></div>
+  <input id="bq2" type="search" placeholder="예: 11524 · B3636 · BLUSA · REGATA…" autocomplete="off"
+   style="width:100%;box-sizing:border-box;margin-top:8px;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;background:var(--cream);color:var(--ink);font-size:14px;font-weight:700"
+   oninput="buscaRender('bres2','bq2')" onkeydown="if(event.key==='Enter')buscaGo('bres2')"
+   onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--line)'">
+  <div id="bres2" class="bresin"></div>
  </div>
- <div class="mc" style="cursor:pointer" onclick="openP('goalSet')"><div class="t">TREND — 주간 매출 (${sep.q?'9':'8'}월 계절 목표 ${(sep.q?(sep.rev/mNeedRev(9)*100):augAch).toFixed(1).replace('.',',')}% · 클릭: 목표 설정)</div>
- <div class="tbar">${T.map((t,i)=>`<div><div class="b ${i===T.length-1?'last':''}" style="height:${Math.max(6,t.rev/mx*70)}px"></div>${t.w}<br>R$ ${fmt(t.rev/1000)}k</div>`).join('')}</div></div>
- <div class="mc" style="cursor:default"><div class="t">PRÓXIMAS AÇÕES — 긴급도 → R$ ENVOLVIDO 순</div>
+ ${(()=>{const L=locAgg();
+  const EQ={n:L.G.n+L.EST.n,est:L.G.est+L.EST.est,val:L.G.val+L.EST.val};
+  const A=[['P','👕 PRINCIPAL','#2DD4BF',L.P],
+           ['PPED','🛍 PRÉ-VENDA','#D4AF37',L.PPED],
+           ['PROM','🏷 PROMOÇÃO','#E8A33D',L.PROM],
+           ['SAL','💸 SALDO','#F0705A',L.SAL],
+           ['ESTQ','📦 ESTOQUE','#8FA1BC',EQ]];
+  const ac=a=>`<div class="arara" onclick="openAr('${a[0]}')" style="--ac:${a[2]}">
+   <div class="arod"></div><div class="anm">${a[1]}</div>
+   <div class="an">${a[3].n}<span> 모델</span></div>
+   <div class="as">${fmt(a[3].est)} pçs · R$ ${fmt(a[3].val)}</div></div>`;
+  return `<div class="hero" style="padding:13px 16px">
+  <span class="lab">🏬 LOJA — ARARAS (실측 ${BASE_D()} + 대표 정정 병합 · 카드 클릭: 모델 목록)</span>
+  <div class="arow">${A.map(ac).join('')}</div>
+  ${(L.PR.n||L.OUT.n||L.ZERO.n)?`<div class="s" style="font-size:10px;color:var(--ink2);margin-top:7px">· PROMOÇÃO/SALDO 미구분 <b>${L.PR.n}</b>모델 ${fmt(L.PR.est)}pçs (실사 때 분리 — 위 PROMO·SALDO 숫자에 미포함) · 기타 ${L.OUT.n} · 소진 ${L.ZERO.n}</div>`:''}
+  </div>`;})()}
+ ${(()=>{window.__ACOES=`
+ <div class="mc" style="cursor:default"><div class="t">PRÓXIMAS AÇÕES — 결정 대기 목록 (헤더 배지와 동일) · 긴급도 → R$ 순</div>
+ <div class="s" style="font-size:10.5px;color:var(--ink2);margin-top:3px">판매↔생산 충돌 — 품절×생산없음 <b>${C.esgSem}</b> · 재고249×생산중 <b>${C.estProdMod}</b> · REORDER 미진행 <b>${C.reoSem}</b> · 관찰 <b>${C.test}</b> &nbsp;${eloBadge()}</div>
  <table class="acts" style="margin-top:6px"><tr><th>modelo</th><th>problema</th><th>recomendação</th><th style="text-align:right">R$</th><th>ação</th></tr>
  ${V3.acoes.map(a=>`<tr><td><b>${a.mod}</b></td><td>${a.prob}</td><td>${a.rec}</td><td class="num">${a.rs?fmt(a.rs):'—'}</td><td style="color:var(--ink2)">${a.act}</td></tr>`).join('')}
  </table>
- <div class="s" style="font-size:10px;color:var(--ink2);margin-top:6px">승인은 채팅/월요일 루프에서 EVENT LOG로 기록 — 화면에서 자동 실행 없음 · 577개 전체는 좌측 레일 상세에서</div></div>`;};}
+ <div class="s" style="font-size:10px;color:var(--ink2);margin-top:6px">승인은 채팅/월요일 루프에서 EVENT LOG로 기록 — 화면에서 자동 실행 없음 · 577개 전체는 좌측 레일 상세에서</div></div>
+`;return '';})()}`;};}
 
 
 /* ═════════ PANDA v0.3 모듈 (판다 화면 전용 — 대표 확정 24/09) ═════════ */
@@ -609,9 +666,11 @@ function cartN(){return Object.values(CART).reduce((a,v)=>a+v.length,0);}
 function cartBar(){
  document.getElementById('cartbar').innerHTML=
   CORD.map(k=>CART[k].length?`<span class="cb on" onclick="openCart()">${CNAME[k]} <b>${CART[k].length}</b></span>`:'').join('')
+  +`<span class="cb" style="border-color:var(--green)" onclick="openBusca()">🔍 찾기</span>`
   +`<span class="cb" onclick="openCart()">🧺 담기 <b>${cartN()}</b></span>`
   +`<span class="cb" onclick="uiUpload()">📥 엑셀 갱신</span>`
   +`<span class="cb" onclick="openEvents()">📋 기록 <b id="evn">${(window.EV||[]).length}</b></span>`
+  +`<span class="cb" style="border-color:var(--gold);cursor:pointer" onclick="openDecs()">🟡 결정 대기 <b id="decn2">${window.__DECN??'—'}</b></span>`
   +(OVRMETA?`<span class="cb" style="border-color:var(--green)" title="${OVRMETA.name||''} · ${OVRMETA.when||''}" onclick="if(confirm('드래그 갱신본을 지우고 내장 데이터로 돌아갈까요?'))ovrReset()">🟢 드래그본 ${OVRMETA.models||''}모델</span>`:'');
 }
 window.openCart=()=>{
@@ -684,6 +743,217 @@ window.hideMenu=()=>{document.getElementById('cmenu').style.display='none';};
 document.addEventListener('click',e=>{if(!e.target.closest('#cmenu')&&!e.target.closest('.addb'))hideMenu();});
 window.plus=(ev,mod)=>{ev.stopPropagation();showMenu(mod,ev.clientX,ev.clientY);};
 window.rctx=(ev,mod)=>{ev.preventDefault();showMenu(mod,ev.clientX,ev.clientY);};
+
+/* ═══ TESTE 6: CLIENTES 잠긴 문서 + D0 도착 컨펌 ═══ */
+window.applyCli=function(obj){
+ if(!obj||!obj.fup||!obj.fup.SEM){toast('CLIENTES 데이터 형식 오류');return;}
+ const N0=(D.fup&&D.fup.N)||null;
+ D.fup=obj.fup; if(N0&&!D.fup.N)D.fup.N=N0;
+ D.cont=obj.cont||D.cont||[];
+ window.CLI=1;
+ const st=document.getElementById('clistate');if(st)st.textContent='🟢 로드됨 (잠긴 문서)';
+ if(VIEW==='cust'||VIEW==='goal'){rail();mid();}
+};
+async function handleClientesJson(f){
+ let obj;try{obj=JSON.parse(await f.text());}catch(e){gateFail([['JSON 손상',String(e.message||e)]],f);return;}
+ if(obj.clientes!==1||!obj.fup||!obj.fup.SEM){gateFail([['CLIENTES 형식','clientes 시드 파일이 아님']],f);return;}
+ const n=(obj.fup.SEM.cli||[]).length+(obj.fup.ESF||[]).length+(obj.fup.HORA||[]).length+(obj.fup.REC||[]).length;
+ if(window.FBcli&&!window.FBLOCAL){
+  if(!confirm('CLIENTES 명단 '+n+'건을 잠긴 클라우드 문서(painel/clientes)에 게시합니까?\n(adm 로그인만 읽을 수 있음)'))return;
+  toast('게시 중…');
+  try{await FBcli(obj);toast('🟢 게시 완료 — 모든 adm 기기에서 자동 로드됩니다');}
+  catch(e){toast('⚠ 게시 실패: '+(e.message||e));return;}
+ }else{toast('MODO LOCAL — 이 화면 메모리에만 적용(게시 안 됨)');}
+ applyCli(obj);
+}
+window.openD0=()=>{const A=(typeof E!=='undefined'&&E&&E.arr)||[];const D0=_ls('painel_d0',{done:{},news:[]});
+ const nrm=s=>String(s||'').toUpperCase().replace(/[ .\-]/g,'');
+ const pk={};D.prods.forEach(p=>pk[nrm(p.mod)]=p.mod);
+ let h=`<div class="ph" style="color:var(--gold)">📦 D0 — 도착 컨펌 (도착 임박 ${A.length}모델)</div>
+ <div class="sub" style="margin-bottom:8px">CHEGOU ✓ = 위치 ESTOQUE 기록 + 도착 이벤트(클라우드 저장). 수량(est)은 여기서 더하지 않음 — 장부 갱신 때 반영됩니다.</div>`;
+ if(!A.length)h+='<div class="note">도착 임박 모델이 없습니다 (ELO 스냅샷 기준).</div>';
+ A.forEach(m=>{const real=pk[nrm(m.cod)];const done=real&&D0.done[real];
+  h+=`<div class="prow"><span class="mod">${m.cod||'—'}</span><span class="sub">${m.nm||''} · ${m.fase||''} · ${m.q||0} pçs</span>
+  <span class="v">${done?'<span class="chip g">✓ 도착 '+done.d+'</span>'
+   :(real?`<button class="addb" onclick="d0Confirm('${real}',${m.q||0})">CHEGOU ✓</button>`
+   :(m.cod?`<span class="chip o">미등록</span> <button class="addb" onclick="d0New('${String(m.cod).replace(/[^A-Za-z0-9\-]/g,'')}',${m.q||0})">등록 대기 담기</button>`
+   :'<span class="chip r">코드 없음 — ELO에서 지정</span>'))}</span></div>`;});
+ if(D0.news.length)h+='<div class="sec" style="margin-top:10px">도착 신규 — 등록 대기 '+D0.news.length+'건 (주간 루프/T7 등록)</div>'
+  +D0.news.map(x=>`<div class="prow"><span class="mod">${x.cod}</span><span class="v">${x.q} pçs · ${x.d}</span></div>`).join('');
+ document.getElementById('pbody').innerHTML=h;document.getElementById('panel').classList.add('open');};
+window.d0Confirm=(mod,q)=>{
+ if(!confirm(mod+' · '+q+' pçs — 도착 처리합니까? (위치=ESTOQUE 기록, 수량은 장부 갱신 대기)'))return;
+ const D0=_ls('painel_d0',{done:{},news:[]});
+ D0.done[mod]={d:new Date().toLocaleDateString('pt-BR').slice(0,5),q};_lsw('painel_d0',D0);
+ logEvent('D0_CHEGADA',mod,'',q+' pçs');
+ setLoc(mod,'EST');
+ openD0();toast('📦 D0 도착 기록: '+mod+' · '+q+' pçs');};
+window.d0New=(cod,q)=>{const D0=_ls('painel_d0',{done:{},news:[]});
+ if(D0.news.some(x=>x.cod===cod)){toast('이미 등록 대기에 있음');return;}
+ D0.news.push({cod,q,d:new Date().toLocaleDateString('pt-BR').slice(0,5)});_lsw('painel_d0',D0);
+ logEvent('D0_NOVO',cod,'',q+' pçs — 등록 대기');openD0();};
+window.goPanda=v=>{VIEW='sell';mid();PVIEW=v;PTAB='obs';pMinis();pExpand();
+ const el=document.getElementById('pexpand');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
+window.openDecs=()=>{if(!window.__DECSHTML){toast('첫 화면(목표)이 한 번 열린 뒤 사용 가능합니다');return;}
+ document.getElementById('pbody').innerHTML='<div class="ph" style="color:var(--gold)">결정 대기 — 전체 '+(window.__DECN||0)+'건 (주제별 묶음 + 목록)</div>'+window.__DECSHTML+(window.__ACOES||'');
+ document.getElementById('panel').classList.add('open');};
+
+/* ═══ TESTE 6B — 🔍 BUSCA (03/10 대표 요청): 모델 찾기 · v2 PC 인라인(FLUXO 밑) ═══ */
+const BNORM=s=>String(s||'').toUpperCase().replace(/[ .\-]/g,'');
+window.openBusca=()=>{
+ document.getElementById('pbody').innerHTML='<div class="ph" style="color:var(--gold)">🔍 찾기 — 모델 코드 · 카테고리 · 등급</div>'
+  +'<input id="bq" type="search" placeholder="예: 11524 · B3636 · BLUSA · REGATA…" autocomplete="off"'
+  +' style="width:100%;box-sizing:border-box;padding:11px 12px;border:1.5px solid var(--gold);border-radius:9px;background:var(--cream);color:var(--ink);font-size:16px;font-weight:700"'
+  +' oninput="buscaRender()" onkeydown="if(event.key===\'Enter\')buscaGo()">'
+  +'<div class="sub" style="margin:6px 0 4px">코드 일부 숫자만 입력해도 됩니다 · 행 클릭: 상세(위치·담기) · ＋: 담기 메뉴 · Enter: 첫 결과 열기</div>'
+  +'<div id="bres"></div>';
+ document.getElementById('panel').classList.add('open');
+ setTimeout(()=>{const i=document.getElementById('bq');if(i)i.focus();},60);
+ buscaRender();
+};
+window.buscaGo=rid=>{const r=document.querySelector('#'+(rid||'bres')+' [data-mod]');if(r)openM(r.dataset.mod);};
+window.buscaRender=(rid,qid)=>{
+ const el=document.getElementById(rid||'bres');if(!el)return;
+ const q=BNORM((document.getElementById(qid||'bq')||{}).value||'');
+ if(!q){el.innerHTML=(rid?'':'<div class="note">등록 '+D.prods.length+'모델 · 미등록 판매 '+((PD.unreg||[]).length)+'건 — 입력하면 바로 좁혀집니다.</div>');return;}
+ const sc=p=>{const m=BNORM(p.mod);
+  if(m===q)return 0; if(m.startsWith(q))return 1; if(m.includes(q))return 2;
+  return BNORM((p.cat||'')+'|'+(p.col||'')+'|'+(p.cl||'')+'|'+(p.bf||'')).includes(q)?3:-1;};
+ let hits=D.prods.map(p=>[sc(p),p]).filter(x=>x[0]>=0)
+  .sort((a,b)=>(a[0]-b[0])||((b[1].est||0)-(a[1].est||0))||String(a[1].mod).localeCompare(String(b[1].mod)));
+ const un=(PD.unreg||[]).filter(u=>BNORM(u[0]).includes(q));
+ const tot=hits.length+un.length, MAXN=100, cut=hits.length>MAXN;
+ hits=hits.slice(0,MAXN);
+ el.innerHTML=
+  '<div class="sub" style="margin:2px 0 6px"><b style="color:var(--gold)">'+tot+'</b>건'+(cut?' — 상위 '+MAXN+'만 표시 (더 입력해 좁혀 주세요)':'')+'</div>'
+  +hits.map(x=>{const p=x[1];
+   return '<div class="prow" data-mod="'+p.mod+'" style="cursor:pointer" onclick="openM(\''+p.mod+'\')" oncontextmenu="rctx(event,\''+p.mod+'\')">'
+    +'<span class="mod">'+p.mod+'</span>'
+    +'<span class="sub">'+(p.cat||'')+' · '+(p.cl||'—')+' · '+effLab(p.mod)+'</span>'
+    +'<button class="addb" onclick="plus(event,\''+p.mod+'\')">＋</button>'
+    +'<span class="v">'+p.est+' pçs'+(p.z!=null?' · '+fmtP(p.z)+' · 총 R$ '+fmt(p.est*(p.z||0)):'')+'</span></div>';}).join('')
+  +(un.length?'<div class="sec">미등록 판매 코드 '+un.length+'건 — PRODUTOS에 없음 (등록 대기)</div>'
+   +un.map(u=>'<div class="prow"><span class="mod">'+u[0]+'</span><span class="chip o">미등록</span><span class="v">'+u[1]+' pçs (라벨 '+(PD.lastlab||'')+')</span></div>').join(''):'')
+  +(tot?'':'<div class="note">일치하는 모델이 없습니다 — 코드 일부(숫자 3~4자리)로 다시 시도해 보세요.</div>');
+};
+document.addEventListener('keydown',e=>{
+ if(e.key!=='/'||/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))return;
+ e.preventDefault();
+ const b2=document.getElementById('bq2');
+ if(b2&&b2.offsetParent!==null){b2.focus();return;}
+ openBusca();});
+
+/* ═══ T6C MOCKUP — ARARA 카드 목록 + KPI 상세 (조회 전용) ═══ */
+
+/* ═══ T6C — GOAL 상세 (목표 설정·관리) ═══ */
+MID.goal2=function(){
+ const hasSep=sep.q>0, m=hasSep?9:8, act=hasSep?sep:aug, need=mNeedRev(m), ach=act.rev/need*100;
+ const col=ach>=90?'var(--green)':ach>=70?'var(--gold)':'var(--red)';
+ return '<div class="hero"><span class="lab">GOAL — '+m+'월 계절 목표 (연 마진 '+fmtR(yMargin)+' 배분)</span>'
+  +'<div class="row"><span class="pct" style="color:'+col+'">'+ach.toFixed(1)+'%</span>'
+  +'<div class="bar"><div class="tr"><div style="width:'+Math.min(100,ach)+'%;background:'+col+'"></div></div>'
+  +'<div class="bt"><span>실적 '+fmtR(act.rev)+' · '+fmt(act.q)+' PÇS</span><span>목표 '+fmtR(need)+' · '+fmt(mNeedQ(m))+' PÇS</span></div></div></div>'
+  +(hasSep?'':'<div class="s" style="font-size:11px;color:var(--ink2);margin-top:8px">9월 판매는 월요일 주간 루프 반영 — 위는 8월 확정 실적</div>')+'</div>'
+  +'<div class="mgrid">'
+  +card('goalSet','① 순익 목표 설정 ⚙','R$ '+fmt(tgt)+'/월','green','고정비 '+fmt(fix)+' · 원가 '+cost+' · 단가 '+unit+' — 클릭: 수정 (전체 재계산)','<span class="chip">설정</span>')
+  +card(null,'② 연 마진 목표',fmtR(yMargin),'','(월 순익 + 고정비) × 12 — 계절 배분 = 2025 월별 매출 비중','')
+  +card(null,'③ 남은 성수기 필요량',fmt(remainNeedQ)+' pçs','','9~12월 판매 필요량 (엔진) — 시뮬레이터 기준값','')
+  +card('sim','④ 공급 시뮬레이터','여름 완성 '+fmt(summerDone)+' pçs','','필요 vs 공급(완성+생산 중+원단) 격차 확인 — 클릭','')
+  +card('h25sep','⑤ 작년 9월 참고','13.476 pçs','','BLUSA 41% · REGATA 21% — 클릭: top 5','')
+  +card(null,'⑥ 최대 목표 (사업 기준)','정가 60~70%','gold','떨이 비율 축소 — 주간 추적은 HOME의 FULL PRICE % 카드','<span class="chip o">기준</span>')
+  +'</div>'
+  +'<div class="mc" style="cursor:default"><div class="t">월별 목표 배분 — 남은 성수기</div>'
+  +'<table class="tb" style="margin-top:8px"><tr><th>월</th><th class="num">목표 R$</th><th class="num">목표 pçs</th><th class="num">실적 R$</th><th class="num">달성률</th></tr>'
+  +[9,10,11,12].map(mm=>{const nr=mNeedRev(mm);const ar=mm===9?sep.rev:0;const pct=ar?(ar/nr*100).toFixed(1)+'%':'—';
+    return '<tr><td><b>'+mm+'월</b></td><td class="num">'+fmt(nr)+'</td><td class="num">'+fmt(mNeedQ(mm))+'</td><td class="num">'+(ar?fmt(ar):'—')+'</td><td class="num">'+pct+'</td></tr>';}).join('')
+  +'</table><div class="s" style="font-size:10px;color:var(--ink2);margin-top:6px">실적은 FECHAMENTO 기록 기준 — 월요일 주간 루프마다 갱신 · 목표 수정은 ① 카드에서</div></div>';
+};
+window.openAr=g=>{
+ const SETS={P:['P'],PPED:['PPED'],PROM:['PROM'],SAL:['SAL'],ESTQ:['G','EST']};
+ const NM2={P:'👕 ARARA PRINCIPAL',PPED:'🛍 PRÉ-VENDA',PROM:'🏷 ARARA PROMOÇÃO',SAL:'💸 ARARA SALDO',ESTQ:'📦 ESTOQUE (실측+추정·확정)'};
+ const set=new Set(SETS[g]||[g]);
+ const L=Object.keys(ALL).filter(m=>set.has(effG(m))).sort((a,b)=>ALL[b].est-ALL[a].est);
+ const te=L.reduce((a,m)=>a+ALL[m].est,0);
+ let h='<div class="ph">'+NM2[g]+' — '+L.length+'모델 · '+fmt(te)+' pçs</div>'
+  +'<div class="sub" style="margin-bottom:8px">재고 많은 순 · 클릭: 상세(위치 수정·담기 가능)</div>'
+  +L.map(m=>{const x=ALL[m];
+   return '<div class="prow"><span class="mod" style="cursor:pointer" onclick="openM(\''+m+'\')">'+m+'</span>'
+    +'<span class="sub">'+(x.cat||'')+' · '+(x.cl||'')+(OV[m]?' · <b style="color:var(--gold)">✎ 대표 '+OV[m].d+'</b>':'')+'</span>'
+    +'<button class="addb" onclick="plus(event,\''+m+'\')">＋</button>'
+    +'<span class="v">'+x.est+' pçs'+(x.z!=null?' · '+fmtP(x.z)+' · 총 R$ '+fmt(x.est*x.z):'')+'</span></div>';}).join('');
+ if(g==='ESTQ')h+='<div class="note">ESTOQUE = 실측(19/09) + 추정·확정 병합 — 추정분은 전수 실사(BASELINE)로 갱신됩니다.</div>';
+ document.getElementById('pbody').innerHTML=h;document.getElementById('panel').classList.add('open');
+};
+/* ── KPI 이력 적립 (주간 — 이 브라우저, 매 갱신마다 1건) ── */
+let KH={};try{KH=JSON.parse(localStorage.getItem('painel_kpih')||'{}');}catch(e){KH={};}
+(function(){const K=V3.kpi2;const wk=(K.trend[K.trend.length-1]||{}).w||'now';
+ KH[wk]=Object.assign(KH[wk]||{},{fp:K.fp,est:K.est,val:K.val,ps:K.ps,psz:K.psz,giro:K.giro,
+  prod:(E&&E.sewPcs!=null&&E.cutPcs!=null)?(E.sewPcs+E.cutPcs):null});
+ try{localStorage.setItem('painel_kpih',JSON.stringify(KH));}catch(e){}})();
+let KPER='w';
+window.setKper=(id,p)=>{KPER=p;openKpi(id);};
+function kbars(S,fv){if(!S.length)return '';const mx=Math.max(...S.map(x=>x.v||0),1e-9);
+ return '<div class="pbars" style="height:118px">'+S.map((x,i)=>'<div><div class="b" style="height:'+Math.max(4,(x.v||0)/mx*82)+'px;'+(i===S.length-1?'background:var(--gold)':'')+'" title="'+fv(x.v)+'"></div><span style="font-size:8.5px">'+x.l+'</span><br><b style="font-size:9px">'+fv(x.v)+'</b></div>').join('')+'</div>';}
+function klist(S,fv){return S.slice().reverse().map((x,i,a)=>{const pr=a[i+1];let d='';
+ if(pr&&pr.v){const pc=(x.v-pr.v)/pr.v*100;d=(pc>=0?'<span class="up">▲':'<span class="dn">▼')+Math.abs(pc).toFixed(1)+'%</span>';}
+ return '<div class="prow"><span class="c">'+x.l+'</span><span class="i">'+(x.s||'')+'</span><span class="v">'+fv(x.v)+(d?' &nbsp;'+d:'')+'</span></div>';}).join('');}
+function kser(id,per){
+ const K=V3.kpi2;const mon=k=>k.slice(5,7)+'/'+k.slice(2,4);
+ if(id==='vend'){
+  if(per==='w')return K.trend.map(t=>({l:t.w,v:t.rev,s:fmt(t.q)+' pçs'}));
+  if(per==='m'){const M={};D.fech.forEach(x=>{const k=x.d.slice(0,7);M[k]=M[k]||{r:0,q:0};M[k].r+=x.rev;M[k].q+=x.q;});
+   const Y25={};D.y25.forEach(x=>Y25[String(x.m).slice(5,7)]=x.rev);
+   return Object.keys(M).sort().map(k=>({l:mon(k),v:Math.round(M[k].r),s:fmt(M[k].q)+' pçs · 25년 동월 R$ '+fmt(Y25[k.slice(5,7)]||0)}));}
+  const t26=D.fech.reduce((a,x)=>a+x.rev,0);
+  return [{l:'2025',v:Math.round(sum(D.y25,x=>x.rev)),s:'1~12월 확정'},
+          {l:'2026',v:Math.round(t26),s:'FECHAMENTO 기록분(31/07~) — 부분'}];
+ }
+ const F={fp:x=>x.fp!=null?x.fp*100:null,est:x=>x.val,ps:x=>x.ps,giro:x=>x.giro,prod:x=>x.prod}[id];
+ const SUB={est:x=>fmt(x.est)+' pçs',ps:x=>'존 기준 R$ '+fmt(x.psz||0)}[id]||(x=>'');
+ if(per!=='w')return null; /* 월간·연간은 주간 기록 적립 후 자동 집계 */
+ const S=[];K.trend.forEach(t=>{const r=KH[t.w];if(r&&F(r)!=null)S.push({l:t.w,v:F(r),s:SUB(r)});});
+ Object.keys(KH).filter(w=>!K.trend.some(t=>t.w===w)).forEach(w=>{const r=KH[w];if(F(r)!=null)S.push({l:w,v:F(r),s:SUB(r)});});
+ return S;
+}
+window.openKpi=id=>{
+ const K=V3.kpi2,KP=V3.kpi;
+ const TT={fp:'FULL PRICE % — 정가 판매 비중',vend:'VENDAS — 매출',est:'ESTOQUE — 재고 가치',ps:'PROMO+SALDO — 떨이 재고',giro:'GIRO — 회전율',prod:'PRODUÇÃO — 생산'}[id];
+ const FV={fp:v=>v==null?'—':v.toFixed(1).replace('.',',')+'%',vend:v=>'R$ '+fmt(v),est:v=>'R$ '+fmt(v),ps:v=>'R$ '+fmt(v),giro:v=>v==null?'—':v.toFixed(1).replace('.',',')+'%',prod:v=>v==null?'—':fmt(v)+' pçs'}[id];
+ if(!TT)return;
+ const tabs='<div class="tabs" style="margin:2px 0 8px">'+[['w','주간'],['m','월간'],['y','연간']].map(pp=>'<span class="tab '+(KPER===pp[0]?'on':'')+'" onclick="setKper(\''+id+'\',\''+pp[0]+'\')">'+pp[1]+'</span>').join('')+'</div>';
+ const S=kser(id,KPER);
+ let hist;
+ if(S===null) hist='<div class="note">월간·연간 집계는 주간 기록이 쌓이면 자동 표시됩니다 (매주 갱신마다 1건 적립 — 현재 '+Object.keys(KH).length+'주).</div>';
+ else if(!S.length) hist='<div class="note">아직 기록이 없습니다 — 다음 갱신부터 적립됩니다.</div>';
+ else hist=kbars(S,FV)+'<div style="margin-top:8px">'+klist(S,FV)+'</div>'
+  +((S.length<=1&&id!=='vend')?'<div class="note">이 지표의 주간 기록 적립을 오늘 시작했습니다 — 매주 갱신마다 쌓이며, 과거 주는 주간 루프 기록에서 백필 가능합니다.</div>':'');
+ const row=(l,v)=>'<div class="prow"><span class="c">'+l+'</span><span class="v">'+v+'</span></div>';
+ let extra='';
+ if(id==='fp') extra='<div class="sec">현재</div>'
+  +row('이번 주 FULL PRICE',(K.fp*100).toFixed(1).replace('.',',')+'%')
+  +row('떨이 재고 (가격 기준·실할인≥25%)','R$ '+fmt(KP.pv)+' · '+KP.pn+'모델')
+  +'<div class="pnote">목표: 정가 비율 60~70% + 떨이 축소 (사업 목표). '+(K.fpw||'')+'</div>';
+ else if(id==='vend') extra='<div class="pnote">최근 주 '+(K.wow>=0?'▲'+K.wow:'▼'+Math.abs(K.wow))+'% vs 前주 · 확정치는 매주 월요일 주간 루프에서 주입 · 2026 연간은 FECHAMENTO 기록분(7월 말~)만 포함.</div>'
+  +'<div style="margin-top:10px"><button class="tab on" onclick="openP(\'goalSet\')">⚙ 목표·원가 설정</button></div>';
+ else if(id==='est'){const Z=[['PRINCIPAL (정가존)',fz],['LIQUIDAÇÃO (떨이존)',dz],['GUARDADO (창고존)',gd]];
+  extra='<div class="sec">현재 — 존별 분해</div>'
+  +Z.map(z=>row(z[0],z[1].length+'모델 · '+fmt(sum(z[1],p=>p.est))+' pçs · R$ '+fmt(sum(z[1],p=>p.val)))).join('')
+  +row('<b>합계</b>','<b>'+fmt(K.est)+' pçs · R$ '+fmt(K.val)+'</b>');}
+ else if(id==='ps') extra='<div class="sec">현재 — 두 가지 계산</div>'
+  +row('가격 기준 (실할인≥25%)',KP.pn+'모델 · '+fmt(KP.pq)+' pçs · R$ '+fmt(KP.pv))
+  +row('존 기준 (BF=LIQUIDAÇÃO)',KP.zn+'모델 · '+fmt(KP.zq)+' pçs · R$ '+fmt(KP.zv))
+  +'<div class="pnote">목표: 이 금액을 줄이는 것 — 두 숫자의 차이 = 존/실할인 불일치 모델.</div>';
+ else if(id==='giro') extra='<div class="sec">현재</div>'
+  +row('주간 판매 ÷ 총재고',fmt(K.vendq)+' ÷ '+fmt(K.est)+' = '+K.giro.toFixed(1).replace('.',',')+'%/sem')
+  +'<div class="pnote">이 속도면 이론상 전체 소진 약 '+Math.round(100/K.giro)+'주 · 주별 판매 흐름은 VENDAS 카드.</div>';
+ else if(id==='prod') extra='<div class="sec">현재 (ELO)</div>'
+  +'<div class="prow" style="cursor:pointer" onclick="openP(\'sewing\')"><span class="c">🧵 봉제 중 (클릭)</span><span class="v">'+(E&&E.sewPcs!=null?fmt(E.sewPcs)+' pçs · '+E.sewN+'로트':'—')+'</span></div>'
+  +'<div class="prow" style="cursor:pointer" onclick="openP(\'cutting\')"><span class="c">✂️ 재단 (클릭)</span><span class="v">'+(E&&E.cutPcs!=null?fmt(E.cutPcs)+' pçs':'—')+'</span></div>'
+  +'<div class="prow" style="cursor:pointer" onclick="openD0()"><span class="c">📦 도착 임박 (클릭: D0)</span><span class="v">'+(E&&E.arr?E.arr.length+'모델':'—')+'</span></div>'
+  +'<div class="pnote">출처: '+ELOSTATE.label+'</div>';
+ document.getElementById('pbody').innerHTML='<div class="ph">'+TT+'</div>'+tabs+hist+extra;
+ document.getElementById('panel').classList.add('open');
+};
 let TOASTT=null;
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('on');
  clearTimeout(TOASTT);TOASTT=setTimeout(()=>el.classList.remove('on'),2600);}
@@ -918,6 +1188,8 @@ window.openM=mod=>{
   ${l?`<div class="info"><span>사다리</span><b>${l.stage} · ${nextStep(l.age)}</b></div>`:''}
   <div class="info"><span>위치 (${OV[mod]?'대표 '+OV[mod].d:((CEN.map&&CEN.map[mod])?'실사 '+CEN.d:(PD.locm[mod]?'실측 19/09':(d.est>0?'추정 — 장부 일치':'—')))})</span>
    <b>${LOCNM[effG(mod)]||'—'} · ${d.est} pçs</b></div>
+  ${(()=>{const _D0=_ls('painel_d0',{done:{}});const k=_D0.done&&_D0.done[mod];
+   return k?`<div class="info"><span>📦 D0 도착 기록</span><b class="up">${k.q} pçs · ${k.d} — 장부 반영 대기</b></div>`:'';})()}
   ${d.est>0?`<div class="info"><span>위치 수정 (대표 전용 — 기록만, 지시 아님)</span>
    <select onchange="if(this.value){setLoc('${mod}',this.value);}this.selectedIndex=0" style="background:var(--cream);color:var(--ink);border:1.5px solid var(--line);border-radius:7px;font-weight:bold;font-size:12px;padding:5px 8px">
     <option value="">위치 수정 ▾</option>
@@ -1281,14 +1553,15 @@ const CIx=s=>{let n=0;for(const ch of s)n=n*26+(ch.charCodeAt(0)-64);return n-1;
 const SEmap={'VERAO 2025':'V45','MEIA ESTAÇÃO 2026':'MEIA','VERAO 2026':'V26','VERAO 2024':'VOLD','VERAO 2023':'VOLD','VERAO 2021':'VOLD','INVERNO 2026':'INV','INVERNO 2024':'INV'};
 window.uiUpload=()=>document.getElementById('xin').click();
 function setupDnD(){
- const inp=document.createElement('input');inp.type='file';inp.id='xin';inp.accept='.xlsx';inp.style.display='none';
+ const inp=document.createElement('input');inp.type='file';inp.id='xin';inp.accept='.xlsx,.json';inp.style.display='none';
  inp.onchange=e=>{if(e.target.files[0])handleXlsx(e.target.files[0]);e.target.value='';};
  document.body.appendChild(inp);
  ['dragover','drop'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault()));
  document.addEventListener('drop',e=>{const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)handleXlsx(f);});
 }
 async function handleXlsx(f){
- if(!/\.xlsx$/i.test(f.name)){gateFail([['파일 형식','xlsx가 아님: '+f.name]],f);return;}
+ if(/\.json$/i.test(f.name)){handleClientesJson(f);return;}
+ if(!/\.xlsx$/i.test(f.name)){gateFail([['파일 형식','xlsx/json이 아님: '+f.name]],f);return;}
  if(typeof XLSX==='undefined'){toast('엑셀 파서 로드 실패 — 새로고침 후 재시도');return;}
  toast('읽는 중… '+f.name);
  let wb; try{wb=XLSX.read(await f.arrayBuffer(),{cellDates:true});}catch(e){gateFail([['파일 손상','열 수 없음: '+(e.message||e)]],f);return;}
@@ -1474,21 +1747,26 @@ const auth=getAuth(app);
 let db;try{db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});}
 catch(e){db=initializeFirestore(app,{});}
 const ADM='exprim.adm@gmail.com';
-const dDados=doc(db,'painel','dados'), dEstado=doc(db,'painel','estado');
+const dDados=doc(db,'painel','dados'), dEstado=doc(db,'painel','estado'), dCli=doc(db,'painel','clientes');
 const $=id=>document.getElementById(id);
 const gm=t=>{const e=$('gmsg');if(e)e.textContent=t;};
 const prov=new GoogleAuthProvider();
+prov.setCustomParameters({prompt:'select_account'});
 window.__login=async()=>{try{gm('Google 로그인 창을 확인해 주세요…');await signInWithPopup(auth,prov);}
  catch(e){gm('로그인 실패: '+(e.code||e.message)+'\n팝업이 막힌 경우 MODO COMPATÍVEL을 눌러 주세요.');const r=$('gred');if(r)r.style.display='';}};
 window.__loginR=()=>signInWithRedirect(auth,prov);
 window.__logout=()=>signOut(auth).then(()=>location.reload());
-const SKEY={locfix:'panda_locfix',bffix:'painel_bffix',events:'painel_events',cart:'painel_cart',censo:'painel_censo'};
+const SKEY={locfix:'panda_locfix',bffix:'painel_bffix',events:'painel_events',cart:'painel_cart',censo:'painel_censo',d0:'painel_d0'};
 function collectState(){const o={when:new Date().toISOString()};for(const k in SKEY)o[k]=localStorage.getItem(SKEY[k])||'';return o;}
 let PUSHT=null;
 window.FBstate=function(){if(window.FBLOCAL||!auth.currentUser)return;
  clearTimeout(PUSHT);
  PUSHT=setTimeout(async()=>{try{await setDoc(dEstado,collectState());const n=$('nuvem');if(n)n.textContent='🟢 NUVEM';}
   catch(e){const n=$('nuvem');if(n)n.textContent='🔴 NUVEM 저장 실패';}},800);};
+window.FBcli=async function(obj){if(window.FBLOCAL||!auth.currentUser)throw new Error('sem nuvem');
+ await setDoc(dCli,Object.assign({},obj,{when:new Date().toISOString()}));};
+async function loadCli(){try{const s=await getDoc(dCli);
+ if(s.exists()&&window.applyCli){applyCli(s.data());}}catch(e){}}
 window.FBpub=async function(json){if(window.FBLOCAL||!auth.currentUser)throw new Error('sem nuvem');
  if(json==null){try{await deleteDoc(dDados);}catch(e){}return;}
  await setDoc(dDados,{ovr:json,when:new Date().toISOString()});};
@@ -1532,6 +1810,6 @@ onAuthStateChanged(auth,async u=>{
  try{sessionStorage.removeItem('fb_reboot');}catch(e){}
  const n=$('nuvem');if(n){n.textContent='🟢 NUVEM';n.title=u.email;
   n.onclick=()=>{if(confirm('클라우드에서 로그아웃할까요? (다음에 다시 로그인 필요)'))window.__logout();};}
- window.__boot();watch();});
+ window.__boot();watch();loadCli();});
 </script>
 </body></html>
