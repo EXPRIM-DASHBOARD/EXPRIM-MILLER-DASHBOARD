@@ -672,11 +672,18 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 #teste{display:none;background:#C0392B;color:#fff;font:900 10px var(--mono);letter-spacing:.14em;border-radius:6px;padding:3px 8px;margin-left:8px;vertical-align:middle}
 body.teste #teste{display:inline-block}
 body.teste header.top{box-shadow:inset 0 -4px 0 #C0392B}
+/* ===== v9.25a · teste link · nova versão · pedido→cortado ===== */
+#lkTeste,#lkElo{display:none;font:800 9.5px var(--mono);letter-spacing:.1em;border:1.5px solid #C0392B;color:#C0392B;border-radius:6px;padding:2px 7px;margin-left:8px;text-decoration:none;vertical-align:middle}
+#lkTeste.on,#lkElo.on{display:inline-block}
+#lkElo{border-color:#F3E7C8;color:#F3E7C8}
+#upd{display:none;position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:9998;background:#1D2A3F;color:#fff;border:2px solid #E8A33D;border-radius:999px;padding:9px 16px;font:800 12px var(--mono);letter-spacing:.06em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#upd.on{display:block}
+.qtd{font:700 10px var(--mono);color:#6b6459}.qtd b{color:var(--ink)}.qtd.neg{color:#C0392B}.qtd.neg b{color:#C0392B}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.24c</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.25a</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <input id="q" class="search" placeholder="buscar modelo, código, oficina…">
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
@@ -691,7 +698,7 @@ body.teste header.top{box-shadow:inset 0 -4px 0 #C0392B}
   <button class="chip fila" data-f="fila"><b id="chipFila">0</b>FILA DE CORTE <span class="hint">DEBORA em Corte · sem lote</span></button>
   <span class="chip ficha"><b id="chipFicha">0</b>SEM FICHA <span class="hint">lote sem M-sheet</span></span>
 </div>
-<main id="main"></main>
+<main id="main"></main><div id="upd" onclick="location.reload()">🔄 NOVA VERSÃO DISPONÍVEL — toque p/ atualizar</div>
 <div id="mp"><div class="mpw"><button id="mpClose">✕ fechar</button><div id="mpBody"></div></div></div>
 <div id="drop">Solte DEBORA, ROBERTO, ESTOQUE_TECIDOS ou BOLETOS (.xlsx)</div>
 <div id="toast"></div> <div class="docwait" id="docwait" hidden><div class="bx"><span class="ic">📄</span><b id="dwT">Lendo documento…</b><small id="dwS">preparando imagem</small></div></div> <input type="file" id="docIn" accept="image/*" hidden onchange="docPicked(this)">
@@ -775,7 +782,8 @@ const FASES=['Design','Amostra','Materiais','Corte','Costura','Qualidade','Embal
 const DB_NAME='exprim_elo', DB_STORE='kv';
 let DEB={models:[],at:null,file:''}, ROB={lots:[],custo:[],at:null,file:''}, TEC={items:[],at:null,file:''};
 let PLANO={key:'',sel:{}}; let TODO={done:{},extra:[]};
-if(/elo_?teste|elo2/i.test(location.pathname)){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
+const IS_TESTE=/elo_?teste|elo2/i.test(location.pathname); if(IS_TESTE){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
+function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&isLucas()); if(b) b.classList.toggle('on',IS_TESTE); }
 let VIEW='debora', FILTER='', Q='', TF='estoque', TORD='', FGRP=true, CV=false, TCAT='', TCOMP='';
 const CATS=['MALHA','PLANO','FORRO','RENDA']; const isForro=t=>!!t&&(t.categoria==='FORRO'||t.categoria==='RENDA');
 function fibrasDe(t){ return String((t&&t.comp)||'').split(/[\/+,]/).map(s=>s.replace(/[\d.,%]+/g,'').trim().toUpperCase()).filter(Boolean); }
@@ -1232,7 +1240,7 @@ function card(r){
     ${m.foto?`<img class="th" src="${m.foto}" alt="">`:''}
     <div class="c1"><span class="mc">${m.aba}${m.codigo?` · ${m.codigo}`:''}${isRep(m.codigo)?'<small>REP</small>':''}</span><span style="display:flex;gap:4px;align-items:center">${badge(r)}${msgsFor('mod:'+m.aba).length?`<span class="mbdg">💬 ${msgsFor('mod:'+m.aba).length}</span>`:''}${ps.length?`<span class="bang" title="${ps.length} ponto(s)" onclick="event.stopPropagation();showProbs('${m.aba}')">!</span>`:''}</span></div>
     <div class="nm">${esc(m.nome.replace(/^\S+\s*[-·]?\s*/,'')||m.nome)}</div>
-    <div class="c3"><span class="pg"><i style="width:${m.prog||0}%"></i></span><span class="pz ${late?'late':''}">${m.prog!=null?m.prog+'%':''}${m.prazo?` · ${dtBR(m.prazo)}`:''}</span></div>
+    <div class="c3"><span class="pg"><i style="width:${m.prog||0}%"></i></span><span class="pz ${late?'late':''}">${m.prog!=null?m.prog+'%':''}${m.prazo?` · ${dtBR(m.prazo)}`:''}${(qtCortOf(m)&&qtCortOf(m)!==(m.qtPedido!=null?m.qtPedido:m.qt))||m.qtAceite?' · '+qtLine(m):''}</span></div>
     <div class="rl">${robLine(r)}</div>
     <div class="tl2">${tecLine(m)}</div>
   </div>`;
@@ -1762,7 +1770,7 @@ function renderLista(A){
 }
 function semFichaRows(A){ const qq2=Q?Q.toUpperCase():''; if(!qq2) return ''; const sf=A.semFicha.filter(l=>String(l.modelo||'').toUpperCase().includes(qq2)||String(l.desc||'').toUpperCase().includes(qq2)||String(l.oficina||'').toUpperCase().includes(qq2)); if(!sf.length) return ''; return '<div class="empty" style="text-align:left;margin-top:10px"><b>⚠ '+sf.length+' lote(s) sem ficha na DEBORA</b></div><table class="tb"><tbody>'+sf.map(l=>'<tr><td class="mc">'+esc(l.modelo)+'</td><td>'+esc(l.desc||'')+'</td><td>'+fmt(l.qtd)+'</td><td>'+lotLine(l)+'</td></tr>').join('')+'</tbody></table>'; }
 
-function render(){ __codDup=null; clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
+function render(){ __codDup=null; try{ testeLinks(); }catch(e){} clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
   const A=computeAll();
   $('#chipAtu').textContent=A.atualizar.length; $('#chipVer').textContent=A.verificar.length; $('#chipFila').textContent=A.fila.length; $('#chipFicha').textContent=A.semFicha.length;
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
@@ -1973,6 +1981,19 @@ function tlCurIdx(m){ const es=tlEtapas(m); if(!es.length) return -1; const i=es
 function tlProg(m){ const n=(m.items||[]).length; return n?Math.round(m.items.filter(tlDone).length/n*100):(m.prog||0); }
 function tlNames(){ const s=new Set(); DEB.models.forEach(m=>(m.items||[]).forEach(i=>{ const r=String(i.resp||'').trim().toLowerCase(); if(r) s.add(r); })); TL_TPL.forEach(([e,...its])=>its.forEach(([,r])=>s.add(r))); return [...s].sort(); }
 function canTL(){ return !!FBUSER; }
+/* ===== v9.25a · pedido (DEBORA) × cortado (Roberto) ===== */
+function qtCortOf(m){ if(!m) return 0; const cl=cevtLotsOf(m); const keys=new Set(cl.map(c=>c.cloud.xref?trazKey(c.cloud.xref.modelo,c.cloud.xref.corte,c.cloud.xref.saida):null).filter(Boolean));
+  const ex=lotsOf(m).lots.filter(l=>l.corte&&!keys.has(trazKey(l.modelo,l.corte,l.saida))); return cl.reduce((s,c)=>s+(c.qtd||0),0)+ex.reduce((s,l)=>s+(l.qtd||0),0); }
+function qtAberto(m){ return CCONF.some(c=>c.aba===m.aba); } /* ainda tem corte pendente (parcial) */
+function qtLine(m){ const qc=qtCortOf(m); const ped=m.qtPedido!=null?m.qtPedido:m.qt; if(!qc||!ped||qc===ped&&!m.qtAceite) return m.qt?`${fmt(m.qt)} pçs`:'—';
+  const d=qc-ped; return `<span class="qtd ${d<0&&!m.qtAceite?'neg':''}">${fmt(ped)} pedido → <b>${fmt(qc)} cortado</b> (${d>0?'+':''}${fmt(d)})${m.qtAceite?' <small>✓ '+esc(m.qtAceite.por)+'</small>':''}</span>`; }
+async function aceitarQt(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!FBUSER) return; const qc=qtCortOf(m); if(!qc) return;
+  const motivo=(prompt('Aceitar '+qc+' peças no lugar de '+(m.qtPedido!=null?m.qtPedido:m.qt)+'? Motivo (opcional):','faltou tecido')||'').trim();
+  const ok=await tlWrite(aba,d=>{ if(d.qtPedido==null) d.qtPedido=d.qt; d.qt=qc; d.qtAceite={por:whoName(),at:TODAY,de:d.qtPedido,para:qc,motivo}; },`✓ aceito ${qc} pçs (pedido ${m.qtPedido!=null?m.qtPedido:m.qt})${motivo?' · '+motivo:''}`,{auto:true});
+  if(ok){ m.qtPedido=m.qtPedido!=null?m.qtPedido:m.qt; m.qt=qc; m.qtAceite={por:whoName(),at:TODAY,de:m.qtPedido,para:qc,motivo}; render(); toast('✓ quantidade aceita: '+qc+' pçs'); } }
+async function desfazerQt(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m||!m.qtAceite||!FBUSER) return;
+  const ok=await tlWrite(aba,d=>{ if(d.qtPedido!=null) d.qt=d.qtPedido; delete d.qtAceite; },'↩ volta p/ quantidade pedida',{auto:true});
+  if(ok){ m.qt=m.qtPedido; delete m.qtAceite; render(); toast('↩ quantidade pedida restaurada'); } }
 /* ===== v9.24b · forro/renda do modelo (tecs2) ===== */
 function tecs2Of(m){ return (m&&Array.isArray(m.tecs2))?m.tecs2:[]; }
 function tecs2Lbl(m){ return tecs2Of(m).map(x=>`${esc(x.tec)} <small>${esc(x.papel||'forro')}</small>`).join(' + '); }
@@ -2060,7 +2081,8 @@ async function robCorteUnsync(aba){ const m=DEB.models.find(x=>x.aba===aba); if(
 function mergeAuto(prev,out){ if(!prev||!prev.items||!out.items) return out; let n=0;
   prev.items.forEach(p=>{ if(!p.auto||!tlDone(p)) return; const o=out.items.find(x=>String(x.etapa||'').toLowerCase()===String(p.etapa||'').toLowerCase()&&String(x.item||'').trim().toUpperCase()===String(p.item||'').trim().toUpperCase()); if(o&&!tlDone(o)){ o.status=p.status; o.data=p.data; o.auto=true; n++; } });
   if(n){ const es=tlEtapas(out); const ci=tlCurIdx(out); const f=es.length?tlFaseOf(es[ci].e):''; if(f&&FASES.indexOf(f)>FASES.indexOf(out.fase||'')) { out.fase=f; out.faseVazia=false; } out.prog=tlProg(out); }
-  if(prev.log&&!out.log) out.log=prev.log; return out; }
+  if(prev.log&&!out.log) out.log=prev.log;
+  if(prev.qtAceite&&(out.qt==null||out.qt===prev.qtPedido)){ out.qtPedido=prev.qtPedido; out.qt=prev.qt; out.qtAceite=prev.qtAceite; } return out; }
 function modProbs(m){ const o=[]; const me=isLucas();
   if(m.foraPlan) o.push({k:'fora',t:`📄 não veio no último drop (${esc(m.foraPlan.file||'')}, ${dtBR(m.foraPlan.at)}) — foi apagado na planilha de propósito?`,fix:me?`<span style="display:flex;gap:6px"><button class="btn mini danger" onclick="closeMod();descartar('${m.aba}')">🗑 descartar</button><button class="btn mini sec" onclick="closeMod();manter('${m.aba}')">✓ manter</button></span>`:''});
   if(m.conflicts&&m.conflicts.length) o.push({k:'conf',t:`⚠ ${m.conflicts.length} campo(s) diferem entre planilha e painel`,fix:me&&window.innerWidth>=980?`<button class="btn mini sec" onclick="closeMod();openModel('${m.aba}');debEdit('${m.aba}')">ver e resolver</button>`:'<span class="sm">resolver no PC</span>'});
@@ -2069,6 +2091,7 @@ function modProbs(m){ const o=[]; const me=isLucas();
   const ts=tecState(m); const fi=FASES.indexOf(m.fase||''); const naFaseCorte=fi>=FASES.indexOf('Corte')&&!m.concl;
   if(ts==='multi') o.push({k:'tec',t:'🧵 vários tecidos candidatos p/ esta NF — confirme qual',fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">escolher tecido</button>`:''});
   else if(naFaseCorte&&(ts==='semnf'||ts==='semcand')) o.push({k:'tec',t:ts==='semnf'?`🧵 em ${esc(m.fase)} sem NF/tecido definido${m.nf?' ("'+esc(m.nf)+'")':''}`:`🧵 NF ${esc(m.nf)} não tem tecido na nuvem`,fix:me?`<button class="btn mini sec" onclick="closeMod();tlHeadOpen('${m.aba}')">escolher tecido</button>`:''});
+  { const qc=qtCortOf(m); const ped=m.qtPedido!=null?m.qtPedido:m.qt; if(qc&&ped&&qc<ped&&!m.qtAceite&&!qtAberto(m)) o.push({k:'qtd',t:`✂ cortado ${fmt(qc)} de ${fmt(ped)} pedidas — faltam ${fmt(ped-qc)}`,fix:FBUSER?`<button class="btn mini sec" onclick="closeMod();aceitarQt('${m.aba}')">✓ aceitar ${fmt(qc)}</button>`:''}); }
   if(m.codigo&&codigoDup().has(String(m.codigo))) o.push({k:'dup',t:`🔁 código ${esc(m.codigo)} repetido em outro modelo ativo — lotes não vinculam`,fix:me?`<button class="btn mini sec" onclick="closeMod();croCodeOpen('${m.aba}')">corrigir código</button>`:''});
   if(m.codElo&&m.codPlan&&m.codPlan!==m.codElo.cod) o.push({k:'codp',t:`✎ código ${esc(m.codElo.cod)} definido no ELO, mas a planilha traz ${esc(m.codPlan)} (planilha prevalece)`,fix:''});
   return o; }
@@ -2097,7 +2120,7 @@ function modFichaHTML(aba){
     <div class="tt"><span class="mc big">${m.aba} · ${m.codigo||'sem código'}${isRep(m.codigo)?'<small>REP</small>':''}</span>${ps.length?`<span class="bang" onclick="showProbs('${aba}')">!</span>`:''}</div>
     <h2 style="margin-top:0">${esc(m.nome)}</h2>
     <div class="kv2">
-      <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.qt?fmt(m.qt)+' pçs':'—'}${m.qtProv?' (provisória)':''}</span></div>
+      <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${qtLine(m)}${m.qtProv?' (provisória)':''}</span></div>
       <div><b>TECIDO</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${tecLbl}${ts!=='ok'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?`<div class="sm"><span style="cursor:pointer;color:#9a5a00" onclick="addTec2('${aba}')">＋ forro / renda</span></div>`:''}</div>
       <div><b>TAM</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${(m.sizes||[]).join(' + ')||'—'}</span></div>
       <div><b>INÍCIO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${dtBR(m.ini)||'—'}</span></div>
@@ -2106,7 +2129,7 @@ function modFichaHTML(aba){
       <div><b>NF</b><span>${esc(m.nf||'')||'—'}</span></div>
       <div><b>MEMO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${esc(m.memo||'')||'—'}</span></div>
     </div>
-    ${me?`<div class="acts2"><button class="btn mini" onclick="croCodeOpen('${aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button><button class="btn mini sec" onclick="tlHeadOpen('${aba}')">✎ EDITAR</button>${ci>0?`<button class="btn mini sec" onclick="tlVoltar('${aba}')">← VOLTAR</button>`:''}${ci>=0&&ci<es.length-1?`<button class="btn mini sec" onclick="tlAdvance('${aba}')">→ AVANÇAR</button>`:''}<button class="btn mini danger" onclick="descartar('${aba}')">🗑 DESCARTAR</button></div>`:''}
+    ${me?`<div class="acts2"><button class="btn mini" onclick="croCodeOpen('${aba}')">✎ ${m.codigo?'CÓDIGO':'DEFINIR CÓDIGO'}</button><button class="btn mini sec" onclick="tlHeadOpen('${aba}')">✎ EDITAR</button>${m.qtAceite?`<button class="btn mini sec" onclick="desfazerQt('${aba}')">↩ ${fmt(m.qtPedido)} pedidas</button>`:''}${ci>0?`<button class="btn mini sec" onclick="tlVoltar('${aba}')">← VOLTAR</button>`:''}${ci>=0&&ci<es.length-1?`<button class="btn mini sec" onclick="tlAdvance('${aba}')">→ AVANÇAR</button>`:''}<button class="btn mini danger" onclick="descartar('${aba}')">🗑 DESCARTAR</button></div>`:''}
   </div>`;
   const left=es.length?`<div class="tlh2"><h4 style="margin:0">DEBORA · ${esc(curE)} · ${pg}%${ap.length?` · aprovados ${apD}/${ap.length}`:''}</h4>${canTL()?'<span class="sm">● status · nome · data · 💬 obs</span>':''}</div><div class="pgb2"><i style="width:${pg}%"></i></div>
    ${es.map((e,ei)=>{ const d=tlEtDone(e); const open=(UI.tl&&UI.tl[aba+'|'+e.e]!=null)?UI.tl[aba+'|'+e.e]:(ei===ci||!d); const last=e.its.map(i=>i.data).filter(Boolean).sort().pop();
@@ -3263,7 +3286,8 @@ async function confirmPed(){ readPed(); const {ent}=pendencias(cur); if(ent.leng
 let __pubT=null, __pubH='';
 function eloSnapshot(){ /* P0: whitelist — SÓ progresso de produção no doc público */
  const mods=(DEB.models||[]).map(m=>({aba:m.aba,codigo:m.codigo||'',nome:m.nome||'',fase:m.fase||'',prog:m.prog??null,
-   qt:m.qt??null,ini:m.ini||null,prazo:m.prazo||null,concl:!!m.concl,risco:!!m.risco}));
+   qt:m.qt??null,ini:m.ini||null,prazo:m.prazo||null,concl:!!m.concl,risco:!!m.risco,
+   ...(qtCortOf(m)?{qtCort:qtCortOf(m)}:{}),...(m.qtPedido!=null?{qtPedido:m.qtPedido}:{}) }));
  const nuvKey=new Set(CEVT.map(d=>d.xref?trazKey(d.xref.modelo,d.xref.corte,d.xref.saida):null).filter(Boolean));
  const stOf=d=>{ const real=entregaFull(d); if(real) return '✅ ENTREGUE'; if(!d.env) return '✂️ EM CORTE'; const sa=d.env.saida, pv=d.env.prev; if(!(d.env.am&&d.env.am.at)&&sa&&daysBetween(sa,TODAY)>5) return '🟠 SEM AMOSTRA'; if(pv&&pv<TODAY) return '🔴 VENCIDO'; if(pv&&daysBetween(TODAY,pv)<=3) return '⏰ VENCE EM BREVE'; return '🟢 NO PRAZO'; };
  const lotsC=(CEVT||[]).filter(d=>!d.encerrado).map(d=>({modelo:String(d.cod||d.aba||''),desc:d.nm||'',qtd:d.pcs??null,corte:d.corte||null,
@@ -3397,5 +3421,9 @@ async function boot(){
   render();
 }
 document.addEventListener('DOMContentLoaded',boot); let __rsz=null,__rw=window.innerWidth; window.addEventListener('resize',()=>{ clearTimeout(__rsz); __rsz=setTimeout(()=>{ try{ if(window.innerWidth!==__rw&&['boletos','tecidos','pedidos','debora','roberto'].includes(VIEW)){ __rw=window.innerWidth; render(); } }catch(e){} },200); });
-</script><script>if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js").catch(()=>{});}</script>
+</script><script>if("serviceWorker" in navigator&&location.protocol==="https:"){
+ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>{ try{ reg.update(); }catch(e){} },30*60*1000);
+   reg.addEventListener('updatefound',()=>{ const nw=reg.installing; if(!nw) return; nw.addEventListener('statechange',()=>{ if(nw.state==='installed'&&navigator.serviceWorker.controller){ const u=document.getElementById('upd'); if(u){ u.classList.add('on'); } } }); }); }).catch(()=>{});
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{ const u=document.getElementById('upd'); if(u) u.classList.add('on'); });
+}</script>
 </body></html>
