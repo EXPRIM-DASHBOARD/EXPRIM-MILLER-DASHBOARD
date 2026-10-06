@@ -738,7 +738,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28d</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28e</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1054,6 +1054,7 @@ function modOfCod(cod,corte){ const c=String(cod||'').trim(); if(!c) return null
   const bs=toks.map(baseOf).filter(Boolean); const fam=DEB.models.filter(m=>m.codigo&&bs.includes(baseOf(m.codigo))); if(!fam.length) return null;
   const ep=fam.filter(m=>!corte||!m.ini||m.ini<=corte).sort((a,b)=>String(b.ini||'').localeCompare(String(a.ini||'')));
   return ep[0]||null; }
+function modOfL(l,A){ if(!l) return null; const r=A&&A.rows?A.rows.find(x=>x.lots&&x.lots.includes(l)):null; if(r&&r.m) return r.m; if(l.cloud) return modOfLot(l.cloud); return modOfCod(l.modelo,l.corte); }
 function modOfLot(d){ if(!d) return null; if(d.aba){ const m=DEB.models.find(x=>x.aba===d.aba); if(m) return m; } return modOfCod(d.cod||d.nm,d.corte); }
 /* religa lotes da nuvem que ficaram sem aba (bug trazerLot ≤ v9.28a) */
 function cortesSemAba(){ return CEVT.filter(d=>!d.aba&&modOfLot(d)); }
@@ -1640,7 +1641,7 @@ function renderRoberto(A){
   const filaR=prep.concat(wait);
   const byOf={}; ofi.forEach(l=>(byOf[l.oficina||'SEM OFICINA']=byOf[l.oficina||'SEM OFICINA']||[]).push(l));
   const filaRow=r=>`<div class="frow" onclick="openModel('${r.m.aba}')"><span class="mc">${r.m.aba} · ${r.m.codigo||'—'}</span><span class="nm">${esc(r.m.nome.replace(/^\S+\s*[-·]?\s*/,''))}</span><span class="sm">${r.m.qt?fmt(r.m.qt)+' pçs':''}${r.m.prazo?' · prazo '+dtBR(r.m.prazo):''}${r.m.nf?' · NF '+esc(r.m.nf):''}</span></div>`;
-  const lotRow=l=>{ const r=A.rows.find(x=>x.lots.includes(l)); return `<div class="frow" ${r?`onclick="openModel('${r.m.aba}')"`:''}><span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc)}</span><span class="sm">${lotLine(l)}</span></div>`; };
+  const lotRow=l=>{ const m=modOfL(l,A); return `<div class="frow" ${m?`onclick="openModel('${m.aba}')"`:''}><span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc)}</span><span class="sm">${lotLine(l)}</span></div>`; };
   /* fila agrupada por tecido (mesma NF) → cortar junto; grupos recolhidos por padrão */
   const groups=filaGroups(A).map(g=>Object.assign({},g,{rows:g.rows.filter(r=>rowHit(r)&&!confSet.has(r.m.aba))})).filter(g=>g.rows.length);
   const juntos=groups.filter(g=>g.rows.length>1);
@@ -1674,7 +1675,7 @@ function renderRoberto(A){
     :Object.keys(gs).map(tc=>cutGroupFull(tc)).join('');
     const cardsPend=cloudPend.map(d=>{const m=modOfLot(d)||{};
       return `<div class="mc2 ${RFICHA&&RFICHA.kind==='cort'&&RFICHA.key===d.id?'on':''}" onclick="robPick('cort','${d.id}')">${m.foto?`<img class="top" src="${m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${codAba(d.cod||m.codigo,d.aba)}</b><span class="nm2">${esc(d.nm)}</span><span class="st2">${fmt(d.pcs)} pçs · <b class="okt">✂ ${dtBR(d.corte)}</b></span><button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F;margin:5px auto 0;display:block" onclick="event.stopPropagation();openEnviar('${d.id}')">📦 ENVIAR</button></div>`;}).join('');
-    const cardsPar=(WIDE&&par.length)?par.map((l,i)=>{const r=A.rows.find(x=>x.lots.includes(l)); const m=r&&r.m; const dd=daysBetween(l.corte,TODAY);
+    const cardsPar=(WIDE&&par.length)?par.map((l,i)=>{const m=modOfL(l,A); const dd=daysBetween(l.corte,TODAY);
       return `<div class="mc2 ${RFICHA&&RFICHA.kind==='xlot'&&RFICHA.key===i?'on':''}" onclick="robPick('xlot',${i})"><span class="orig">📄 planilha</span>${m&&m.foto?`<img class="top" src="${m.foto}">`:'<div class="top" style="background:#EAE4D8"></div>'}<b>${esc(l.modelo)}</b><span class="nm2">${esc(l.desc||'')}</span><span class="st2">${l.qtd?fmt(l.qtd)+' pçs · ':''}✂ ${dtBR(l.corte)}${dd>3?` · <b style="color:#C0392B">+${dd}d</b>`:''}</span></div>`;}).join(''):'';
     const pendRows=WIDE?((cloudPend.length+par.length)?`<div class="cgrid">${cardsPend}${cardsPar}</div>`:'')
       :(cloudPend.map(d=>`<div class="frow"><span class="mc">${codAba(d.cod,d.aba)}</span><span class="nm">${esc(d.nm)}</span><span class="sm">${fmt(d.pcs)} pçs · ✂ ${dtBR(d.corte)}${d.junto>1?' · junto +'+(d.junto-1):''} · ${esc(d.tec)} ${d.mt} m</span><span style="margin-left:auto;display:flex;gap:6px"><button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desCorteCloud('${d.id}')">↩</button></span></div>`).join('')+par.map(lotRow).join(''));
@@ -1712,7 +1713,7 @@ function renderRoberto(A){
       const lt=ls.filter(l=>l.prev&&l.prev<TODAY); const pcs=ls.reduce((s,l)=>s+(l.qtd||0),0);
       const next=ls.filter(l=>l.prev&&l.prev>=TODAY).map(l=>l.prev).sort()[0];
       return `<div class="ofc ${lt.length?'late':''} ${OFSEL===o?'ofsel':''}"><div class="ofh" style="cursor:pointer" onclick="ofClick('${esc(o).replace(/'/g,'')}')"><b>${esc(o)}</b><span>${ls.length} lote(s) · ${fmt(pcs)} pçs</span>${lt.length?`<em>${lt.length} atrasado(s)</em>`:(next?`<em class="ok">próx. ${dtBR(next)}</em>`:'')}</div>${(v=>WIDE?(v?`<div class="ofst">⚡ ${v.lead!=null?v.lead+'d lead':'—'} · ${v.pct!=null?v.pct+'% no prazo':'—'}${v.rs!=null?' · R$ '+v.rs.toFixed(2).replace('.',',')+'/pç':''}${v.defp!=null?' · def '+v.defp.toFixed(1).replace('.',',')+'%':''}</div>`:'<div class="ofst" style="color:#b6ac9c">⚡ sem histórico</div>'):'')(VMAP[o])}
-      ${ls.sort((a,b)=>(a.prev||'9')<(b.prev||'9')?-1:1).map(l=>{const r=A.rows.find(x=>x.lots.includes(l)); const m=r&&r.m; const d=l.prev?daysBetween(l.prev,TODAY):null;
+      ${ls.sort((a,b)=>(a.prev||'9')<(b.prev||'9')?-1:1).map(l=>{const m=modOfL(l,A); const d=l.prev?daysBetween(l.prev,TODAY):null;
         return `<div class="ofl" ${m?`onclick="openModel('${m.aba}')"`:''}>${m&&m.foto?`<img loading="lazy" decoding="async" src="${m.foto}">`:'<i class="noth"></i>'}<span class="mc">${esc(l.modelo)}</span><span class="nm">${esc(l.desc||(m?m.nome:''))}</span><span class="dt ${d>0?'late':''}">${l.qtd?fmt(l.qtd)+' pçs · ':''}saiu ${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${d>0?` · <b>+${d}d</b>`:''}</span></div>`;}).join('')}
     </div>`;}).join('')||'<div class="empty">nenhum lote na oficina</div>'}</div>${WIDE?'':renderVelocidade()}`,'ordenado por atraso')}
     ${K('oficinas','🏷 OFICINAS','',ofiAll().length,'cadastro · prazo padrão','ranking por lotes concluídos','',()=>renderOficinas())}
@@ -1742,14 +1743,14 @@ function renderRoberto(A){
         ${(()=>{ const arr=ls.slice().sort((x,y)=>(x.prev||'9')<(y.prev||'9')?-1:1);
         if(OFV>=arr.length) OFV=0;
         const rows=arr.map((l,i)=>{ const dd=l.prev?daysBetween(l.prev,TODAY):null;
-          const r=A.rows.find(x=>x.lots.includes(l)); const m=(r&&r.m)||(l.cloud?DEB.models.find(x=>x.aba===l.cloud.aba):null);
+          const m=modOfL(l,A);
           return `<div class="ovr ${i===OFV?'on':''}" onclick="OFV=${i};render()">
             ${m&&m.foto?`<img loading="lazy" decoding="async" src="${m.foto}" class="ovth">`:'<div class="ovth"></div>'}
             <div style="min-width:0"><b>${esc(l.modelo)}</b><div class="ovnm">${esc(l.desc||'')}</div>
              <div class="ovdt">${l.qtd?fmt(l.qtd)+' pçs · ':''}saiu ${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${(dd&&dd>0)?` · <b style="color:#C0392B">+${dd}d</b>`:''}${l.cloud&&l.cloud.env.am?' · <b class="okt">amostra ✓</b>':''}${l.cloud&&chegRec(l.cloud)>0?` · <b style="color:#2E7D32">📥 ${fmt(chegRec(l.cloud))}/${fmt(l.cloud.pcs)}</b>`:''}</div></div></div>`; }).join('');
         const l=arr[OFV]; let vw='';
         if(l){ const dd=l.prev?daysBetween(l.prev,TODAY):null;
-          const r=A.rows.find(x=>x.lots.includes(l)); const m=(r&&r.m)||(l.cloud?DEB.models.find(x=>x.aba===l.cloud.aba):null);
+          const m=modOfL(l,A);
           const d=l.cloud;
           vw=`<div class="ovbig" ${m?`onclick="openModel('${m.aba}')" style="cursor:pointer" title="ficha completa"`:''}>${m&&m.foto?`<img loading="lazy" decoding="async" src="${m.foto}">`:''}${(dd&&dd>0)?`<span class="ovd">+${dd}d</span>`:''}</div>
            <b>${esc(l.modelo)}</b><div class="ovnm2">${esc(l.desc||'')}</div>
@@ -2776,6 +2777,11 @@ async function regCorteCloud(tec){
   finally{ pgHide(); window.__cutBusy=false; } }
 async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
   if(window.__cutBusy) return;
+  const plan=d.origem==='planilha'||!d.tec;
+  if(plan){ if(!confirm('Tirar '+(d.cod||d.aba||d.nm)+' do painel? (veio da planilha — nenhum estoque é mexido; se a linha ainda existir no ROBERTO.xlsx ela volta a aparecer como 📄 planilha)')) return;
+    window.__cutBusy=true; pgShow('↩ tirando do painel…');
+    try{ await FB.deleteDoc(FB.doc(FB.db,'cortes',id)); toast('↩ '+(d.cod||d.aba||d.nm)+' saiu do painel'); if(d.aba){ try{ await robCorteUnsync(d.aba); }catch(e){} } }
+    catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } finally{ pgHide(); window.__cutBusy=false; } return; }
   if(!confirm('Desfazer o corte de '+(d.aba||d.nm)+'? O estoque volta.')) return;
   const now=new Date().toISOString();
   window.__cutBusy=true; pgShow('↩ desfazendo…');
@@ -2932,11 +2938,11 @@ function robFichaHTML(kind,key){
  if(kind==='cort'){ const d=CEVT.find(x=>x.id===key); if(!d) return '';
   const m=modOfLot(d)||{};
   return box(m, codAba(d.cod,d.aba||m.aba)||esc(d.nm), esc(d.nm),
-    chip('✂ cortado '+dtBR(d.corte),'g')+chip(esc(d.tec)+' · '+d.mt+' m')+(d.junto>1?chip('junto +'+(d.junto-1)):''),
-    `<div class="kv2"><b>Risco</b><span>${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m${d.risco&&d.risco.mPc?` · <b>${d.risco.mPc} m/pç</b>`:''}${d.risco&&d.risco.moldes?` · ${d.risco.moldes} moldes/pç`:''}</span><b>Cores</b><span>${(d.coresUse||[]).map(c=>esc(c.cor)+' '+(c.pcs!=null?c.pcs+'p':c.folhas+'f')).join(' · ')||'—'}</span>${(d.extras||[]).length?`<b>Forro</b><span>${d.extras.map(x=>esc(x.tec)+' '+esc(x.papel)+(x.cor?' '+esc(x.cor):'')+' · '+x.mt+' m'+(x.mPc?' ('+x.mPc+' m/pç)':'')).join(' · ')}</span>`:''}<b>Por</b><span>${esc(d.who)}</span></div>
+    chip('✂ cortado '+dtBR(d.corte),'g')+(d.origem==='planilha'?chip('📄 veio da planilha'):chip(esc(d.tec||'—')+' · '+(d.mt!=null?d.mt+' m':'—')))+(d.junto>1?chip('junto +'+(d.junto-1)):''),
+    `<div class="kv2"><b>Risco</b><span>${d.origem==='planilha'?'planilha — sem risco no ELO':`${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m`}${d.risco&&d.risco.mPc?` · <b>${d.risco.mPc} m/pç</b>`:''}${d.risco&&d.risco.moldes?` · ${d.risco.moldes} moldes/pç`:''}</span><b>Cores</b><span>${(d.coresUse||[]).map(c=>esc(c.cor)+' '+(c.pcs!=null?c.pcs+'p':c.folhas+'f')).join(' · ')||'—'}</span>${(d.extras||[]).length?`<b>Forro</b><span>${d.extras.map(x=>esc(x.tec)+' '+esc(x.papel)+(x.cor?' '+esc(x.cor):'')+' · '+x.mt+' m'+(x.mPc?' ('+x.mPc+' m/pç)':'')).join(' · ')}</span>`:''}<b>Por</b><span>${esc(d.who)}</span></div>
      <div style="margin-top:8px">${matrizHTML(d.grade,d.coresUse,d.pcs)}</div>
      <textarea class="lmemo" placeholder="✎ memo do lote (aparece na DEBORA em cinza)" onchange="lotMemoSave('${d.id}',this.value)">${esc(d.memo||'')}</textarea>`,
-    `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR P/ OFICINA</button><button class="tg" onclick="fichaCorte('${d.id}')">📄 FICHA DE CORTE</button><button class="tg" onclick="desCorteCloud('${d.id}');RFICHA=null;">↩ desfazer corte</button>`)
+    `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR P/ OFICINA</button><button class="tg" onclick="fichaCorte('${d.id}')">📄 FICHA DE CORTE</button><button class="tg" onclick="desCorteCloud('${d.id}');RFICHA=null;">${d.origem==='planilha'?'↩ tirar do painel':'↩ desfazer corte'}</button>`)
    +(d.aba?msgThread('mod:'+d.aba,'rfI',`rfMsgSend('${d.aba}')`):''); }
  return ''; }
 function lastRs(of){ const xs=CEVT.filter(d=>d.env&&d.env.oficina===of&&d.env.rs!=null).sort((a,b)=>String(b.env.at||'').localeCompare(a.env.at||'')); return xs.length?xs[0].env.rs:null; }
