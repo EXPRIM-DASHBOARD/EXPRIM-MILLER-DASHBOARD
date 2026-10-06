@@ -734,11 +734,19 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 .ccl{display:flex;gap:6px;align-items:center;margin:2px 0}.ccl input{border:1px solid var(--line);border-radius:7px;padding:5px 7px;font:inherit}.ccl .cclc{flex:1;min-width:0}.ccl .cclk{max-width:86px}.ccl .cclm{width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459}
 .livbox{border:1.5px dashed #A3641A;border-radius:10px;background:#FBF3E2;padding:8px 10px;margin:0 0 8px}
 .livbox .lt{font:800 10px var(--mono);color:#A3641A;margin-bottom:5px}
+/* ===== v9.28f · ↩ voltar unificado · + forro/renda ===== */
+.back{margin-left:auto;border:1.5px solid #B3352E;color:#B3352E;background:#FBF0EE;border-radius:8px;padding:6px 10px;font:800 10.5px var(--mono);letter-spacing:.06em;cursor:pointer;white-space:nowrap}
+.back:hover{background:#B3352E;color:#fff}.back[disabled]{opacity:.45;cursor:not-allowed}.back[disabled]:hover{background:#FBF0EE;color:#B3352E}
+.ovac{flex-wrap:wrap}.ovac .back{flex-basis:100%;margin-left:0;text-align:center}
+.kv2 .tecv{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.kv2 .tecv>span:first-child{flex:1;min-width:0}
+.plus2{display:inline-flex;align-items:center;gap:4px;border-radius:999px;border:1.5px solid #B8862B;color:#7A4E00;background:#FFF7E6;font:800 10.5px var(--mono);letter-spacing:.06em;padding:0 9px;height:22px;white-space:nowrap;cursor:pointer;margin-left:auto}
+.plus2:hover{background:#B8862B;color:#fff}.plus2 i{font-style:normal;font-weight:900;font-size:13px;line-height:1}
+.kv2 .x2l{flex-basis:100%}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28e</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28f</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1288,11 +1296,11 @@ function renderCustoTab(){ const all=(ROB.custo||[]).slice(); if(!all.length) re
    <div class="culeg"><i style="background:#FBFAF6"></i>planilha (drop reescreve) <i style="background:#FFFDF0"></i>editável no ELO — verde = digitado por você <i style="background:#FBEDEB;border-color:#C0392B"></i>conflito: planilha e ELO mudaram diferente — escolha <i style="background:#F3F5F9"></i>calculado · clique no cabeçalho p/ ordenar · linha = modelo + data de corte</div>
   </section>`; }
 function tecFromCloud(docs){ return docs.map(t=>({code:t.code,nome:t.nome||'',forn:t.forn||'',nf:t.nf||'',categoria:t.categoria||'',estoque:t.estoque||0,usado:t.usado||0,status:(t.status==='esgotado'&&!(t.usado>0)&&!((t.cortes||[]).length)&&!t.sobras)?'estoque':(t.status||(t.estoque>0?'estoque':(((t.usado||0)>0||((t.cortes||[]).length))?'esgotado':'estoque'))),comp:t.comp||'',estacao:t.estacao||'',preco:t.preco??null,largura:t.largura??null,gramatura:t.gramatura??null,mediaRolo:t.mediaRolo??null,dataEntrada:t.dataEntrada||null,cores:t.cores||[],foto:t.foto||null,obs:t.obs||'',imposto:t.imposto??null,precoImp:t.precoImp??null,qtdPedida:t.qtdPedida??null,dataPedido:t.dataPedido||null,prevEntrega:t.prevEntrega||null,qtdRecebida:t.qtdRecebida??null,rolosRec:t.rolosRec??null,inspecao:t.inspecao||'',cortes:t.cortes||[],devol:t.devol||[],sobras:!!t.sobras,pecas:t.pecas||[],sobraOut:t.sobraOut||null,corteOut:t.corteOut||null,pedidoId:t.pedidoId||null})).sort((a,b)=>+a.code.replace(/\D/g,'')-+b.code.replace(/\D/g,'')); }
-let FBUSER=null, FBUNSUB=[]; let CRO=[], CSEL=null, CMODE='view', NMF=null, DESC=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, OFIC=[], RANK={k:'taxa',d:1}, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[], CPV={}, CUF='todos', CUQ='', CUX=false, CUS={k:'corte',d:-1}; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
+let FBUSER=null, FBUNSUB=[]; let CEVTX=[]; let CRO=[], CSEL=null, CMODE='view', NMF=null, DESC=[]; let TDOCS=[], PED=[], PFILT='PEDIDO', cur=null, CFG={}, TSEL=null, PSEL=null, DFASE='Corte', DMSEL=null, DCHIP={}, RSEL='fila', OFSEL=null, RFICHA=null, OFIC=[], RANK={k:'taxa',d:1}, ROBG=[], ROBXP=[], OFV=0, GV=0, FMAN=[], CCONF=[], CEVT=[], CPV={}, CUF='todos', CUQ='', CUX=false, CUS={k:'corte',d:-1}; let BOL=[], BOLF='PEND', BOLSORT={k:'venc',d:1}, BSEL=null, MSG=[]; const $$=q=>[...document.querySelectorAll(q)];
 function cloudSubscribe(){
   const {db,collection,doc,onSnapshot}=FB; FBUNSUB.forEach(f=>f()); FBUNSUB=[];
   FBUNSUB.push(onSnapshot(doc(db,'config','cfg'),s=>{ CFG=s.exists()?s.data():{}; }));
-  FBUNSUB.push(onSnapshot(collection(db,'boletos'),s=>{ BOL=s.docs.map(d=>d.data()); render(); },e=>toast('Erro boletos: '+e.code)));   FBUNSUB.push(onSnapshot(collection(db,'corte_conf'),s=>{ CCONF=s.docs.map(d=>d.data()); render(); },e=>console.warn('corte_conf',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'cortes'),s=>{ CEVT=s.docs.map(d=>d.data()); render(); },e=>console.warn('cortes',e&&e.code)));
+  FBUNSUB.push(onSnapshot(collection(db,'boletos'),s=>{ BOL=s.docs.map(d=>d.data()); render(); },e=>toast('Erro boletos: '+e.code)));   FBUNSUB.push(onSnapshot(collection(db,'corte_conf'),s=>{ CCONF=s.docs.map(d=>d.data()); render(); },e=>console.warn('corte_conf',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'cortes'),s=>{ const all=s.docs.map(d=>d.data()); CEVTX=all.filter(d=>d&&d.anulado); CEVT=all.filter(d=>!(d&&d.anulado)); render(); },e=>console.warn('cortes',e&&e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'oficinas'),s=>{ OFIC=s.docs.map(d=>d.data()); render(); },e=>console.warn('oficinas',e&&e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'cro_elo'),s=>{ CRO=s.docs.map(d=>d.data()).filter(x=>x&&x.id).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||''))); if(CSEL&&!CRO.some(c=>c.id===CSEL)){ CSEL=null; CMODE='view'; } render(); },e=>console.warn('cro_elo',e&&e.code)));
   FBUNSUB.push(onSnapshot(collection(db,'custo_elo'),s=>{ const m={}; s.docs.forEach(d=>{ const x=d.data(); if(x&&x.key) m[x.key]=x; }); CPV=m; render(); },e=>console.warn('custo_elo',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'fila_manual'),s=>{ FMAN=s.docs.map(d=>d.data()); render(); },e=>console.warn('fila_manual',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'msgs'),s=>{ MSG=s.docs.map(d=>d.data()).sort((a,b)=>String(a.at).localeCompare(String(b.at))); render(); },e=>console.warn('msgs',e&&e.code)));   FBUNSUB.push(onSnapshot(collection(db,'pedidos'),s=>{ PED=s.docs.map(d=>d.data()); render(); },e=>toast('Erro pedidos: '+e.code)));
@@ -1756,8 +1764,8 @@ function renderRoberto(A){
            <b>${esc(l.modelo)}</b><div class="ovnm2">${esc(l.desc||'')}</div>
            <div class="ovdt2">${l.qtd?fmt(l.qtd)+' pçs · ':''}${dtBR(l.saida)} → ${dtBR(l.prev)||'?'}${d&&d.env.rs!=null?` · <b style="cursor:pointer" onclick="editRsC('${d.id}')">R$ ${d.env.rs.toFixed(2).replace('.',',')}/pç</b>`:(d?` · <b style="cursor:pointer" onclick="editRsC('${d.id}')">R$/pç?</b>`:'')}</div>
            ${d?`<button class="tg ${d.env.am?'on':''}" style="width:100%;margin-top:7px;${d.env.am?'background:#2E7D32;border-color:#2E7D32;color:#fff':''}" onclick="togAmostraC('${d.id}')">${d.env.am?('amostra ✓ '+dtBR(d.env.am.at)):'⚠ sem amostra — toque'}</button>
-            ${chegList(d).length?`<div style="margin-top:6px;text-align:left">${chegList(d).map(e=>`<div class="chr">${e.retrab?'🔁':'📥'} ${dtBR(e.data)} · ${fmt(e.qtd)} pçs${e.def?` · <b style="color:#C0392B">def ${e.def}</b>`:''}${e.retrab?' · retrabalho (não paga)':''}${e.legado?' · <small>antigo</small>':''}<button class="tg" style="float:right;padding:0 6px" onclick="desChg('${d.id}','${e.id}')">↩</button></div>`).join('')}<div class="chr" style="border-top:1px solid var(--line)"><b>${fmt(chegRec(d))}/${fmt(d.pcs)} recebidas · restam ${fmt(chegPend(d))}</b></div></div>`:''}
-            <div class="ovac"><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="openCheg('${d.id}')">📥 RECEBER${chegRec(d)>0?' +':''}</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="tg" onclick="desEnvio('${d.id}')">↩</button></div>`
+            ${chegList(d).length?`<div style="margin-top:6px;text-align:left">${chegList(d).map(e=>`<div class="chr">${e.retrab?'🔁':'📥'} ${dtBR(e.data)} · ${fmt(e.qtd)} pçs${e.def?` · <b style="color:#C0392B">def ${e.def}</b>`:''}${e.retrab?' · retrabalho (não paga)':''}${e.legado?' · <small>antigo</small>':''}<button class="tg" style="float:right;padding:0 6px" title="cancelar esta chegada" onclick="desChg('${d.id}','${e.id}')">↩ cancelar chegada</button></div>`).join('')}<div class="chr" style="border-top:1px solid var(--line)"><b>${fmt(chegRec(d))}/${fmt(d.pcs)} recebidas · restam ${fmt(chegPend(d))}</b></div></div>`:''}
+            <div class="ovac"><button class="tg on" style="background:#2E7D32;border-color:#2E7D32" onclick="openCheg('${d.id}')">📥 RECEBER${chegRec(d)>0?' +':''}</button><button class="tg" onclick="fichaCorte('${d.id}')">📄</button><button class="back" ${chegList(d).length?'disabled title="primeiro cancele as chegadas (↩ em cada linha)"':''} onclick="desEnvio('${d.id}')">↩ voltar p/ AGUARD. SAIR</button></div>${chegList(d).length?'<div class="sm" style="margin-top:4px;color:#6b6459">com chegada registrada o ↩ fica desligado — cancele a chegada primeiro</div>':''}`
            :(m?`<button class="tg" style="width:100%;margin-top:7px" onclick="openModel('${m.aba}')">ficha completa do modelo</button>`:'')}`; }
         return `<div class="ovwrap"><div class="ovrows">${rows}</div><div class="ovview">${vw}</div></div>`; })()}
         ${(cs=>cs.length?`<h4 style="margin:10px 12px 4px">📥 CHEGARAM · ${cs.length} <small style="color:#8a6d00">💰 a pagar: R$ ${cs.reduce((s,d)=>s+(chegPagar(d)||0),0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</small></h4>${cs.map(d=>{ const pg=chegPagar(d), dfT=chegDef(d), rs=d.env.rs;
@@ -2079,7 +2087,7 @@ function tlNames(){ const s=new Set(); DEB.models.forEach(m=>(m.items||[]).forEa
 function canTL(){ return !!FBUSER; }
 /* ===== v9.25a · pedido (DEBORA) × cortado (Roberto) ===== */
 function qtCortOf(m){ if(!m) return 0; const cl=cevtLotsOf(m);
-  const ex=lotsOf(m).lots.filter(l=>l.corte&&!cl.some(c=>trazHit(c.cloud,l))); return cl.reduce((s,c)=>s+(c.qtd||0),0)+ex.reduce((s,l)=>s+(l.qtd||0),0); }
+  const ex=lotsOf(m).lots.filter(l=>l.corte&&!trazido(l)); return cl.reduce((s,c)=>s+(c.qtd||0),0)+ex.reduce((s,l)=>s+(l.qtd||0),0); }
 function qtAberto(m){ return CCONF.some(c=>c.aba===m.aba); } /* ainda tem corte pendente (parcial) */
 function qtLine(m){ const qc=qtCortOf(m); const ped=m.qtPedido!=null?m.qtPedido:m.qt; if(!qc||!ped||qc===ped&&!m.qtAceite) return m.qt?`${fmt(m.qt)} pçs`:'—';
   const d=qc-ped; return `<span class="qtd ${d<0&&!m.qtAceite?'neg':''}">${fmt(ped)} pedido → <b>${fmt(qc)} cortado</b> (${d>0?'+':''}${fmt(d)})${m.qtAceite?' <small>✓ '+esc(m.qtAceite.por)+'</small>':''}</span>`; }
@@ -2210,7 +2218,7 @@ function modProbs(m){ const o=[]; const me=isLucas(); { const a=alertProb(m); if
   return o; }
 function showProbs(aba){ const m=DEB.models.find(x=>x.aba===aba); if(!m) return; const ps=modProbs(m); if(!ps.length) return;
   openMod(`! · ${aba} · ${ps.length} ponto(s) a resolver`,`<div class="fp2">${ps.map(p=>`<div class="prob"><span>${p.t}</span>${p.fix||''}</div>`).join('')}<div class="acts"><button class="btn sec" onclick="closeMod()">FECHAR</button></div></div>`,'',true); }
-function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>trazHit(c.cloud,l))).concat(cl);
+function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!trazido(l)).concat(cl);
   if(!lots.length) return `<div class="cl"><span class="pale">sem lote do Roberto</span></div><div class="cl">${tecLine(m)}</div>`;
   const l=lots.slice().sort((a,b)=>String(b.corte||'').localeCompare(String(a.corte||'')))[0]; const extra=lots.length>1?` <span class="pale">+${lots.length-1} lote</span>`:'';
   const l1=l.saida?`🏭 <b>${esc(l.oficina||'?')}</b> ${l.qtd?fmt(l.qtd)+'p':''} · ✂ ${dtBR(l.corte)||'—'}${extra}`:`✂ cortado ${l.qtd?fmt(l.qtd)+'p':''} · ${dtBR(l.corte)||'—'}${extra}`;
@@ -2219,7 +2227,7 @@ function costLines(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||
   else if(l.real) l2=`<span class="ok2">📥 chegou ${dtBR(l.real)} ✓</span>${l.def>0?` <span class="pale">def ${l.def}</span>`:''}`;
   else { const d=l.prev?daysBetween(l.prev,TODAY):null; const part=rec?`${fmt(rec)}/${fmt(l.qtd)} · `:''; if(d==null) l2=`📥 ${part}<span class="pale">sem previsão</span>`; else if(d<=0) l2=`📥 ${part}<span class="pale">prev. ${dtBR(l.prev)}</span>`; else if(d<=tol) l2=`📥 ${part}<span class="tol">tolerância +${d}d</span>`; else l2=`📥 ${part}<span class="lt2">atrasado ${d}d</span>`; }
   return `<div class="cl">${l1}</div><div class="cl">${l2}</div>`; }
-function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!cl.some(c=>trazHit(c.cloud,l))).concat(cl);
+function robLine(r){ const m=r.m; const cl=cevtLotsOf(m); const lots=(r.lots||[]).filter(l=>!trazido(l)).concat(cl);
   if(!lots.length){ if(m.fase==='Corte') return m.risco?'<b>✂ risco ✓</b> · pronto p/ cortar':'<span class="pale">✂ risco pendente</span>'; return '<span class="pale">—</span>'; }
   return lots.map(l=>{ const p=[]; if(l.corte) p.push(`<b>✂ ${dtBR(l.corte)}</b>${l.qtd?' '+fmt(l.qtd)+'p':''}`); if(l.saida) p.push(`<b>📦 ${esc(l.oficina||'?')}</b> ${dtBR(l.saida)}`);
     if(l.real) p.push(`<b style="color:var(--green)">📥 ${dtBR(l.real)} ✓</b>`); else if(l.saida) p.push(`📥 ${l.cloud&&chegRec(l.cloud)>0?`<b>${fmt(chegRec(l.cloud))}/${fmt(l.qtd)}</b> · `:''}<span class="pale${l.prev&&l.prev<TODAY?' late':''}">prev. ${dtBR(l.prev)||'?'}</span>`); else if(l.corte) p.push('<span class="pale">não saiu</span>');
@@ -2243,7 +2251,7 @@ function modFichaHTML(aba){
     <h2 style="margin-top:0">${esc(m.nome)}</h2>
     <div class="kv2">
       <div><b>QTD</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${qtLine(m)}${m.qtProv?' (provisória)':''}</span></div>
-      <div><b>TECIDO${me?`<span class="plus" title="＋ forro · renda (tecido secundário — o principal é em ✎ EDITAR)" onclick="addTec2('${aba}')">+ forro/renda</span>`:''}</b><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${ts==='livre'?'✎ ':''}${tecLbl}${ts==='livre'?' <span class="chipLiv">manual · sem estoque</span>':''}${ts!=='ok'&&ts!=='livre'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${tecs2Of(m).length?`<div class="sm" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}${me?``:''}</div>
+      <div><b>TECIDO</b><span class="tecv"><span ${tecs.length?`style="cursor:pointer" onclick="openTecido('${tecs[0].code}')"`:''}>${ts==='livre'?'✎ ':''}${tecLbl}${ts==='livre'?' <span class="chipLiv">manual · sem estoque</span>':''}${ts!=='ok'&&ts!=='livre'&&ts!=='semnf'?'<small>não confirmado</small>':''}</span>${me?`<span class="plus2" title="＋ forro · renda (tecido secundário — o principal é em ✎ EDITAR)" onclick="addTec2('${aba}')"><i>+</i> forro/renda</span>`:''}${tecs2Of(m).length?`<div class="sm x2l" style="margin-top:2px">+ ${tecs2Of(m).map(x=>`<span style="cursor:pointer" onclick="openTecido('${x.tec}')">${esc(x.tec)}</span> <small>${esc(x.papel)}</small>${me?` <span style="cursor:pointer;color:#9a9386" onclick="delTec2('${aba}','${x.tec}')">✕</span>`:''}`).join(' · ')}</div>`:''}</span></div>
       <div><b>TAM</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${(m.sizes||[]).join(' + ')||'—'}</span></div>
       <div><b>INÍCIO</b><span class="${me?'ed':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${dtBR(m.ini)||'—'}</span></div>
       <div><b>PRAZO</b><span class="${me?'ed':''} ${late?'late':''}" ${me?`onclick="tlHeadOpen('${aba}')"`:''}>${m.prazo?dtBR(m.prazo):'—'}${m.prazoTipo?' · '+esc(m.prazoTipo):''}${m.prazoAj?' (ajustado)':''}</span></div>
@@ -2777,12 +2785,20 @@ async function regCorteCloud(tec){
   finally{ pgHide(); window.__cutBusy=false; } }
 async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
   if(window.__cutBusy) return;
-  const plan=d.origem==='planilha'||!d.tec;
-  if(plan){ if(!confirm('Tirar '+(d.cod||d.aba||d.nm)+' do painel? (veio da planilha — nenhum estoque é mexido; se a linha ainda existir no ROBERTO.xlsx ela volta a aparecer como 📄 planilha)')) return;
-    window.__cutBusy=true; pgShow('↩ tirando do painel…');
-    try{ await FB.deleteDoc(FB.doc(FB.db,'cortes',id)); toast('↩ '+(d.cod||d.aba||d.nm)+' saiu do painel'); if(d.aba){ try{ await robCorteUnsync(d.aba); }catch(e){} } }
+  const plan=d.origem==='planilha'||!d.tec; const mm=modOfLot(d);
+  if(plan){ const nm=d.cod||d.aba||d.nm;
+    if(!mm){ if(!confirm('Tirar '+nm+' do painel? Não achei a ficha na DEBORA, então ele não volta p/ AGUARD. CORTAR — só sai daqui.')) return; }
+    else if(!confirm('Voltar '+nm+' p/ AGUARD. CORTAR?\n\nA linha da planilha ROBERTO (✂ '+dtBR(d.corte)+') fica IGNORADA — não volta como 📄 planilha nem conta em quantidade/oficina. Nenhum estoque é mexido.')) return;
+    window.__cutBusy=true; pgShow('↩ voltando…'); const now=new Date().toISOString();
+    try{ const b=FB.writeBatch(FB.db);
+      if(mm){ b.set(FB.doc(FB.db,'cortes',id),{...d,anulado:{at:now,by:whoName(),motivo:'voltou p/ AGUARD. CORTAR'}});
+        const sel=mm.tecSel&&mm.tecSel.tec?mm.tecSel:null;
+        b.set(FB.doc(FB.db,'corte_conf','C'+mm.aba),{id:'C'+mm.aba,aba:mm.aba,cod:String(mm.codigo||d.cod||''),nm:mm.nome||d.nm,tec:sel?sel.tec:'',livre:!!(sel&&sel.livre),tecAt:sel?sel.tecAt||null:null,pcs:mm.qt||d.pcs||null,man:null,who:whoName(),by:(FBUSER&&FBUSER.email)||'',at:now}); }
+      else b.delete(FB.doc(FB.db,'cortes',id));
+      await b.commit(); toast(mm?('↩ '+nm+' voltou p/ AGUARD. CORTAR · linha da planilha ignorada'):('↩ '+nm+' saiu do painel'));
+      if(mm){ try{ await robCorteUnsync(mm.aba); }catch(e){} } }
     catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } finally{ pgHide(); window.__cutBusy=false; } return; }
-  if(!confirm('Desfazer o corte de '+(d.aba||d.nm)+'? O estoque volta.')) return;
+  if(!confirm('Voltar '+(d.cod||d.aba||d.nm)+' p/ AGUARD. CORTAR?\n\nO estoque de '+d.tec+' volta '+(d.mt||0)+' m'+((d.extras||[]).length?' (+ forro/renda)':'')+'. O modelo reaparece em AGUARD. CORTAR com o tecido confirmado.')) return;
   const now=new Date().toISOString();
   window.__cutBusy=true; pgShow('↩ desfazendo…');
   try{
@@ -2808,7 +2824,7 @@ async function desCorteCloud(id){ const d=CEVT.find(x=>x.id===id); if(!d) return
       tx.set(FB.doc(FB.db,'corte_conf','C'+(d.aba||d.id)),{id:'C'+(d.aba||d.id),aba:d.aba,cod:d.cod,nm:d.nm,tec:d.tec,livre:!!d.tecLivre,pcs:null,man:null,who:d.who,by:d.by,at:now});
       window.__unsyncAba=d.aba||'';
     });
-    toast('↩ corte desfeito · estoque restaurado');
+    toast('↩ voltou p/ AGUARD. CORTAR · estoque restaurado');
     if(window.__unsyncAba){ try{ await robCorteUnsync(window.__unsyncAba); }catch(e){} window.__unsyncAba=''; }
   }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
   finally{ pgHide(); window.__cutBusy=false; } }
@@ -2847,11 +2863,11 @@ function cutGroupFull(tc){ const its=CCONF.filter(c=>(c.tec||'?')===tc); if(!its
   </div>`:'';
  const header=`<div class="cfgh">${t&&t.foto?`<img src="${t.foto}">`:'<div class="cfsw"></div>'}<div style="min-width:0"><b>${t?esc(tc)+' · '+esc(t.nome):(livre?'✎ '+esc(tc)+' · manual':'⚠ '+esc(tc))}</b><span>✔ ${its.length} confirmado(s) · ✂ cortar junto${t?' · '+fmt(Math.round(t.estoque))+' m em estoque':''}${its.some(c=>c.parcial)?' · <span class="parc">2º corte</span>':''}</span></div><div class="cfgn"><b>${its.length}</b><small>P/ CORTAR</small></div></div>`;
  const cardOf=c=>{ const m=DEB.models.find(x=>x.aba===c.aba)||{};
-   return `<div class="mc2" style="cursor:default"><span class="who2">✔ ${esc(c.who)}</span>${m.foto?`<img class="top" loading="lazy" decoding="async" src="${m.foto}">`:'<div class="top"></div>'}<b>${codAba(c.cod||m.codigo,c.aba)}</b><span class="nm2">${esc(c.nm)}</span>${c.parcial?`<span class="parc">faltam ${fmt(c.pcs||0)}</span>`:''}<button class="tg" style="margin:4px auto 6px;display:block" onclick="desConfC('${c.id}')">↩ fila</button></div>`; };
+   return `<div class="mc2" style="cursor:default"><span class="who2">✔ ${esc(c.who)}</span>${m.foto?`<img class="top" loading="lazy" decoding="async" src="${m.foto}">`:'<div class="top"></div>'}<b>${codAba(c.cod||m.codigo,c.aba)}</b><span class="nm2">${esc(c.nm)}</span>${c.parcial?`<span class="parc">faltam ${fmt(c.pcs||0)}</span>`:''}<button class="back" style="margin:4px auto 6px;display:block" onclick="desConfC('${c.id}')">↩ voltar p/ FILA</button></div>`; };
  if(WIDE){
    return `<div class="cfg"><div class="cutwrap"><div class="cutL">${its.map(cardOf).join('')}</div><div class="cutR">${linkSel}${calc}</div></div></div>`.replace('<div class="cutwrap">',header+'<div class="cutwrap">');
  }
- const rowsN=its.map(c=>`<div class="frow"><span class="mc">${codAba(c.cod,c.aba)}</span><span class="nm">${esc(c.nm)}</span><span class="sm"><b class="okt">✔ ${esc(c.who)}</b>${c.man?' · manual':''}${c.parcial?' · <span class="parc">parcial</span>':''}</span><button class="tg" style="margin-left:auto" onclick="desConfC('${c.id}')">↩ fila</button></div>`).join('');
+ const rowsN=its.map(c=>`<div class="frow"><span class="mc">${codAba(c.cod,c.aba)}</span><span class="nm">${esc(c.nm)}</span><span class="sm"><b class="okt">✔ ${esc(c.who)}</b>${c.man?' · manual':''}${c.parcial?' · <span class="parc">parcial</span>':''}</span><button class="back" onclick="desConfC('${c.id}')">↩ voltar p/ FILA</button></div>`).join('');
  return `<div class="cfg">${header}${rowsN}<div style="padding:8px 12px">${linkSel}${calc}</div></div>`;
 }
 function robPick(kind,key){ if((kind==='grp'||kind==='xlot'||kind==='cutg')&&window.innerWidth<980) return; if(kind==='grp') GV=0; if(window.innerWidth>=980){ RFICHA=(RFICHA&&RFICHA.kind===kind&&RFICHA.key===key)?null:{kind,key}; OFSEL=null; render(); }
@@ -2942,7 +2958,7 @@ function robFichaHTML(kind,key){
     `<div class="kv2"><b>Risco</b><span>${d.origem==='planilha'?'planilha — sem risco no ELO':`${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m`}${d.risco&&d.risco.mPc?` · <b>${d.risco.mPc} m/pç</b>`:''}${d.risco&&d.risco.moldes?` · ${d.risco.moldes} moldes/pç`:''}</span><b>Cores</b><span>${(d.coresUse||[]).map(c=>esc(c.cor)+' '+(c.pcs!=null?c.pcs+'p':c.folhas+'f')).join(' · ')||'—'}</span>${(d.extras||[]).length?`<b>Forro</b><span>${d.extras.map(x=>esc(x.tec)+' '+esc(x.papel)+(x.cor?' '+esc(x.cor):'')+' · '+x.mt+' m'+(x.mPc?' ('+x.mPc+' m/pç)':'')).join(' · ')}</span>`:''}<b>Por</b><span>${esc(d.who)}</span></div>
      <div style="margin-top:8px">${matrizHTML(d.grade,d.coresUse,d.pcs)}</div>
      <textarea class="lmemo" placeholder="✎ memo do lote (aparece na DEBORA em cinza)" onchange="lotMemoSave('${d.id}',this.value)">${esc(d.memo||'')}</textarea>`,
-    `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR P/ OFICINA</button><button class="tg" onclick="fichaCorte('${d.id}')">📄 FICHA DE CORTE</button><button class="tg" onclick="desCorteCloud('${d.id}');RFICHA=null;">${d.origem==='planilha'?'↩ tirar do painel':'↩ desfazer corte'}</button>`)
+    `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR P/ OFICINA</button><button class="tg" onclick="fichaCorte('${d.id}')">📄 FICHA DE CORTE</button><button class="back" onclick="desCorteCloud('${d.id}');RFICHA=null;">↩ voltar p/ AGUARD. CORTAR</button>`)
    +(d.aba?msgThread('mod:'+d.aba,'rfI',`rfMsgSend('${d.aba}')`):''); }
  return ''; }
 function lastRs(of){ const xs=CEVT.filter(d=>d.env&&d.env.oficina===of&&d.env.rs!=null).sort((a,b)=>String(b.env.at||'').localeCompare(a.env.at||'')); return xs.length?xs[0].env.rs:null; }
@@ -2969,7 +2985,8 @@ async function salvarEnvio(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
     closeMod(); toast('📦 enviado p/ '+of+' · prazo '+dtBR(prev)+' → DEBORA: SAIDA ✓'); RSEL='ofi'; OFSEL=of; render(); if(d.aba) setTimeout(()=>robCosturaSync(d.aba),800);
   }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 async function desEnvio(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
-  if(!confirm('Voltar '+(d.aba||d.nm)+' para 📦 (desfazer envio)?')) return;
+  if(chegList(d).length){ toast('cancele as chegadas antes de voltar p/ AGUARD. SAIR'); return; }
+  if(!confirm('Voltar '+(d.cod||d.aba||d.nm)+' p/ AGUARD. SAIR?\n\nA saída p/ '+(d.env.oficina||'—')+' ('+dtBR(d.env.saida)+') é apagada. O corte continua registrado.')) return;
   try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env:null,cheg:null}); toast('↩ voltou p/ 📦'); if(d.aba) setTimeout(()=>robCosturaSync(d.aba),800); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
 async function togAmostraC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) return;
   const env={...d.env,am:d.env.am?null:{at:new Date().toISOString().slice(0,10),by:whoName()}};
@@ -2980,7 +2997,7 @@ function trazHit(d,l){ const x=d&&d.xref; if(!x||!l) return false;
   if(String(x.modelo||'').trim()!==String(l.modelo||'').trim()) return false;
   if(String(x.corte||'')!==String(l.corte||'')) return false;
   return !x.saida||!l.saida||String(x.saida)===String(l.saida); }
-function trazido(l){ return CEVT.some(d=>trazHit(d,l)); }
+function trazido(l){ return CEVT.some(d=>trazHit(d,l))||CEVTX.some(d=>trazHit(d,l)); }
 function lotesDup(){ /* lotes da planilha que ainda contam em dobro (chave antiga ≠, mas modelo+corte casam) — só diagnóstico */
   return (ROB.lots||[]).filter(l=>l.corte&&trazido(l)&&!CEVT.some(d=>d.xref&&trazKey(d.xref.modelo,d.xref.corte,d.xref.saida)===trazKey(l.modelo,l.corte,l.saida))); }
 async function trazerLot(i){ const l=ROBXP[i]; if(!l){ toast('lote não encontrado'); return; }
@@ -3066,7 +3083,7 @@ async function salvarCheg(id){ if(window.__chgBusy) return;
   }catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); }
   finally{ pgHide(); window.__chgBusy=false; } }
 async function desChg(id,gid){ if(window.__chgBusy) return;
-  if(!confirm('Remover esta entrada?')) return;
+  { const d0=CEVT.find(x=>x.id===id); const e0=d0?chegList(d0).find(x=>x.id===gid):null; if(!confirm('Cancelar a chegada'+(e0?' de '+fmt(e0.qtd)+' pçs ('+dtBR(e0.data)+')':'')+'?\n\nO lote continua na oficina'+(d0&&d0.env?' '+d0.env.oficina:'')+'; só esta entrada é apagada.')) return; }
   window.__chgBusy=true; pgShow('↩ removendo…');
   try{
     await FB.runTransaction(FB.db, async tx=>{
