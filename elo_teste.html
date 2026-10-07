@@ -742,11 +742,16 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 .plus2{display:inline-flex;align-items:center;gap:4px;border-radius:999px;border:1.5px solid #B8862B;color:#7A4E00;background:#FFF7E6;font:800 10.5px var(--mono);letter-spacing:.06em;padding:0 9px;height:22px;white-space:nowrap;cursor:pointer;margin-left:auto}
 .plus2:hover{background:#B8862B;color:#fff}.plus2 i{font-style:normal;font-weight:900;font-size:13px;line-height:1}
 .kv2 .x2l{flex-basis:100%}
+/* ===== v9.28g · risco depois do corte ===== */
+.rkf{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px 10px}.rkf label{display:flex;flex-direction:column;gap:3px;font:800 8.5px var(--mono);letter-spacing:.1em;color:#6b6459}.rkf input{border:1px solid var(--line);border-radius:7px;padding:7px 8px;font:inherit;width:100%}
+.rkf .full{grid-column:1/-1}
+.rkc{display:flex;gap:6px;align-items:center;margin:3px 0}.rkc input{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit}.rkc .c{flex:1;min-width:0}.rkc .k{max-width:90px}.rkc .m{width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459}
+.rkout2{font:700 11px var(--mono);color:#2E7D32;margin:8px 0 4px}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28f</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28g</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -849,7 +854,7 @@ const DB_NAME='exprim_elo', DB_STORE='kv';
 let DEB={models:[],at:null,file:''}, ROB={lots:[],custo:[],at:null,file:''}, TEC={items:[],at:null,file:''};
 let PLANO={key:'',sel:{}}; let TODO={done:{},extra:[]};
 const IS_TESTE=/elo_?teste|elo2/i.test(location.pathname); window.IS_TESTE=IS_TESTE; if(IS_TESTE){ document.body.classList.add('teste'); document.title='ELO · TESTE'; }
-function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&isLucas()); if(b) b.classList.toggle('on',IS_TESTE); ['lkCopy','lkWipe'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.toggle('on',IS_TESTE&&isLucas()); }); }
+function testeLinks(){ const a=document.getElementById('lkTeste'), b=document.getElementById('lkElo'); if(a) a.classList.toggle('on',!IS_TESTE&&!!FBUSER); if(b) b.classList.toggle('on',IS_TESTE); ['lkCopy','lkWipe'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.toggle('on',IS_TESTE&&isLucas()); }); }
 const TESTE_COLS=['elo_deb','cro_elo','cro_img','custo_elo','cortes','corte_conf','tecidos','pedidos','boletos','msgs','fila_manual','oficinas','movs','nfs','elo','public'];
 async function testeCopiar(){ if(!IS_TESTE||!isLucas()||window.__tcBusy) return; if(!confirm('Copiar TODOS os dados do ELO (produção) para a versão de TESTE?\nO que já existe no teste é sobrescrito. Nada muda no ELO.')) return;
   window.__tcBusy=true; let n=0; try{ for(const c of TESTE_COLS){ pgShow('📥 copiando '+c+'…'); const src=await FB.getDocs(FB._colRaw(FB.db,c)); let b=FB.writeBatch(FB.db), k=0, bytes=0;
@@ -2954,8 +2959,8 @@ function robFichaHTML(kind,key){
  if(kind==='cort'){ const d=CEVT.find(x=>x.id===key); if(!d) return '';
   const m=modOfLot(d)||{};
   return box(m, codAba(d.cod,d.aba||m.aba)||esc(d.nm), esc(d.nm),
-    chip('✂ cortado '+dtBR(d.corte),'g')+(d.origem==='planilha'?chip('📄 veio da planilha'):chip(esc(d.tec||'—')+' · '+(d.mt!=null?d.mt+' m':'—')))+(d.junto>1?chip('junto +'+(d.junto-1)):''),
-    `<div class="kv2"><b>Risco</b><span>${d.origem==='planilha'?'planilha — sem risco no ELO':`${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m`}${d.risco&&d.risco.mPc?` · <b>${d.risco.mPc} m/pç</b>`:''}${d.risco&&d.risco.moldes?` · ${d.risco.moldes} moldes/pç`:''}</span><b>Cores</b><span>${(d.coresUse||[]).map(c=>esc(c.cor)+' '+(c.pcs!=null?c.pcs+'p':c.folhas+'f')).join(' · ')||'—'}</span>${(d.extras||[]).length?`<b>Forro</b><span>${d.extras.map(x=>esc(x.tec)+' '+esc(x.papel)+(x.cor?' '+esc(x.cor):'')+' · '+x.mt+' m'+(x.mPc?' ('+x.mPc+' m/pç)':'')).join(' · ')}</span>`:''}<b>Por</b><span>${esc(d.who)}</span></div>
+    chip('✂ cortado '+dtBR(d.corte),'g')+(d.origem==='planilha'?chip('📄 veio da planilha')+(d.risco&&d.risco.garments?chip(esc(d.tec||'—')+' · '+(d.mt!=null?d.mt+' m':'—')):''):chip(esc(d.tec||'—')+' · '+(d.mt!=null?d.mt+' m':'—')))+(d.junto>1?chip('junto +'+(d.junto-1)):''),
+    `<div class="kv2"><b>Risco</b><span>${d.risco&&d.risco.garments?`${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m`:(d.origem==='planilha'?'planilha — sem risco no ELO':`${esc(d.tam||'—')} × ${d.folhas||'?'} folhas × ${d.comp||'?'} m`)}${FBUSER?` <button class="tg" style="padding:2px 7px;font-size:9.5px" onclick="riscoDepoisOpen('${d.id}')">${d.risco&&d.risco.garments?'✎ editar risco':'✎ informar risco'}</button>`:''}${d.risco&&d.risco.mPc?` · <b>${d.risco.mPc} m/pç</b>`:''}${d.risco&&d.risco.moldes?` · ${d.risco.moldes} moldes/pç`:''}</span><b>Cores</b><span>${(d.coresUse||[]).map(c=>esc(c.cor)+' '+(c.pcs!=null?c.pcs+'p':c.folhas+'f')).join(' · ')||'—'}</span>${(d.extras||[]).length?`<b>Forro</b><span>${d.extras.map(x=>esc(x.tec)+' '+esc(x.papel)+(x.cor?' '+esc(x.cor):'')+' · '+x.mt+' m'+(x.mPc?' ('+x.mPc+' m/pç)':'')).join(' · ')}</span>`:''}<b>Por</b><span>${esc(d.who)}</span></div>
      <div style="margin-top:8px">${matrizHTML(d.grade,d.coresUse,d.pcs)}</div>
      <textarea class="lmemo" placeholder="✎ memo do lote (aparece na DEBORA em cinza)" onchange="lotMemoSave('${d.id}',this.value)">${esc(d.memo||'')}</textarea>`,
     `<button class="tg on" style="background:#1D2A3F;border-color:#1D2A3F" onclick="openEnviar('${d.id}')">📦 ENVIAR P/ OFICINA</button><button class="tg" onclick="fichaCorte('${d.id}')">📄 FICHA DE CORTE</button><button class="back" onclick="desCorteCloud('${d.id}');RFICHA=null;">↩ voltar p/ AGUARD. CORTAR</button>`)
@@ -3101,6 +3106,45 @@ async function editRsC(id){ const d=CEVT.find(x=>x.id===id); if(!d||!d.env) retu
   const v=prompt('R$/pç costura — '+(d.aba||d.nm), d.env.rs!=null?d.env.rs:''); if(v==null) return;
   const rs=parseFloat(String(v).replace(',','.'))||null;
   try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),{...d,env:{...d.env,rs}}); }catch(e){ toast('Erro: '+(e&&e.code),5000); } }
+/* v9.28g: informar/editar o risco de um lote já cortado (planilha ou ELO) — só registro, não mexe em estoque */
+function riscoDepoisOpen(id){ const d=CEVT.find(x=>x.id===id); if(!d) return; const m=modOfLot(d)||{}; const r=d.risco||{};
+  const tec0=d.tec||(m.tecSel&&m.tecSel.tec)||''; const cs=(d.coresUse||[]);
+  const rows=(cs.length?cs:[{cor:'',folhas:''}]).map(c=>rdRow(c.cor,c.folhas)).join('');
+  openMod('📐 RISCO — '+(d.cod||d.aba||d.nm),`<div class="fp2">
+   <div class="sm" style="margin-bottom:8px">Registro p/ a FICHA DE CORTE e p/ o m/pç. <b>Não mexe em estoque</b> (o corte já aconteceu).</div>
+   <div class="rkf">
+    <label class="full">TECIDO (código ou nome)<input id="rd_tec" value="${esc(tec0)}" placeholder="T56 ou MALHA PRETA X"></label>
+    <label>COMPLETOS (sets)<input id="rd_comp" value="${esc(r.completos||d.tam||'')}" placeholder="2-P 2-M" oninput="rdCalc()"></label>
+    <label>MOLDES / PÇ<input id="rd_mold" type="number" value="${r.moldes||''}" placeholder="14"></label>
+    <label>COMPRIMENTO (cm ou m)<input id="rd_cp" value="${r.len||d.comp||''}" placeholder="307" oninput="rdCalc()"></label>
+    <label>APROV. %<input id="rd_ap" type="number" step="0.01" value="${r.aprov||''}" placeholder="75,86"></label>
+    <label>FOLHAS (total)<input id="rd_f" type="number" value="${d.folhas||''}" placeholder="45" oninput="rdCalc()"></label>
+   </div>
+   <div style="font:800 9.5px var(--mono);color:#6b6459;margin:10px 0 2px">CORES — folhas por cor <button class="tg" style="padding:1px 7px" onclick="document.getElementById('rd_cores').insertAdjacentHTML('beforeend',rdRow('',''))">⊕ cor</button></div>
+   <div id="rd_cores">${rows}</div>
+   <div class="rkout2" id="rd_out">—</div>
+   <div class="acts"><button class="btn" onclick="riscoDepoisSave('${d.id}')">💾 SALVAR RISCO</button><button class="btn sec" onclick="closeMod()">CANCELAR</button></div></div>`,'',true); rdCalc(); }
+function rdRow(cor,f){ return `<div class="rkc"><input class="c" placeholder="cor" value="${esc(cor||'')}"><input class="k" type="number" placeholder="folhas" value="${f||''}" oninput="rdCalc()"><span class="m">—</span></div>`; }
+function rdRead(){ const g=id=>document.getElementById(id); let cp=parseFloat(String((g('rd_cp')||{}).value||'').replace(',','.'))||0; if(cp>30) cp=cp/100;
+  const comp=((g('rd_comp')||{}).value||'').trim(); const f=+((g('rd_f')||{}).value)||0; const gar=compGarments(comp);
+  const lc=[...((g('rd_cores')||{children:[]}).children)].map(r=>({cor:tecNorm((r.querySelector('.c')||{}).value),folhas:+((r.querySelector('.k')||{}).value)||0,el:r}));
+  return {cp,comp,f,gar,lc,moldes:+((g('rd_mold')||{}).value)||null,aprov:parseFloat(String((g('rd_ap')||{}).value||'').replace(',','.'))||null,tec:tecNorm((g('rd_tec')||{}).value)}; }
+function rdCalc(){ const R=rdRead(); const o=document.getElementById('rd_out'); if(!o) return; const msg=[];
+  if(R.gar) msg.push(R.gar+' pçs/risco'); if(R.cp&&R.gar) msg.push((Math.round(R.cp/R.gar*100)/100)+' m/pç'); if(R.cp&&R.f) msg.push((Math.round(R.cp*R.f*10)/10)+' m no total'); if(R.gar&&R.f) msg.push('<b>'+(R.gar*R.f)+' pçs</b>');
+  R.lc.forEach(x=>{ const s=x.el.querySelector('.m'); if(s) s.textContent=(R.cp&&x.folhas)?(Math.round(R.cp*x.folhas*10)/10)+' m':'—'; });
+  const sk=R.lc.reduce((s,x)=>s+x.folhas,0); if(R.f&&sk&&sk!==R.f) msg.push('<span style="color:#C0392B">⚠ cores somam '+sk+'/'+R.f+'</span>');
+  o.innerHTML=msg.join(' · ')||'— completos · comprimento · folhas —'; }
+async function riscoDepoisSave(id){ const d=CEVT.find(x=>x.id===id); if(!d||!FBUSER) return; const R=rdRead();
+  if(!R.gar||!R.cp||!R.f){ toast('Preencha completos, comprimento e folhas'); return; }
+  const lc=R.lc.filter(x=>x.cor||x.folhas); if(lc.some(x=>!x.cor||!(x.folhas>0))){ toast('Cada cor precisa de nome e folhas'); return; }
+  const sk=lc.reduce((s,x)=>s+x.folhas,0); if(lc.length&&sk!==R.f){ toast('Folhas por cor ('+sk+') ≠ total ('+R.f+')'); return; }
+  const now=new Date().toISOString(); const len=R.cp, mPc=Math.round(len/R.gar*100)/100, mt=Math.round(len*R.f*10)/10, pcs=R.gar*R.f;
+  const coresUse=lc.map(x=>({cor:x.cor,folhas:x.folhas,m:Math.round(len*x.folhas*10)/10,pcs:x.folhas*R.gar}));
+  const risco={completos:R.comp,garments:R.gar,moldes:R.moldes,area:100,len,mPc,comp:R.cp,aprov:R.aprov,junto:[d.cod||d.aba],depois:true};
+  const nd={...d,tec:R.tec||d.tec||null,tam:R.comp,grade:compParse(R.comp),folhas:R.f,comp:R.cp,mt,coresUse,risco,pcs:d.pcs||pcs,riscoEdit:{at:now,by:whoName(),semBaixa:true}};
+  try{ await FB.setDoc(FB.doc(FB.db,'cortes',id),nd); closeMod(); toast('📐 risco salvo · '+mt+' m · '+mPc+' m/pç (sem baixa de estoque)');
+    if(d.aba){ try{ await robCorteSync(d.aba,d.corte,mt,{risco:{completos:R.comp,garments:R.gar,moldes:R.moldes,len,mPc},parcial:false}); }catch(e){} } }
+  catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } }
 function fichaCorte(id){ const d=CEVT.find(x=>x.id===id); if(!d) return;
   const g=d.grade||[], cs=d.coresUse||[]; const nS=g.reduce((s,x)=>s+x.n,0);
   const head=cs.map(c=>`<th>${esc(c.cor)}</th>`).join('');
