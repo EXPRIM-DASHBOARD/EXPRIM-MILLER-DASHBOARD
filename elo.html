@@ -751,7 +751,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28h</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28i</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1227,7 +1227,7 @@ async function custoSeed(rows){ /* 1ª vez: semente (P.VENDA/MARKUP). Sempre: 3 
   if(msg.length) toast('💰 CUSTO: '+msg.join(' · '),6000); }
 async function custoSet(k,field,val){ const c=(ROB.custo||[]).find(x=>cuKey(x)===k); if(!c) return;
   const cur=CPV[k]||{key:k,modelo:c.modelo,corte:c.corte||null,pv:null,mk:null};
-  const n=parseFloat(String(val).replace(/\./g,'').replace(',','.')); const v=(val===''||isNaN(n))?null:n;
+  const v=numBR(val);
   if(field==='mk'&&v!=null&&(v<0.5||v>20)){ toast('markup fora do razoável (0,5 a 20)'); render(); return; }
   if(field==='pv'&&v!=null&&(v<0||v>9999)){ toast('preço fora do razoável'); render(); return; }
   if(CU_EDIT.includes(field)&&v!=null&&(v<0||v>999)){ toast('valor fora do razoável (0 a 999)'); render(); return; }
@@ -2421,7 +2421,13 @@ function exportSnapshot(){
 })();
 /* ---------- TECIDOS / PEDIDOS (edição na nuvem) ---------- */
 const tfmt=(n,d=0)=>n==null||isNaN(n)?"—":Number(n).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
-const tnum=v=>{if(v==null||v==='')return null;let s=String(v).trim();if(/,\d{1,2}$/.test(s))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=parseFloat(s);return isNaN(n)?null:n};
+/* v9.28i: aceita 40,5 · 40.5 · 1.234,56 · 1,234.56 — o ÚLTIMO separador é o decimal */
+function numBR(v){ if(v==null||v==='') return null; let s=String(v).trim().replace(/\s/g,''); const lc=s.lastIndexOf(','), ld=s.lastIndexOf('.');
+  if(lc>=0&&ld>=0){ s=lc>ld?s.replace(/\./g,'').replace(',','.'):s.replace(/,/g,''); }
+  else if(lc>=0){ s=s.replace(/,/g,(m,i)=>i===lc?'.':''); }
+  else if(ld>=0){ s=s.replace(/\./g,(m,i)=>i===ld?'.':''); }
+  const n=parseFloat(s); return isNaN(n)?null:n; }
+const tnum=v=>numBR(v);
 const todayISO=()=>new Date().toISOString().slice(0,10);
 const brToISO=v=>{if(!v)return '';let s=String(v).trim();let m=/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/.exec(s);if(m){let y=m[3].length===2?'20'+m[3]:m[3];return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`}if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;return s};
 const DEF_FORN=['IMATEX','GRIFE TEXTIL','EUROTEX','DIAGONAL','BETA','LUNELLI','COMPANY TEXTIL','ROVITEX'];
