@@ -751,7 +751,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28g</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28h</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1251,8 +1251,8 @@ async function custoResolve(k,f,which){ const cur=CPV[k]; if(!cur||!cur.conf||!c
   try{ await FB.setDoc(FB.doc(FB.db,'custo_elo',cuId(k)),doc); toast(which==='xl'?'ficou o valor da planilha':'ficou o seu valor (ELO)'); }catch(e){ toast('⚠ não salvou: '+(e&&e.code),5000); } }
 function renderCustoTab(){ const all=(ROB.custo||[]).slice(); if(!all.length) return '<div class="empty big">Arraste o ROBERTO (.xlsx) com a aba CUSTO</div>';
   const brl2=v=>v==null?'—':v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const q=CUQ.toLowerCase();
-  let rows=all.filter(c=>!q||String(c.modelo).toLowerCase().includes(q)||String(c.desc||'').toLowerCase().includes(q)||String(c.tecido||'').toLowerCase().includes(q)||String(c.nf||'').includes(q));
+  const q=CUQ.toLowerCase().replace(/\s/g,''); const nz=s=>String(s||'').toLowerCase().replace(/\s/g,'');
+  let rows=all.filter(c=>!q||nz(c.modelo).includes(q)||nz(c.desc).includes(q)||nz(c.tecido).includes(q)||nz(c.nf).includes(q));
   if(CUF==='inc') rows=rows.filter(c=>cuComp(c).length);
   if(CUF==='semp') rows=rows.filter(c=>cuCalc(c).pv==null);
   if(CUF==='conf') rows=rows.filter(c=>cuCalc(c).nconf);
@@ -1288,7 +1288,7 @@ function renderCustoTab(){ const all=(ROB.custo||[]).slice(); if(!all.length) re
     <div class="cuk"><b style="color:${nc?'#C0392B':'#2E7D32'}">${nc}</b><span>CONFLITOS planilha × ELO</span></div>
     <div class="cuk"><b>${mgMed}</b><span>MARGEM mediana</span></div></div>
    <div class="cubar">
-    <input class="cusrch" placeholder="modelo · descrição · tecido · NF" value="${esc(CUQ)}" oninput="CUQ=this.value;render()">
+    <input class="cusrch" placeholder="modelo · descrição · tecido · NF" value="${esc(CUQ)}" oninput="CUQ=this.value;cuSrchDeb()">
     <button class="tg ${CUF==='todos'?'on':''}" onclick="CUF='todos';render()">todos</button>
     <button class="tg ${CUF==='inc'?'on':''}" onclick="CUF='inc';render()">só incompletos</button>
     <button class="tg ${CUF==='semp'?'on':''}" onclick="CUF='semp';render()">sem preço</button>
@@ -1878,7 +1878,15 @@ function renderLista(A){
 }
 function semFichaRows(A){ const qq2=Q?Q.toUpperCase():''; if(!qq2) return ''; const sf=A.semFicha.filter(l=>String(l.modelo||'').toUpperCase().includes(qq2)||String(l.desc||'').toUpperCase().includes(qq2)||String(l.oficina||'').toUpperCase().includes(qq2)); if(!sf.length) return ''; return '<div class="empty" style="text-align:left;margin-top:10px"><b>⚠ '+sf.length+' lote(s) sem ficha na DEBORA</b></div><table class="tb"><tbody>'+sf.map(l=>'<tr><td class="mc">'+esc(l.modelo)+'</td><td>'+esc(l.desc||'')+'</td><td>'+fmt(l.qtd)+'</td><td>'+lotLine(l)+'</td></tr>').join('')+'</tbody></table>'; }
 
-function render(){ __codDup=null; try{ testeLinks(); }catch(e){} clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
+/* v9.28h: #main é redesenhado inteiro — campos de texto dentro dele perdiam o cursor a cada tecla (busca CUSTO) */
+function focusKeep(){ const ae=document.activeElement; const main=document.getElementById('main'); if(!ae||!main||!main.contains(ae)) return null; if(!/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return null;
+  let sel=ae.id?'#'+CSS.escape(ae.id):(ae.className?ae.tagName.toLowerCase()+'.'+String(ae.className).trim().split(/\s+/).map(c=>CSS.escape(c)).join('.'):null); if(!sel) return null;
+  const all=[...main.querySelectorAll(sel)]; const idx=all.indexOf(ae); if(idx<0) return null;
+  let s=null,e=null; try{ s=ae.selectionStart; e=ae.selectionEnd; }catch(x){} return {sel,idx,s,e}; }
+function focusRestore(k){ if(!k) return; try{ const main=document.getElementById('main'); const el=main.querySelectorAll(k.sel)[k.idx]; if(!el) return; el.focus({preventScroll:true}); if(k.s!=null&&typeof el.setSelectionRange==='function'){ try{ el.setSelectionRange(k.s,k.e==null?k.s:k.e); }catch(x){} } }catch(x){} }
+function render(){ const __fk=focusKeep(); try{ renderCore(); } finally{ focusRestore(__fk); } }
+let __cuT=null; function cuSrchDeb(){ clearTimeout(__cuT); __cuT=setTimeout(render,150); }
+function renderCore(){ __codDup=null; try{ testeLinks(); }catch(e){} clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
   const A=computeAll();
   $('#chipAtu').textContent=A.atualizar.length; $('#chipVer').textContent=A.verificar.length; $('#chipFila').textContent=A.fila.length; $('#chipFicha').textContent=A.semFicha.length;
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===FILTER));
