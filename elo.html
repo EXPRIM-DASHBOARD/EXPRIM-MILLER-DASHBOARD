@@ -751,7 +751,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28i</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28j</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1884,7 +1884,10 @@ function focusKeep(){ const ae=document.activeElement; const main=document.getEl
   const all=[...main.querySelectorAll(sel)]; const idx=all.indexOf(ae); if(idx<0) return null;
   let s=null,e=null; try{ s=ae.selectionStart; e=ae.selectionEnd; }catch(x){} return {sel,idx,s,e}; }
 function focusRestore(k){ if(!k) return; try{ const main=document.getElementById('main'); const el=main.querySelectorAll(k.sel)[k.idx]; if(!el) return; el.focus({preventScroll:true}); if(k.s!=null&&typeof el.setSelectionRange==='function'){ try{ el.setSelectionRange(k.s,k.e==null?k.s:k.e); }catch(x){} } }catch(x){} }
-function render(){ const __fk=focusKeep(); try{ renderCore(); } finally{ focusRestore(__fk); } }
+function scrollKeep(){ const main=document.getElementById('main'); const o={x:window.scrollX||0,y:window.scrollY||0,els:[]}; if(!main) return o;
+  main.querySelectorAll('*').forEach(el=>{ if((el.scrollTop||el.scrollLeft)&&el.className){ const sel=el.tagName.toLowerCase()+'.'+String(el.className).trim().split(/\s+/).map(c=>CSS.escape(c)).join('.'); const all=[...main.querySelectorAll(sel)]; const idx=all.indexOf(el); if(idx>=0) o.els.push({sel,idx,t:el.scrollTop,l:el.scrollLeft}); } }); return o; }
+function scrollRestore(o){ if(!o) return; try{ const main=document.getElementById('main'); o.els.forEach(k=>{ const el=main&&main.querySelectorAll(k.sel)[k.idx]; if(el){ el.scrollTop=k.t; el.scrollLeft=k.l; } }); if(window.scrollY!==o.y||window.scrollX!==o.x) window.scrollTo(o.x,o.y); }catch(e){} }
+function render(){ const __fk=focusKeep(); const __sk=scrollKeep(); try{ renderCore(); } finally{ scrollRestore(__sk); focusRestore(__fk); } }
 let __cuT=null; function cuSrchDeb(){ clearTimeout(__cuT); __cuT=setTimeout(render,150); }
 function renderCore(){ __codDup=null; try{ testeLinks(); }catch(e){} clearTimeout(__pubT); __pubT=setTimeout(()=>publishSnap(false),15000);
   const A=computeAll();
@@ -3530,20 +3533,23 @@ function eloSnapshot(){ /* P0: whitelist — SÓ progresso de produção no doc 
  const mods=(DEB.models||[]).map(m=>({aba:m.aba,codigo:m.codigo||'',nome:m.nome||'',fase:m.fase||'',prog:m.prog??null,
    qt:m.qt??null,ini:m.ini||null,prazo:m.prazo||null,concl:!!m.concl,risco:!!m.risco,
    ...(qtCortOf(m)?{qtCort:qtCortOf(m)}:{}),...(m.qtPedido!=null?{qtPedido:m.qtPedido}:{}) }));
- const nuvKey=new Set(CEVT.map(d=>d.xref?trazKey(d.xref.modelo,d.xref.corte,d.xref.saida):null).filter(Boolean));
  const stOf=d=>{ const real=entregaFull(d); if(real) return '✅ ENTREGUE'; if(!d.env) return '✂️ EM CORTE'; const sa=d.env.saida, pv=d.env.prev; if(!(d.env.am&&d.env.am.at)&&sa&&daysBetween(sa,TODAY)>5) return '🟠 SEM AMOSTRA'; if(pv&&pv<TODAY) return '🔴 VENCIDO'; if(pv&&daysBetween(TODAY,pv)<=3) return '⏰ VENCE EM BREVE'; return '🟢 NO PRAZO'; };
  const lotsC=(CEVT||[]).filter(d=>!d.encerrado).map(d=>({modelo:String(d.cod||d.aba||''),desc:d.nm||'',qtd:d.pcs??null,corte:d.corte||null,
    saida:d.env?d.env.saida||null:null,prev:d.env?d.env.prev||null:null,real:entregaFull(d)||null,oficina:d.env?d.env.oficina||'':'',
    ...(d.cod?{tokens:[String(d.cod).replace(/\s/g,'')]}:{}), status:stOf(d), nuvem:true }));
- const lotsX=(ROB.lots||[]).filter(l=>!nuvKey.has(trazKey(l.modelo,l.corte,l.saida))).map(l=>({modelo:l.modelo,desc:l.desc||'',qtd:l.qtd??null,corte:l.corte||null,
+ const lotsX=(ROB.lots||[]).filter(l=>!trazido(l)).map(l=>({modelo:l.modelo,desc:l.desc||'',qtd:l.qtd??null,corte:l.corte||null,
    saida:l.saida||null,prev:l.prev||null,real:l.real||null,oficina:l.oficina||'',
    ...(Array.isArray(l.tokens)&&l.tokens.length?{tokens:l.tokens.slice()}:{}),
    ...(String(l.status||'').trim()?{status:String(l.status).trim()}:{}) }));
  const lots=lotsX.concat(lotsC);
  window.__snapStat={com:lots.filter(l=>l.status).length,total:lots.length};
+ /* v9.28j: preço de venda confirmado (P.VENDA do CUSTO) — só {m,pv}; nunca custo/markup/sugerido/lucro/margem */
+ const pvMap={}; (ROB.custo||[]).forEach(c=>{ const e=CPV[cuKey(c)]; const pv=e&&e.pv; if(pv==null||!(pv>0)) return; const m=String(c.modelo||'').replace(/\s/g,''); if(!m) return; const prev=pvMap[m]; if(!prev||String(c.corte||'')>prev.corte) pvMap[m]={pv,corte:String(c.corte||'')}; });
+ const precos=Object.keys(pvMap).sort().map(m=>({m,pv:pvMap[m].pv}));
  return { v:2, escopo:'whitelist-p0',
   debora:{ file:DEB.file||null, at:DEB.at||null, models:mods },
-  roberto:{ file:ROB.file||null, at:ROB.at||null, lots:lots } }; }
+  roberto:{ file:ROB.file||null, at:ROB.at||null, lots:lots },
+  precos }; }
 function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
 async function publishSnap(force){
  try{ if(!FBUSER||!FB||!FB.setDoc) return;
