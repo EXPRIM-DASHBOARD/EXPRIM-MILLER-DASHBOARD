@@ -751,7 +751,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28j</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28k</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1236,6 +1236,9 @@ async function custoSet(k,field,val){ const c=(ROB.custo||[]).find(x=>cuKey(x)==
   try{ await FB.setDoc(FB.doc(FB.db,'custo_elo',cuId(k)),doc); }catch(e){ toast('⚠ não salvou: '+(e&&e.code),5000); render(); } }
 const CU_EDIT=['cost','avi','emb'];
 /* valor efetivo: ELO se digitado, senão planilha. Conflito pendente → vale o ELO até resolver */
+/* v9.28k: célula mostra 1 casa (valor da planilha vem com 8 casas / ruído do Excel); o valor exato fica no title e nos cálculos */
+function cuD1(v){ return (Math.round(v*10)/10).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}); }
+function cuExato(v){ return Number(v).toLocaleString('pt-BR',{maximumFractionDigits:8}); }
 function cuEff(c,f){ const e=CPV[cuKey(c)]||{}; return e[f]!=null?e[f]:(c[f]??null); }
 function cuSrc(c,f){ const e=CPV[cuKey(c)]||{}; return e[f]!=null?'elo':(c[f]!=null?'xl':null); }
 function cuComp(c){ const miss=[]; if(c.rsm==null||c.cons==null) miss.push('tecido'); if(cuEff(c,'cost')==null) miss.push('costura'); if(cuEff(c,'avi')==null) miss.push('aviam'); if(cuEff(c,'emb')==null) miss.push('embal'); return miss; }
@@ -1266,7 +1269,7 @@ function renderCustoTab(){ const all=(ROB.custo||[]).slice(); if(!all.length) re
   const cell=(c,f)=>{ const k=cuKey(c), kq=k.replace(/'/g,''), C=cuCalc(c), cx=C.conf[f];
     if(cx) return `<td class="elo cuconf"><div class="cucf"><span>planilha ${brl2(cx.xl)}</span><span>ELO ${brl2(cx.elo)}</span><div><button onclick="custoResolve('${kq}','${f}','xl')">planilha</button> <button onclick="custoResolve('${kq}','${f}','elo')">ELO</button></div></div></td>`;
     const v=cuEff(c,f), s=cuSrc(c,f);
-    return `<td class="elo"><input class="${s==='elo'?'set':''}" value="${v!=null?String(v).replace('.',','):''}" placeholder="—" onchange="custoSet('${kq}','${f}',this.value)" title="${s==='elo'?('digitado no ELO'+(C.por?' · '+esc(C.por):'')):(s==='xl'?'da planilha (Roberto)':'vazio')}"></td>`; };
+    return `<td class="elo"><input class="${s==='elo'?'set':''}" value="${v!=null?cuD1(v):''}" placeholder="—" onchange="custoSet('${kq}','${f}',this.value)" title="${v!=null?'exato: '+cuExato(v)+' · ':''}${s==='elo'?('digitado no ELO'+(C.por?' · '+esc(C.por):'')):(s==='xl'?'da planilha (Roberto)':'vazio')}"></td>`; };
   const tr=rows.map(c=>{ const k=cuKey(c), C=cuCalc(c); const par=C.miss.length; const kq=k.replace(/'/g,'');
    return `<tr>
     <td class="xl"><b>${esc(String(c.modelo))}</b></td><td class="xl cu-el" title="${esc(c.desc||'')}">${esc(c.desc||'')}</td>
