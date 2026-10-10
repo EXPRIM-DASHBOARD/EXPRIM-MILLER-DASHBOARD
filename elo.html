@@ -752,7 +752,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28l</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28m</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -3518,7 +3518,16 @@ function readPed(keep){ $$('#tmBody [data-k]').forEach(i=>{ const k=i.dataset.k;
   $$('#compBody input').forEach(i=>{ const c=cur.comp[+i.dataset.comp]; if(!c) return; c[i.dataset.f]=i.dataset.f==='pct'?tnum(i.value):i.value.trim().toUpperCase(); }); if(!keep) cur.comp=cur.comp.filter(c=>c.fibra||c.pct!=null);
   $$('#corBody input[data-cor]').forEach(i=>{ const c=cur.cores[+i.dataset.cor]; if(!c) return; c[i.dataset.f]=i.dataset.f==='cor'?i.value.trim().toUpperCase():tnum(i.value); });
   const rol={}; $$('#corBody input[data-rol]').forEach(i=>{ const v=tnum(i.value); if(v!=null) rol[i.dataset.rol]=v; }); cur.entrada.rolos=rol; if(!keep) cur.cores=cur.cores.filter(c=>c.cor||c.qtd!=null); }
-async function savePed(silent){ readPed(); const p={...cur}; delete p._try; p.atualizado=new Date().toISOString(); p.por=by(); try{ await FB.setDoc(FB.doc(FB.db,'pedidos',p.id),p); if(!silent){ const n=pendencias(p).ped.length; toast(n?`Salvo · ⚠ ${n} campo(s) por preencher`:'Pedido salvo'); closeMod(); } }catch(e){ toast('Erro: '+e.code,5000); } }
+/* v9.28m: SALVAR mostra o que está acontecendo — antes um erro só aparecia 5 s num toast (ou nem isso, se falhasse antes do try) */
+function pedSaveSt(msg,err){ const b=document.getElementById('bSaveP'); let s=document.getElementById('pSaveSt'); if(!s&&b){ b.insertAdjacentHTML('beforebegin','<span id="pSaveSt" style="align-self:center;margin-right:10px;font:700 11px var(--mono);max-width:46vw"></span>'); s=document.getElementById('pSaveSt'); } if(s){ s.textContent=msg||''; s.style.color=err?'#C0392B':'#2E7D32'; } }
+async function savePed(silent){ const b=document.getElementById('bSaveP'); let p;
+  try{ readPed(); p={...cur}; delete p._try; p.atualizado=new Date().toISOString(); p.por=by(); }
+  catch(e){ console.error('[ELO] savePed/readPed',e); pedSaveSt('⚠ erro ao ler o formulário: '+(e&&e.message),true); toast('⚠ erro ao ler o formulário: '+(e&&e.message),8000); return; }
+  if(b){ b.disabled=true; b.textContent='salvando…'; } pedSaveSt('salvando…');
+  let done=false; const tm=setTimeout(()=>{ if(!done) pedSaveSt('⏳ sem resposta da nuvem há 10 s — veja o ● salvo no topo / conexão',true); },10000);
+  try{ await FB.setDoc(FB.doc(FB.db,'pedidos',p.id),p); done=true; clearTimeout(tm); pedSaveSt('✓ salvo'); if(!silent){ const n=pendencias(p).ped.length; toast(n?`Salvo · ⚠ ${n} campo(s) por preencher`:'Pedido salvo'); closeMod(); } }
+  catch(e){ done=true; clearTimeout(tm); console.error('[ELO] savePed',e); const m=(e&&(e.code||e.message))||String(e); pedSaveSt('⚠ não salvou: '+m,true); toast('Erro ao salvar: '+m,8000); }
+  finally{ if(b){ b.disabled=false; b.textContent='SALVAR'; } } }
 async function pgShow(msg){ let o=document.getElementById('pgov');
  if(!o){ o=document.createElement('div'); o.id='pgov';
   o.style.cssText='position:fixed;inset:0;background:rgba(28,26,23,.45);z-index:9999;display:flex;align-items:center;justify-content:center';
