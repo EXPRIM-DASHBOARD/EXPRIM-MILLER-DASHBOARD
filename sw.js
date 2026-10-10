@@ -1,5 +1,5 @@
 /* ELO · service worker: rede primeiro, cache só p/ abrir sem internet */
-const C='elo-v9-28k', PFX='elo-v9-';
+const C='elo-v9-28l', PFX='elo-v9-';
 self.addEventListener('install',e=>{ self.skipWaiting(); });
 self.addEventListener('activate',e=>{ e.waitUntil(
   caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k.startsWith(PFX)).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });
