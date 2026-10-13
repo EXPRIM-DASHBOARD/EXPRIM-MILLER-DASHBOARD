@@ -158,7 +158,7 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 .vt .tag{display:inline-block;margin-left:6px;font:800 8.5px var(--mono);letter-spacing:.08em;padding:1px 5px;border-radius:4px;font-style:normal;background:var(--green);color:#fff;vertical-align:middle}
 .vt .tag.f{background:#DCE5F3;color:var(--indigo)}.vt .tag.c{background:#F6E6C3;color:var(--amber)}
 /* lista */
-.tb{width:100%;border-collapse:collapse;font-size:12.5px}
+table.tb{width:100%;border-collapse:collapse;font-size:12.5px}
 .tb th{text-align:left;font:800 9.5px var(--mono);letter-spacing:.14em;color:var(--ink2);padding:6px 8px;border-bottom:2px solid var(--line)}
 .tb td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}.tb tr{cursor:pointer}.tb tr:hover td{background:#fff}
 .tb td small{color:var(--ink2);font-size:10.5px}
@@ -225,8 +225,8 @@ h3.sec{font:800 10.5px var(--mono);letter-spacing:.16em;color:var(--indigo);marg
 /* drop, toast */
 #drop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(29,42,63,.82);color:#fff;font:700 18px var(--sans);z-index:60;pointer-events:none}
 #drop.on{display:flex}
-#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#111928;color:#F3E7C8;padding:10px 16px;border-radius:9px;font:600 12.5px var(--sans);opacity:0;transition:.2s;z-index:10050;max-width:90vw}
-#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#111928;color:#F3E7C8;padding:10px 16px;border-radius:9px;font:600 12.5px var(--sans);opacity:0;transition:.2s;z-index:10050;max-width:90vw;pointer-events:none;visibility:hidden}
+#toast.on{opacity:1;transform:translate(-50%,0);visibility:visible}
 .cvt{width:100%;border-collapse:collapse;font-size:13px}.cvt th,.cvt td{padding:6px 10px;text-align:right;border-bottom:1px solid var(--line,#e5e0d6)}.cvt th:first-child,.cvt td:first-child{text-align:left}.cvt tr.tot td{font-weight:700;background:rgba(0,0,0,.035)}
 
 /* ===== cartões acordeão (ROBERTO / DEBORA) ===== */
@@ -506,7 +506,8 @@ header.top .who{font:600 10px var(--mono);opacity:.75;max-width:160px;overflow:h
 .tapp .hist .v{font:700 11px var(--mono);min-width:60px;text-align:right}
 .tapp .hist .v.neg{color:var(--red)}
 .tapp .hist .v.pos{color:var(--green)}
-.tapp .foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:8px 12px;display:flex;gap:8px;justify-content:flex-end;z-index:60}
+.tapp .foot{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:760px;background:#fff;border-top:1px solid var(--line);padding:8px 12px;display:flex;gap:8px;justify-content:flex-end;z-index:60}
+@media(max-width:600px){.tapp .foot .tb{flex:1;min-width:0}}
 .tapp .foot .tb{padding:10px 14px}
 .tapp .drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--ink2);font-size:12.5px;background:#fff}
 .tapp .drop.hover{border-color:var(--indigo);background:#F3F5F9}
@@ -752,7 +753,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28m</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28o</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
