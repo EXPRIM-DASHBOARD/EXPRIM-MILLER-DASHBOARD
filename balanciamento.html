@@ -65,9 +65,30 @@ const KEY='loja_1510';
 let S={mov:{},prc:{},bal:{},tag:{}};
 if(!S.tag)S.tag={};
 try{const s=localStorage.getItem(KEY);if(s)S=JSON.parse(s);}catch(e){}
-let TASK=null;try{const h=location.hash.match(/#t=(.+)/);if(h)TASK=JSON.parse(decodeURIComponent(escape(atob(h[1]))));}catch(e){TASK=null;}
-if(TASK&&!(TASK.ms&&TASK.ms.length))TASK=null;
-let C=TASK?'tk':'ar',AR='P',Q='';
+const FSB='https://firestore.googleapis.com/v1/projects/exprim-elo/databases/(default)/documents';
+const LKEY='AIzaSyCSjvYonQpR__7NzVSH0H-w_tJ6aA0Cbqg';
+const LTOK='LJX-EXPRIM-7h2k9';
+let TASKS=[];
+try{const h=location.hash.match(/#t=(.+)/);if(h){const t=JSON.parse(decodeURIComponent(escape(atob(h[1]))));
+ if(t&&t.ms&&t.ms.length)TASKS.push({id:'link',d:t.d,n:t.n,ms:t.ms});}}catch(e){}
+let C=TASKS.length?'tk':'ar',AR='P',Q='';
+function tkBadge(){const c=document.getElementById('c_tk'),b=document.getElementById('ntk');
+ if(!c)return;if(TASKS.length){c.style.display='';b.style.display='';b.textContent=TASKS.length;}else{c.style.display='none';}}
+function aplicarConf(cf){let n=0;for(const m in (cf||{})){const p=S.prc[m];if(!p)continue;
+ const want=cf[m].st==='ok'?'ok':'nao';
+ if(p.st==='sent'||p.st==='draft'){if(p.st!==want){p.st=want;if(cf[m].v!=null)p.para=+cf[m].v;n++;}}}
+ if(n){save();toast('🛰 Lucas respondeu: '+n+' preço(s)');}return n;}
+async function nuvemLer(manual){
+ if(location.protocol==='file:'&&!manual)return;
+ try{const r=await fetch(FSB+'/public/loja?key='+LKEY);if(!r.ok)throw 0;
+  const d=await r.json();const raw=d&&d.fields&&d.fields.j&&d.fields.j.stringValue;if(!raw)throw 0;
+  const O=JSON.parse(raw);
+  (O.t||[]).forEach(t=>{if(t&&t.ms&&t.ms.length&&!TASKS.some(x=>x.id===t.id))TASKS.push(t);});
+  TASKS.sort((a,b)=>String(b.id).localeCompare(String(a.id)));
+  aplicarConf(O.c);tkBadge();render();
+  if(manual)toast('✔ Atualizado do painel');
+ }catch(e){if(manual)toast('⚠ Sem conexão com o painel agora');}}
+setTimeout(()=>nuvemLer(),400);setInterval(()=>nuvemLer(),180000);
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 const N=s=>String(s||'').toUpperCase().replace(/[ .\-]/g,'');
 const fmtP=v=>'R$ '+(+v).toFixed(2).replace('.',',');
@@ -91,18 +112,21 @@ function rowH(x){
   +'<span style="color:var(--ink2);font-size:16px">›</span></div>';}
 function render(){
  const el=document.getElementById('body');pend();
- if(C==='tk'&&TASK){
-  const done=TASK.ms.filter(m=>S.mov[m]||S.prc[m]||S.bal[m]!==undefined||S.tag[m]!==undefined).length;
-  el.innerHTML='<div class="note" style="border:1.5px solid var(--gold);border-radius:10px;padding:9px 11px">📌 <b style="color:var(--gold)">TAREFA DO LUCAS</b> — '+(TASK.n||'')+' · '+(TASK.d||'')+'<br>'+done+' de '+TASK.ms.length+' feitos. Toque no modelo, registre, e no fim use 📤 ENVIAR.</div>'
-   +TASK.ms.map(m=>{const x=byM(m);return x?rowH(x):'<div class="row"><span class="m">'+m+'</span><span class="i">fora da lista do app — avisar o Lucas</span></div>';}).join('');
+ if(C==='tk'){
+  el.innerHTML='<div style="margin-bottom:6px"><button class="btn" style="width:100%;border-color:var(--blue);color:var(--blue)" onclick="nuvemLer(1)">🔄 ATUALIZAR — buscar tarefas e respostas do Lucas</button></div>'
+   +(TASKS.length?TASKS.map(T=>{
+    const done=T.ms.filter(m=>S.mov[m]||S.prc[m]||S.bal[m]!==undefined||S.tag[m]!==undefined).length;
+    return '<div class="note" style="border:1.5px solid var(--gold);border-radius:10px;padding:9px 11px;margin-top:10px">📌 <b style="color:var(--gold)">TAREFA DO LUCAS</b> — '+(T.n||'')+' · '+(T.d||'')+'<br>'+done+' de '+T.ms.length+' feitos. Toque no modelo, registre, e no fim use 📤 ENVIAR.</div>'
+    +T.ms.map(m=>{const x=byM(m);return x?rowH(x):'<div class="row"><span class="m">'+m+'</span><span class="i">fora da lista do app — avisar o Lucas</span></div>';}).join('');}).join('')
+   :'<div class="note">Nenhuma tarefa agora. Toque ATUALIZAR para verificar.</div>');
   return;}
  if(C==='ar'){
   const cnt={};DATA.forEach(d=>{const g=curG(d.m);cnt[g]=(cnt[g]||0)+1;});
   let L=DATA.filter(d=>curG(d.m)===AR);
   el.innerHTML='<div class="chips">'+['P','PROM','SAL','PPED','EST'].map(g=>
    '<span class="chip '+g+(AR===g?' on':'')+'" onclick="AR=\''+g+'\';render()">'+LOCN[g]+'<br><span style="font-size:10px">'+(cnt[g]||0)+'</span></span>').join('')+'</div>'
-  +'<div class="note">Modelos na arara <b>'+LOCN[AR]+'</b> (base 14/10). Toque para agir.</div>'
-  +L.slice(0,60).map(rowH).join('')+(L.length>60?'<div class="note">… e mais '+(L.length-60)+' — use BUSCAR.</div>':'');
+  +'<div class="note">'+L.length+' modelos na arara <b>'+LOCN[AR]+'</b> (base 14/10). Toque para agir.</div>'
+  +L.map(rowH).join('');
   return;}
  if(C==='bu'){
   el.innerHTML='<input id="q" type="search" placeholder="🔍 código do modelo…" value="'+Q+'" oninput="Q=this.value;render2()"><div id="bres"></div>';
@@ -119,7 +143,8 @@ function render(){
  const txt='#LOJA EXPRIM '+d+'\n'+lines.join('\n')+'\nFIM|'+lines.length;
  el.innerHTML='<div class="note">Resumo: <b>'+movs.length+'</b> movidos · <b>'+drafts.length+'</b> propostas de preço (⚪ rascunho) · <b>'+bals.length+'</b> contagens · <b>'+tags.length+'</b> etiquetas.</div>'
   +(lines.length?'<textarea id="out" readonly>'+txt+'</textarea>'
-   +'<button class="btn g" style="width:100%;margin-top:8px" onclick="enviar()">📲 ENVIAR AO LUCAS (as propostas ficam 🟡)</button>'
+   +'<button class="btn g" style="width:100%;margin-top:8px" onclick="enviar()">🛰 ENVIAR AO PAINEL (direto)</button>'
+   +'<button class="btn" style="width:100%;margin-top:8px" onclick="enviarZap()">📲 WhatsApp (reserva)</button>'
    +'<button class="btn" style="width:100%;margin-top:8px" onclick="copia()">📋 COPIAR</button>'
    :'<div class="note">Nada registrado ainda.</div>')
   +'<div class="note" style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px"><b style="color:var(--gold)">COLAR RESPOSTA do Lucas</b> — cole o texto #CONFIRMADO aqui:</div>'
@@ -171,12 +196,19 @@ function etiqueta(m){const x=byM(m);
  S.tag[m]=n;save();closeSheet();render();
  toast('🏷 <b>'+m+'</b>: etiqueta '+fmtP(n)+(x.z&&Math.abs(n-x.z)<0.005?' — bate 👌':''));}
 function limpar(m){delete S.mov[m];delete S.prc[m];delete S.bal[m];delete S.tag[m];save();closeSheet();render();toast(m+' — registros removidos');}
-function enviar(){Object.values(S.prc).forEach(p=>{if(p.st==='draft')p.st='sent';});save();
- const t=document.getElementById('out');
- if(navigator.share){navigator.share({text:t.value}).then(()=>toast('✔ Enviado — propostas agora 🟡'))
-  .catch(e=>{if(e&&e.name==='AbortError')return;copia();});}
- else copia();
- render();}
+function marcaEnviado(){Object.values(S.prc).forEach(p=>{if(p.st==='draft')p.st='sent';});save();}
+async function enviar(){const t=document.getElementById('out');if(!t)return;
+ try{const id='LJ'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const r=await fetch(FSB+'/inbox?documentId='+id+'&key='+LKEY,{method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({fields:{k:{stringValue:LTOK},txt:{stringValue:t.value},d:{stringValue:new Date().toISOString()}}})});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  marcaEnviado();render();toast('🛰 Enviado direto ao painel do Lucas ✔ (propostas 🟡)');
+ }catch(e){toast('⚠ Sem internet agora — use 📲 WhatsApp (reserva)');}}
+function enviarZap(){const t=document.getElementById('out');if(!t)return;
+ marcaEnviado();
+ if(navigator.share){navigator.share({text:t.value}).then(()=>{render();toast('✔ Enviado — propostas agora 🟡');})
+  .catch(e=>{if(e&&e.name==='AbortError')return;copia();render();});}
+ else{copia();render();}}
 function copia(){const t=document.getElementById('out');if(!t)return;
  t.removeAttribute('readonly');t.focus();t.select();try{t.setSelectionRange(0,t.value.length);}catch(e){}
  let ok=false;try{ok=document.execCommand('copy');}catch(e){}
@@ -190,7 +222,7 @@ function aplicar(){const t=document.getElementById('resp').value||'';let ok=0,na
   if(p[0]==='NAO'&&S.prc[p[1]]){S.prc[p[1]].st='nao';nao++;}});
  save();render();
  toast(ok+nao?('✔ Aplicado: 🟢 '+ok+' confirmados'+(nao?' · 🔴 '+nao+' não aprovados':'')):'⚠ Nenhuma linha OK|/NAO| reconhecida');}
-if(TASK){const c=document.getElementById('c_tk');c.style.display='';const b=document.getElementById('ntk');b.style.display='';b.textContent=TASK.ms.length;}
+tkBadge();
 document.getElementById('dt').textContent=new Date().toLocaleDateString('pt-BR');
 render();
 </script></body></html>
