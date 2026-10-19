@@ -751,10 +751,10 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 .rkout2{font:700 11px var(--mono);color:#2E7D32;margin:8px 0 4px}
 </style>
 <style>
-/* ===== ELO-MOBILE-RAIL (19/10, PAINEL 세션) · 모바일: bwrap 1열 + 레일 가로 스크롤 — ROBERTO▸CUSTO 등 하위 메뉴 접근 복구. ELO 마스터(v9.28j) 위 단독 CSS 패치 — 다음 ELO 버전에 흡수 요망 ===== */
+/* ===== ELO-MOBILE-RAIL (19/10, PAINEL 세션) · 모바일: bwrap 1열 + 레일 가로 스크롤 — v9.28p부터 마스터에 포함 ===== */
 @media(max-width:700px){
  .bwrap,.bwrap.has3,.bwrap.fsS.has3,.bwrap.fsM.has3,.bwrap.fsL.has3{grid-template-columns:1fr!important}
- .brail{position:static!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto;gap:7px;padding-bottom:5px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ .brail{position:static!important;flex-direction:row!important;flex-wrap:nowrap!important;width:auto!important;min-width:0!important;overflow-x:auto;gap:7px;padding-bottom:5px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
  .brail::-webkit-scrollbar{display:none}
  .brail>*{flex:0 0 auto!important;min-width:132px;max-width:70vw}
  .bmid{min-width:0}
@@ -764,7 +764,7 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28o</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28p</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1749,6 +1749,7 @@ function renderRoberto(A){
     ${K('oficinas','🏷 OFICINAS','',ofiAll().length,'cadastro · prazo padrão','ranking por lotes concluídos','',()=>renderOficinas())}
     ${K('chk','CHECK LIST',A.semFicha.length?'r':'',`${todoPend}<small>/${todoAll.length}</small>`,'pendentes hoje',A.semFicha.length?`${A.semFicha.length} lote(s) sem ficha DEBORA`:'todos os lotes com ficha',A.semFicha.length?'late':'',()=>renderTodo(A,{prep,par,late,ofi}))}
     ${cv?K('cv','💰 MÉDIA/PÇ','g',`R$ ${brl(cv.total.media)}`,`média/pç · ${cv.n} modelos`,'corte desde '+dtBR(VERAO_INI),'',()=>((window.innerWidth>=980&&cv)?`<div class="cvcards">${[['🧵 TECIDO',cv.tec],['🪡 COSTURA',cv.cost],['🔘 AVIAM.+EMB.',cv.extra],['💰 TOTAL',cv.total]].map(([l,v])=>v&&v.media!=null?`<div class="cvc"><span class="tag2">${l}</span><b>R$ ${brl(v.media)}</b><small>mediana R$ ${brl(v.mediana)}${v.pond!=null?' · pond. R$ '+brl(v.pond):''}</small></div>`:'').join('')}</div>`:'')+renderCustoVerao(cv)):`<div class="kc"><span class="ktab g">💰 MÉDIA/PÇ</span><div class="khead"><div><em>—</em><div class="l1">re-arraste o ROBERTO (.xlsx)</div><div class="l2">&nbsp;</div></div></div></div>`}
+    ${(ROB.custo||[]).length?K('cu','💰 CUSTO','g',(ROB.custo||[]).length,'lotes com custo · P.VENDA','mesma tabela do PC · deslize p/ o lado','',()=>`<div class="cutw" style="overflow-x:auto;-webkit-overflow-scrolling:touch">${renderCustoTab()}</div>`):''}
   </div>`;
   if(!WIDE) return inner;
   const railR=(k,lbl,val,sub,cls)=>`<button class="brc ${cls||''}" aria-selected="${RSEL===k}" onclick="RSEL='${k}';OFSEL=null;RFICHA=null;render()"><span class="ph">${lbl}</span><div class="big">${val}</div><div class="pcs">${sub}</div></button>`;
