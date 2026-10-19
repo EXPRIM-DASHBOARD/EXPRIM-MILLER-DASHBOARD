@@ -750,6 +750,17 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 .rkc{display:flex;gap:6px;align-items:center;margin:3px 0}.rkc input{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit}.rkc .c{flex:1;min-width:0}.rkc .k{max-width:90px}.rkc .m{width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459}
 .rkout2{font:700 11px var(--mono);color:#2E7D32;margin:8px 0 4px}
 </style>
+<style>
+/* ===== ELO-MOBILE-RAIL (19/10, PAINEL 세션) · 모바일: bwrap 1열 + 레일 가로 스크롤 — ROBERTO▸CUSTO 등 하위 메뉴 접근 복구. ELO 마스터(v9.28j) 위 단독 CSS 패치 — 다음 ELO 버전에 흡수 요망 ===== */
+@media(max-width:700px){
+ .bwrap,.bwrap.has3,.bwrap.fsS.has3,.bwrap.fsM.has3,.bwrap.fsL.has3{grid-template-columns:1fr!important}
+ .brail{position:static!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto;gap:7px;padding-bottom:5px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ .brail::-webkit-scrollbar{display:none}
+ .brail>*{flex:0 0 auto!important;min-width:132px;max-width:70vw}
+ .bmid{min-width:0}
+ .cut{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+</style>
 </head>
 <body>
 <header class="top">
