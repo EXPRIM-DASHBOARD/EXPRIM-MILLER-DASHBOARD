@@ -750,10 +750,21 @@ body.teste header.top{box-shadow:inset 0 -6px 0 #C0392B}
 .rkc{display:flex;gap:6px;align-items:center;margin:3px 0}.rkc input{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit}.rkc .c{flex:1;min-width:0}.rkc .k{max-width:90px}.rkc .m{width:64px;text-align:right;font:700 10.5px var(--mono);color:#6b6459}
 .rkout2{font:700 11px var(--mono);color:#2E7D32;margin:8px 0 4px}
 </style>
+<style>
+/* ===== ELO-MOBILE-RAIL (19/10, PAINEL 세션) · 모바일: bwrap 1열 + 레일 가로 스크롤 — v9.28p부터 마스터에 포함 ===== */
+@media(max-width:700px){
+ .bwrap,.bwrap.has3,.bwrap.fsS.has3,.bwrap.fsM.has3,.bwrap.fsL.has3{grid-template-columns:1fr!important}
+ .brail{position:static!important;flex-direction:row!important;flex-wrap:nowrap!important;width:auto!important;min-width:0!important;overflow-x:auto;gap:7px;padding-bottom:5px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ .brail::-webkit-scrollbar{display:none}
+ .brail>*{flex:0 0 auto!important;min-width:132px;max-width:70vw}
+ .bmid{min-width:0}
+ .cut{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+</style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28o</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
+  <div class="brand"><b>EXPRIM PRODUÇÃO <em>· ELO</em><span id="teste">TESTE</span><a id="lkTeste" href="elo_teste.html" title="abrir a versão de teste (mesmos dados)">🧪 TESTE</a><a id="lkElo" href="elo.html" title="voltar p/ o ELO">← ELO</a><a id="lkCopy" href="#" onclick="event.preventDefault();testeCopiar()" title="copia TODOS os dados do ELO p/ as coleções teste_*">📥 copiar do ELO</a><a id="lkWipe" href="#" onclick="event.preventDefault();testeLimpar()" title="apaga os dados de teste">🗑 limpar</a></b><span>DEBORA × ROBERTO × TECIDOS · nuvem · <b id="vtag">v9.28q</b> <b id="cldot" class="cd ok">● salvo</b></span></div>
   <nav class="tabs"><button class="tab on" data-v="debora">DEBORA</button><button class="tab" data-v="roberto">ROBERTO</button><button class="tab" data-v="tecidos">TECIDOS</button><button class="tab" data-v="pedidos">PEDIDOS</button><button class="tab" data-v="boletos">💰 BOLETOS</button><button class="tab" data-v="plano">✂ PLANO</button><button class="tab" data-v="lista">LISTA</button></nav>
   <span id="who" class="who"></span><button id="upBtn" class="btn">+ .xlsx</button><button id="outBtn" class="btn" hidden>SAIR</button>
   <button id="expBtn" class="btn exp" title="Gera um HTML com os dados atuais embutidos, p/ mandar no WhatsApp">📤 Exportar snapshot</button>
@@ -1738,6 +1749,7 @@ function renderRoberto(A){
     ${K('oficinas','🏷 OFICINAS','',ofiAll().length,'cadastro · prazo padrão','ranking por lotes concluídos','',()=>renderOficinas())}
     ${K('chk','CHECK LIST',A.semFicha.length?'r':'',`${todoPend}<small>/${todoAll.length}</small>`,'pendentes hoje',A.semFicha.length?`${A.semFicha.length} lote(s) sem ficha DEBORA`:'todos os lotes com ficha',A.semFicha.length?'late':'',()=>renderTodo(A,{prep,par,late,ofi}))}
     ${cv?K('cv','💰 MÉDIA/PÇ','g',`R$ ${brl(cv.total.media)}`,`média/pç · ${cv.n} modelos`,'corte desde '+dtBR(VERAO_INI),'',()=>((window.innerWidth>=980&&cv)?`<div class="cvcards">${[['🧵 TECIDO',cv.tec],['🪡 COSTURA',cv.cost],['🔘 AVIAM.+EMB.',cv.extra],['💰 TOTAL',cv.total]].map(([l,v])=>v&&v.media!=null?`<div class="cvc"><span class="tag2">${l}</span><b>R$ ${brl(v.media)}</b><small>mediana R$ ${brl(v.mediana)}${v.pond!=null?' · pond. R$ '+brl(v.pond):''}</small></div>`:'').join('')}</div>`:'')+renderCustoVerao(cv)):`<div class="kc"><span class="ktab g">💰 MÉDIA/PÇ</span><div class="khead"><div><em>—</em><div class="l1">re-arraste o ROBERTO (.xlsx)</div><div class="l2">&nbsp;</div></div></div></div>`}
+    ${(ROB.custo||[]).length?K('cu','💰 CUSTO','g',(ROB.custo||[]).length,'lotes com custo · P.VENDA','mesma tabela do PC · deslize p/ o lado','',()=>`<div class="cutw" style="overflow-x:auto;-webkit-overflow-scrolling:touch">${renderCustoTab()}</div>`):''}
   </div>`;
   if(!WIDE) return inner;
   const railR=(k,lbl,val,sub,cls)=>`<button class="brc ${cls||''}" aria-selected="${RSEL===k}" onclick="RSEL='${k}';OFSEL=null;RFICHA=null;render()"><span class="ph">${lbl}</span><div class="big">${val}</div><div class="pcs">${sub}</div></button>`;
@@ -1987,7 +1999,7 @@ function isLucas(){ return !!(FBUSER&&FBUSER.email&&FBUSER.email.startsWith('exp
 function croLivres(){ return CRO.filter(c=>!c.usedBy); }
 function croRailBtn(){ const l=croLivres().length; return `<button class="brc ${DFASE==='cro'?'gold':''}" aria-selected="${DFASE==='cro'}" onclick="DFASE='cro';DMSEL=null;render()"><span class="ph">📷 CROQUIS</span><div class="big">${l}</div><div class="pcs">livres · ${CRO.length-l} usado(s)</div></button>`; }
 function croAddBar(){ if(!isLucas()) return `<div class="pvnote">📷 Só o Lucas adiciona fotos e cria modelos aqui.</div>`;
-  return `<div class="addbar"><button class="btn" onclick="croPick(true)">📷 TIRAR FOTO</button><button class="btn sec" onclick="croPick(false)">🖼 DA GALERIA</button><span class="lk">croqui ou foto real · 1024px guardada à parte, miniatura 300px aqui</span><button class="tg" style="margin-left:auto" onclick="fotoCompact()" title="Reduz fotos de modelos concluídos p/ 160px e separa originais dos croquis antigos">🗜 compactar fotos</button></div>`; }
+  return `<div class="addbar"><button class="btn" onclick="croPick(true)">📷 TIRAR FOTO</button><button class="btn sec" onclick="croPick(false)">🖼 DA GALERIA</button><button class="btn sec" onclick="croImpPick()" title="importar várias fotos de um .json preparado no chat (croquis_fotos.json)">📥 importar (.json)</button><span class="lk">croqui ou foto real · 1024px guardada à parte, miniatura 300px aqui</span><button class="tg" style="margin-left:auto" onclick="fotoCompact()" title="Reduz fotos de modelos concluídos p/ 160px e separa originais dos croquis antigos">🗜 compactar fotos</button></div>`; }
 async function fotoCompact(){ if(!isLucas()) return; if(window.__fcBusy) return; window.__fcBusy=true;
   const cand=DEB.models.filter(m=>m.concl&&m.foto&&m.foto.length>40000); const old=CRO.filter(c=>c.img&&!c.thumb);
   if(!cand.length&&!old.length){ toast('✓ nada p/ compactar'); window.__fcBusy=false; return; }
@@ -2000,6 +2012,30 @@ async function fotoCompact(){ if(!isLucas()) return; if(window.__fcBusy) return;
   }catch(e){ pgHide(); toast('⚠ '+(e&&(e.code||e.message)),6000); }
   window.__fcBusy=false; }
 const CROIMG={};
+/* v9.28q: importar croquis em lote de um .json (exprim-croquis-v1) — prévia, nada gravado até IMPORTAR */
+let CIMP=null;
+function croImpPick(){ if(!isLucas()) return; const i=document.createElement('input'); i.type='file'; i.accept='.json,application/json'; i.onchange=()=>{ const f=i.files&&i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ croImpLoad(JSON.parse(r.result)); }catch(e){ toast('arquivo inválido: '+(e&&e.message)); } }; r.readAsText(f); }; i.click(); }
+function croImpLoad(j){ const arr=Array.isArray(j)?j:(j&&j.croquis)||[]; if(!arr.length){ toast('nenhum croqui no arquivo'); return; }
+  CIMP=arr.filter(c=>c&&(c.img||c.thumb)).map((c,i)=>{ const dup=!!c.id&&CRO.some(x=>x.id===c.id); const img=c.img||c.thumb; const kb=Math.round(img.length*3/4/1024);
+    return {id:(c.id&&!dup)?c.id:('c'+Date.now().toString(36)+i.toString(36)+Math.random().toString(36).slice(2,5)),img,thumb:c.thumb||img,memo:c.memo||'',at:c.at||new Date().toISOString(),kb,_arq:c._arq||'',_dup:dup,_skip:dup||!!c._skip}; });
+  croImpDraw(); }
+function croImpDraw(){ const cards=CIMP.map((c,i)=>`<div style="width:132px;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff;${c._skip?'opacity:.45':''}">
+   <label style="display:flex;align-items:center;gap:5px;font:800 10px var(--mono);margin-bottom:4px"><input type="checkbox" ${c._skip?'':'checked'} onchange="CIMP[${i}]._skip=!this.checked;croImpCnt()"> ${i+1}${c._dup?' <span style="color:#C0392B">já existe</span>':''}</label>
+   <img src="${c.thumb}" style="width:100%;height:150px;object-fit:cover;border-radius:7px;display:block">
+   <input value="${esc(c.memo)}" placeholder="memo (opcional)" style="width:100%;margin-top:5px;font-size:11px" onchange="CIMP[${i}].memo=this.value">
+   <div class="sm" style="font-size:9.5px;margin-top:3px">${c.kb} KB · ${esc(c._arq)}</div></div>`).join('');
+  openMod('📥 Importar croquis — prévia (nada gravado ainda)',`<div class="fp2"><div class="sm" style="margin-bottom:8px">Marque as fotos que entram · memo pode ficar p/ depois (edita no cartão) · cada foto vira um croqui livre p/ NOVO MODELO.</div>
+   <div style="display:flex;flex-wrap:wrap;gap:8px;max-height:60vh;overflow:auto">${cards}</div>
+   <div class="acts" style="justify-content:space-between;margin-top:10px"><span class="sm" id="cimpCnt"></span><span><button class="btn sec" onclick="closeMod();CIMP=null">CANCELAR</button> <button class="btn" onclick="croImpGo()">📥 IMPORTAR MARCADOS</button></span></div></div>`,'',true); document.getElementById('tmod').classList.add('wide'); croImpCnt(); }
+function croImpCnt(){ const e=document.getElementById('cimpCnt'); if(e&&CIMP) e.textContent=CIMP.filter(c=>!c._skip).length+' de '+CIMP.length+' marcado(s)'; }
+async function croImpGo(){ if(!CIMP||!FBUSER||!isLucas()) return; const ok=CIMP.filter(c=>!c._skip); if(!ok.length){ toast('nada marcado'); return; }
+  if(!confirm('Importar '+ok.length+' croqui(s) p/ a nuvem?')) return; pgShow('📥 importando croquis…');
+  try{ let b=FB.writeBatch(FB.db), k=0, n=0; const by=whoName();
+    for(const c of ok){ const doc={id:c.id,thumb:c.thumb,memo:c.memo||'',at:c.at,by,usedBy:null,kb:c.kb,origem:'import'};
+      b.set(FB.doc(FB.db,'cro_img',c.id),{id:c.id,img:c.img,at:c.at}); b.set(FB.doc(FB.db,'cro_elo',c.id),doc); CROIMG[c.id]=c.img; if(!CRO.some(x=>x.id===c.id)) CRO.unshift(doc); n++; k+=2;
+      if(k>=40){ await b.commit(); b=FB.writeBatch(FB.db); k=0; } }
+    if(k) await b.commit(); closeMod(); CIMP=null; if(window.innerWidth>=980) DFASE='cro'; render(); toast('📥 '+n+' croqui(s) importado(s)'); }
+  catch(e){ toast('⚠ '+(e&&(e.message||e.code)),6000); } finally{ pgHide(); } }
 function croThumb(c){ return c.thumb||c.img||''; }
 async function croFull(id){ if(CROIMG[id]) return CROIMG[id]; const c=CRO.find(x=>x.id===id); if(c&&c.img&&!c.thumb){ CROIMG[id]=c.img; return c.img; }
   try{ const s=await FB.getDoc(FB.doc(FB.db,'cro_img',id)); const d=s&&s.exists&&s.exists()?s.data():null; if(d&&d.img){ CROIMG[id]=d.img; return d.img; } }catch(e){} return c?croThumb(c):''; }
